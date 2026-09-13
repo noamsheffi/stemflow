@@ -1,0 +1,9 @@
+node_modules/
+.next/
+*.tsbuildinfo
+
+# Local environment files may contain database credentials and lecturer access secrets.
+.env
+.env.local
+.env.*.local
+!.env.example
