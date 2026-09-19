@@ -172,6 +172,24 @@ export const lessons: CourseLesson[] = [
       },
     ],
   },
+  {
+    lessonId: "lesson-04",
+    number: 4,
+    title: "אפנון תנופה AM",
+    url: "/courses/communication-systems/lesson-04/",
+    topics: ["אפנון", "AM", "מעטפת", "פסי צד", "רוחב פס"],
+    formulaIds: [],
+    conceptIds: [],
+    slides: [],
+    resources: [
+      {
+        resourceId: "lesson-04-main-html",
+        kind: "lesson-html",
+        title: "למידה עצמאית — אפנון תנופה AM",
+        href: "/courses/communication-systems/lesson-04/",
+      },
+    ],
+  },
 ];
 export const formulas: CourseFormula[] = formulaSheet.map((item) => ({
   formulaId: item.id,
