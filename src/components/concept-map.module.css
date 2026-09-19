@@ -22,7 +22,7 @@
 .reset { border: 0; background: transparent; color: var(--accent-dark); cursor: pointer; text-decoration: underline; text-underline-offset: 4px; font-size: .85rem; }
 .toolbar > .reset { margin-inline-start: auto; }
 .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 290px), 1fr)); gap: 18px; }
-.card { display: flex; flex-direction: column; text-align: start; width: 100%; min-width: 0; padding: 24px; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); color: var(--ink); box-shadow: var(--shadow-sm); cursor: pointer; transition: transform .2s var(--ease), box-shadow .2s; line-height: 1.6; }
+.card { display: flex; flex-direction: column; text-align: start; width: 100%; min-width: 0; padding: 24px; border: 1px solid var(--line); border-radius: var(--radius-md); background: var(--surface); color: var(--ink); box-shadow: var(--shadow-sm); cursor: pointer; text-decoration: none; transition: transform .2s var(--ease), box-shadow .2s; line-height: 1.6; }
 .card:hover { border-color: var(--violet); box-shadow: var(--shadow-md); transform: translateY(-3px); }
 .badges { display: flex; flex-wrap: wrap; gap: 6px; font-size: .73rem; font-weight: 600; }
 .badges > span { padding: 3px 8px; border-radius: 6px; background: var(--accent-pale); color: var(--accent-dark); }
@@ -31,7 +31,7 @@
 .english { display: block; color: var(--muted); font-size: .8rem; text-align: start; }
 .description { display: block; color: var(--muted); font-size: .9rem; margin: 15px 0 22px; }
 .cardFooter { margin-top: auto; display: flex; flex-wrap: wrap; justify-content: space-between; width: 100%; gap: 10px; border-top: 1px solid var(--line); padding-top: 14px; font-size: .76rem; color: var(--muted); }
-.cardFooter b { color: var(--accent-dark); }
+.cardFooter b { color: var(--accent-dark); text-decoration: underline; text-underline-offset: 4px; }
 .empty { padding: 40px; text-align: center; background: var(--surface); border: 1px dashed var(--line-strong); border-radius: var(--radius-md); }
 .root { margin: 0 auto 28px; padding: 18px 24px; width: fit-content; border-radius: var(--radius-md); background: var(--ink); color: white; text-align: center; font-weight: 700; position: relative; }
 .root span { display: block; font-size: .8rem; color: #cbd5e1; font-weight: 400; }
@@ -44,7 +44,7 @@
 .branch h2 { font-size: 1rem; margin: 0 0 18px; }
 .branch h2 span { display: block; color: var(--muted); font-size: .75rem; font-weight: 400; margin-bottom: 4px; }
 .branch > div { border-inline-start: 2px solid var(--line); padding-inline-start: 12px; }
-.node { display: block; width: 100%; text-align: start; padding: 12px; background: var(--canvas); border: 1px solid var(--line); border-radius: 10px; margin: 10px 0; cursor: pointer; color: var(--ink); line-height: 1.6; }
+.node { display: block; width: 100%; text-align: start; padding: 12px; background: var(--canvas); border: 1px solid var(--line); border-radius: 10px; margin: 10px 0; cursor: pointer; color: var(--ink); text-decoration: none; line-height: 1.6; }
 .node strong { font-size: .87rem; }
 .node:hover { background: var(--accent-pale); border-color: var(--accent); }
 .footnote { color: var(--muted); font-size: .8rem; margin-top: 24px; }
