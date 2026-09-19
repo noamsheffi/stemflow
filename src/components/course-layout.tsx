@@ -12,6 +12,7 @@ function breadcrumbLabel(pathname: string) {
     return `שיעור ${lesson?.number.toString().padStart(2, "0") ?? lessonId}`;
   }
   if (pathname.endsWith("/lessons") || pathname === "/lessons") return "מערכי שיעור";
+  if (pathname.includes("/surveys/")) return "שאלון 02 · אחרי השיעור";
   if (pathname.includes("/formulas")) return "נוסחאון";
   if (pathname.includes("/concepts")) return "מפת מושגים";
   return null;
@@ -23,8 +24,12 @@ export default function CourseLayout({ children }: { children: React.ReactNode }
   const context = breadcrumbLabel(pathname);
   const isConceptMap = pathname.endsWith("/concepts") || pathname === "/concepts";
   const isCourseCollection = pathname.endsWith("/lessons") || pathname.endsWith("/formulas");
+  const navigationClass = (section = "") => {
+    const href = courseAppPath(section);
+    return pathname === href || (section && pathname.startsWith(`${href}/`)) ? "active" : undefined;
+  };
   const productNavigation = <nav className="product-nav" aria-label="ניווט Syllo"><Link href="/"><span aria-hidden="true">⌂</span><span className="nav-label">בית</span></Link><Link href="/"><span aria-hidden="true">▦</span><span className="nav-label">הקורסים שלי</span></Link></nav>;
-  const courseNavigation = <nav className="course-nav" aria-label={`ניווט ${course.title}`}><Link href={courseAppPath()}><span aria-hidden="true">⌂</span><span className="nav-label">בית הקורס</span></Link><Link href={courseAppPath("lessons")}><span aria-hidden="true">▤</span><span className="nav-label">מערכי שיעור</span></Link><Link href={courseAppPath("formulas")}><span aria-hidden="true">ƒ</span><span className="nav-label">נוסחאון</span></Link><Link href={courseAppPath("concepts")}><span aria-hidden="true">⌘</span><span className="nav-label">מפת מושגים</span></Link></nav>;
+  const courseNavigation = <nav className="course-nav" aria-label={`ניווט ${course.title}`}><Link className={navigationClass()} href={courseAppPath()} aria-current={navigationClass() ? "page" : undefined}><span aria-hidden="true">⌂</span><span className="nav-label">בית הקורס</span></Link><Link className={navigationClass("lessons")} href={courseAppPath("lessons")} aria-current={navigationClass("lessons") ? "page" : undefined}><span aria-hidden="true">▤</span><span className="nav-label">מערכי שיעור</span></Link><Link className={navigationClass("formulas")} href={courseAppPath("formulas")} aria-current={navigationClass("formulas") ? "page" : undefined}><span aria-hidden="true">ƒ</span><span className="nav-label">נוסחאון</span></Link><Link className={navigationClass("concepts")} href={courseAppPath("concepts")} aria-current={navigationClass("concepts") ? "page" : undefined}><span aria-hidden="true">⌘</span><span className="nav-label">מפת מושגים</span></Link></nav>;
 
   return <div className={`course-shell${sidebarCollapsed ? " sidebar-collapsed" : ""}`}>
     <button
@@ -43,7 +48,7 @@ export default function CourseLayout({ children }: { children: React.ReactNode }
       {productNavigation}
       <div className="course-divider" />
       <p className="course-nav-label">קורס</p>
-      <Link className="course-context" href={courseAppPath()}><strong>{course.title}</strong><span dir="ltr">{course.titleEnglish}</span></Link>
+      <Link className="course-context" href={courseAppPath()}><strong>{course.title}</strong><span dir="ltr">{course.courseNumber}</span></Link>
       {courseNavigation}
     </aside>
     <section className="course-workspace">

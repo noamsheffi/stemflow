@@ -1,5 +1,5 @@
 import CourseLayout from "../../components/course-layout";
-import { EmptyContent, LessonCard } from "../../components/course-content";
+import LessonBrowser from "../../components/lesson-browser";
 import { lessons } from "../../lib/course-data";
 
 export default function LessonsPage() {
@@ -15,9 +15,7 @@ export default function LessonsPage() {
           <span>מושגים ונוסחאות בהקשר</span>
         </div>
       </section>
-      <section className="lesson-list" aria-label="מערכי שיעור">
-        {lessons.length === 0 ? <EmptyContent title="אין עדיין מערכי שיעור רשומים">קובצי השיעור לא נמצאים עדיין בריפו. לאחר הוספתם ל־Registry הם יופיעו כאן אוטומטית.</EmptyContent> : lessons.map((lesson) => <LessonCard key={lesson.lessonId} lesson={lesson} />)}
-      </section>
+      <LessonBrowser lessons={lessons} />
     </CourseLayout>
   );
 }

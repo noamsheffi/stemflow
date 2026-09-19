@@ -58,7 +58,7 @@ export type Course = {
   workspaceId: string;
   courseId: string;
   title: string;
-  titleEnglish: string;
+  courseNumber: string;
   lecturer: string;
   lessonIds: string[];
   formulaIds: string[];
@@ -77,7 +77,7 @@ export const course: Course = {
   workspaceId: "syllo-workspace",
   courseId: "communication-systems",
   title: "מערכות תקשורת",
-  titleEnglish: "Communication Systems",
+  courseNumber: "11.9004",
   lecturer: "נועם שפי",
   lessonIds: [],
   formulaIds: [],

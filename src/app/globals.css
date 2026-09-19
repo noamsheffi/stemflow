@@ -488,6 +488,31 @@ th {
   color: var(--muted);
 }
 
+.lecturer-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 22px 0;
+}
+
+.lecturer-summary span {
+  padding: 7px 10px;
+  background: #f8fafc;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+}
+
+.lecturer-warning {
+  padding: 12px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: var(--radius-sm);
+}
+
+.lecturer-signal td {
+  background: #fffbeb;
+}
+
 @media (min-width: 640px) {
   .page-shell {
     padding: 40px 24px;
@@ -666,7 +691,7 @@ th {
   text-decoration: none;
 }
 
-.course-mobile-header .course-nav a span {
+.course-mobile-header .course-nav a span[aria-hidden="true"] {
   display: none;
 }
 
@@ -1628,8 +1653,8 @@ th {
     place-items: center;
   }
 
-  .course-nav a:hover,
-  .course-nav a:focus-visible {
+.course-nav a:hover,
+.course-nav a:focus-visible {
     color: var(--ink);
     background: var(--accent-pale);
     outline: none;
@@ -1710,6 +1735,12 @@ th {
   .concept-map {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+}
+
+.course-nav a.active {
+  color: var(--accent-dark);
+  background: var(--accent-pale);
+  box-shadow: inset 3px 0 0 var(--accent);
 }
 
 /* Small polish */

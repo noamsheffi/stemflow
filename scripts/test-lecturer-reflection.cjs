@@ -1,0 +1,60 @@
+const { chromium } = require('playwright');
+const assert = require('node:assert/strict');
+const path = require('node:path');
+(async () => {
+  const browser = await chromium.launch({headless:true,channel:"chrome"});
+  try {
+    const page = await browser.newPage({viewport:{width:1440,height:900}});
+    await page.goto('http://localhost:8765/courses/communication-systems/lesson-03/index.html');
+    await page.evaluate(() => {
+      window.saved = {};
+      window.chrome = {storage:{local:{set: async values => Object.assign(window.saved, values), get: async key => typeof key === 'string' ? {[key]: window.saved[key]} : window.saved}}};
+      window.SYLLO_WORKSPACE_ID = null;
+      document.querySelector('.slide').dataset.minutes = '0.0001';
+    });
+    await page.addScriptTag({path:path.resolve('extensions/lecturer-reflection/tracker.js')});
+    const snapshot = () => page.evaluate(() => Object.values(window.saved)[0]);
+    await page.waitForTimeout(120);
+    await page.locator('.toggle').click();
+    await page.locator('[data-mark="HARD"]').click();
+    await page.locator('[data-mark="DEEPEN"]').click();
+    let data = await snapshot();
+    assert.equal(data.slides[0].annotations.length,2);
+    assert.equal(data.slides[0].planned_duration_minutes,0.0001);
+    assert.equal(data.slides[1].planned_duration_minutes,null);
+    assert.equal(await page.locator('.slide.active').count(),1);
+    await page.evaluate(() => { const slides=document.querySelectorAll('.slide'); slides[0].classList.remove('active'); slides[1].classList.add('active'); });
+    await page.waitForTimeout(80);
+    await page.evaluate(() => { Object.defineProperty(document,'visibilityState',{configurable:true,value:'hidden'});document.dispatchEvent(new Event('visibilitychange')); });
+    const paused = (await snapshot()).slides[1].actual_active_duration_ms;
+    await page.waitForTimeout(120);
+    await page.evaluate(() => { Object.defineProperty(document,'visibilityState',{configurable:true,value:'visible'});document.dispatchEvent(new Event('visibilitychange')); });
+    assert.equal((await snapshot()).slides[1].actual_active_duration_ms,paused);
+    await page.waitForTimeout(60);
+    await page.evaluate(() => window.__lecturerReflection());
+    data = await snapshot();
+    assert(data.slides[1].actual_active_duration_ms >= paused + 50);
+    assert(await page.locator('tbody .signal').count() > 0);
+    assert(await page.locator('tbody .mark').count() > 0);
+    await page.locator('.close').click();
+    await page.evaluate(() => { const slides=document.querySelectorAll('.slide'); slides[1].classList.remove('active'); slides[0].classList.add('active'); });
+    await page.waitForTimeout(80);
+    await page.evaluate(() => window.__lecturerReflection());
+    assert((await snapshot()).slides[0].actual_active_duration_ms > data.slides[0].actual_active_duration_ms);
+    await page.locator('.end').click();
+    const ended = await snapshot(); assert(ended.ended_at);
+    await page.locator('.close').click();
+    await page.screenshot({path:'/tmp/lecturer-overlay.png'});
+    const overlap = await page.evaluate(() => {
+      const host=[...document.documentElement.children].find(e=>e.shadowRoot);
+      const a=host.getBoundingClientRect();
+      return [...document.querySelectorAll('.nav,.counter,.top-actions,.help')].some(el=>{const b=el.getBoundingClientRect();return a.left<b.right&&a.right>b.left&&a.top<b.bottom&&a.bottom>b.top;});
+    });
+    assert.equal(overlap,false);
+    await page.addScriptTag({path:path.resolve('extensions/lecturer-reflection/tracker.js')});
+    assert.equal(await page.locator('.bar').count(),1);
+    await page.waitForTimeout(80);
+    assert.equal((await snapshot()).slides[0].actual_active_duration_ms,ended.slides[0].actual_active_duration_ms);
+    console.log('PASS: metadata, missing/planned duration, annotations, transitions, hidden pause/resume, revisits, review signals, end, reinjection, desktop navigation clearance');
+  } finally { await browser.close(); }
+})().catch(error=>{console.error(error);process.exitCode=1;});

@@ -44,8 +44,8 @@ npm run dev
 
 1. צרו פרויקט Vercel חדש וחברו אליו את GitHub repository `noamsheffi/stemflow`.
 2. בפרויקט Vercel, הוסיפו **Neon Postgres** דרך Vercel Marketplace וחברו אותו לאותו פרויקט. ודאו ש-`DATABASE_URL` הוזרק ל-Production ול-Preview לפי הצורך.
-3. פתחו את Neon SQL Editor והריצו פעם אחת את `db/migrations/001_create_survey_submissions.sql`.
-4. ב-Vercel → Settings → Environment Variables הגדירו ערכים פרטיים ל-`LECTURER_USERNAME` ול-`LECTURER_PASSWORD`. אין להגדיר אותם כ-`NEXT_PUBLIC_*`.
+3. פתחו את Neon SQL Editor והריצו פעם אחת את `db/migrations/001_create_survey_submissions.sql`, `db/migrations/002_create_slide_friction_submissions.sql` ו־`db/migrations/003_create_lecturer_sessions.sql`.
+4. ב-Vercel → Settings → Environment Variables הגדירו ערכים פרטיים ל-`LECTURER_USERNAME`, `LECTURER_PASSWORD` ו־`LECTURER_SYNC_TOKEN_SECRET`. אין להגדיר אותם כ-`NEXT_PUBLIC_*`. בעת אריזת התוסף הגדירו גם `SYLLO_EXTENSION_ORIGIN` ל־`chrome-extension://<extension-id>`.
 5. לבדיקות מקומיות, העתיקו את אותם שמות משתנים ל-`.env.local` עם `DATABASE_URL` המתאים. קובץ זה מתעלם מ-Git.
 
 לא נדרשת הגדרת Google Classroom, Google SSO, חשבון סטודנט או שירות AI.

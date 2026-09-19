@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "Lesson lecturer reflection",
+  "version": "0.2.0",
+  "description": "Local active-slide timing and pedagogical reflection, enabled by the lecturer.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "storage"
+  ],
+  "host_permissions": [
+    "http://localhost:3000/*",
+    "https://stemflow-noamsheffi-gmailcoms-projects.vercel.app/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "http://localhost:3000/courses/communication-systems/*",
+        "https://stemflow-noamsheffi-gmailcoms-projects.vercel.app/courses/communication-systems/*"
+      ],
+      "js": ["config.js", "auto-start.js", "tracker.js"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_title": "Start / open lecturer reflection"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "options_page": "history.html"
+}

@@ -1,0 +1,9 @@
+.controls { display: grid; gap: 16px; margin-top: 18px; padding: clamp(18px, 2.4vw, 22px); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); box-shadow: var(--shadow-sm); }
+.search, .selectLabel { display: grid; gap: 8px; min-width: 0; color: var(--muted); font-size: .82rem; font-weight: 700; }
+.search input, .selectLabel select { width: 100%; min-width: 0; padding: 12px 16px; color: var(--ink); background: var(--canvas); border: 1px solid var(--line-strong); border-radius: var(--radius-sm); font: inherit; font-weight: 400; }
+.selectLabel select { padding-inline: 12px 38px; font-size: .92rem; }
+.summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 18px 0; color: var(--muted); font-size: .85rem; }
+.summary button { padding: 0; color: var(--accent-dark); background: transparent; border: 0; cursor: pointer; font: inherit; font-size: .85rem; text-decoration: underline; text-underline-offset: 4px; }
+.controls :is(input, select, button):focus-visible, .summary button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+@media (min-width: 760px) { .controls { grid-template-columns: minmax(0, 1fr) minmax(260px, .55fr); align-items: end; } }
+@media (max-width: 500px) { .summary { align-items: flex-start; flex-direction: column; gap: 10px; } }
