@@ -54,12 +54,43 @@ export type CourseConcept = {
   formulaIds: string[];
 };
 
-export const course = {
+export type Course = {
+  workspaceId: string;
+  courseId: string;
+  title: string;
+  titleEnglish: string;
+  lecturer: string;
+  lessonIds: string[];
+  formulaIds: string[];
+  conceptIds: string[];
+};
+
+export type Workspace = {
+  workspaceId: string;
+  title: string;
+  courses: Course[];
+};
+
+// Product registry: a workspace owns courses; every educational item belongs to a course.
+// More courses can be appended here without changing Syllo-level components.
+export const course: Course = {
+  workspaceId: "syllo-workspace",
   courseId: "communication-systems",
   title: "מערכות תקשורת",
   titleEnglish: "Communication Systems",
   lecturer: "נועם שפי",
-} as const;
+  lessonIds: [],
+  formulaIds: [],
+  conceptIds: [],
+};
+
+export const workspace: Workspace = {
+  workspaceId: "syllo-workspace",
+  title: "Syllo",
+  courses: [course],
+};
+
+export const courseAppPath = (section = "") => `/course/${course.courseId}${section ? `/${section}` : ""}`;
 
 // Register each hosted item here instead of duplicating course structure across pages.
 export const lessons: CourseLesson[] = [
@@ -168,6 +199,14 @@ for (const lesson of lessons) {
 }
 for (const formula of formulas) {
   formula.conceptIds = concepts.filter((concept) => concept.formulaIds.includes(formula.formulaId)).map((concept) => concept.conceptId);
+}
+
+course.lessonIds = lessons.map((lesson) => lesson.lessonId);
+course.formulaIds = formulas.map((formula) => formula.formulaId);
+course.conceptIds = concepts.map((concept) => concept.conceptId);
+
+export function getCourse(courseId: string) {
+  return workspace.courses.find((item) => item.courseId === courseId);
 }
 
 export function getLesson(lessonId: string) {

@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Syllo | מערכות תקשורת",
-  description: "מרכז התוכן והמחקר של קורס מערכות תקשורת",
+  title: "Syllo | סביבת למידה",
+  description: "סביבת הלמידה של Syllo",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {

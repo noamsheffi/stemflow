@@ -12,7 +12,6 @@ export default function ConceptsPage() {
     lesson: concept.lesson, category: concept.category, summary: concept.summary,
     connections: concept.connections,
     search: [concept.title, concept.english, concept.summary, concept.details, concept.category, concept.real_world, ...concept.formulas].join(" ").toLocaleLowerCase(),
-    details: <ConceptDetails concept={concept} />,
   }));
   return <CourseLayout><ConceptMap entries={entries} /></CourseLayout>;
 }
