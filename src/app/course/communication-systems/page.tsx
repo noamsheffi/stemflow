@@ -2,13 +2,15 @@ import Link from "next/link";
 
 import CourseLayout from "../../../components/course-layout";
 import LessonOpenLink from "../../../components/lesson-open-link";
-import { course, courseAppPath, lessonHref, lessons } from "../../../lib/course-data";
+import AnalyticsEventTracker from "../../../components/analytics-event-tracker";
+import { course, courseAppPath, lessonHref, lessons, workspace } from "../../../lib/course-data";
 
 export default function CourseHomePage() {
   const latestLesson = lessons.at(-1);
 
   return (
     <CourseLayout>
+      <AnalyticsEventTracker eventName="course_open" properties={{ workspace_id: workspace.workspaceId, course_id: course.courseId }} />
       <section className="course-hero">
         <div>
           <p className="item-kicker">קורס פעיל · מרצה: {course.lecturer}</p>

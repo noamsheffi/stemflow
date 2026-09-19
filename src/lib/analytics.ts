@@ -1,10 +1,10 @@
 export type CourseEventName =
   | "course_open"
   | "lesson_open"
-  | "slide_view"
   | "formula_open"
   | "concept_open"
-  | "simulation_interaction";
+  | "simulation_start"
+  | "resource_open";
 
 export type AnalyticsContext = {
   workspace_id?: string;
@@ -18,6 +18,32 @@ export type AnalyticsContext = {
 
 export type CourseEventProperties = AnalyticsContext;
 
-// Deliberately provider-agnostic and no-op in Phase 1. A later analytics adapter can
-// send these stable IDs to the chosen service without changing educational components.
-export function trackEvent(_eventName: CourseEventName, _properties: CourseEventProperties) {}
+declare global {
+  interface Window {
+    dataLayer?: unknown[][];
+    gtag?: (...args: unknown[]) => void;
+  }
+}
+
+const gaId = process.env.NEXT_PUBLIC_GA_ID;
+
+function sendToGoogleAnalytics(command: "event", eventName: string, properties: Record<string, string>) {
+  if (typeof window === "undefined" || !gaId) return;
+  if (window.gtag) {
+    window.gtag(command, eventName, properties);
+    return;
+  }
+  window.dataLayer ??= [];
+  window.dataLayer.push([command, eventName, properties]);
+}
+
+// Application code only uses this provider-independent function. The Google adapter is
+// intentionally limited to stable, non-identifying registry IDs.
+export function trackEvent(eventName: CourseEventName, properties: CourseEventProperties) {
+  const filteredProperties = Object.fromEntries(Object.entries(properties).filter(([, value]) => typeof value === "string")) as Record<string, string>;
+  sendToGoogleAnalytics("event", eventName, filteredProperties);
+}
+
+export function trackPageView(pathname: string) {
+  sendToGoogleAnalytics("event", "page_view", { page_path: pathname });
+}
