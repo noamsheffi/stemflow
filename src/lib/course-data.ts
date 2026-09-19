@@ -185,8 +185,14 @@ export const lessons: CourseLesson[] = [
       {
         resourceId: "lesson-04-main-html",
         kind: "lesson-html",
-        title: "למידה עצמאית — אפנון תנופה AM",
+        title: "מערך שיעור — אפנון תנופה AM",
         href: "/courses/communication-systems/lesson-04/",
+      },
+      {
+        resourceId: "lesson-04-self-practice",
+        kind: "exercise",
+        title: "תרגול אינטראקטיבי לבית — אפנון תנופה AM",
+        href: "/courses/communication-systems/lesson-04/practice.html",
       },
     ],
   },

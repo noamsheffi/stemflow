@@ -3,8 +3,9 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>תרגול עצמי לבית · שיעור 4 — אפנון תנופה AM</title>
+<title>מערך שיעור 4 — אפנון תנופה AM · Style B Preview</title>
 <style>
+
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
   :root{
@@ -25,12 +26,10 @@
     --accent-glow:rgba(6,182,212,.18);
     --violet:#8b5cf6;
     --violet-pale:#f5f3ff;
-    --green:#10b981;
-    --green-pale:#ecfdf5;
+    --green:#06b6d4;
+    --green-dark:#0e7490;
+    --green2:#22d3ee;
     --red:#ef4444;
-    --red-pale:#fef2f2;
-    --amber:#f59e0b;
-    --amber-pale:#fffbeb;
     --shadow-sm:0 1px 2px rgba(15,23,42,.05);
     --shadow-md:0 4px 12px rgba(15,23,42,.06),0 1px 3px rgba(15,23,42,.04);
     --shadow-lg:0 12px 28px rgba(15,23,42,.08);
@@ -38,651 +37,724 @@
     --radius-sm:10px;
     --display:"Inter",system-ui,sans-serif;
     --body:"Inter",system-ui,sans-serif;
+    --title:clamp(36px,4.2vw,64px);
+    --body-size:clamp(20px,1.7vw,28px);
+    --small:clamp(14px,1.1vw,18px);
   }
   *{box-sizing:border-box}
-  html{scroll-behavior:smooth}
-  body{
-    margin:0;min-height:100vh;color:var(--ink);font-family:var(--body);
-    background:
-      radial-gradient(ellipse 70% 40% at 90% 0%,rgba(6,182,212,.10),transparent),
-      radial-gradient(ellipse 50% 30% at 10% 100%,rgba(139,92,246,.06),transparent),
-      var(--canvas);
-    -webkit-font-smoothing:antialiased;
-  }
-  button,input,select,textarea{font:inherit}
-  .ltr,bdi.ltr{direction:ltr;unicode-bidi:isolate;display:inline-block}
-  .app{max-width:1100px;margin:0 auto;padding:28px 20px 60px}
+  html,body{width:100%;height:100%;margin:0;overflow:hidden;background:var(--ink);font-family:var(--body);color:var(--ink);-webkit-font-smoothing:antialiased}
+  button,input{font:inherit}
+  .deck{position:relative;width:100vw;height:100vh;background:var(--canvas);overflow:hidden}
+  .deck:after{content:"";position:absolute;inset:0;pointer-events:none;z-index:80;opacity:.03;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  .slide{position:absolute;inset:0;display:none;grid-template-rows:auto minmax(0,1fr) auto auto;gap:clamp(10px,1.4vh,18px);padding:clamp(24px,3.2vh,40px) clamp(28px,4vw,64px) clamp(60px,7vh,76px);background:
+    radial-gradient(ellipse 70% 40% at 90% 0%,rgba(6,182,212,.08),transparent),
+    radial-gradient(ellipse 50% 30% at 10% 100%,rgba(139,92,246,.05),transparent),
+    var(--canvas)}
+  .slide.active{display:grid}
+  .slide:before{content:"";position:absolute;right:0;bottom:0;width:28%;height:5px;background:linear-gradient(90deg,var(--accent),var(--violet));border-radius:4px 0 0 0}
+  header{border-bottom:2px solid var(--line);padding-bottom:clamp(8px,1vh,12px)}
+  .eyebrow{font-family:var(--display);font-size:var(--small);font-weight:700;letter-spacing:.08em;color:var(--accent-dark);margin-bottom:6px;text-transform:uppercase}
+  h1,h2,h3,p{margin:0}
+  h1,h2{font-family:var(--display);font-weight:800;line-height:1.08;letter-spacing:-.03em}
+  h1{font-size:clamp(42px,5.5vw,84px)}h2{font-size:var(--title)}h3{font-size:clamp(24px,2.3vw,36px);line-height:1.15;font-weight:700}
+  p,li{font-size:var(--body-size);line-height:1.4}
+  ul,ol{margin:.2em 0;padding-right:1.2em}li{margin:.28em 0}
+  .main{display:grid;align-items:center;min-height:0;gap:clamp(14px,1.8vw,28px)}
+  .two{grid-template-columns:1fr 1fr;direction:rtl}.two-visual{grid-template-columns:.78fr 1.22fr;direction:rtl}.equal-panels>*{height:100%;display:grid;align-content:center}.fill{height:100%}
+  .stack{display:grid;align-content:center;gap:clamp(12px,1.5vh,20px);min-width:0}
+  .paper{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:clamp(20px,2.2vw,36px);box-shadow:var(--shadow-md)}
+  .paper.green{background:linear-gradient(145deg,#0f172a 0%,#1e293b 50%,#0e7490 130%);color:#ecfeff;border:none;box-shadow:var(--shadow-lg)}
+  .paper.green *,.paper.dark *,.section *{color:inherit}
+  .paper.dark{background:var(--ink);color:#f1f5f9;border:none}
+  .offset{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:clamp(18px,2.2vw,34px);box-shadow:var(--shadow-md);isolation:isolate}
+  .offset:before{content:"";position:absolute;inset:8px -8px -8px 8px;background:linear-gradient(135deg,var(--accent),var(--violet));z-index:-1;border-radius:var(--radius);opacity:.9}
+  .formula{direction:ltr;unicode-bidi:isolate;text-align:center;background:linear-gradient(135deg,#ecfeff,#f0f9ff);border:1px solid #a5f3fc;border-radius:var(--radius-sm);padding:clamp(14px,1.6vw,24px);font-family:"SF Mono","Fira Code",Consolas,monospace;font-weight:700;font-size:clamp(20px,2.2vw,34px);line-height:1.25;color:var(--accent-dark)}
+  .formula.small{font-size:clamp(18px,1.8vw,28px)}
+  .frac{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;vertical-align:middle;line-height:1.05;margin:0 .18em;font-size:1em}
+  .frac .num{border-bottom:2.5px solid currentColor;padding:0 .2em 3px;font-size:1em;min-width:1.2em;text-align:center}
+  .frac .den{padding:3px .2em 0;font-size:1em;min-width:1.2em;text-align:center}
+  .formula sub{font-size:.78em}
+  .formula .frac{font-size:1em}
+  /* Real stacked fraction for multi-part expressions */
+  .frac-block{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;vertical-align:middle;margin:0 .2em;line-height:1.05;font-size:1em}
+  .frac-block .num{border-bottom:2.5px solid currentColor;padding:1px .3em 3px;text-align:center;min-width:0.9em}
+  .frac-block .den{padding:3px .3em 1px;text-align:center;min-width:0.9em}
+  .mini .frac-block{font-size:1.05em}
+  .formula .frac-block{font-size:1em}
+  .big{font-family:var(--display);font-weight:800;font-size:clamp(56px,8vw,120px);line-height:.92;background:linear-gradient(135deg,var(--accent),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+  .green-text{color:var(--accent-dark)}.red-text{color:var(--red)}.ltr{direction:ltr;unicode-bidi:isolate;display:inline-block}
+  .takeaway{border:1px solid var(--line);background:var(--surface);border-radius:var(--radius);padding:clamp(12px,1.2vw,18px) clamp(16px,1.6vw,26px);font-size:clamp(18px,1.5vw,26px);font-weight:700;line-height:1.3;display:flex;align-items:center;gap:14px;box-shadow:var(--shadow-sm)}
+  .takeaway:before{content:"שורה תחתונה";flex:none;background:linear-gradient(135deg,var(--accent),var(--violet));color:white;padding:6px 12px;border-radius:8px;font-family:var(--display);font-size:.7em;letter-spacing:.03em;font-weight:700}
+  footer{font-size:var(--small);font-family:var(--display);font-weight:700;letter-spacing:.04em;display:flex;justify-content:space-between;align-items:center;min-height:22px;color:var(--muted)}
+  .ribbon{display:inline-block;background:linear-gradient(135deg,var(--accent),var(--violet));color:white;padding:6px 16px;border-radius:8px;font-family:var(--display);font-weight:700;font-size:clamp(16px,1.6vw,26px)}
+  .mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(10px,1.2vw,18px)}
+  .mini{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:clamp(16px,1.6vw,26px);min-height:120px;display:grid;align-content:center;gap:6px;box-shadow:var(--shadow-sm);transition:border-color .2s,box-shadow .2s}
+  .mini:hover{border-color:var(--accent);box-shadow:var(--shadow-md)}
+  .mini b{font-size:clamp(22px,2vw,32px);font-weight:800}.mini span{font-size:clamp(16px,1.35vw,22px);line-height:1.3;color:var(--muted)}
+  .compare{width:100%;border-collapse:collapse;background:var(--surface);font-size:clamp(18px,1.6vw,26px);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm)}
+  .compare th,.compare td{border:1px solid var(--line);padding:clamp(10px,1.1vw,16px);text-align:right}.compare th{background:var(--ink);color:#f1f5f9;font-weight:700}
+  .flow{display:flex;direction:rtl;align-items:center;justify-content:center;gap:clamp(8px,1vw,14px);min-width:0}
+  .flow .box{flex:1 1 0;min-width:0;min-height:130px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:clamp(16px,1.6vw,26px);text-align:center;font-size:clamp(18px,1.6vw,28px);font-weight:700;line-height:1.25;display:grid;place-items:center;box-shadow:var(--shadow-sm)}
+  .flow .arrow{flex:none;font-size:clamp(24px,2.5vw,38px);font-weight:800;color:var(--accent)}
+  .big-flow .box{min-height:160px;font-size:clamp(20px,1.9vw,32px)}
+  .block-label{display:block;font-size:clamp(20px,1.7vw,28px);font-weight:800;line-height:1.12}
+  .block-symbol{display:block;margin-top:8px;font-size:clamp(18px,1.4vw,24px);font-weight:700;color:var(--accent-dark)}
+  .block-note{display:block;margin-top:8px;padding-top:8px;border-top:1px solid var(--line);font-size:clamp(14px,.95vw,18px);font-weight:600;line-height:1.2;color:var(--muted)}
+  .channel-compare{display:grid;grid-template-columns:1fr 1.18fr;gap:clamp(14px,1.8vw,24px);height:100%;direction:rtl}
+  .channel-stage{border:1px solid var(--line);background:var(--surface);border-radius:var(--radius);padding:clamp(16px,1.8vw,28px);display:grid;grid-template-rows:auto 1fr auto;gap:12px;min-width:0;box-shadow:var(--shadow-sm)}
+  .channel-stage h3{font-size:clamp(22px,2vw,32px)}
+  .channel-stage p{font-size:clamp(17px,1.35vw,22px);font-weight:600;line-height:1.3;color:var(--muted)}
+  .baseband{position:relative;min-height:170px;border-bottom:2px solid var(--line);overflow:hidden}
+  .baseband .signal{position:absolute;right:8%;width:68%;height:52px;border:2px solid var(--ink);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:clamp(16px,1.2vw,20px);font-weight:700;color:white}
+  .baseband .s1{bottom:12px;background:#0e7490}.baseband .s2{bottom:52px;background:#06b6d4}.baseband .s3{bottom:92px;background:#22d3ee}
+  .axis-labels{display:flex;justify-content:space-between;direction:ltr;font-size:clamp(14px,1vw,18px);font-weight:700;margin-top:4px;color:var(--muted)}
+  .channels{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;align-items:end;min-height:170px;border-bottom:2px solid var(--line);direction:ltr}
+  .channel{height:115px;border:2px solid var(--ink-soft);border-radius:var(--radius-sm);background:linear-gradient(160deg,#0e7490,#06b6d4);color:white;display:grid;place-items:center;text-align:center;padding:8px;font-size:clamp(15px,1.1vw,20px);font-weight:700;line-height:1.2;box-shadow:var(--shadow-sm)}
+  .channel.selected{outline:3px solid var(--violet);outline-offset:3px;background:linear-gradient(160deg,#06b6d4,#8b5cf6)}
+  .channel small{display:block;font-size:.78em;margin-top:6px;opacity:.85}
+  .concept-table{width:100%;height:100%;border-collapse:collapse;background:var(--surface);table-layout:fixed;font-size:clamp(17px,1.4vw,24px);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm)}
+  .concept-table th,.concept-table td{border:1px solid var(--line);padding:clamp(8px,.9vh,12px) clamp(10px,1.1vw,18px);vertical-align:middle;text-align:right}
+  .concept-table th{background:var(--ink);color:#f1f5f9;font-size:.85em;font-weight:700}.concept-table .symbol{width:15%;text-align:center;color:var(--accent-dark);font-weight:800;font-size:1.3em;direction:ltr}.concept-table .term{width:27%;font-weight:700;color:var(--accent-dark)}
+  .osc-layout{display:grid;grid-template-columns:minmax(300px,.82fr) 1.18fr;gap:clamp(16px,1.8vw,28px);height:100%;min-height:0;direction:rtl}
+  .osc-controls{border:1px solid var(--line);background:var(--surface);border-radius:var(--radius);padding:clamp(16px,1.8vw,28px);display:grid;align-content:center;gap:12px;box-shadow:var(--shadow-sm)}
+  .osc-controls label{font-size:clamp(16px,1.4vw,24px);font-weight:700;display:flex;justify-content:space-between}.osc-controls input{width:100%;accent-color:var(--accent)}
+  .phase-toggle{border:1px solid var(--line);background:var(--ink);color:#f1f5f9;padding:10px 16px;border-radius:10px;font-weight:700;cursor:pointer;transition:background .15s}.phase-toggle.on{background:linear-gradient(135deg,var(--accent),var(--accent-dark))}
+  .osc-status{border:1px solid var(--line);border-radius:10px;padding:10px 14px;text-align:center;font-size:clamp(16px,1.3vw,22px);font-weight:700}.osc-status.good{background:#ecfdf5;color:#047857;border-color:#a7f3d0}.osc-status.warn{background:#fef2f2;color:var(--red);border-color:#fecaca}
+  .osc-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:clamp(22px,2.6vw,42px);display:grid;align-content:center;gap:16px;height:100%;box-shadow:var(--shadow-md)}.osc-card .components{font-size:clamp(36px,4.2vw,68px);font-weight:800;background:linear-gradient(135deg,var(--accent),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;direction:ltr}.osc-card p{max-width:24ch;color:var(--muted)}
+  .value-list{display:grid;gap:14px}.value-row{display:grid;grid-template-columns:minmax(180px,30%) 1fr;direction:rtl;align-items:center;border:1px solid var(--line);background:var(--surface);border-radius:var(--radius);min-height:110px;overflow:hidden;box-shadow:var(--shadow-sm)}.value-row b{height:100%;display:grid;place-items:center;background:linear-gradient(160deg,#0e7490,#06b6d4);color:white;font-size:clamp(24px,2.5vw,42px);padding:16px 20px;direction:ltr;font-weight:800;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;letter-spacing:-0.02em}.value-row b sub{font-size:.65em;bottom:-0.05em}.value-row span{font-size:clamp(18px,1.8vw,30px);font-weight:700;padding:20px}
+  .diagram{height:100%;min-height:200px;border:1px solid var(--line);background:var(--surface);border-radius:var(--radius);position:relative;padding:8px;overflow:hidden;box-shadow:var(--shadow-sm)}
+  canvas{display:block;width:100%;height:100%;max-width:100%;max-height:100%}
+  .choice-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.choice{border:1px solid var(--line);background:var(--surface);border-radius:var(--radius-sm);padding:16px;font-size:clamp(18px,1.5vw,24px);font-weight:700;cursor:pointer;transition:all .15s;box-shadow:var(--shadow-sm)}.choice:hover{border-color:var(--accent)}.choice.ok{background:#ecfdf5;border-color:#10b981;color:#047857}.choice.bad{background:#fef2f2;border-color:var(--red);color:#b91c1c}
+  .reveal{border:none;background:linear-gradient(135deg,var(--accent),var(--violet));color:white;padding:12px 20px;border-radius:10px;font-weight:700;cursor:pointer;box-shadow:0 4px 14px rgba(6,182,212,.3);transition:transform .15s,box-shadow .15s}.reveal:focus,.reveal:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(6,182,212,.4)}
+  .answer{display:none;border:1px solid #a7f3d0;background:#ecfdf5;border-radius:var(--radius-sm);padding:14px 18px;font-size:var(--body-size);font-weight:700;color:#047857}.answer.show{display:block}
+  .sim{display:grid;grid-template-columns:minmax(230px,28%) 1fr;gap:16px;min-height:0;height:100%;direction:rtl}
+  .controls{border:1px solid var(--line);background:var(--surface);border-radius:var(--radius);padding:14px;display:grid;align-content:start;gap:10px;overflow:auto;box-shadow:var(--shadow-sm)}
+  .control label{font-size:clamp(15px,1.2vw,20px);display:flex;justify-content:space-between;font-weight:700}.control input{width:100%;accent-color:var(--accent)}
+  .readouts{display:grid;grid-template-columns:1fr 1fr;gap:8px}.readout{border:1px solid var(--line);border-radius:8px;padding:8px;text-align:center;font-size:clamp(15px,1.1vw,18px);background:var(--canvas);font-weight:600}
+  .status{border:1px solid #a7f3d0;border-radius:8px;padding:8px;text-align:center;font-weight:700;color:#047857;background:#ecfdf5}.status.bad{border-color:#fecaca;color:var(--red);background:#fef2f2}
+  .plots{display:grid;grid-template-rows:1fr 1fr;gap:12px;min-height:0;overflow:hidden}.plot{min-height:0;border:1px solid var(--line);background:var(--surface);border-radius:var(--radius);display:grid;grid-template-rows:auto 1fr;overflow:hidden;box-shadow:var(--shadow-sm)}.plot-title{background:var(--ink);color:#f1f5f9;padding:7px 12px;font-weight:700;font-size:clamp(15px,1.15vw,20px);border-radius:var(--radius) var(--radius) 0 0}
+  .plot canvas{max-height:100%;overflow:hidden}
+  .cover{background:var(--canvas);grid-template-rows:1fr auto}.cover .main{grid-template-columns:1fr 1fr}.cover h1{background:linear-gradient(135deg,var(--accent),var(--violet));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}.cover header{border:0}.cover .diagram{min-height:320px;border-radius:var(--radius);box-shadow:var(--shadow-lg),0 0 0 1px var(--line);transform:none}
+  .section{background:linear-gradient(145deg,#0f172a 0%,#1e293b 55%,#0e7490 140%);color:#ecfeff;place-items:center;text-align:center;grid-template-rows:1fr auto}.section .main{place-items:center}.section .big{-webkit-text-fill-color:#ecfeff;background:none;color:#ecfeff}.section .takeaway{width:min(900px,90vw);color:var(--ink)}
+  .notes{display:none;position:absolute;z-index:90;right:4%;left:4%;bottom:6%;background:var(--ink);color:#f1f5f9;border:2px solid var(--accent);border-radius:var(--radius);padding:16px 22px;font-size:clamp(14px,1.15vw,20px);line-height:1.45;box-shadow:var(--shadow-lg)}.notes.show{display:block}
+  .nav{position:fixed;z-index:100;bottom:18px;left:50%;transform:translateX(-50%);direction:ltr;display:flex;gap:6px;background:var(--ink);padding:6px;border-radius:12px;box-shadow:var(--shadow-lg)}.nav button{width:46px;height:38px;border:none;border-radius:8px;background:transparent;color:#f1f5f9;font-weight:700;cursor:pointer;transition:background .15s}.nav button:hover{background:var(--accent)}
+  .counter{position:fixed;z-index:100;bottom:18px;right:24px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:6px 14px;font-family:var(--display);font-weight:700;font-size:14px;box-shadow:var(--shadow-sm);color:var(--ink)}.progress{position:fixed;z-index:100;bottom:0;right:0;height:4px;background:linear-gradient(90deg,var(--accent),var(--violet));transition:width .2s;border-radius:2px 0 0 0}
+  .top-actions{position:fixed;z-index:100;top:14px;left:18px;display:flex;gap:6px}.top-actions button{border:1px solid var(--line);background:var(--surface);height:36px;min-width:42px;padding:0 10px;border-radius:10px;font-weight:700;cursor:pointer;box-shadow:var(--shadow-sm);transition:border-color .15s}.top-actions button:hover{border-color:var(--accent)}
+  @media(max-width:900px){.slide{padding:20px 22px 60px}.two,.two-visual{grid-template-columns:1fr}.sim{grid-template-columns:200px 1fr}.mini-grid{grid-template-columns:1fr 1fr}.cover .main{grid-template-columns:1fr}.osc-layout{grid-template-columns:1fr}}
+  @media(max-height:650px){:root{--body-size:clamp(15px,1.5vw,22px);--title:clamp(28px,3.6vw,48px)}.slide{padding-top:18px}}
 
-  /* Header */
-  .mast{
-    display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px;
-    border-bottom:2px solid var(--line);padding-bottom:18px;margin-bottom:28px;
-  }
-  .eyebrow{font-size:13px;font-weight:700;letter-spacing:.08em;color:var(--accent-dark);text-transform:uppercase;margin-bottom:6px}
-  h1{font-family:var(--display);font-weight:800;font-size:clamp(28px,4vw,42px);line-height:1.15;margin:0;letter-spacing:-.02em}
-  .mast-note{max-width:320px;font-size:15px;line-height:1.5;color:var(--muted);border-right:4px solid var(--accent);padding-right:14px}
-
-  /* Tabs */
-  .nav-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
-  .tab-btn{
-    background:var(--surface);color:var(--ink);border:1px solid var(--line);
-    padding:11px 18px;font-size:14px;font-weight:700;border-radius:10px;cursor:pointer;
-    box-shadow:var(--shadow-sm);transition:all .15s;
-  }
-  .tab-btn:hover{border-color:var(--accent)}
-  .tab-btn.active{
-    background:linear-gradient(135deg,var(--accent),var(--accent-dark));
-    color:#fff;border-color:transparent;box-shadow:0 4px 14px rgba(6,182,212,.3);
-  }
-  .tab-content{display:none}.tab-content.active{display:block;animation:fadeIn .25s ease}
-  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
-
-  /* Cards */
-  .card{
-    background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);
-    padding:22px 24px;margin-bottom:20px;box-shadow:var(--shadow-md);
-  }
-  .card h2{font-size:clamp(20px,2.2vw,26px);font-weight:800;margin:0 0 12px;color:var(--ink)}
-  .card h3{font-size:17px;font-weight:700;margin:16px 0 8px;color:var(--accent-dark)}
-  .card p,.card li{font-size:16px;line-height:1.55;color:var(--ink-soft)}
-
-  .formula-box{
-    background:linear-gradient(135deg,#ecfeff,#f0f9ff);border:1px solid #a5f3fc;
-    border-radius:var(--radius-sm);padding:16px 18px;margin:14px 0;
-    text-align:center;
-  }
-  .formula-box .math{
-    display:block;direction:ltr;unicode-bidi:isolate;
-    font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-weight:600;
-    font-size:clamp(15px,1.5vw,18px);line-height:1.65;color:var(--ink);
-  }
-  .formula-box .math .line{display:block;margin:6px 0}
-  .formula-box .he{
-    direction:rtl;unicode-bidi:isolate;display:block;margin-top:12px;
-    font-family:var(--body);font-weight:600;color:var(--muted);font-size:.88em;text-align:center;
-  }
-  .formula-box a.formulary-link{
-    direction:rtl;unicode-bidi:isolate;display:inline-block;margin-top:8px;
-    font-family:var(--body);font-size:13px;font-weight:700;
-    color:var(--accent-dark);text-decoration:none;border-bottom:1px dashed var(--accent);
-  }
-  .formula-box a.formulary-link:hover{color:var(--accent);border-bottom-style:solid}
-  .frac{display:inline-flex;flex-direction:column;align-items:center;justify-content:center;vertical-align:middle;line-height:1.05;margin:0 .2em;font-size:1em}
-  .frac .num{border-bottom:2px solid currentColor;padding:1px .25em 3px;text-align:center}
-  .frac .den{padding:3px .25em 1px;text-align:center}
-
-  .exam-trap{
-    background:var(--red-pale);border:1px solid #fecaca;border-radius:var(--radius-sm);
-    padding:14px 16px;margin:12px 0;
-  }
-  .exam-trap h4{color:var(--red);font-size:15px;font-weight:700;margin:0 0 6px}
-
-  /* Controls */
-  .controls-grid{
-    display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;
-    background:var(--canvas);border:1px solid var(--line);border-radius:var(--radius-sm);padding:16px;margin-bottom:16px;
-  }
-  .control-group label{display:flex;justify-content:space-between;font-weight:700;font-size:14px;margin-bottom:6px}
-  .control-group input[type=range]{width:100%;accent-color:var(--accent)}
-  .control-group .val{color:var(--accent-dark);font-weight:800;direction:ltr}
-
-  .metrics-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:16px}
-  .metric-card{
-    background:var(--canvas);border:1px solid var(--line);border-radius:10px;padding:12px;text-align:center;
-  }
-  .metric-card .title{font-size:12px;color:var(--muted);font-weight:600}
-  .metric-card .value{font-size:18px;font-weight:800;color:var(--accent-dark);margin-top:4px;direction:ltr}
-
-  .status-ok{color:var(--green);font-weight:700;text-align:center;padding:8px}
-  .status-bad{
-    display:inline-block;background:var(--red);color:#fff;font-weight:700;padding:6px 14px;
-    border-radius:8px;font-size:14px;animation:pulse 1.4s infinite;
-  }
-  @keyframes pulse{0%,100%{opacity:.85}50%{opacity:1}}
-
-  /* Canvases */
-  .canvas-container{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0}
-  @media(max-width:720px){.canvas-container{grid-template-columns:1fr}}
-  .canvas-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius-sm);overflow:hidden;box-shadow:var(--shadow-sm)}
-  .canvas-card h4{background:var(--ink);color:#f1f5f9;margin:0;padding:8px 12px;font-size:14px;font-weight:700}
-  canvas{display:block;width:100%;height:200px;background:#0f172a}
-
-  /* Quiz */
-  .quiz-option{
-    background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 16px;
-    margin:8px 0;cursor:pointer;font-weight:600;transition:all .15s;box-shadow:var(--shadow-sm);
-  }
-  .quiz-option:hover{border-color:var(--accent)}
-  .quiz-option.correct{background:var(--green-pale);border-color:var(--green);color:#047857}
-  .quiz-option.wrong{background:var(--red-pale);border-color:var(--red);color:#b91c1c}
-
-  /* Steps */
-  .step-box{
-    background:var(--canvas);border-right:4px solid var(--accent);border-radius:0 var(--radius-sm) var(--radius-sm) 0;
-    padding:16px 18px;margin-bottom:16px;
-  }
-  .step-box h4{color:var(--accent-dark);font-size:16px;font-weight:700;margin:0 0 8px}
-  .input-row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:10px}
-  .input-row input[type=number]{
-    background:var(--surface);border:2px solid var(--accent);border-radius:8px;padding:9px 12px;
-    width:120px;font-weight:600;direction:ltr;text-align:center;
-  }
-  .btn{
-    background:linear-gradient(135deg,var(--accent),var(--accent-dark));color:#fff;border:none;
-    font-weight:700;padding:9px 18px;border-radius:8px;cursor:pointer;box-shadow:0 3px 10px rgba(6,182,212,.25);
-    transition:transform .12s,box-shadow .12s;
-  }
-  .btn:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(6,182,212,.35)}
-  .btn-secondary{background:var(--surface);color:var(--ink);border:1px solid var(--line);box-shadow:var(--shadow-sm)}
-  .btn-secondary:hover{border-color:var(--accent);box-shadow:var(--shadow-md)}
-
-  .feedback{margin-top:10px;padding:10px 14px;border-radius:8px;font-weight:700;display:none}
-  .feedback.ok{display:block;background:var(--green-pale);color:#047857;border:1px solid #a7f3d0}
-  .feedback.err{display:block;background:var(--red-pale);color:#b91c1c;border:1px solid #fecaca}
-  .hint{display:none;margin-top:8px;padding:10px 12px;background:var(--amber-pale);border:1px dashed var(--amber);border-radius:8px;font-size:14px;color:#92400e}
-  .hint.show{display:block}
-
-  textarea,select{
-    width:100%;background:var(--surface);border:1px solid var(--line);border-radius:8px;
-    padding:12px;color:var(--ink);resize:vertical;
-  }
-  textarea:focus,select:focus,input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow)}
-  textarea{min-height:90px}
-
-  /* frac defined above with formula-box */
-
-  footer.note{text-align:center;font-size:13px;color:var(--muted);margin-top:32px;padding-top:16px;border-top:1px solid var(--line)}
 </style>
+
+  <script defer src="/lesson-metadata.js"></script>
 </head>
-<body>
-<div class="app">
+<body data-deck-version="d6fccbbefda307ea" data-course-id="communication-systems" data-lesson-id="lesson-04">
+<main class="deck" id="deck">
+  <div class="top-actions"><button id="notesBtn" title="הערות מרצה">N</button><button id="fsBtn" title="מסך מלא">⛶</button></div>
 
-  <header class="mast">
-    <div>
-      <div class="eyebrow">מערכות תקשורת · 11.9004 · תרגול בית</div>
-      <h1>שיעור 4 · אפנון תנופה AM</h1>
+  <section class="slide cover active" data-minutes="2">
+    <div class="main">
+      <header><div class="eyebrow">מערכות תקשורת · שיעור 04</div><h1>אפנון תנופה<br><span class="ltr">AM</span> ומשדר</h1><div class="ribbon">AMPLITUDE MODULATION</div><p style="margin-top:22px"><b>מרצה: נועם שפי</b></p></header>
+      <div class="diagram"><canvas id="coverWave"></canvas></div>
     </div>
-    <div class="mast-note">
-      <b>למידה עצמאית לאחר ההרצאה</b><br>
-      רענון ← מעבדת סימולציה ← תרגיל מודרך ← מלכודות מבחן.
-    </div>
-  </header>
-
-  <nav class="nav-tabs" role="tablist">
-    <button class="tab-btn active" data-tab="tab-refresh" role="tab">1 · רענון ובוחן</button>
-    <button class="tab-btn" data-tab="tab-lab" role="tab">2 · מעבדת חקירה</button>
-    <button class="tab-btn" data-tab="tab-solver" role="tab">3 · תרגיל מה״ט</button>
-    <button class="tab-btn" data-tab="tab-traps" role="tab">4 · מלכודות ומשוב</button>
-  </nav>
-
-  <!-- ========== TAB 1: REFRESH ========== -->
-  <section id="tab-refresh" class="tab-content active">
-    <div class="card">
-      <h2>תמצית רענון · אבני הבניין של AM</h2>
-      <p>
-        באפנון תנופה, אות המידע הנמוך
-        <bdi class="ltr">m(t) = A<sub>m</sub> cos(ω<sub>m</sub> t)</bdi>
-        משנה את <b>המעטפת</b> של הגל הנושא
-        <bdi class="ltr">c(t) = A<sub>c</sub> cos(ω<sub>c</sub> t)</bdi>.
-      </p>
-
-      <div class="formula-box">
-        <div class="math">
-          <span class="line">u<sub>AM</sub>(t) = A<sub>c</sub> [1 + m<sub>a</sub> cos(ω<sub>m</sub> t)] cos(ω<sub>c</sub> t)</span>
-          <span class="line">
-            m<sub>a</sub> = A<sub>m</sub> / A<sub>c</sub> =
-            <span class="frac"><span class="num">V<sub>max</sub> − V<sub>min</sub></span><span class="den">V<sub>max</sub> + V<sub>min</sub></span></span>
-          </span>
-        </div>
-        <span class="he">מקדם האפנון ומדידה מאוסצילוסקופ</span>
-        <a class="formulary-link" href="https://stemflow-noamsheffi-gmailcoms-projects.vercel.app/course/communication-systems/formulas" target="_blank" rel="noopener">נוסחאון · אפנון AM בתחום הזמן ←</a>
-      </div>
-
-      <div class="formula-box">
-        <div class="math">
-          <span class="line">f<sub>USB</sub> = f<sub>c</sub> + f<sub>m</sub> &nbsp;·&nbsp; f<sub>LSB</sub> = f<sub>c</sub> − f<sub>m</sub> &nbsp;·&nbsp; BW<sub>AM</sub> = 2 f<sub>m</sub></span>
-          <span class="line">
-            P<sub>AM</sub> = P<sub>c</sub>
-            <span style="font-size:.95em">(1 + </span>
-            <span class="frac"><span class="num">m<sub>a</sub>²</span><span class="den">2</span></span>
-            <span style="font-size:.95em">)</span>
-            &nbsp;·&nbsp; η<sub>max</sub> = 1/3 ≈ 33.3%
-          </span>
-        </div>
-        <span class="he">פסי צד · רוחב פס · הספקים · נצילות מרבית</span>
-        <a class="formulary-link" href="https://stemflow-noamsheffi-gmailcoms-projects.vercel.app/course/communication-systems/formulas" target="_blank" rel="noopener">נוסחאון · ספקטרום, הספקים ונצילות ב־AM ←</a>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>בוחן חימום · 3 שאלות</h2>
-
-      <div id="quiz-q1" style="margin-bottom:22px">
-        <h3>1. מה יקרה אם נגדיל את תדר המידע f<sub>m</sub> מ־2 kHz ל־5 kHz?</h3>
-        <div class="quiz-option" data-q="1" data-ok="0">א. אמפליטודת הגל הנושא A<sub>c</sub> תוכפל</div>
-        <div class="quiz-option" data-q="1" data-ok="1">ב. רוחב הפס BW<sub>AM</sub> יגדל מ־4 kHz ל־10 kHz</div>
-        <div class="quiz-option" data-q="1" data-ok="0">ג. מקדם האפנון m<sub>a</sub> יקטן במחצית</div>
-        <div id="quiz-fb-1" class="feedback"></div>
-      </div>
-
-      <div id="quiz-q2" style="margin-bottom:22px">
-        <h3>2. מה משמעות m<sub>a</sub> = 1.4?</h3>
-        <div class="quiz-option" data-q="2" data-ok="0">א. נצילות שידור מושלמת של 100%</div>
-        <div class="quiz-option" data-q="2" data-ok="0">ב. האות נחלש ולא ניתן לקליטה</div>
-        <div class="quiz-option" data-q="2" data-ok="1">ג. אפנון־יתר: המעטפת חוצה אפס ונגרם עיוות במקלט</div>
-        <div id="quiz-fb-2" class="feedback"></div>
-      </div>
-
-      <div id="quiz-q3">
-        <h3>3. לאן הולך רוב ההספק (מעל 66%) במשדר AM רגיל?</h3>
-        <div class="quiz-option" data-q="3" data-ok="1">א. לגל הנושא בתדר f<sub>c</sub> (שאינו נושא מידע חדש)</div>
-        <div class="quiz-option" data-q="3" data-ok="0">ב. לפס הצד העליון USB</div>
-        <div class="quiz-option" data-q="3" data-ok="0">ג. לחום המתבזבז באנטנה</div>
-        <div id="quiz-fb-3" class="feedback"></div>
-      </div>
-    </div>
+    <footer><span>כיתה י״ג · 135 דקות</span><span>11.9004</span></footer>
+    <aside class="notes"><b>פתיחה:</b> שאל: איך קול בתדר נמוך יכול לצאת מאנטנה מעשית? אל תציג עדיין את הנוסחה.</aside>
   </section>
 
-  <!-- ========== TAB 2: LAB ========== -->
-  <section id="tab-lab" class="tab-content">
-    <div class="card">
-      <h2>מעבדת חקירה · זמן וספקטרום</h2>
-      <p>שנה ערכים וראה בזמן אמת את המעטפת ואת מחטי הפס. נסה לחצות את <span class="ltr">m<sub>a</sub> = 1</span>.</p>
-
-      <div class="controls-grid">
-        <div class="control-group">
-          <label><span class="ltr">A<sub>c</sub></span> <span class="val" id="val-Ac">10 V</span></label>
-          <input type="range" id="slider-Ac" min="2" max="20" step="0.5" value="10">
-        </div>
-        <div class="control-group">
-          <label><span class="ltr">A<sub>m</sub></span> <span class="val" id="val-Am">6 V</span></label>
-          <input type="range" id="slider-Am" min="0" max="25" step="0.5" value="6">
-        </div>
-        <div class="control-group">
-          <label><span class="ltr">f<sub>c</sub></span> <span class="val" id="val-fc">500 kHz</span></label>
-          <input type="range" id="slider-fc" min="100" max="1000" step="50" value="500">
-        </div>
-        <div class="control-group">
-          <label><span class="ltr">f<sub>m</sub></span> <span class="val" id="val-fm">5 kHz</span></label>
-          <input type="range" id="slider-fm" min="1" max="20" step="1" value="5">
-        </div>
-      </div>
-
-      <div id="status-alert" class="status-ok">✓ אפנון תקין (m<sub>a</sub> ≤ 1)</div>
-
-      <div class="canvas-container">
-        <div class="canvas-card">
-          <h4>תחום הזמן · מעטפת AM</h4>
-          <canvas id="canvasTime"></canvas>
-        </div>
-        <div class="canvas-card">
-          <h4>תחום התדר · LSB · Carrier · USB</h4>
-          <canvas id="canvasFreq"></canvas>
-        </div>
-      </div>
-
-      <div class="metrics-grid">
-        <div class="metric-card"><div class="title">m<sub>a</sub></div><div class="value" id="m-ma">0.60</div></div>
-        <div class="metric-card"><div class="title">V<sub>max</sub></div><div class="value" id="m-vmax">16.0 V</div></div>
-        <div class="metric-card"><div class="title">V<sub>min</sub></div><div class="value" id="m-vmin">4.0 V</div></div>
-        <div class="metric-card"><div class="title">LSB / USB</div><div class="value" id="m-sidebands">495 / 505</div></div>
-        <div class="metric-card"><div class="title">BW<sub>AM</sub></div><div class="value" id="m-bw">10 kHz</div></div>
-        <div class="metric-card"><div class="title">η</div><div class="value" id="m-eta">15.3%</div></div>
-      </div>
-    </div>
+  <section class="slide" data-minutes="3">
+    <header><div class="eyebrow">חזרה · שיעורים 1–2</div><h2>מפת המושגים: מערכת תקשורת</h2></header>
+    <div class="main fill"><table class="concept-table"><thead><tr><th>סימון</th><th>מושג</th><th>תפקיד במערכת</th></tr></thead><tbody>
+      <tr><td class="symbol">S</td><td class="term">מקור מידע</td><td>יוצר את ההודעה שרוצים להעביר.</td></tr>
+      <tr><td class="symbol">Tx</td><td class="term">משדר</td><td>מעבד את המידע ומכין אותו לתווך.</td></tr>
+      <tr><td class="symbol">Ch</td><td class="term">ערוץ / תווך</td><td>הדרך שבה האות עובר.</td></tr>
+      <tr><td class="symbol">N</td><td class="term">רעש</td><td>הפרעה שנוספת לאות בדרך.</td></tr>
+      <tr><td class="symbol">Rx</td><td class="term">מקלט</td><td>קולט את האות ומשחזר את המידע.</td></tr>
+    </tbody></table></div>
+    <div class="takeaway">מערכת תקשורת מעבירה מידע מהמקור אל היעד דרך תווך שאינו מושלם.</div><footer><span>מושגים · 1 מתוך 2</span><span>02</span></footer>
   </section>
 
-  <!-- ========== TAB 3: SOLVER ========== -->
-  <section id="tab-solver" class="tab-content">
-    <div class="card">
-      <h2>תרגיל בית מודרך · מתכונת מה״ט</h2>
-      <p>
-        תחנת רדיו משדרת אות AM: <span class="ltr">f<sub>c</sub> = 1 MHz</span>,
-        <span class="ltr">A<sub>c</sub> = 100 V</span>,
-        <span class="ltr">f<sub>m</sub> = 5 kHz</span>,
-        <span class="ltr">A<sub>m</sub> = 60 V</span>,
-        עומס אנטנה <span class="ltr">R = 50 Ω</span>.
-      </p>
-    </div>
-
-    <div class="step-box">
-      <h4>שלב 1 · מקדם האפנון m<sub>a</sub></h4>
-      <p>חשב <span class="ltr">m<sub>a</sub> = A<sub>m</sub> / A<sub>c</sub></span> וקבע אם האפנון תקין.</p>
-      <div class="input-row">
-        <label>תשובה:</label>
-        <input type="number" id="ans-step1" step="0.01" placeholder="0.??">
-        <button class="btn" onclick="checkStep1()">בדוק</button>
-        <button class="btn btn-secondary" onclick="toggleHint(1)">רמז</button>
-      </div>
-      <div id="hint-1" class="hint">חלק 60 ב־100. אם התוצאה ≤ 1 האפנון תקין.</div>
-      <div id="fb-step1" class="feedback"></div>
-    </div>
-
-    <div class="step-box">
-      <h4>שלב 2 · מתחי המעטפת V<sub>max</sub> ו־V<sub>min</sub></h4>
-      <p><span class="ltr">V<sub>max</sub> = A<sub>c</sub> + A<sub>m</sub></span> &nbsp;·&nbsp; <span class="ltr">V<sub>min</sub> = A<sub>c</sub> − A<sub>m</sub></span></p>
-      <div class="input-row">
-        <label>V<sub>max</sub> [V]:</label>
-        <input type="number" id="ans-vmax" placeholder="V">
-        <label>V<sub>min</sub> [V]:</label>
-        <input type="number" id="ans-vmin" placeholder="V">
-        <button class="btn" onclick="checkStep2()">בדוק</button>
-      </div>
-      <div id="fb-step2" class="feedback"></div>
-    </div>
-
-    <div class="step-box">
-      <h4>שלב 3 · פסי צד ורוחב פס</h4>
-      <p>המר יחידות: <span class="ltr">1 MHz = 1000 kHz</span>. חשב <span class="ltr">f<sub>USB</sub>, f<sub>LSB</sub>, BW</span>.</p>
-      <div class="input-row">
-        <label>f<sub>USB</sub> [kHz]:</label>
-        <input type="number" id="ans-usb" placeholder="kHz">
-        <label>f<sub>LSB</sub> [kHz]:</label>
-        <input type="number" id="ans-lsb" placeholder="kHz">
-        <label>BW [kHz]:</label>
-        <input type="number" id="ans-bw" placeholder="kHz">
-        <button class="btn" onclick="checkStep3()">בדוק</button>
-      </div>
-      <div id="fb-step3" class="feedback"></div>
-    </div>
-
-    <div class="step-box">
-      <h4>שלב 4 · הספקים ונצילות</h4>
-      <p>
-        <span class="ltr">P<sub>c</sub> = A<sub>c</sub>² / (2R)</span> &nbsp;·&nbsp;
-        <span class="ltr">P<sub>AM</sub> = P<sub>c</sub> (1 + m<sub>a</sub>²/2)</span>
-      </p>
-      <div class="input-row">
-        <label>P<sub>c</sub> [W]:</label>
-        <input type="number" id="ans-pc" placeholder="W">
-        <label>P<sub>AM</sub> [W]:</label>
-        <input type="number" id="ans-pam" placeholder="W">
-        <button class="btn" onclick="checkStep4()">בדוק</button>
-      </div>
-      <div id="fb-step4" class="feedback"></div>
-    </div>
+  <section class="slide" data-minutes="3">
+    <header><div class="eyebrow">חזרה · שיעורים 2–3</div><h2>מפת המושגים: אות ותדר</h2></header>
+    <div class="main fill"><table class="concept-table"><thead><tr><th>סימון</th><th>מושג</th><th>משמעות</th></tr></thead><tbody>
+      <tr><td class="symbol">A</td><td class="term">תנופה</td><td>הערך המרבי של האות.</td></tr>
+      <tr><td class="symbol">T</td><td class="term">זמן מחזור</td><td>הזמן למחזור אחד. <span class="ltr">T=1/f</span></td></tr>
+      <tr><td class="symbol">f</td><td class="term">תדר</td><td>מספר המחזורים בשנייה.</td></tr>
+      <tr><td class="symbol">φ</td><td class="term">מופע</td><td>נקודת ההתחלה בתוך המחזור.</td></tr>
+      <tr><td class="symbol">f₀</td><td class="term">תדר יסודי</td><td>התדר הנמוך בסדרה ההרמונית.</td></tr>
+      <tr><td class="symbol">λ</td><td class="term">אורך גל</td><td>המרחק של מחזור במרחב. <span class="ltr">λ=v/f</span></td></tr>
+      <tr><td class="symbol">BW</td><td class="term">רוחב פס</td><td>תחום התדרים שהאות תופס.</td></tr>
+    </tbody></table></div>
+    <div class="takeaway">המתנד משיעור 3 יוצר אות מחזורי. היום נשתמש בו כגל נושא.</div><footer><span>מושגים · 2 מתוך 2</span><span>03</span></footer>
   </section>
 
-  <!-- ========== TAB 4: TRAPS ========== -->
-  <section id="tab-traps" class="tab-content">
-    <div class="card">
-      <h2>מלכודות מבחן קריטיות ב־AM</h2>
-
-      <div class="exam-trap">
-        <h4>1 · מתח מקצה־לקצה (V<sub>pp</sub>)</h4>
-        <p>אם נתון גרף אוסצילוסקופ עם <span class="ltr">V<sub>pp</sub></span>, חלק ב־2 לקבלת האמפליטודה. דוגמה: <span class="ltr">V<sub>pp</sub> = 40 V ⇒ A = 20 V</span>.</p>
-      </div>
-      <div class="exam-trap">
-        <h4>2 · יחידות תדר (kHz מול MHz)</h4>
-        <p>הנושא ב־MHz והמידע ב־kHz. חובה להמיר לפני חיבור/חיסור: <span class="ltr">1.2 MHz + 4 kHz = 1204 kHz</span>.</p>
-      </div>
-      <div class="exam-trap">
-        <h4>3 · רוחב הפס הוא 2·f<sub>m</sub></h4>
-        <p>לא <span class="ltr">f<sub>m</sub></span> בלבד. אם המידע תופס 15 kHz, האות המאופן תופס 30 kHz.</p>
-      </div>
-      <div class="exam-trap">
-        <h4>4 · נצילות מקסימלית 33.3%</h4>
-        <p>ב־AM קלאסי עם <span class="ltr">m<sub>a</sub> = 1</span> הנצילות היא בדיוק שליש. תוצאה מעל 33.3% מעידה על שגיאה אלגברית.</p>
-      </div>
-    </div>
-
-    <div class="card">
-      <h2>רפלקציה · משוב למרצה</h2>
-      <p>המשוב עוזר להתאים את ההסברים בשיעורים הבאים.</p>
-
-      <div style="margin:14px 0">
-        <label style="font-weight:700;display:block;margin-bottom:6px">רמת ההבנה שלך באפנון AM אחרי התרגול:</label>
-        <select id="rating">
-          <option value="5">★★★★★ מבין מצוין, מוכן למבחן</option>
-          <option value="4">★★★★ מבין את הרוב, צריך עוד תרגול אלגברי</option>
-          <option value="3">★★★ מבין את העיקרון, מסתבך בנוסחאות</option>
-          <option value="2">★★ מתקשה, צריך עזרה נוספת</option>
-        </select>
-      </div>
-      <div style="margin:14px 0">
-        <label style="font-weight:700;display:block;margin-bottom:6px">באיזה שלב חשת קושי?</label>
-        <textarea id="reflect-text" placeholder="הערה קצרה למרצה (נועם)…"></textarea>
-      </div>
-      <button class="btn" onclick="submitReflect()">שלח משוב</button>
-      <div id="reflect-fb" class="feedback"></div>
-    </div>
+  <section class="slide" data-minutes="2">
+    <header><div class="eyebrow">מפת השיעור</div><h2>ארבע שאלות</h2></header>
+    <div class="main"><div class="flow"><div class="box">למה צריך אפנון?</div><div class="arrow">←</div><div class="box">מה רואים בזמן?</div><div class="arrow">←</div><div class="box">מה רואים בתדר?</div><div class="arrow">←</div><div class="box">לאן הולך ההספק?</div></div></div>
+    <div class="takeaway">כל חלק עונה על שאלה אחת ומסתיים בבדיקת הבנה.</div><footer><span>135 דקות</span><span>04</span></footer>
   </section>
 
-  <footer class="note">
-    מערכות תקשורת 11.9004 · שיעור 4 · תרגול עצמי לבית · Style B
-  </footer>
-</div>
+  <section class="slide" data-minutes="6">
+    <header><div class="eyebrow">חיבור לשיעור 3 · מתנדים</div><h2>המתנד יוצר את הגל הנושא</h2></header>
+    <div class="main fill"><div class="osc-layout"><div class="osc-controls">
+      <h3>תזכורת לחוק ברקהאוזן</h3>
+      <div class="formula small">|Aβ| = 1 &nbsp;&nbsp; ∠Aβ = 0°</div>
+      <p style="font-size:clamp(19px,1.45vw,25px)">בהתנעה <span class="ltr">|Aβ|&gt;1</span>. במצב יציב ההגבר מתייצב על 1.</p>
+      <label><span>הגבר החוג <span class="ltr">|Aβ|</span></span><span id="loopGainValue">1.00</span></label>
+      <input id="loopGain" type="range" min="0.60" max="1.40" step="0.05" value="1.00">
+      <button id="phaseToggle" class="phase-toggle on">המופע בחוג: 0° ✓</button>
+      <div id="oscStatus" class="osc-status good">תנודה יציבה</div>
+    </div><div class="diagram"><canvas id="oscWave"></canvas></div></div></div>
+    <div class="takeaway">כאשר תנאי ברקהאוזן מתקיימים, המתנד מספק סינוס יציב שישמש גל נושא.</div><footer><span>מתנד → גל נושא</span><span>05</span></footer>
+    <aside class="notes">שנה תחילה את |Aβ| מתחת ל־1 (דעיכה), אחר כך מעל 1 (התנעה וגידול עד רוויה). לבסוף שב ל־1 והפר את תנאי המופע. הזכר: ההתנעה מתחילה מרעש תרמי – אין אות מבוא חיצוני.</aside>
+  </section>
 
+  <section class="slide" data-minutes="3">
+    <header><div class="eyebrow">חזרה · משפחות מתנדים</div><h2>בחירת מתנד לפי תחום התדר</h2></header>
+    <div class="main two equal-panels"><div class="osc-card"><h3>גשר ויין</h3><div class="components">R + C</div><p>מתאים בעיקר לתדרי שמע ולתדרים נמוכים.</p></div><div class="osc-card"><h3>קולפיץ / הרטלי</h3><div class="components">L + C</div><p>מתאימים לתדרי רדיו וליצירת גל נושא במשדר.</p></div></div>
+    <div class="takeaway">בשיעור הזה נניח שהמתנד כבר מספק גל נושא יציב בתדר <span class="ltr">fc</span>.</div><footer><span>משפחות מתנדים</span><span>06</span></footer>
+  </section>
+
+  <section class="slide section" data-minutes="0"><div class="main"><div><div class="big">01</div><h1>למה צריך אפנון?</h1><p>אות שמע נמוך אינו מתאים לשידור ישיר.</p></div></div><div class="takeaway">מתחילים מהבעיה הפיזיקלית.</div></section>
+
+  <section class="slide" data-minutes="3">
+    <header><div class="eyebrow">למה צריך אפנון?</div><h2>אות האודיו שאנחנו מדברים</h2></header>
+    <div class="main two">
+      <div class="stack">
+        <div class="paper">
+          <p>כשאנחנו מדברים, האות הוא תנודות לחץ אוויר — בתדרים של בערך <span class="ltr green-text">300 Hz – 3 kHz</span>.</p>
+        </div>
+        <div class="formula small">f<sub>m</sub> ≈ 1 kHz <span style="color:var(--muted);font-size:.85em">(סדר גודל)</span></div>
+      </div>
+      <div class="stack">
+        <div class="paper">
+          <p>המתח/אמפליטודה של האות חלשה. בלי צעקות — האות דועך מהר במרחב ואינו מגיע רחוק.</p>
+        </div>
+        <div class="paper" style="background:var(--accent-pale);border-color:#a5f3fc">
+          <p style="font-weight:700;color:var(--accent-dark)">כדי לקלוט אותו מרחוק — צריך אנטנה.</p>
+        </div>
+      </div>
+    </div>
+    <div class="takeaway">אות שמע = תדר נמוך + אמפליטודה חלשה.</div>
+    <footer><span>למה אפנון</span><span></span></footer>
+    <aside class="notes">שאלו את הכיתה: באיזה תדר אנחנו מדברים? מה קורה אם מנסים לשדר את זה ישירות?</aside>
+  </section>
+
+  <section class="slide" data-minutes="3">
+    <header><div class="eyebrow">למה צריך אפנון?</div><h2>כדי לקלוט — צריך אנטנה</h2></header>
+    <div class="main stack">
+      <div class="paper">
+        <p>אנטנה יעילה צריכה להיות באורך בסדר גודל של <span class="ltr" style="white-space:nowrap">λ/4</span> (מונופול) או <span class="ltr" style="white-space:nowrap">λ/2</span> (דיפול).</p>
+      </div>
+      <div class="mini-grid">
+        <div class="mini">
+          <b class="ltr" style="font-size:clamp(22px,2.2vw,34px);display:flex;align-items:center;justify-content:center;gap:6px;direction:ltr">
+            λ =
+            <span class="frac-block"><span class="num">c</span><span class="den">f</span></span>
+          </b>
+          <span>אורך הגל במרחב החופשי</span>
+        </div>
+        <div class="mini">
+          <b class="ltr" style="font-size:clamp(22px,2.2vw,34px);display:flex;align-items:center;justify-content:center;gap:6px;direction:ltr">
+            L ≈
+            <span class="frac-block"><span class="num">λ</span><span class="den">4</span></span>
+          </b>
+          <span>אורך מונופול מעשי</span>
+        </div>
+        <div class="mini">
+          <b>שאלה</b>
+          <span>מה אורך האנטנה ל־1 kHz?</span>
+        </div>
+      </div>
+    </div>
+    <div class="takeaway">נחשב יחד — ואז נבין למה אפנון הכרחי.</div>
+    <footer><span>למה אפנון</span><span></span></footer>
+    <aside class="notes">הוק: בקשו ניחוש לפני החישוב. רוב הסטודנטים יופתעו מהמספר.</aside>
+  </section>
+
+
+  <section class="slide" data-minutes="4">
+    <header><div class="eyebrow">הבעיה הפיזיקלית</div><h2>אנטנה של 75 קילומטר?</h2></header>
+    <div class="main stack">
+      <div class="formula small" dir="ltr" style="display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px">
+        <span>f<sub>m</sub> = 1 kHz</span>
+        <span style="color:var(--muted)">→</span>
+        <span style="display:inline-flex;align-items:center;gap:8px">
+          λ =
+          <span class="frac-block"><span class="num">c</span><span class="den">f</span></span>
+          =
+          <span class="frac-block"><span class="num">3·10<sup>8</sup></span><span class="den">10<sup>3</sup></span></span>
+          = 300 km
+        </span>
+      </div>
+      <div class="formula" dir="ltr">
+        L<sub>monopole</sub> ≈
+        <span class="frac-block"><span class="num">λ</span><span class="den">4</span></span>
+        = <span class="green-text">75 km</span>
+      </div>
+      <div class="paper"><p>לא מעשי. לכן מעבירים את המידע לתדר גבוה (MHz) שבו אורך הגל קטן והאנטנה מעשית.</p></div>
+    </div>
+    <div class="takeaway">תדר גבוה → אורך גל קצר → אנטנה קצרה.</div>
+    <footer><span>למה אפנון</span><span>08</span></footer>
+    <aside class="notes">שאל את הכיתה לפני החישוב: מה יהיה אורך אנטנה לתדר שמע? חכה לתגובות. זה ההוק של השיעור.</aside>
+  </section>
+
+  <section class="slide" data-minutes="4">
+    <header><div class="eyebrow">אות מידע וגל נושא</div><h2>שני אותות בתדרים שונים</h2></header>
+    <div class="main stack" style="gap:18px;max-width:820px;margin-inline:auto;width:100%">
+      <div style="display:flex;align-items:stretch;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);min-height:110px">
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:20px 28px;font-size:clamp(22px,2vw,32px);font-weight:700">תדר אות המידע</div>
+        <div dir="ltr" style="display:flex;align-items:center;justify-content:center;padding:20px 40px;background:linear-gradient(135deg,#0e7490,#06b6d4);color:white;font-family:ui-monospace,Consolas,monospace;font-size:clamp(24px,2.6vw,40px);font-weight:800;white-space:nowrap;flex-shrink:0">
+          f<sub style="font-size:.7em">m</sub>&nbsp;=&nbsp;5&nbsp;kHz
+        </div>
+      </div>
+      <div style="display:flex;align-items:stretch;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);min-height:110px">
+        <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:20px 28px;font-size:clamp(22px,2vw,32px);font-weight:700">תדר הגל הנושא</div>
+        <div dir="ltr" style="display:flex;align-items:center;justify-content:center;padding:20px 40px;background:linear-gradient(135deg,#0e7490,#06b6d4);color:white;font-family:ui-monospace,Consolas,monospace;font-size:clamp(24px,2.6vw,40px);font-weight:800;white-space:nowrap;flex-shrink:0">
+          f<sub style="font-size:.7em">c</sub>&nbsp;=&nbsp;1&nbsp;MHz
+        </div>
+      </div>
+    </div>
+    <div class="takeaway">האפנון מעביר את המידע מסביב לתדר הנושא הגבוה.</div>
+    <footer><span>לפני האפנון</span><span>09</span></footer>
+  </section>
+
+  <section class="slide" data-minutes="3">
+    <header><div class="eyebrow">הפתרון</div><h2>מעבירים את המידע לתדר גבוה</h2></header>
+    <div class="main fill"><div class="flow big-flow"><div class="box">אות מידע<br><span class="ltr">m(t)</span></div><div class="arrow">←</div><div class="box"><span class="green-text">אפנן AM</span></div><div class="arrow">←</div><div class="box">אות מאופנן<br><span class="ltr">s(t)</span></div></div></div>
+    <div class="takeaway">באפנון <span class="ltr">AM</span> המידע משנה את תנופת הגל הנושא.</div><footer><span>עקרון האפנון</span><span>10</span></footer>
+  </section>
+
+  <section class="slide" data-minutes="3">
+    <header><div class="eyebrow">הפרדת תחנות</div><h2>אפנון מקצה ערוץ נפרד לכל תחנה</h2></header>
+    <div class="main fill"><div class="channel-compare">
+      <div class="channel-stage"><h3>לפני האפנון</h3><div><div class="baseband" aria-label="שלושה אותות שמע חופפים באותו תחום תדרים"><div class="signal s3">תחנה ג׳</div><div class="signal s2">תחנה ב׳</div><div class="signal s1">תחנה א׳</div></div><div class="axis-labels"><span>0</span><span>5 kHz</span></div></div><p>אותות השמע תופסים אותו תחום ועלולים לחפוף.</p></div>
+      <div class="channel-stage"><h3>אחרי האפנון</h3><div><div class="channels" aria-label="שלושה ערוצי AM נפרדים"><div class="channel">תחנה א׳<small>נושא + פסי צד</small></div><div class="channel selected">תחנה ב׳<small>הערוץ שהמקלט בחר</small></div><div class="channel">תחנה ג׳<small>נושא + פסי צד</small></div></div><div class="axis-labels"><span>תדר נמוך</span><span>תדר גבוה</span></div></div><p>מסנן מעביר־פס בוחר ערוץ שלם, לא תדר יחיד.</p></div>
+    </div></div>
+    <div class="takeaway">אפשר להפריד בין התחנות רק כאשר תחומי התדרים שלהן אינם חופפים.</div><footer><span>ריבוב בתדר</span><span>11</span></footer>
+    <aside class="notes">הדגש: לכל תחנה יש רוחב פס סביב תדר הנושא. בדוגמה של שמע עד 5 kHz, ערוץ AM תופס 10 kHz. המקלט בוחר את כל הערוץ בעזרת מסנן מעביר־פס.</aside>
+  </section>
+
+  <section class="slide" data-minutes="3">
+    <header><div class="eyebrow">משדר AM</div><h2>מסלול אות המידע במשדר</h2></header>
+    <div class="main fill"><div class="flow big-flow">
+      <div class="box"><div><span class="block-label">מיקרופון</span><span class="block-symbol ltr">m(t)</span></div></div><div class="arrow">←</div>
+      <div class="box"><div><span class="block-label">מסנן מעביר נמוכים</span><span class="block-symbol ltr">LPF</span></div></div><div class="arrow">←</div>
+      <div class="box"><div><span class="block-label">אפנן תנופה</span><span class="block-symbol ltr">AM</span><span class="block-note">כניסת נושא: <span class="ltr">c(t)</span></span></div></div><div class="arrow">←</div>
+      <div class="box"><div><span class="block-label">מגבר הספק</span><span class="block-symbol ltr">PA</span></div></div><div class="arrow">←</div>
+      <div class="box"><div><span class="block-label">אנטנה</span><span class="block-symbol ltr">RF OUT</span></div></div>
+    </div></div>
+    <div class="takeaway">המסנן מגביל את רוחב פס המידע; האפנן מעביר אותו סביב תדר הנושא; מגבר ההספק מזין את האנטנה.</div><footer><span>תרשים מלבנים</span><span>12</span></footer>
+    <aside class="notes">קרא את התרשים מימין לשמאל. בכל מלבן מופיע קודם שם הרכיב בעברית ומתחתיו הסימון המקצועי. הזכר שגל הנושא מגיע מהמתנד אל כניסה נוספת של האפנן.</aside>
+  </section>
+
+  <section class="slide section" data-minutes="0"><div class="main"><div><div class="big">02</div><h1>מה רואים בזמן?</h1><p>המידע מופיע כמעטפת.</p></div></div><div class="takeaway">עוברים למסך האוסצילוסקופ.</div></section>
+
+  <section class="slide" data-minutes="3">
+    <header><div class="eyebrow">שלושה אותות</div><h2>מידע, נושא ואות מאופן</h2></header>
+    <div class="main"><div class="mini-grid">
+      <div class="mini">
+        <b>מידע</b>
+        <span class="ltr" style="font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:clamp(16px,1.4vw,22px);font-weight:700;color:var(--accent-dark);display:block;margin-top:8px;line-height:1.35">
+          m(t) = A<sub>m</sub> cos(ω<sub>m</sub> t)
+        </span>
+      </div>
+      <div class="mini">
+        <b>נושא</b>
+        <span class="ltr" style="font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:clamp(16px,1.4vw,22px);font-weight:700;color:var(--accent-dark);display:block;margin-top:8px;line-height:1.35">
+          c(t) = A<sub>c</sub> cos(ω<sub>c</sub> t)
+        </span>
+      </div>
+      <div class="mini">
+        <b>אות AM</b>
+        <span class="ltr" style="font-family:ui-monospace,SFMono-Regular,Consolas,monospace;font-size:clamp(15px,1.3vw,20px);font-weight:700;color:var(--accent-dark);display:block;margin-top:8px;line-height:1.35">
+          s(t) = [A<sub>c</sub> + m(t)] cos(ω<sub>c</sub> t)
+        </span>
+      </div>
+    </div></div>
+    <div class="takeaway">האות המהיר הוא הנושא. גובהו עוקב אחרי המידע.</div><footer><span>תחום הזמן</span><span>14</span></footer>
+  </section>
+
+  <section class="slide" data-minutes="4">
+    <header><div class="eyebrow">מעטפת</div><h2>התנופה משתנה. תדר הנושא נשאר קבוע</h2></header>
+    <div class="main two-visual"><div class="stack"><div class="paper green"><h3>משתנה</h3><p>גובה התנודות</p></div><div class="paper"><h3>קבוע</h3><p>המרחק בין המחזורים</p></div></div><div class="diagram"><canvas id="envelopeWave"></canvas></div></div>
+    <div class="takeaway">המעטפת היא הצורה החיצונית של אות ה־<span class="ltr">AM</span>.</div><footer><span>מעטפת</span><span>15</span></footer>
+  </section>
+
+  <section class="slide" data-minutes="4">
+    <header><div class="eyebrow">המשוואה בזמן</div><h2>שני חלקים במשוואת <span class="ltr">AM</span></h2></header>
+    <div class="main stack">
+      <div class="formula" dir="ltr" style="font-size:clamp(20px,2.3vw,36px);letter-spacing:0.01em">
+        s(t) = A<sub>c</sub> [1 + m<sub>a</sub> cos(ω<sub>m</sub> t)] cos(ω<sub>c</sub> t)
+      </div>
+      <div class="two">
+        <div class="paper green">
+          <h3>המעטפת</h3>
+          <p class="ltr" style="font-family:ui-monospace,Consolas,monospace;font-size:clamp(18px,1.6vw,26px);font-weight:700;margin-top:8px">
+            A<sub>c</sub> [1 + m<sub>a</sub> cos(ω<sub>m</sub> t)]
+          </p>
+        </div>
+        <div class="paper">
+          <h3>הנושא</h3>
+          <p class="ltr" style="font-family:ui-monospace,Consolas,monospace;font-size:clamp(18px,1.6vw,26px);font-weight:700;margin-top:8px;color:var(--accent-dark)">
+            cos(ω<sub>c</sub> t)
+          </p>
+        </div>
+      </div>
+    </div>
+    <div class="takeaway">הסוגריים קובעים את הגובה. הקוסינוס האחרון קובע את הקצב המהיר.</div><footer><span>משוואת AM</span><span>16</span></footer>
+  </section>
+
+  <section class="slide" data-minutes="4">
+    <header><div class="eyebrow">מקדם אפנון</div><h2>כמה חזק המידע משנה את הנושא?</h2></header>
+    <div class="main two"><div class="formula">m<sub>a</sub> = <span class="frac"><span class="num">A<sub>m</sub></span><span class="den">A<sub>c</sub></span></span></div><div class="paper"><p><b class="ltr">A<sub>m</sub></b> תנופת המידע</p><p><b class="ltr">A<sub>c</sub></b> תנופת הנושא</p><p><b class="ltr">m<sub>a</sub></b> יחס ללא יחידות</p></div></div>
+    <div class="takeaway"><span class="ltr">ma=1</span> פירושו אפנון של 100%.</div><footer><span>עומק האפנון</span><span>17</span></footer>
+  </section>
+
+  <section class="slide" data-minutes="4">
+    <header><div class="eyebrow">מדידה באוסצילוסקופ</div><h2>מחשבים את <span class="ltr">ma</span> מהמעטפת</h2></header>
+    <div class="main two"><div class="stack"><div class="formula small">V<sub>max</sub> = A<sub>c</sub> + A<sub>m</sub></div><div class="formula small">V<sub>min</sub> = A<sub>c</sub> − A<sub>m</sub></div></div><div class="stack"><div class="formula small">m<sub>a</sub> = <span class="frac"><span class="num">V<sub>max</sub> − V<sub>min</sub></span><span class="den">V<sub>max</sub> + V<sub>min</sub></span></span></div><button class="reveal" data-target="ans1">דוגמה: 18V ו־2V</button><div class="answer" id="ans1"><span class="ltr">m<sub>a</sub> = 16/20 = 0.8 = 80%</span></div></div></div>
+    <div class="takeaway">מודדים את גבולות המעטפת, לא את המחזורים המהירים.</div><footer><span>מדידת ma</span><span>18</span></footer>
+  </section>
+
+  <section class="slide" data-minutes="4">
+    <header><div class="eyebrow">מצבי אפנון</div><h2>הגבול החשוב הוא <span class="ltr">ma=1</span></h2></header>
+    <div class="main" style="max-width:900px;margin-inline:auto;width:100%">
+      <div style="display:grid;grid-template-columns:1.1fr 1.2fr 1.4fr;gap:0;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm);background:var(--surface)">
+        <div style="background:var(--ink);color:#f1f5f9;padding:14px 18px;font-weight:700;text-align:center">מצב</div>
+        <div style="background:var(--ink);color:#f1f5f9;padding:14px 18px;font-weight:700;text-align:center">תנאי</div>
+        <div style="background:var(--ink);color:#f1f5f9;padding:14px 18px;font-weight:700;text-align:center">המעטפת</div>
+
+        <div style="padding:18px;font-weight:700;text-align:center;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:center">אפנון חסר</div>
+        <div dir="ltr" style="padding:18px;font-family:ui-monospace,Consolas,monospace;font-weight:700;font-size:clamp(18px,1.6vw,24px);text-align:center;border-top:1px solid var(--line);border-right:1px solid var(--line);border-left:1px solid var(--line);display:flex;align-items:center;justify-content:center;white-space:nowrap">0 &lt; m<sub>a</sub> &lt; 1</div>
+        <div style="padding:18px;text-align:center;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:center">אינה נוגעת באפס</div>
+
+        <div style="padding:18px;font-weight:700;text-align:center;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:center;background:#f8fafc">אפנון מלא</div>
+        <div dir="ltr" style="padding:18px;font-family:ui-monospace,Consolas,monospace;font-weight:700;font-size:clamp(18px,1.6vw,24px);text-align:center;border-top:1px solid var(--line);border-right:1px solid var(--line);border-left:1px solid var(--line);display:flex;align-items:center;justify-content:center;white-space:nowrap;background:#f8fafc">m<sub>a</sub> = 1</div>
+        <div style="padding:18px;text-align:center;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:center;background:#f8fafc">נוגעת באפס</div>
+
+        <div style="padding:18px;font-weight:700;text-align:center;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:center">אפנון יתר</div>
+        <div dir="ltr" style="padding:18px;font-family:ui-monospace,Consolas,monospace;font-weight:700;font-size:clamp(18px,1.6vw,24px);text-align:center;border-top:1px solid var(--line);border-right:1px solid var(--line);border-left:1px solid var(--line);display:flex;align-items:center;justify-content:center;white-space:nowrap">m<sub>a</sub> &gt; 1</div>
+        <div style="padding:18px;text-align:center;border-top:1px solid var(--line);display:flex;align-items:center;justify-content:center">חוצה אפס ומתעוותת</div>
+      </div>
+    </div>
+    <div class="takeaway">לשידור תקין שומרים על <span class="ltr">0≤ma≤1</span>.</div><footer><span>שלושה מצבים</span><span>19</span></footer>
+  </section>
+
+  <section class="slide" data-minutes="7">
+    <header><div class="eyebrow">סימולטור AM</div><h2>שינוי אחד, שתי תצוגות</h2></header>
+    <div class="main"><div class="sim"><div class="controls">
+      <div class="control"><label><span class="ltr">Ac</span><span id="acVal">60 V</span></label><input id="ac" type="range" min="10" max="100" value="60"></div>
+      <div class="control"><label><span class="ltr">Am</span><span id="amVal">36 V</span></label><input id="am" type="range" min="0" max="120" value="36"></div>
+      <div class="control"><label><span class="ltr">fc</span><span id="fcVal">500 kHz</span></label><input id="fc" type="range" min="100" max="1000" step="50" value="500"></div>
+      <div class="control"><label><span class="ltr">fm</span><span id="fmVal">5 kHz</span></label><input id="fm" type="range" min="1" max="20" value="5"></div>
+      <div class="readouts"><div class="readout"><b class="ltr">ma</b><br><span id="maOut">0.60</span></div><div class="readout"><b class="ltr">BW</b><br><span id="bwOut">10 kHz</span></div><div class="readout"><b class="ltr">LSB</b><br><span id="lsbOut">495 kHz</span></div><div class="readout"><b class="ltr">USB</b><br><span id="usbOut">505 kHz</span></div></div>
+      <div id="simStatus" class="status">אפנון תקין</div>
+    </div><div class="plots"><div class="plot"><div class="plot-title">תחום הזמן</div><canvas id="simTime"></canvas></div><div class="plot"><div class="plot-title">תחום התדר</div><canvas id="simFreq"></canvas></div></div></div></div>
+    <div class="takeaway">העלאת <span class="ltr">Am</span> מגדילה את פסי הצד. מעל <span class="ltr">ma=1</span> המעטפת מתעוותת.</div><footer><span>התנסות</span><span>20</span></footer>
+    <aside class="notes">בקש חיזוי לפני כל שינוי סליידר. עצור ב־m<sub>a</sub>=1 (מעטפת נוגעת באפס), ואז עבור מעט מעליו והראה את העיוות והיפוך הפאזה.</aside>
+  </section>
+
+  <section class="slide section" data-minutes="0"><div class="main"><div><div class="big">03</div><h1>מה רואים בתדר?</h1><p>אות אחד יוצר שלושה רכיבים.</p></div></div><div class="takeaway">עוברים למנתח ספקטרום.</div></section>
+
+  <section class="slide" data-minutes="5">
+    <header><div class="eyebrow">זהות טריגונומטרית</div><h2>מכפלה בזמן → סכום והפרש בתדר</h2></header>
+    <div class="main two">
+      <div class="stack">
+        <div class="paper">
+          <p style="font-weight:700;margin-bottom:10px">שתי זהויות בסיסיות:</p>
+          <p class="ltr" style="font-family:ui-monospace,Consolas,monospace;font-size:clamp(15px,1.25vw,20px);line-height:1.55;font-weight:600">
+            cos(α+β) = cosα·cosβ − sinα·sinβ<br>
+            cos(α−β) = cosα·cosβ + sinα·sinβ
+          </p>
+        </div>
+        <div class="paper" style="background:var(--accent-pale);border-color:#a5f3fc">
+          <p style="font-weight:700;margin-bottom:8px">חיבור אגף לאגף + צמצום:</p>
+          <p class="ltr" style="font-family:ui-monospace,Consolas,monospace;font-size:clamp(15px,1.25vw,20px);line-height:1.5;font-weight:600;color:var(--accent-dark)">
+            cosα·cosβ =
+            <span class="frac-block" style="display:inline-flex;vertical-align:middle"><span class="num">1</span><span class="den">2</span></span>
+            [cos(α+β) + cos(α−β)]
+          </p>
+        </div>
+      </div>
+      <div class="stack">
+        <div class="formula small" dir="ltr" style="font-size:clamp(18px,1.8vw,26px)">
+          cos(α)cos(β) =
+          <span class="frac-block"><span class="num">1</span><span class="den">2</span></span>
+          [cos(α+β)+cos(α−β)]
+        </div>
+        <div class="paper green">
+          <p>באפנון AM: מכפלת המידע בנושא יוצרת שני תדרים חדשים — פס צד עליון ותחתון — סביב תדר הנושא.</p>
+        </div>
+      </div>
+    </div>
+    <div class="takeaway">הזהות מסבירה למה מופיעים בדיוק שלושה קווים בספקטרום.</div>
+    <footer><span>מעבר זמן–תדר</span><span>22</span></footer>
+    <aside class="notes">הדגישו: לא חובה לזכור את הפיתוח במבחן, אבל חשוב להבין מאיפה מגיעים שלושת התדרים. אפשר לדלג על הפרטים בכיתה חלשה.</aside>
+  </section>
+
+  <section class="slide" data-minutes="3">
+    <header><div class="eyebrow">ספקטרום AM</div><h2>נושא במרכז ושני פסי צד</h2></header>
+    <div class="main two-visual"><div class="stack" style="gap:10px"><div class="paper" style="padding:12px 18px"><h3 class="ltr" style="font-size:clamp(24px,2vw,34px)">LSB</h3><p style="font-size:clamp(18px,1.4vw,24px)">פס צד תחתון</p></div><div class="paper green" style="padding:12px 18px"><h3 class="ltr" style="font-size:clamp(24px,2vw,34px)">Carrier</h3><p style="font-size:clamp(18px,1.4vw,24px)">גל נושא</p></div><div class="paper" style="padding:12px 18px"><h3 class="ltr" style="font-size:clamp(24px,2vw,34px)">USB</h3><p style="font-size:clamp(18px,1.4vw,24px)">פס צד עליון</p></div></div><div class="diagram"><canvas id="spectrumCanvas"></canvas></div></div>
+    <div class="takeaway">המידע נמצא בפסי הצד. הנושא עצמו אינו מוסיף מידע.</div><footer><span>שלוש מחטים</span><span>23</span></footer>
+  </section>
+
+  <section class="slide" data-minutes="4">
+    <header><div class="eyebrow">רוחב פס</div><h2>המרחק בין פסי הצד</h2></header>
+    <div class="main two"><div class="stack"><div class="formula small">f<sub>USB</sub> = f<sub>c</sub> + f<sub>m</sub></div><div class="formula small">f<sub>LSB</sub> = f<sub>c</sub> − f<sub>m</sub></div></div><div class="formula">BW<sub>AM</sub> = 2f<sub>m</sub></div></div>
+    <div class="takeaway"><span class="ltr">fc</span> קובע היכן הספקטרום נמצא. <span class="ltr">fm</span> קובע את רוחבו.</div><footer><span>BW</span><span>24</span></footer>
+  </section>
+
+  <section class="slide" data-minutes="4">
+    <header><div class="eyebrow">בדיקת הבנה</div><h2>מהם פסי הצד? <span class="ltr" style="white-space:nowrap">f<sub>c</sub>=1 MHz, f<sub>m</sub>=5 kHz</span></h2></header>
+    <div class="main two">
+      <div class="choice-grid" id="quiz">
+        <button class="choice" data-ok="1" dir="ltr">995 &amp; 1005 kHz</button>
+        <button class="choice" dir="ltr">5 &amp; 10 kHz</button>
+        <button class="choice" dir="ltr">1 &amp; 6 MHz</button>
+        <button class="choice" dir="ltr">500 &amp; 1500 kHz</button>
+      </div>
+      <div class="paper"><p id="quizText">בחרו תשובה והסבירו את המרת היחידות.</p></div>
+    </div>
+    <div class="takeaway">לפני חיבור וחיסור ממירים <span class="ltr">1 MHz=1000 kHz</span>.</div><footer><span>בדיקה</span><span>25</span></footer>
+  </section>
+
+  <section class="slide section" data-minutes="0"><div class="main"><div><div class="big">04</div><h1>לאן הולך ההספק?</h1><p>רק פסי הצד נושאים מידע.</p></div></div><div class="takeaway">מפרידים בין נושא לפסי צד.</div></section>
+
+  <section class="slide" data-minutes="3">
+    <header><div class="eyebrow">הספק נושא</div><h2>מתח השיא קובע את ההספק</h2></header>
+    <div class="main two"><div class="formula">P<sub>c</sub> = <span class="frac"><span class="num">A<sub>c</sub><sup>2</sup></span><span class="den">2R</span></span></div><div class="paper"><h3>שימו לב</h3><p><span class="ltr">A<sub>c</sub></span> הוא מתח שיא. אם נתון <span class="ltr">V<sub>pp</sub></span>, מחלקים ב־2.</p></div></div>
+    <div class="takeaway">טעות של פי 2 במתח יוצרת טעות של פי 4 בהספק.</div><footer><span>Pc</span><span>28</span></footer>
+  </section>
+
+  <section class="slide" data-minutes="3">
+    <header><div class="eyebrow">הספק פסי הצד</div><h2>מקדם האפנון קובע את הספק המידע</h2></header>
+    <div class="main two"><div class="formula small">כל פס צד<br>P<sub>side</sub> = P<sub>c</sub>·<span class="frac"><span class="num">m<sub>a</sub><sup>2</sup></span><span class="den">4</span></span></div><div class="formula small">שני פסי הצד<br>P<sub>SB</sub> = P<sub>c</sub>·<span class="frac"><span class="num">m<sub>a</sub><sup>2</sup></span><span class="den">2</span></span></div></div>
+    <div class="takeaway">שני פסי הצד יחד נושאים את המידע.</div><footer><span>PSB</span><span>29</span></footer>
+  </section>
+
+  <section class="slide" data-minutes="3">
+    <header><div class="eyebrow">הספק כולל</div><h2>מחברים נושא ושני פסי צד</h2></header>
+    <div class="main"><div class="formula">P<sub>AM</sub> = P<sub>c</sub><span style="font-size:.85em">(1 + </span><span class="frac"><span class="num">m<sub>a</sub><sup>2</sup></span><span class="den">2</span></span><span style="font-size:.85em">)</span></div></div>
+    <div class="takeaway">ההספק הכולל גדול מהספק הנושא.</div><footer><span>PAM</span><span>30</span></footer>
+  </section>
+
+  <section class="slide" data-minutes="3">
+    <header><div class="eyebrow">נצילות</div><h2>ב־<span class="ltr">AM</span> קלאסי רוב ההספק נמצא בנושא</h2></header>
+    <div class="main two"><div class="stack"><div class="formula small">η = <span class="frac"><span class="num">m<sub>a</sub><sup>2</sup></span><span class="den">2 + m<sub>a</sub><sup>2</sup></span></span></div><div class="formula small">m<sub>a</sub>=1 ⇒ η<sub>max</sub>=33.3%</div></div><div class="paper green"><div class="big" style="color:var(--cream)">⅓</div><p>לכל היותר שליש מההספק נושא מידע.</p></div></div>
+    <div class="takeaway">הנצילות המרבית התקינה היא 33.3%.</div><footer><span>יעילות הספק</span><span>31</span></footer>
+  </section>
+
+  <section class="slide" data-minutes="3">
+    <header><div class="eyebrow">שאלת עומק</div><h2>מדוע לא מעלים את <span class="ltr">ma</span> מעל 1?</h2></header>
+    <div class="main two"><div class="paper"><h3>המספר עולה</h3><p class="ltr">ma=1.2 ⇒ η≈41.8%</p></div><div class="paper green"><h3>האות נהרס</h3><p>המעטפת חוצה אפס וגלאי מעטפת משחזר מידע מעוות.</p></div></div>
+    <div class="takeaway">נצילות גבוהה אינה מועילה כאשר המידע מתעוות.</div><footer><span>אפנון יתר</span><span>32</span></footer>
+  </section>
+
+  <section class="slide section" data-minutes="0"><div class="main"><div><div class="big">05</div><h1>תרגיל מה״ט מודרך</h1><p>פתרון לפי סדר קבוע.</p></div></div><div class="takeaway">בכל שקף מבצעים שלב אחד.</div></section>
+
+  <section class="slide" data-minutes="3">
+    <header><div class="eyebrow">נתוני התרגיל</div><h2>משווים לצורה התקנית</h2></header>
+    <div class="main stack"><div class="formula small">s(t)=100[1+0.8 cos(10,000π t)] cos(2,000,000π t) [V]</div><div class="formula small">s(t)=A<sub>c</sub>[1+m<sub>a</sub> cos(ω<sub>m</sub> t)] cos(ω<sub>c</sub> t)</div><div class="paper"><p>עומס האנטנה: <span class="ltr">R=50 Ω</span></p></div></div>
+    <div class="takeaway">מסמנים כל מספר לפי מקומו במשוואה התקנית.</div><footer><span>נתונים</span><span>34</span></footer>
+  </section>
+
+  <section class="slide" data-minutes="3">
+    <header><div class="eyebrow">פתרון 1</div><h2>תנופות ומקדם אפנון</h2></header>
+    <div class="main two"><div class="stack"><div class="formula small">A<sub>c</sub> = 100 V</div><div class="formula small">m<sub>a</sub> = 0.8</div></div><div class="formula">A<sub>m</sub> = m<sub>a</sub>·A<sub>c</sub> = 80 V</div></div>
+    <div class="takeaway">המספר לפני הסוגריים הוא <span class="ltr">Ac</span>. המספר בתוך הסוגריים הוא <span class="ltr">ma</span>.</div><footer><span>שלב 1</span><span>35</span></footer>
+  </section>
+
+  <section class="slide" data-minutes="3">
+    <header><div class="eyebrow">פתרון 2</div><h2>המרת תדר זוויתי להרץ</h2></header>
+    <div class="main two">
+      <div class="formula small" dir="ltr" style="display:flex;flex-direction:column;align-items:center;gap:10px">
+        <span style="display:inline-flex;align-items:center;gap:8px">
+          f<sub>c</sub> =
+          <span class="frac-block"><span class="num">ω<sub>c</sub></span><span class="den">2π</span></span>
+        </span>
+        <span>= 1 MHz</span>
+      </div>
+      <div class="formula small" dir="ltr" style="display:flex;flex-direction:column;align-items:center;gap:10px">
+        <span style="display:inline-flex;align-items:center;gap:8px">
+          f<sub>m</sub> =
+          <span class="frac-block"><span class="num">ω<sub>m</sub></span><span class="den">2π</span></span>
+        </span>
+        <span>= 5 kHz</span>
+      </div>
+    </div>
+    <div class="takeaway">בביטוי <span class="ltr">cos(ωt)</span> מחלקים את המקדם של <span class="ltr">t</span> ב־<span class="ltr">2π</span>.</div><footer><span>שלב 2</span><span>36</span></footer>
+  </section>
+
+  <section class="slide" data-minutes="3">
+    <header><div class="eyebrow">פתרון 3</div><h2>מעטפת, פסי צד ורוחב פס</h2></header>
+    <div class="main"><div class="mini-grid"><div class="mini"><b>מעטפת</b><span class="ltr">V<sub>max</sub>=180 V<br>V<sub>min</sub>=20 V</span></div><div class="mini"><b>פסי צד</b><span class="ltr">995 kHz , 1005 kHz</span></div><div class="mini"><b>רוחב פס</b><span class="ltr">BW=10 kHz</span></div></div></div>
+    <div class="takeaway">תנופת כל פס צד היא <span class="ltr">maAc/2=40 V</span>.</div><footer><span>שלב 3</span><span>37</span></footer>
+  </section>
+
+  <section class="slide" data-minutes="5">
+    <header><div class="eyebrow">פתרון 4</div><h2>הספקים ונצילות</h2></header>
+    <div class="main two"><div class="stack"><div class="formula small">P<sub>c</sub> = 100 W</div><div class="formula small">P<sub>SB</sub> = 32 W</div></div><div class="stack"><div class="formula small">P<sub>AM</sub> = 132 W</div><div class="formula small">η = 24.24%</div></div></div>
+    <div class="takeaway">בדיקת היגיון: <span class="ltr">η&lt;33.3%</span> כי <span class="ltr">ma=0.8</span>.</div><footer><span>שלב 4</span><span>38</span></footer>
+  </section>
+
+  <section class="slide" data-minutes="3">
+    <header><div class="eyebrow">שיטת פתרון</div><h2>סדר קבוע לבחינה</h2></header>
+    <div class="main"><div class="flow"><div class="box">חילוץ נתונים</div><div class="arrow">←</div><div class="box">המרת תדרים</div><div class="arrow">←</div><div class="box">זמן ותדר</div><div class="arrow">←</div><div class="box">הספק ובדיקה</div></div></div>
+    <div class="takeaway">סדר קבוע מפחית טעויות ומציג דרך פתרון ברורה.</div><footer><span>תהליך עבודה</span><span>39</span></footer>
+  </section>
+
+  <section class="slide" data-minutes="7">
+    <header><div class="eyebrow">תרגול עצמי · 7 דקות</div><h2>פתרו לפני חשיפת הפתרון</h2></header>
+    <div class="main two"><div class="paper"><p><span class="ltr">f<sub>c</sub>=2 MHz</span><br><span class="ltr">A<sub>c</sub>=50 V</span><br><span class="ltr">f<sub>m</sub>=10 kHz</span><br><span class="ltr">A<sub>m</sub>=25 V</span><br><span class="ltr">R=50 Ω</span></p></div><div class="stack"><p>חשבו <span class="ltr">m<sub>a</sub>, BW, P<sub>c</sub>, P<sub>AM</sub>, η</span>.</p><button class="reveal" data-target="practice">פתרון</button><div class="answer" id="practice"><span class="ltr">m<sub>a</sub>=0.5 · BW=20 kHz · P<sub>c</sub>=25 W · P<sub>AM</sub>=28.125 W · η=11.11%</span></div></div></div>
+    <div class="takeaway">רושמים נוסחה ויחידות לפני כל הצבה.</div><footer><span>עבודה בזוגות</span><span>40</span></footer>
+  </section>
+
+  <section class="slide" data-minutes="2">
+    <header><div class="eyebrow">מלכודות בחינה</div><h2>ארבע בדיקות לפני שמסיימים</h2></header>
+    <div class="main two"><div class="mini"><b class="ltr">Vpp ≠ Ac</b><span class="ltr" style="display:inline-flex;align-items:center;gap:4px">A<sub>c</sub>=<span class="frac-block" style="font-size:.9em"><span class="num">V<sub>pp</sub></span><span class="den">2</span></span></span></div><div class="mini"><b>אותן יחידות</b><span class="ltr">1 MHz=1000 kHz</span></div><div class="mini"><b class="ltr">PSB ≠ PAM</b><span>מידע אינו ההספק הכולל</span></div><div class="mini"><b class="ltr">ω ≠ f</b><span class="ltr" style="display:inline-flex;align-items:center;gap:4px">f=<span class="frac-block" style="font-size:.9em"><span class="num">ω</span><span class="den">2π</span></span></span></div></div>
+    <div class="takeaway">יחידות ובדיקת היגיון מצילות נקודות.</div><footer><span>בדיקה עצמית</span><span>41</span></footer>
+  </section>
+
+  <section class="slide" data-minutes="2">
+    <header><div class="eyebrow">כרטיס יציאה</div><h2>שלוש שאלות קצרות</h2></header>
+    <div class="main two"><div class="paper"><ol><li>מה משתנה באפנון <span class="ltr">AM</span>?</li><li>אם <span class="ltr">fm=4 kHz</span>, מה <span class="ltr">BW</span>?</li><li>מדוע הנצילות מוגבלת?</li></ol></div><div class="stack"><button class="reveal" data-target="exitAnswer">בדיקה עצמית</button><div class="answer" id="exitAnswer">התנופה משתנה. רוחב הפס הוא <span class="ltr">8 kHz</span>. הנושא צורך רוב ההספק אך אינו נושא מידע.</div></div></div>
+    <div class="takeaway">הסבר במילים מוכיח הבנה טובה יותר משינון נוסחה.</div><footer><span>סיום</span><span>42</span></footer>
+  </section>
+
+  <section class="slide" data-minutes="2">
+    <header><div class="eyebrow">סיכום</div><h2>אות מידע הופך לאות שניתן לשדר</h2></header>
+    <div class="main"><div class="flow"><div class="box">שמע נמוך</div><div class="arrow">←</div><div class="box">נושא גבוה</div><div class="arrow">←</div><div class="box">מעטפת</div><div class="arrow">←</div><div class="box">פסי צד</div><div class="arrow">←</div><div class="box">הספק מידע</div></div></div>
+    <div class="takeaway">אפנון <span class="ltr">AM</span> מעביר מידע לתדר מתאים, במחיר רוחב פס והספק נושא.</div><footer><span>שיעור 04</span><span>43</span></footer>
+  </section>
+
+  <nav class="nav"><button id="prev" aria-label="השקף הבא">→</button><button id="notesNav" aria-label="הערות">N</button><button id="next" aria-label="השקף הקודם">←</button></nav>
+  <div class="counter" id="counter">01 / 43</div><div class="progress" id="progress"></div>
+</main>
 <script>
-(() => {
-  /* ---- Tabs ---- */
-  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-      btn.classList.add('active');
-      const tab = document.getElementById(btn.dataset.tab);
-      tab.classList.add('active');
-      if (btn.dataset.tab === 'tab-lab') setTimeout(updateLab, 40);
-    });
-  });
+(()=>{
+  const slides=[...document.querySelectorAll('.slide')],counter=document.getElementById('counter'),progress=document.getElementById('progress');let index=0;
+  const pad=n=>String(n).padStart(2,'0');
+  slides.forEach((slide,i)=>{const number=slide.querySelector('footer span:last-child');if(number)number.textContent=pad(i+1)});
+  function show(i){index=Math.max(0,Math.min(slides.length-1,i));slides.forEach((s,j)=>s.classList.toggle('active',j===index));counter.textContent=`${pad(index+1)} / ${pad(slides.length)}`;progress.style.width=`${(index+1)/slides.length*100}%`;drawVisible()}
+  const toggleNotes=()=>slides[index].querySelector('.notes')?.classList.toggle('show');
+  document.getElementById('prev').onclick=()=>show(index+1);document.getElementById('next').onclick=()=>show(index-1);document.getElementById('notesBtn').onclick=toggleNotes;document.getElementById('notesNav').onclick=toggleNotes;
+  document.getElementById('fsBtn').onclick=()=>document.fullscreenElement?document.exitFullscreen():document.getElementById('deck').requestFullscreen();
+  addEventListener('keydown',e=>{if(['ArrowRight','PageDown',' '].includes(e.key)){e.preventDefault();show(index+1)}else if(['ArrowLeft','PageUp'].includes(e.key)){e.preventDefault();show(index-1)}else if(e.key==='Home')show(0);else if(e.key==='End')show(slides.length-1);else if(e.key.toLowerCase()==='n')toggleNotes();else if(e.key.toLowerCase()==='f')document.getElementById('fsBtn').click()});
+  document.querySelectorAll('.reveal[data-target]').forEach(b=>b.onclick=()=>document.getElementById(b.dataset.target)?.classList.toggle('show'));
+  document.querySelectorAll('#quiz .choice').forEach(b=>b.onclick=()=>{document.querySelectorAll('#quiz .choice').forEach(x=>x.classList.remove('ok','bad'));b.classList.add(b.dataset.ok?'ok':'bad');document.getElementById('quizText').textContent=b.dataset.ok?'נכון. 1000−5=995 ו־1000+5=1005 kHz.':'בדקו שוב: המירו תחילה MHz ל־kHz.'});
 
-  /* ---- Quiz ---- */
-  document.querySelectorAll('.quiz-option').forEach(opt => {
-    opt.addEventListener('click', () => {
-      const q = opt.dataset.q;
-      const ok = opt.dataset.ok === '1';
-      const opts = document.querySelectorAll(`#quiz-q${q} .quiz-option`);
-      opts.forEach(o => o.classList.remove('correct','wrong'));
-      const fb = document.getElementById('quiz-fb-' + q);
-      if (ok) {
-        opt.classList.add('correct');
-        fb.className = 'feedback ok';
-        fb.textContent = '✓ תשובה נכונה!';
-      } else {
-        opt.classList.add('wrong');
-        fb.className = 'feedback err';
-        fb.textContent = '✗ לא מדויק — נסה שוב או חזור לתמצית הרענון.';
-      }
-    });
-  });
-
-  /* ---- Lab ---- */
-  const sliders = ['slider-Ac','slider-Am','slider-fc','slider-fm'];
-  sliders.forEach(id => document.getElementById(id).addEventListener('input', updateLab));
-
-  function updateLab() {
-    const Ac = +document.getElementById('slider-Ac').value;
-    const Am = +document.getElementById('slider-Am').value;
-    const fc = +document.getElementById('slider-fc').value;
-    const fm = +document.getElementById('slider-fm').value;
-
-    document.getElementById('val-Ac').textContent = Ac + ' V';
-    document.getElementById('val-Am').textContent = Am + ' V';
-    document.getElementById('val-fc').textContent = fc + ' kHz';
-    document.getElementById('val-fm').textContent = fm + ' kHz';
-
-    const ma = Am / Ac;
-    const Vmax = Ac + Am;
-    const Vmin = Math.max(0, Ac - Am);
-    const BW = 2 * fm;
-    const eta = (ma * ma) / (2 + ma * ma) * 100;
-
-    document.getElementById('m-ma').textContent = ma.toFixed(2);
-    document.getElementById('m-vmax').textContent = Vmax.toFixed(1) + ' V';
-    document.getElementById('m-vmin').textContent = (Ac < Am ? '0 (קטיעה)' : Vmin.toFixed(1) + ' V');
-    document.getElementById('m-sidebands').textContent = (fc - fm) + ' / ' + (fc + fm);
-    document.getElementById('m-bw').textContent = BW + ' kHz';
-    document.getElementById('m-eta').textContent = eta.toFixed(1) + '%';
-
-    const alert = document.getElementById('status-alert');
-    if (ma > 1) {
-      alert.className = '';
-      alert.innerHTML = '<span class="status-bad">⚠ אפנון־יתר (m<sub>a</sub> &gt; 1) — המעטפת נקטמת</span>';
-    } else {
-      alert.className = 'status-ok';
-      alert.innerHTML = '✓ אפנון תקין (m<sub>a</sub> ≤ 1) — המעטפת משחזרת את המידע';
+  function fit(c){const r=c.getBoundingClientRect(),d=devicePixelRatio||1,w=Math.max(1,Math.round(r.width*d)),h=Math.max(1,Math.round(r.height*d));if(c.width!==w||c.height!==h){c.width=w;c.height=h}return{ctx:c.getContext('2d'),w,h,d}}
+  function grid(ctx,w,h){ctx.clearRect(0,0,w,h);ctx.strokeStyle='#cbd5e1';ctx.lineWidth=1;for(let i=1;i<6;i++){ctx.beginPath();ctx.moveTo(i*w/6,0);ctx.lineTo(i*w/6,h);ctx.stroke()}ctx.strokeStyle='#0f172a';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(0,h/2);ctx.lineTo(w,h/2);ctx.stroke()}
+  function amWave(c,m=.65){if(!c||!c.offsetParent)return;const z=fit(c);grid(z.ctx,z.w,z.h);z.ctx.save();z.ctx.beginPath();z.ctx.rect(0,0,z.w,z.h);z.ctx.clip();const amp=0.22;z.ctx.strokeStyle='#06b6d4';z.ctx.lineWidth=3*z.d;z.ctx.beginPath();for(let x=0;x<z.w;x++){const t=x/z.w*4*Math.PI,env=amp*(1+m*Math.cos(t)),y=z.h/2-env*z.h*Math.cos(10*t);x?z.ctx.lineTo(x,y):z.ctx.moveTo(x,y)}z.ctx.stroke();z.ctx.setLineDash([8*z.d,6*z.d]);z.ctx.strokeStyle='#0f172a';z.ctx.lineWidth=1.6*z.d;for(const s of [-1,1]){z.ctx.beginPath();for(let x=0;x<z.w;x++){const t=x/z.w*4*Math.PI,y=z.h/2+s*amp*(1+m*Math.cos(t))*z.h;x?z.ctx.lineTo(x,y):z.ctx.moveTo(x,y)}z.ctx.stroke()}z.ctx.setLineDash([]);z.ctx.restore()}
+  let phaseOk=true;
+  const loopGain=document.getElementById('loopGain'),phaseToggle=document.getElementById('phaseToggle');
+  loopGain.addEventListener('input',drawOscillator);
+  phaseToggle.addEventListener('click',()=>{phaseOk=!phaseOk;phaseToggle.classList.toggle('on',phaseOk);phaseToggle.textContent=phaseOk?'המופע בחוג: 0° ✓':'המופע בחוג: 180° ✕';drawOscillator()});
+  function drawOscillator(){const c=document.getElementById('oscWave');if(!c||!c.offsetParent)return;const gain=+loopGain.value,status=document.getElementById('oscStatus');document.getElementById('loopGainValue').textContent=gain.toFixed(2);let mode='stable';if(!phaseOk||gain<.97)mode='decay';else if(gain>1.03)mode='grow';status.className='osc-status '+(mode==='stable'?'good':'warn');status.textContent=mode==='stable'?'תנודה יציבה':mode==='grow'?'התנודה גדלה עד לרוויה':'התנודה דועכת';const z=fit(c);grid(z.ctx,z.w,z.h);z.ctx.strokeStyle=mode==='stable'?'#06b6d4':'#ef4444';z.ctx.lineWidth=3*z.d;z.ctx.beginPath();for(let x=0;x<z.w;x++){const t=x/z.w,a=mode==='stable'?.36:mode==='grow'?Math.min(.42,.035*Math.exp(3.2*t)):.42*Math.exp(-3.2*t),y=z.h/2-a*z.h*Math.sin(t*30*Math.PI);x?z.ctx.lineTo(x,y):z.ctx.moveTo(x,y)}z.ctx.stroke();z.ctx.fillStyle='#0f172a';z.ctx.font=`${18*z.d}px Inter`;z.ctx.textAlign='right';z.ctx.fillText(mode==='stable'?'|Aβ|=1 והמופע 0°':mode==='grow'?'|Aβ|>1 והמופע 0°':'אין תנאי להתנודדות יציבה',z.w-24*z.d,34*z.d)}
+  function spectrum(c){if(!c||!c.offsetParent)return;const z=fit(c),base=z.h*.78;z.ctx.clearRect(0,0,z.w,z.h);z.ctx.save();z.ctx.beginPath();z.ctx.rect(0,0,z.w,z.h);z.ctx.clip();z.ctx.strokeStyle='#0f172a';z.ctx.lineWidth=2*z.d;z.ctx.beginPath();z.ctx.moveTo(z.w*.08,base);z.ctx.lineTo(z.w*.92,base);z.ctx.stroke();[[.28,.42,'fc−fm'],[.5,.72,'fc'],[.72,.42,'fc+fm']].forEach((v,i)=>{z.ctx.strokeStyle=i===1?'#06b6d4':'#0f172a';z.ctx.lineWidth=7*z.d;z.ctx.beginPath();z.ctx.moveTo(z.w*v[0],base);z.ctx.lineTo(z.w*v[0],base-z.h*v[1]);z.ctx.stroke();z.ctx.fillStyle='#0f172a';z.ctx.font=`${16*z.d}px Inter`;z.ctx.textAlign='center';z.ctx.fillText(v[2],z.w*v[0],base+26*z.d)});z.ctx.restore()}
+  ['ac','am','fc','fm'].forEach(id=>document.getElementById(id).addEventListener('input',updateSim));
+  function updateSim(){const ac=+document.getElementById('ac').value,am=+document.getElementById('am').value,fc=+document.getElementById('fc').value,fm=+document.getElementById('fm').value,ma=am/ac;document.getElementById('acVal').textContent=ac+' V';document.getElementById('amVal').textContent=am+' V';document.getElementById('fcVal').textContent=fc+' kHz';document.getElementById('fmVal').textContent=fm+' kHz';document.getElementById('maOut').textContent=ma.toFixed(2);document.getElementById('bwOut').textContent=2*fm+' kHz';document.getElementById('lsbOut').textContent=fc-fm+' kHz';document.getElementById('usbOut').textContent=fc+fm+' kHz';const st=document.getElementById('simStatus');st.textContent=ma<=1?'אפנון תקין':'אפנון יתר';st.classList.toggle('bad',ma>1);drawSim(ac,am,fc,fm)}
+  function drawSim(ac,am,fc,fm){
+    const tc=document.getElementById('simTime'),sc=document.getElementById('simFreq');
+    if(!tc||!tc.offsetParent)return;
+    // --- Time domain ---
+    let z=fit(tc);
+    grid(z.ctx,z.w,z.h);
+    z.ctx.save();z.ctx.beginPath();z.ctx.rect(0,0,z.w,z.h);z.ctx.clip();
+    const max=Math.max(ac+am,1),m=am/ac,amp=0.38;
+    // envelope cycles visible scale with fm relative to a fixed carrier visual rate
+    const envCycles=Math.max(2,Math.min(6,fm));
+    const carCycles=envCycles*8;
+    z.ctx.strokeStyle='#06b6d4';z.ctx.lineWidth=2.5*z.d;z.ctx.beginPath();
+    for(let x=0;x<z.w;x++){
+      const t=x/z.w*2*Math.PI;
+      const env=ac+am*Math.cos(t*envCycles);
+      const y=z.h/2-env/max*z.h*amp*Math.cos(t*carCycles);
+      x?z.ctx.lineTo(x,y):z.ctx.moveTo(x,y);
     }
-
-    drawTime(Ac, Am);
-    drawFreq(Ac, Am, fc, fm, ma);
-  }
-
-  function fit(canvas) {
-    const r = canvas.getBoundingClientRect();
-    const d = devicePixelRatio || 1;
-    const w = Math.max(1, Math.round(r.width * d));
-    const h = Math.max(1, Math.round(r.height * d));
-    if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
-    return { ctx: canvas.getContext('2d'), w, h, d };
-  }
-
-  function drawTime(Ac, Am) {
-    const canvas = document.getElementById('canvasTime');
-    if (!canvas.offsetParent) return;
-    const { ctx, w, h, d } = fit(canvas);
-    ctx.clearRect(0, 0, w, h);
-
-    const mid = h / 2;
-    const maxA = Math.max(Ac + Am, 1);
-    const scale = (h / 2 - 12 * d) / maxA;
-
-    // axis
-    ctx.strokeStyle = '#334155';
-    ctx.lineWidth = 1 * d;
-    ctx.beginPath(); ctx.moveTo(0, mid); ctx.lineTo(w, mid); ctx.stroke();
-
-    const cycles = 3;
-    // envelope
-    ctx.setLineDash([5 * d, 4 * d]);
-    ctx.strokeStyle = '#f59e0b';
-    ctx.lineWidth = 1.5 * d;
-    for (const s of [1, -1]) {
-      ctx.beginPath();
-      for (let x = 0; x < w; x++) {
-        const t = (x / w) * cycles * 2 * Math.PI;
-        const env = Ac + Am * Math.cos(t);
-        const y = mid - s * env * scale;
-        x ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+    z.ctx.stroke();
+    z.ctx.setLineDash([7*z.d,5*z.d]);
+    z.ctx.strokeStyle=m>1?'#ef4444':'#0f172a';
+    for(const s of [-1,1]){
+      z.ctx.beginPath();
+      for(let x=0;x<z.w;x++){
+        const t=x/z.w*2*Math.PI;
+        const y=z.h/2+s*(ac+am*Math.cos(t*envCycles))/max*z.h*amp;
+        x?z.ctx.lineTo(x,y):z.ctx.moveTo(x,y);
       }
-      ctx.stroke();
+      z.ctx.stroke();
     }
+    z.ctx.setLineDash([]);z.ctx.restore();
+
+    // --- Frequency domain with proper axes ---
+    z=fit(sc);
+    const ctx=z.ctx, W=z.w, H=z.h, d=z.d;
+    ctx.clearRect(0,0,W,H);
+    ctx.save();ctx.beginPath();ctx.rect(0,0,W,H);ctx.clip();
+
+    const left=W*0.10, right=W*0.94, top=H*0.12, base=H*0.78;
+    // frequency window: show from fc-3*fm_max-ish centered on fc
+    const span=Math.max(fm*6, fc*0.08, 40); // kHz half-ish width total = 2*span visual
+    const fMin=fc-span, fMax=fc+span;
+    const xOf=f=> left+(right-left)*(f-fMin)/(fMax-fMin);
+    const hOf=a=> Math.max(4*d, (a/Math.max(ac,am/2,1))*(base-top)*0.92);
+
+    // grid + axes
+    ctx.strokeStyle='#e2e8f0';ctx.lineWidth=1*d;
+    for(let i=1;i<4;i++){
+      const yy=top+(base-top)*i/4;
+      ctx.beginPath();ctx.moveTo(left,yy);ctx.lineTo(right,yy);ctx.stroke();
+    }
+    // vertical grid at fc and sidebands
+    ctx.setLineDash([4*d,4*d]);
+    [fc-fm,fc,fc+fm].forEach(f=>{
+      const x=xOf(f);
+      if(x>=left&&x<=right){ctx.beginPath();ctx.moveTo(x,top);ctx.lineTo(x,base);ctx.stroke();}
+    });
     ctx.setLineDash([]);
 
-    // carrier
-    ctx.strokeStyle = maColor(Am / Ac);
-    ctx.lineWidth = 1.8 * d;
-    ctx.beginPath();
-    for (let x = 0; x < w; x++) {
-      const t = (x / w) * cycles * 2 * Math.PI;
-      const env = Ac + Am * Math.cos(t);
-      const y = mid - env * Math.cos(t * 10) * scale;
-      x ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
-    }
-    ctx.stroke();
-  }
+    // axes
+    ctx.strokeStyle='#0f172a';ctx.lineWidth=2*d;
+    ctx.beginPath();ctx.moveTo(left,top);ctx.lineTo(left,base);ctx.lineTo(right,base);ctx.stroke();
 
-  function maColor(ma) { return ma > 1 ? '#ef4444' : '#06b6d4'; }
+    // axis labels
+    ctx.fillStyle='#64748b';ctx.font=`${11*d}px Inter,Arial`;ctx.textAlign='center';
+    ctx.fillText('f [kHz]', (left+right)/2, H-6*d);
+    ctx.save();ctx.translate(14*d,(top+base)/2);ctx.rotate(-Math.PI/2);
+    ctx.fillText('|X(f)|',0,0);ctx.restore();
 
-  function drawFreq(Ac, Am, fc, fm, ma) {
-    const canvas = document.getElementById('canvasFreq');
-    if (!canvas.offsetParent) return;
-    const { ctx, w, h, d } = fit(canvas);
-    ctx.clearRect(0, 0, w, h);
-
-    const left = 28 * d, right = w - 20 * d, base = h - 28 * d, top = 16 * d;
-    const span = Math.max(fm * 5, 40);
-    const fMin = fc - span, fMax = fc + span;
-    const xOf = f => left + (right - left) * (f - fMin) / (fMax - fMin);
-    const hOf = a => Math.max(3 * d, (a / Math.max(Ac, Am / 2, 1)) * (base - top) * 0.9);
-
-    // axis
-    ctx.strokeStyle = '#475569';
-    ctx.lineWidth = 1.5 * d;
-    ctx.beginPath(); ctx.moveTo(left, base); ctx.lineTo(right, base); ctx.stroke();
-
-    const lines = [
-      { f: fc - fm, a: (ma * Ac) / 2, col: '#94a3b8', lab: 'LSB' },
-      { f: fc,      a: Ac,           col: '#06b6d4', lab: 'fc' },
-      { f: fc + fm, a: (ma * Ac) / 2, col: '#94a3b8', lab: 'USB' }
-    ];
-    lines.forEach(L => {
-      if (L.a <= 0) return;
-      const x = xOf(L.f), hh = hOf(L.a);
-      ctx.strokeStyle = L.col;
-      ctx.lineWidth = 5 * d;
-      ctx.lineCap = 'round';
-      ctx.beginPath(); ctx.moveTo(x, base); ctx.lineTo(x, base - hh); ctx.stroke();
-      ctx.fillStyle = L.col;
-      ctx.font = `${11 * d}px Inter,sans-serif`;
-      ctx.textAlign = 'center';
-      ctx.fillText(L.lab, x, base + 14 * d);
-      ctx.fillText(Math.round(L.f) + '', x, base + 26 * d);
+    // tick labels
+    ctx.fillStyle='#0f172a';ctx.font=`${12*d}px Inter,Arial`;ctx.textAlign='center';
+    const ticks=[fc-fm,fc,fc+fm];
+    const tickLabels=[String(Math.round(fc-fm)),String(Math.round(fc)),String(Math.round(fc+fm))];
+    ticks.forEach((f,i)=>{
+      const x=xOf(f);
+      if(x<left||x>right)return;
+      ctx.beginPath();ctx.moveTo(x,base);ctx.lineTo(x,base+5*d);ctx.stroke();
+      ctx.fillText(tickLabels[i],x,base+18*d);
     });
+
+    // spectral lines: LSB, carrier, USB
+    const lines=[
+      {f:fc-fm, a:am/2, color:'#0f172a', label:'LSB'},
+      {f:fc,    a:ac,   color:'#06b6d4', label:'fc'},
+      {f:fc+fm, a:am/2, color:'#0f172a', label:'USB'}
+    ];
+    lines.forEach(L=>{
+      const x=xOf(L.f), hh=hOf(L.a);
+      ctx.strokeStyle=L.color;ctx.lineWidth=7*d;ctx.lineCap='round';
+      ctx.beginPath();ctx.moveTo(x,base);ctx.lineTo(x,base-hh);ctx.stroke();
+      // tip dot
+      ctx.fillStyle=L.color;ctx.beginPath();ctx.arc(x,base-hh,4*d,0,Math.PI*2);ctx.fill();
+    });
+
+    // legend note
+    ctx.fillStyle='#64748b';ctx.font=`${11*d}px Inter,Arial`;ctx.textAlign='left';
+    ctx.fillText('BW = '+(2*fm)+' kHz', left+6*d, top-4*d);
+
+    ctx.restore();
   }
-
-  /* ---- Solver checks ---- */
-  window.checkStep1 = function() {
-    const val = parseFloat(document.getElementById('ans-step1').value);
-    const fb = document.getElementById('fb-step1');
-    if (Math.abs(val - 0.6) < 0.03) {
-      fb.className = 'feedback ok';
-      fb.textContent = '✓ מעולה! mₐ = 60/100 = 0.6. האפנון תקין (≤ 1).';
-    } else {
-      fb.className = 'feedback err';
-      fb.textContent = '✗ נוסחה: mₐ = Aₘ / Aₑ = 60 / 100 = 0.6';
-    }
-  };
-  window.checkStep2 = function() {
-    const vmax = parseFloat(document.getElementById('ans-vmax').value);
-    const vmin = parseFloat(document.getElementById('ans-vmin').value);
-    const fb = document.getElementById('fb-step2');
-    if (Math.abs(vmax - 160) < 1.5 && Math.abs(vmin - 40) < 1.5) {
-      fb.className = 'feedback ok';
-      fb.textContent = '✓ נכון: Vₘₐₓ = 100+60 = 160 V, Vₘᵢₙ = 100−60 = 40 V';
-    } else {
-      fb.className = 'feedback err';
-      fb.textContent = '✗ Vₘₐₓ = Aₑ + Aₘ = 160 V, Vₘᵢₙ = Aₑ − Aₘ = 40 V';
-    }
-  };
-  window.checkStep3 = function() {
-    const usb = parseFloat(document.getElementById('ans-usb').value);
-    const lsb = parseFloat(document.getElementById('ans-lsb').value);
-    const bw  = parseFloat(document.getElementById('ans-bw').value);
-    const fb = document.getElementById('fb-step3');
-    if (Math.abs(usb - 1005) < 1 && Math.abs(lsb - 995) < 1 && Math.abs(bw - 10) < 0.5) {
-      fb.className = 'feedback ok';
-      fb.textContent = '✓ מדויק: USB=1005 kHz, LSB=995 kHz, BW=10 kHz';
-    } else {
-      fb.className = 'feedback err';
-      fb.textContent = '✗ המר: 1 MHz = 1000 kHz. USB=1005, LSB=995, BW=2×5=10 kHz';
-    }
-  };
-  window.checkStep4 = function() {
-    const pc  = parseFloat(document.getElementById('ans-pc').value);
-    const pam = parseFloat(document.getElementById('ans-pam').value);
-    const fb = document.getElementById('fb-step4');
-    // Pc = 10000/100 = 100; PAM = 100*(1 + 0.36/2) = 118
-    if (Math.abs(pc - 100) < 2 && Math.abs(pam - 118) < 3) {
-      fb.className = 'feedback ok';
-      fb.textContent = '✓ מצוין! Pₑ = 100 W, P_AM = 118 W. נצילות ≈ 15.3%';
-    } else {
-      fb.className = 'feedback err';
-      fb.textContent = '✗ Pₑ = Aₑ²/(2R) = 10000/100 = 100 W. P_AM = 100×(1+0.18) = 118 W';
-    }
-  };
-  window.toggleHint = function(n) {
-    document.getElementById('hint-' + n).classList.toggle('show');
-  };
-  window.submitReflect = function() {
-    const fb = document.getElementById('reflect-fb');
-    fb.className = 'feedback ok';
-    fb.textContent = '✓ המשוב נרשם. תודה! (בגרסת הכיתה הוא נשלח למרצה)';
-  };
-
-  // init
-  updateLab();
-  addEventListener('resize', () => { if (document.getElementById('tab-lab').classList.contains('active')) updateLab(); });
+function drawVisible(){requestAnimationFrame(()=>{amWave(document.getElementById('coverWave'),.6);drawOscillator();amWave(document.getElementById('envelopeWave'),.7);spectrum(document.getElementById('spectrumCanvas'));updateSim()})}
+  addEventListener('resize',drawVisible);show(0);
 })();
 </script>
 </body>

@@ -10,12 +10,19 @@ export function EmptyContent({ title, children }: { title: string; children: Rea
 }
 
 export function LessonCard({ lesson }: { lesson: CourseLesson }) {
+  const lessonPlan = lesson.resources.find((resource) => resource.kind === "lesson-html");
+  const homePractice = lesson.resources.find((resource) => resource.kind === "exercise");
+
   return (
     <article className="lesson-card">
       <div className="lesson-card-top"><p className="item-kicker">שיעור</p><span>{lesson.number.toString().padStart(2, "0")}</span></div>
       <h2>{lesson.title}</h2>
       {lesson.topics.length > 0 && <p className="topic-list">{lesson.topics.join(" · ")}</p>}
-      <LessonOpenLink className="text-link" href={lessonHref(lesson)} lessonId={lesson.lessonId} resourceId="lesson-main-html">פתח חומרי שיעור <bdi>←</bdi></LessonOpenLink>
+      <div className="lesson-card-actions">
+        {lessonPlan && <LessonOpenLink className="lesson-card-action primary" href={lessonPlan.href} lessonId={lesson.lessonId} resourceId={lessonPlan.resourceId} resourceKind={lessonPlan.kind}>למערך השיעור <bdi>←</bdi></LessonOpenLink>}
+        {homePractice && <LessonOpenLink className="lesson-card-action" href={homePractice.href} lessonId={lesson.lessonId} resourceId={homePractice.resourceId} resourceKind={homePractice.kind}>לתרגול אינטראקטיבי <bdi>←</bdi></LessonOpenLink>}
+        {!lessonPlan && <LessonOpenLink className="lesson-card-action primary" href={lessonHref(lesson)} lessonId={lesson.lessonId} resourceId="lesson-main-html">לחומרי השיעור <bdi>←</bdi></LessonOpenLink>}
+      </div>
     </article>
   );
 }
