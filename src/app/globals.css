@@ -1669,6 +1669,10 @@ th {
     padding-block: 48px 80px;
   }
 
+  .course-main-concept-map {
+    width: min(92%, 1560px);
+  }
+
   .workspace-main {
     width: min(100% - 64px, 1120px);
   }

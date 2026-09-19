@@ -26,7 +26,7 @@ export default function ConceptMap({ entries }: { entries: Entry[] }) {
     </Link>;
   }
   return <div className={styles.map} dir="rtl">
-    <header className={styles.hero}><p className="item-kicker">מערכות תקשורת · 11.9004 · סמסטר א׳</p><h1>מפת המושגים</h1><p>רואים את הקשרים. מבינים את התמונה.</p><span>מהאנטנה ועד לאפנון — הסברים, נוסחאות ודוגמאות שמחברים את חומרי הקורס.</span><div className={styles.heroStats}><span>{entries.length} מושגים</span><span>4 שיעורים</span><span>למידה דרך קשרים</span></div></header>
+    <header className={styles.hero}><div className={styles.heroContent}><p className="item-kicker">מערכות תקשורת · 11.9004 · סמסטר א׳</p><h1>מפת המושגים</h1><p>רואים את הקשרים. מבינים את התמונה.</p><span>מהאנטנה ועד לאפנון — הסברים, נוסחאות ודוגמאות שמחברים את חומרי הקורס.</span></div><div className={styles.heroStats}><span>{entries.length} מושגים</span><span>4 שיעורים</span><span>למידה דרך קשרים</span></div></header>
     <section className={styles.controls} aria-label="חיפוש וסינון מושגים">
       <label className={styles.search}>מה רוצים להבין היום?<input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="חיפוש מושג, מונח באנגלית או נוסחה — למשל קולפיץ, Fourier, AM" /></label>
       <fieldset><legend>לפי שיעור</legend><div className={styles.pills}><button aria-pressed={lesson === "all"} onClick={() => setLesson("all")}>כל השיעורים</button>{lessons.map((item, i) => <button key={item} aria-pressed={lesson === item} onClick={() => setLesson(item)}>{item} · {lessonTitles[i]}</button>)}</div></fieldset>
