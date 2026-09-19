@@ -1049,7 +1049,7 @@ th {
 
 /* Page intro (lessons, formulas, concepts) */
 .course-page-hero {
-  padding: clamp(24px, 4vw, 40px);
+  padding: clamp(24px, 3vw, 30px);
   color: white;
   background: radial-gradient(circle at 10% 90%, #8b5cf630, transparent 40%), linear-gradient(145deg, #0f172a, #1e293b 60%, #0e7490 140%);
   border-radius: var(--radius-lg);
@@ -1062,7 +1062,7 @@ th {
 }
 
 .course-page-hero h1 {
-  margin: 0 0 12px;
+  margin: 0 0 8px;
   color: white;
   font-size: clamp(2rem, 4vw, 3rem);
 }
@@ -1078,8 +1078,8 @@ th {
 .course-page-hero-stats {
   display: flex;
   flex-wrap: wrap;
-  gap: 12px;
-  margin-top: 26px;
+  gap: 8px;
+  margin-top: 18px;
   color: #cffafe;
   font-size: .82rem;
 }
@@ -1116,14 +1116,14 @@ th {
 .formula-list {
   display: grid;
   gap: 16px;
-  margin-top: 28px;
+  margin-top: 18px;
 }
 
 .lesson-card,
 .formula-card,
 .empty-content,
 .detail-section {
-  padding: 24px;
+  padding: 20px;
   background: var(--surface);
   border: 1px solid var(--line);
   border-radius: var(--radius-md);
@@ -1134,7 +1134,7 @@ th {
 .lesson-card {
   display: flex;
   flex-direction: column;
-  min-height: 230px;
+  min-height: 190px;
 }
 
 .lesson-card:hover,
@@ -1171,7 +1171,7 @@ th {
 .formula-card h2,
 .empty-content h2,
 .detail-section h2 {
-  margin: 16px 0 10px;
+  margin: 12px 0 8px;
   font-size: 1.2rem;
   font-weight: 700;
   letter-spacing: -0.02em;
@@ -1193,7 +1193,7 @@ th {
   align-items: center;
   gap: 6px;
   margin-top: auto;
-  padding-top: 16px;
+  padding-top: 12px;
   font-weight: 700;
   color: var(--accent-dark);
   text-decoration: none;
@@ -1671,6 +1671,28 @@ th {
 
   .course-main-concept-map {
     width: min(92%, 1560px);
+  }
+
+  .course-main-wide {
+    width: min(92%, 1560px);
+  }
+
+  .course-main-wide .course-page-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 28px;
+    align-items: center;
+  }
+
+  .course-main-wide .course-page-hero-stats {
+    display: grid;
+    justify-items: start;
+    min-width: 132px;
+    margin: 0;
+  }
+
+  .course-main-wide .lesson-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .workspace-main {

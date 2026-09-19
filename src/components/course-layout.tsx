@@ -22,6 +22,7 @@ export default function CourseLayout({ children }: { children: React.ReactNode }
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const context = breadcrumbLabel(pathname);
   const isConceptMap = pathname.endsWith("/concepts") || pathname === "/concepts";
+  const isCourseCollection = pathname.endsWith("/lessons") || pathname.endsWith("/formulas");
   const productNavigation = <nav className="product-nav" aria-label="ניווט Syllo"><Link href="/"><span aria-hidden="true">⌂</span><span className="nav-label">בית</span></Link><Link href="/"><span aria-hidden="true">▦</span><span className="nav-label">הקורסים שלי</span></Link></nav>;
   const courseNavigation = <nav className="course-nav" aria-label={`ניווט ${course.title}`}><Link href={courseAppPath()}><span aria-hidden="true">⌂</span><span className="nav-label">בית הקורס</span></Link><Link href={courseAppPath("lessons")}><span aria-hidden="true">▤</span><span className="nav-label">מערכי שיעור</span></Link><Link href={courseAppPath("formulas")}><span aria-hidden="true">ƒ</span><span className="nav-label">נוסחאון</span></Link><Link href={courseAppPath("concepts")}><span aria-hidden="true">⌘</span><span className="nav-label">מפת מושגים</span></Link></nav>;
 
@@ -50,7 +51,7 @@ export default function CourseLayout({ children }: { children: React.ReactNode }
         <div className="mobile-product-row"><Link className="course-mobile-brand" href="/" aria-label="Syllo — דף הבית"><img className="brand-logo" src="/brand/syllo-logo.png" alt="Syllo" width="112" height="48" /></Link>{productNavigation}</div>
         <p className="mobile-course-context">{course.title}</p>{courseNavigation}
       </header>
-      <main className={`course-main${isConceptMap ? " course-main-concept-map" : ""}`}>
+      <main className={`course-main${isConceptMap ? " course-main-concept-map" : ""}${isCourseCollection ? " course-main-wide" : ""}`}>
         <nav className="breadcrumbs" aria-label="פירורי לחם"><Link href="/">Syllo</Link><span aria-hidden="true">/</span><Link href={courseAppPath()}>{course.title}</Link>{context && <><span aria-hidden="true">/</span><span>{context}</span></>}</nav>
         {children}
       </main>
