@@ -2,20 +2,24 @@ import { NextResponse } from "next/server";
 import { getSql } from "../../../../lib/db";
 import { hasValidLecturerSyncToken } from "../../../../lib/lecturer-auth";
 import { parseLecturerSession } from "../../../../lib/lecturer-session";
+import { extensionCorsHeaders } from "../../../../lib/extension-cors";
+import { ensureLecturerSessionSchema } from "../../../../lib/learning-schema";
 
 export const runtime = "nodejs";
 
-export async function OPTIONS() {
-  return new NextResponse(null, { status: 204, headers: corsHeaders() });
+export async function OPTIONS(request: Request) {
+  return new NextResponse(null, { status: 204, headers: extensionCorsHeaders(request) });
 }
 
 export async function POST(request: Request) {
-  if (!hasValidLecturerSyncToken(request.headers.get("authorization"))) return NextResponse.json({ error: "unauthorized" }, { status: 401, headers: corsHeaders() });
+  const cors = extensionCorsHeaders(request);
+  if (!hasValidLecturerSyncToken(request.headers.get("authorization"))) return NextResponse.json({ error: "unauthorized" }, { status: 401, headers: cors });
   let body: unknown;
-  try { body = await request.json(); } catch { return NextResponse.json({ error: "invalid_request" }, { status: 400, headers: corsHeaders() }); }
+  try { body = await request.json(); } catch { return NextResponse.json({ error: "invalid_request" }, { status: 400, headers: cors }); }
   const session = parseLecturerSession(body);
-  if (!session) return NextResponse.json({ error: "invalid_session" }, { status: 400, headers: corsHeaders() });
+  if (!session) return NextResponse.json({ error: "invalid_session" }, { status: 400, headers: cors });
   try {
+    await ensureLecturerSessionSchema();
     const sql = getSql();
     const existing = await sql`SELECT id FROM lecturer_sessions WHERE session_id = ${session.sessionId}` as unknown as Array<{ id: string }>;
     const rows = await sql`
@@ -37,14 +41,9 @@ export async function POST(request: Request) {
         VALUES (${observations[0].id}, ${annotation.type}, ${annotation.timestamp})
       `;
     }
-    return NextResponse.json({ sessionId: session.sessionId, syncedAt: new Date().toISOString() }, { status: existing.length ? 200 : 201, headers: corsHeaders() });
+    return NextResponse.json({ sessionId: session.sessionId, syncedAt: new Date().toISOString() }, { status: existing.length ? 200 : 201, headers: cors });
   } catch (error) {
     console.error("Unable to store lecturer session", error);
-    return NextResponse.json({ error: "storage_unavailable" }, { status: 500, headers: corsHeaders() });
+    return NextResponse.json({ error: "storage_unavailable" }, { status: 500, headers: cors });
   }
-}
-
-function corsHeaders(): Record<string, string> {
-  const origin = process.env.SYLLO_EXTENSION_ORIGIN;
-  return origin ? { "Access-Control-Allow-Origin": origin, "Access-Control-Allow-Headers": "Authorization, Content-Type", "Access-Control-Allow-Methods": "POST, OPTIONS", Vary: "Origin" } : {};
 }
