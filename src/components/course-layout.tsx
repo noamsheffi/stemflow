@@ -2,8 +2,18 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { course, courseAppPath, getLesson } from "../lib/course-data";
+
+const sidebarStorageKey = "syllo:course-sidebar-collapsed";
+
+function getStoredSidebarState() {
+  try {
+    return window.localStorage.getItem(sidebarStorageKey) === "true";
+  } catch {
+    return false;
+  }
+}
 
 function breadcrumbLabel(pathname: string) {
   if (pathname.includes("/lessons/")) {
@@ -21,6 +31,21 @@ function breadcrumbLabel(pathname: string) {
 export default function CourseLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  useLayoutEffect(() => {
+    setSidebarCollapsed(getStoredSidebarState());
+  }, []);
+
+  const toggleSidebar = () => {
+    setSidebarCollapsed((collapsed) => {
+      const nextState = !collapsed;
+      try {
+        window.localStorage.setItem(sidebarStorageKey, String(nextState));
+      } catch {
+        // The sidebar still works when browser storage is unavailable.
+      }
+      return nextState;
+    });
+  };
   const context = breadcrumbLabel(pathname);
   const isConceptMap = pathname.endsWith("/concepts") || pathname === "/concepts";
   const isCourseCollection = pathname.endsWith("/lessons") || pathname.endsWith("/formulas");
@@ -35,7 +60,7 @@ export default function CourseLayout({ children }: { children: React.ReactNode }
     <button
       className="course-sidebar-toggle"
       type="button"
-      onClick={() => setSidebarCollapsed((collapsed) => !collapsed)}
+      onClick={toggleSidebar}
       aria-expanded={!sidebarCollapsed}
       aria-label={sidebarCollapsed ? "פתיחת סרגל הניווט" : "קיפול סרגל הניווט"}
       title={sidebarCollapsed ? "פתיחת ניווט" : "קיפול ניווט"}
