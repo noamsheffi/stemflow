@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import { course, courseAppPath, getLesson } from "../lib/course-data";
 
 function breadcrumbLabel(pathname: string) {
@@ -18,13 +19,24 @@ function breadcrumbLabel(pathname: string) {
 
 export default function CourseLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const context = breadcrumbLabel(pathname);
   const productNavigation = <nav className="product-nav" aria-label="ניווט Syllo"><Link href="/">בית</Link><Link href="/">הקורסים שלי</Link></nav>;
   const courseNavigation = <nav className="course-nav" aria-label={`ניווט ${course.title}`}><Link href={courseAppPath()}><span aria-hidden="true">⌂</span>בית הקורס</Link><Link href={courseAppPath("lessons")}><span aria-hidden="true">▤</span>מערכי שיעור</Link><Link href={courseAppPath("formulas")}><span aria-hidden="true">ƒ</span>נוסחאון</Link><Link href={courseAppPath("concepts")}><span aria-hidden="true">⌘</span>מפת מושגים</Link></nav>;
 
-  return <div className="course-shell">
+  return <div className={`course-shell${sidebarCollapsed ? " sidebar-collapsed" : ""}`}>
+    <button
+      className="course-sidebar-toggle"
+      type="button"
+      onClick={() => setSidebarCollapsed((collapsed) => !collapsed)}
+      aria-expanded={!sidebarCollapsed}
+      aria-label={sidebarCollapsed ? "פתיחת סרגל הניווט" : "קיפול סרגל הניווט"}
+      title={sidebarCollapsed ? "פתיחת ניווט" : "קיפול ניווט"}
+    >
+      <span aria-hidden="true">{sidebarCollapsed ? "‹" : "›"}</span>
+    </button>
     <aside className="course-sidebar" aria-label="ניווט סביבת הלמידה">
-      <Link className="course-brand" href="/"><span className="course-mark course-mark-logo" aria-hidden="true" /><span><strong>Syllo</strong><small>סביבת למידה</small></span></Link>
+      <Link className="course-brand" href="/" aria-label="Syllo — דף הבית"><img className="brand-logo" src="/brand/syllo-logo.png" alt="Syllo" width="132" height="56" /></Link>
       <p className="course-nav-label">Syllo</p>{productNavigation}
       <div className="course-divider" />
       <p className="course-nav-label">קורס</p>
@@ -33,7 +45,7 @@ export default function CourseLayout({ children }: { children: React.ReactNode }
     </aside>
     <section className="course-workspace">
       <header className="course-mobile-header">
-        <div className="mobile-product-row"><Link className="course-mobile-brand" href="/"><span className="course-mark course-mark-logo" aria-hidden="true" /><strong>Syllo</strong></Link>{productNavigation}</div>
+        <div className="mobile-product-row"><Link className="course-mobile-brand" href="/" aria-label="Syllo — דף הבית"><img className="brand-logo" src="/brand/syllo-logo.png" alt="Syllo" width="112" height="48" /></Link>{productNavigation}</div>
         <p className="mobile-course-context">{course.title}</p>{courseNavigation}
       </header>
       <main className="course-main">
