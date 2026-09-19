@@ -7,3 +7,12 @@ node_modules/
 .env.local
 .env.*.local
 !.env.example
+.vercel
+.env*
+
+# Local operating-system metadata and exported student-response data.
+.DS_Store
+broad-term-28141531_main_neondb_2026-09-16_23-04-36.csv
+
+# Local Grok design-handoff artifacts are not application source.
+exports/

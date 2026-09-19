@@ -1,0 +1,37 @@
+import Link from "next/link";
+
+import CourseLayout from "../../../components/course-layout";
+import LessonOpenLink from "../../../components/lesson-open-link";
+import { course, lessonHref, lessons } from "../../../lib/course-data";
+
+export default function CourseHomePage() {
+  const latestLesson = lessons.at(-1);
+
+  return (
+    <CourseLayout>
+      <section className="course-hero">
+        <div>
+          <p className="item-kicker">קורס פעיל · מרצה: {course.lecturer}</p>
+          <h1>ברוכים הבאים לקורס<br />{course.title}</h1>
+          <p>כל מערכי השיעור, התרגולים והידע של הקורס—במקום אחד.</p>
+        </div>
+        <div className="course-hero-action">
+          <span>המשך מהשיעור האחרון</span>
+          {latestLesson ? <LessonOpenLink href={lessonHref(latestLesson)} lessonId={latestLesson.lessonId} resourceId="lesson-main-html">שיעור {latestLesson.number.toString().padStart(2, "0")} <bdi>←</bdi></LessonOpenLink> : <Link href="/lessons">למערכי השיעור <bdi>←</bdi></Link>}
+        </div>
+      </section>
+
+      <section className="course-shortcuts" aria-label="גישה מהירה">
+        <Link href="/lessons"><i aria-hidden="true">▤</i><strong>מערכי שיעור</strong><span>מצגות, חומרים ותרגול עצמי</span><bdi aria-hidden="true">←</bdi></Link>
+        <Link href="/formulas"><i aria-hidden="true">ƒ</i><strong>נוסחאון</strong><span>נוסחה, משמעות והקשר בקורס</span><bdi aria-hidden="true">←</bdi></Link>
+        <Link href="/concepts"><i aria-hidden="true">⌘</i><strong>מפת מושגים</strong><span>הקשרים בין הנושאים שלמדנו</span><bdi aria-hidden="true">←</bdi></Link>
+      </section>
+
+      <section className="course-status" aria-label="סטטוס תוכן הקורס">
+        <div><span>שיעורים זמינים</span><strong>{lessons.length}</strong><small>כולל מערכים ותרגולים</small></div>
+        <div><span>השיעור האחרון</span><strong>{latestLesson ? `שיעור ${latestLesson.number.toString().padStart(2, "0")}` : "טרם נרשם"}</strong><small>{latestLesson?.title ?? ""}</small></div>
+        <div><span>מצב הקורס</span><strong>מתקדם בהדרגה</strong><small>הידע נבנה יחד עם השיעורים</small></div>
+      </section>
+    </CourseLayout>
+  );
+}

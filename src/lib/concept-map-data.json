@@ -1,0 +1,511 @@
+[
+  {
+    "id": "block-diagram",
+    "title": "תרשים מלבנים של מערכת תקשורת",
+    "english": "Communication System Block Diagram",
+    "lesson": "שיעור 1",
+    "lesson_file": "lesson-1-guide.md",
+    "category": "ארכיטקטורה",
+    "summary": "המודל האוניברסלי המתאר העברת מידע: מקור -> משדר (Tx) -> תווך שידור (Channel) + רעש (Noise) -> מקלט (Rx) -> יעד.",
+    "details": "כל מערכת תקשורת בעולם (מסלולר ועד לוויינים) מבוססת על 5 הבלוקים הללו. המשדר מכין את האות (אפנון, הגברה), התווך מעביר אותו תוך ניחות, הרעש מתווסף באופן אקראי, והמקלט מסנן ומחלץ את המידע.",
+    "formulas": [
+      "P_{out} = P_{in} \\cdot L"
+    ],
+    "exam_trap": "שכחת בלוק הרעש בשרטוט! הרעש תמיד מתווסף בערוץ (התווך) ולא בתוך המשדר.",
+    "real_world": "שיחת וואטסאפ: הסמארטפון שלך (Tx), האוויר והסיב האופטי (Channel + Noise), הסמארטפון של החבר (Rx).",
+    "connections": [
+      "transmitter",
+      "receiver",
+      "channel-noise",
+      "simplex-duplex"
+    ]
+  },
+  {
+    "id": "transmitter",
+    "title": "משדר (Tx)",
+    "english": "Transmitter",
+    "lesson": "שיעור 1",
+    "lesson_file": "lesson-1-guide.md",
+    "category": "רכיבים ומעגלים",
+    "summary": "רכיב הממיר את אות המידע לאות חשמלי/אלקטרומגנטי המותאם לשידור בתווך.",
+    "details": "המשדר מכיל מתנד (ייצור גל נושא), מאפנן (הרכבת המידע על הנושא), ומגבר הספק (RF Power Amplifier) המזין את האנטנה.",
+    "formulas": [
+      "P_{Tx} = P_c \\left(1 + \\frac{m_a^2}{2}\\right)"
+    ],
+    "exam_trap": "בלבול בין תפקיד המשדר לתפקיד האנטנה. המשדר מייצר את האות החשמלי; האנטנה ממירה אותו לגלים אלקטרומגנטיים.",
+    "real_world": "משדר תחנת הרדיו גלגלצ בגלבוע המשדר ב-91.8MHz בהספק של קילו-וואטים.",
+    "connections": [
+      "block-diagram",
+      "carrier-wave",
+      "modulation-am",
+      "oscillator"
+    ]
+  },
+  {
+    "id": "receiver",
+    "title": "מקלט (Rx)",
+    "english": "Receiver",
+    "lesson": "שיעור 1",
+    "lesson_file": "lesson-1-guide.md",
+    "category": "רכיבים ומעגלים",
+    "summary": "רכיב הקולט את האות המונחת מהתווך, מסנן רעשים, ומחלץ את אות המידע המקורי.",
+    "details": "מקלט מודרני (סופר-הטרודיין) מכיל מסנן דרגה ראשונה, מפרק/גלאי (Demodulator), מתנד מקומי (LO), וערבל (Mixer) להמרת תדר ל-IF.",
+    "formulas": [
+      "f_{IF} = |f_{RF} - f_{LO}|"
+    ],
+    "exam_trap": "הנחה שהמקלט רק מגביר. תפקידו הקריטי ביותר הוא סינון סלקטיבי (BPF) והפרדת האות המבוקש מהרעש.",
+    "real_world": "רדיו לרכב או רכיב ה-Wi-Fi בסמארטפון המסנן את התחנה המבוקשת מתוך אלפי אותות באוויר.",
+    "connections": [
+      "block-diagram",
+      "local-oscillator",
+      "filters",
+      "demodulation"
+    ]
+  },
+  {
+    "id": "channel-noise",
+    "title": "תווך שידור ורעש",
+    "english": "Channel & Noise",
+    "lesson": "שיעור 1",
+    "lesson_file": "lesson-1-guide.md",
+    "category": "תופעות פיזיקליות",
+    "summary": "הערוץ הפיזי שבו עובר האות (אוויר/סיב) והפרעות אקראיות המתווספות אליו.",
+    "details": "התווך יכול להיות מודרך (סיב אופטי, כבל קואקסיאלי) או לא-מודרך (התפשטות באוויר/וואקום). הרעש התרמי (Thermal Noise) הוא בלתי נמנע ונובע מתנועת אלקטרונים.",
+    "formulas": [
+      "N = k \\cdot T \\cdot BW"
+    ],
+    "exam_trap": "בלבול בין ניחות (החלשת עוצמה) לרעש (תוספת אות אקראי). ניחות ניתן לתיקון ע\"י הגברה; רעש מגביל את יחס SNR.",
+    "real_world": "ניחות קליטת Wi-Fi כשעוברים לחדר ממ\"ד (חסימת בטון) מלווה ברעש מכשיר מיקרוגל.",
+    "connections": [
+      "block-diagram",
+      "wave-propagation",
+      "thermal-noise",
+      "bandwidth"
+    ]
+  },
+  {
+    "id": "simplex-duplex",
+    "title": "כיווניות שידור",
+    "english": "Transmission Directionality",
+    "lesson": "שיעור 1",
+    "lesson_file": "lesson-1-guide.md",
+    "category": "ארכיטקטורה",
+    "summary": "האופן שבו זורם המידע בין קצוות המערכת: Simplex, Half-Duplex, Full-Duplex.",
+    "details": "Simplex: חד-כיווני בלבד. Half-Duplex: דו-כיווני לסירוגין (שידור או קליטה). Full-Duplex: דו-כיווני בו-זמנית (שידור וקליטה במקביל).",
+    "formulas": [],
+    "exam_trap": "בלבול בין מכשיר קשר (Half-Duplex) לטלפון סלולרי (Full-Duplex).",
+    "real_world": "Simplex = רדיו AM/FM. Half-Duplex = ווקי-טוקי (לחיצה לדיבור). Full-Duplex = שיחת סלולר.",
+    "connections": [
+      "block-diagram",
+      "transmitter",
+      "receiver"
+    ]
+  },
+  {
+    "id": "wave-propagation",
+    "title": "תצורות התפשטות גלים",
+    "english": "Wave Propagation Modes",
+    "lesson": "שיעור 1",
+    "lesson_file": "lesson-1-guide.md",
+    "category": "תופעות פיזיקליות",
+    "summary": "3 הדרכים שבהן גל אלקטרומגנטי נע במרחב: גל ישיר (LOS), גל קרקע, וגל רקיע.",
+    "details": "גל ישיר (LOS): קו ראייה (VHF/UHF, סלולר, Wi-Fi). גל קרקע: עוקב אחר קימור כדור הארץ (LF/MF, רדיו AM). גל רקיע: החזרה מהיונוספירה (HF, קשר גלובלי).",
+    "formulas": [
+      "d \\approx 80\\sqrt{2h_k}"
+    ],
+    "exam_trap": "שימוש בנוסחת האופק הגיאומטרי בלי להמיר את גובה האנטנה h לקילומטרים!",
+    "real_world": "קשר חובבי רדיו בינלאומי ב-HF מול רשת סלולרית דור 5 (LOS בלבד).",
+    "connections": [
+      "channel-noise",
+      "wavelength-antenna",
+      "frequency-domain"
+    ]
+  },
+  {
+    "id": "wavelength-antenna",
+    "title": "אורך גל ואנטנות",
+    "english": "Wavelength & Antennas",
+    "lesson": "שיעור 1",
+    "lesson_file": "lesson-1-guide.md",
+    "category": "רכיבים ומעגלים",
+    "summary": "הקשר ההפוך בין תדר לאורך גל, והתאמת אורך האנטנה הפיזית לחיזוי הקליטה.",
+    "details": "אנטנה היא מתמר הממיר אנרגיה חשמלית לגלים אלקטרומגנטיים. אנטנת דיפול נדרשת לאורך חצי גל (λ/2); אנטנת מונופול נדרשת לרבע גל (λ/4).",
+    "formulas": [
+      "\\lambda = \\frac{c}{f}",
+      "L_{dipole} = \\frac{\\lambda}{2}",
+      "L_{monopole} = \\frac{\\lambda}{4}"
+    ],
+    "exam_trap": "שכחת המרת תדר מ-MHz ל-Hz (הכפלה ב-10^6) לפני חישוב λ!",
+    "real_world": "אנטנת סמארטפון בתדר 3.5GHz באורך 2 ס\"מ מול אנטנת רדיו AM בתדר 1MHz באורך 75 מטר.",
+    "connections": [
+      "wave-propagation",
+      "frequency-domain",
+      "modulation-need"
+    ]
+  },
+  {
+    "id": "filters",
+    "title": "מסננים (Filters) ורוחב פס",
+    "english": "Filters & Cutoff Frequency",
+    "lesson": "שיעור 1",
+    "lesson_file": "lesson-1-guide.md",
+    "category": "רכיבים ומעגלים",
+    "summary": "רכיבים הסלקטיביים לתדר: LPF, HPF, BPF, BSF ותדר הקטיעה fc.",
+    "details": "מסנן מעביר רק תחום תדרים מבוקש. תדר הקטיעה fc מוגדר בנקודת ה-3dB- שבה הספק המוצא יורד למחצית (P_out = 0.5 P_in).",
+    "formulas": [
+      "P_{out}(f_c) = 0.5 \\cdot P_{in}",
+      "A_{dB} = 10 \\log_{10}\\left(\\frac{P_{out}}{P_{in}}\\right)"
+    ],
+    "exam_trap": "בלבול בין תדר קטיעה (fc) ב-3dB- לבין תדר תהודה (f0).",
+    "real_world": "בורר התחנות ברדיו (BPF) המבודד את תחנת 91.8MHz מכל שאר השידורים באוויר.",
+    "connections": [
+      "receiver",
+      "bandwidth",
+      "harmonics-fourier"
+    ]
+  },
+  {
+    "id": "periodic-random",
+    "title": "אות מחזורי מול אות אקראי",
+    "english": "Periodic vs. Random Signals",
+    "lesson": "שיעור 2",
+    "lesson_file": "lesson-2-guide-v2.md",
+    "category": "תופעות פיזיקליות",
+    "summary": "ההבדל היסודי בתורת המידע: אות מחזורי צפוי לחלוטין ולכן נושא 0 מידע חדש.",
+    "details": "אות מחזורי מקיים x(t) = x(t+T). מכיוון שצורתו ידועה מראש לכל t, הוא אינו מחדש דבר למקלט. מידע אמיתי (קול, וידאו, הודעות) חייב להיות אות אקראי ובלתי צפוי.",
+    "formulas": [
+      "x(t) = x(t + T)",
+      "f_0 = \\frac{1}{T}"
+    ],
+    "exam_trap": "קביעה מוטעית שגל סינוס מחזורי מעביר מידע. הגל הנושא הוא מחזורי, אך המידע הוא האפנון האקראי המולבש עליו!",
+    "real_world": "צפצוף בדיקה אחיד (0 מידע) מול הודעת קולית בוואטסאפ (אות אקראי נושא מידע).",
+    "connections": [
+      "time-freq-domains",
+      "harmonics-fourier",
+      "carrier-wave"
+    ]
+  },
+  {
+    "id": "time-freq-domains",
+    "title": "תחום הזמן מול תחום התדר",
+    "english": "Time Domain vs. Frequency Domain",
+    "lesson": "שיעור 2",
+    "lesson_file": "lesson-2-guide-v2.md",
+    "category": "ניתוח ספקטרלי",
+    "summary": "שתי נקודות מבט משלימות על אותו אות חשמלי: אוסצילוסקופ (זמן) מול מנתח ספקטרום (תדר).",
+    "details": "בתחום הזמן מודדים מתח כפונקציה של זמן v(t). בתחום התדר (ספקטרום) מציגים את התנופות של הרכיבים הסינוסואידליים המרכיבים את האות כפונקציה של תדר f.",
+    "formulas": [
+      "v(t) = A_0 \\cos(\\omega_0 t + \\phi)",
+      "\\omega_0 = 2\\pi f_0"
+    ],
+    "exam_trap": "שרטוט מחט בספקטרום עם ציר זמן, או קריאת תדר מתוך ציר x באוסצילוסקופ בלי לחשב 1/T.",
+    "real_world": "אוסצילוסקופ במעבדה לבדיקת צורת גל מול מנתח ספקטרום (Spectrum Analyzer) לבדיקת חריגות תדר.",
+    "connections": [
+      "periodic-random",
+      "harmonics-fourier",
+      "bandwidth"
+    ]
+  },
+  {
+    "id": "harmonics-fourier",
+    "title": "טור פורייה והרמוניות",
+    "english": "Fourier Series & Harmonics",
+    "lesson": "שיעור 2",
+    "lesson_file": "lesson-2-guide-v2.md",
+    "category": "ניתוח ספקטרלי",
+    "summary": "כל אות מחזורי מורכב מסכום של גלי סינוס בתדר יסודי f0 ובהרמוניות (n·f0).",
+    "details": "משפט פורייה קובע כי אות מחזורי מורכב מרכיב DC, תדר יסודי f0 = 1/T, והרמוניות 2f0, 3f0, 4f0... התדר היסודי של אות מורכב נקבע ע\"י המחלק המשותף המרבי (GCD) של תדרי רכיביו.",
+    "formulas": [
+      "f_0 = \\text{GCD}(f_1, f_2, \\dots)",
+      "f_n = n \\cdot f_0"
+    ],
+    "exam_trap": "שכחת החלוקה ב-2π לחילוץ תדר ב-Hz מתוך הביטוי הזוויתי ω (למשל 1000πt פירושו f=500Hz).",
+    "real_world": "צליל של פסנתר מול גיטרה המנגנים את אותו תו A (440Hz) – השוני בצליל נובע מפיזור עוצמת ההרמוניות.",
+    "connections": [
+      "time-freq-domains",
+      "bandwidth",
+      "filters"
+    ]
+  },
+  {
+    "id": "bandwidth",
+    "title": "רוחב פס (Bandwidth - BW)",
+    "english": "Bandwidth",
+    "lesson": "שיעור 2",
+    "lesson_file": "lesson-2-guide-v2.md",
+    "category": "ניתוח ספקטרלי",
+    "summary": "המשאב היקר ביותר בתקשורת: תחום התדרים [Hz] שאותו תופס האות בספקטרום.",
+    "details": "רוחב הפס מוגדר כהפרש בין התדר הגבוה ביותר לתדר הנמוך ביותר באות: BW = f_max - f_min. ככל שרוחב הפס גדול יותר, האות יכול להעביר קצב נתונים גבוה יותר.",
+    "formulas": [
+      "BW = f_{max} - f_{min}",
+      "BW_{AM} = 2 f_m"
+    ],
+    "exam_trap": "חישוב רוחב פס כסכום התדרים במקום הפרש בין תדר מקסימלי למינימלי בספקטרום.",
+    "real_world": "ערוץ Wi-Fi ברוחב 20MHz מול ערוץ סלולר 5G ברוחב 100MHz המאפשר מהירות הורדה של גיגה-ביט.",
+    "connections": [
+      "time-freq-domains",
+      "harmonics-fourier",
+      "spectrum-am"
+    ]
+  },
+  {
+    "id": "oscillator",
+    "title": "מתנד (Oscillator)",
+    "english": "Electronic Oscillator",
+    "lesson": "שיעור 3",
+    "lesson_file": "lesson-3-guide.md",
+    "category": "רכיבים ומעגלים",
+    "summary": "הלב הפועם של המשדר והמקלט: מעגל הממיר מתח ישר (DC) לאות סינוס מחזורי (AC).",
+    "details": "מתנד אינו זקוק לאות מבוא חיצוני. הוא משתמש ברעש תרמי ראשוני (Thermal Noise) ובחוג משוב חיובי מתוזמן כדי להצמיח ולשמור על תנודה סינוסואידלית יציבה בתדר תהודה f0.",
+    "formulas": [
+      "v_{out}(t) = A_0 \\cos(\\omega_0 t + \\phi)",
+      "A_{cl} = \\frac{A}{1 - A\\beta}"
+    ],
+    "exam_trap": "הנחה שמתנד מייצר אנרגיה מכלום. הוא ממיר אנרגיית DC מספק הכוח לאנרגיית AC תנודתית!",
+    "real_world": "רכיב השעון (Crystal Oscillator) בסמארטפון ובמחשב המסנכרן את הביטים והמעבד.",
+    "connections": [
+      "barkhausen",
+      "thermal-noise",
+      "colpitts-hartley",
+      "wien-bridge",
+      "carrier-wave"
+    ]
+  },
+  {
+    "id": "thermal-noise",
+    "title": "התנעה מרעש תרמי",
+    "english": "Thermal Noise Oscillator Startup",
+    "lesson": "שיעור 3",
+    "lesson_file": "lesson-3-guide.md",
+    "category": "תופעות פיזיקליות",
+    "summary": "מאיפה מופיע הסינוס ללא מבוא? מכת רעש תרמי אקראי ברגע הדלקת ה-DC.",
+    "details": "ברגע חיבור הספק, תנועת האלקטרונים מייצרת רעש לבן רחב תדרים. רשת המשוב המסננת מעבירה רק את תדר f0. בשלב ההתנעה |Aβ| > 1 והאות גדל אקספוננציאלית עד להתייצבות ברוויה |Aβ| = 1.",
+    "formulas": [
+      "|A \\cdot \\beta|_{startup} > 1",
+      "|A \\cdot \\beta|_{steady} = 1"
+    ],
+    "exam_trap": "אי-הבחנה בין תנאי ההתנעה (|Aβ|>1) לבין מצב מתמיד (|Aβ|=1).",
+    "real_world": "התנעת מנוע רכב או דחיפת נדנדה מהמקום מול שמירה על מהירות קבועה.",
+    "connections": [
+      "oscillator",
+      "barkhausen",
+      "channel-noise"
+    ]
+  },
+  {
+    "id": "barkhausen",
+    "title": "קריטריון ברקהאוזן",
+    "english": "Barkhausen Criterion",
+    "lesson": "שיעור 3",
+    "lesson_file": "lesson-3-guide.md",
+    "category": "תופעות פיזיקליות",
+    "summary": "שני התנאים ההכרחיים לתנודה יציבה בחוג משוב סגור: תנאי התנופה ותנאי המופע.",
+    "details": "1. תנאי התנופה: |A·β| = 1 במצב מתמיד (מכפלת הגבר המגבר במקדם המשוב שווה ל-1). 2. תנאי המופע: ∠(A·β) = 0° או 360° (משוב חיובי - האות החוזר מחזק את המבוא).",
+    "formulas": [
+      "|A \\cdot \\beta| = 1",
+      "\\angle(A \\cdot \\beta) = 0^\\circ \\quad \\text{או} \\quad 360^\\circ"
+    ],
+    "exam_trap": "בלבול בין משוב שלילי (מגברים, הגבר יציב) למשוב חיובי (מתנדים, תנודה מתמדת).",
+    "real_world": "שריקת מיקרופון המתקרב לרמקול (Feedback loop שבו ההגבר גדול מ-1 והמופע זהה).",
+    "connections": [
+      "oscillator",
+      "thermal-noise",
+      "colpitts-hartley",
+      "wien-bridge"
+    ]
+  },
+  {
+    "id": "colpitts-hartley",
+    "title": "מתנדי RF: קולפיץ והרטלי",
+    "english": "Colpitts & Hartley Oscillators",
+    "lesson": "שיעור 3",
+    "lesson_file": "lesson-3-guide.md",
+    "category": "רכיבים ומעגלים",
+    "summary": "מתנדי LC לתדרים גבוהים (RF, MHz-GHz) המבוססים על מחלק קיבולי או השראותי.",
+    "details": "מתנד קולפיץ (Colpitts): משתמש ב-2 קבלים (C1, C2) וסליל L אחד. C_eq = C1·C2/(C1+C2). מתנד הרטלי (Hartley): משתמש ב-2 סלילים (L1, L2) וקבל C אחד. L_eq = L1 + L2.",
+    "formulas": [
+      "f_0 = \\frac{1}{2\\pi \\sqrt{L \\cdot C_{eq}}} \\quad \\text{(קולפיץ)}",
+      "f_0 = \\frac{1}{2\\pi \\sqrt{C \\cdot L_{eq}}} \\quad \\text{(הרטלי)}"
+    ],
+    "exam_trap": "בלבול בזיכרון: קולפיץ = הקבלים כפולים (C1, C2); הרטלי = הסלילים כפולים (L1, L2).",
+    "real_world": "ייצור הגל הנושא במקלטי ומשדרי רдио טקטיים ומכשירי קשר צה\"ליים.",
+    "connections": [
+      "oscillator",
+      "barkhausen",
+      "carrier-wave",
+      "local-oscillator"
+    ]
+  },
+  {
+    "id": "wien-bridge",
+    "title": "מתנד גשר ויין (Wien Bridge)",
+    "english": "Wien Bridge Oscillator",
+    "lesson": "שיעור 3",
+    "lesson_file": "lesson-3-guide.md",
+    "category": "רכיבים ומעגלים",
+    "summary": "מתנד RC לתדרים נמוכים (Audio, Hz-kHz) המבוסס על רשת נגדים וקבלים.",
+    "details": "לתדרים נמוכים סלילים (L) יהיו ענקיים וכבדים. גשר ויין משתמש ברשת RC שבה בתדר f0 הסחת המופע היא 0° ומקדם המשוב הוא β = 1/3. לכן נדרש הגבר מגבר A = 3 (R2 = 2R1).",
+    "formulas": [
+      "f_0 = \\frac{1}{2\\pi R C}",
+      "\\beta = \\frac{1}{3} \\implies A = 3",
+      "R_f = 2 R_1"
+    ],
+    "exam_trap": "שכחת הדרישה להגבר A = 3 במגבר השרת לקבלת |Aβ| = 1.",
+    "real_world": "מחוללי אותות שמע (Audio Generators) במעבדה וכרטיסי קול במחשב.",
+    "connections": [
+      "oscillator",
+      "barkhausen",
+      "filters"
+    ]
+  },
+  {
+    "id": "local-oscillator",
+    "title": "מתנד מקומי (LO) וסחף תדרים",
+    "english": "Local Oscillator (LO) & Frequency Drift",
+    "lesson": "שיעור 3",
+    "lesson_file": "lesson-3-guide.md",
+    "category": "רכיבים ומעגלים",
+    "summary": "המתנד הפנימי במקלט המאפשר המרת תדר נקלט לתדר ביניים קבוע (IF).",
+    "details": "המתנד המקומי מייצר אות סינוס הפועל יחד עם הערבל (Mixer). שינויי טמפרטורה גורמים לשינוי בערכי הרכיבים (C, L) ולסחף תדרים (Frequency Drift) השובר את הסינכרון.",
+    "formulas": [
+      "f_{IF} = f_{RF} - f_{LO}",
+      "\\Delta f_0 \\approx -\\frac{1}{2} f_0 \\frac{\\Delta C}{C}"
+    ],
+    "exam_trap": "אי-הבנה שעליית טמפרטורה המגדילה את הקיבול C גורמת לירידה בתדר f0 ולא לעלייה!",
+    "real_world": "סחף תדרים במכשיר קשר צבאי במדבר עקב התחממות, הדורש מעגל נעילת מופע (PLL).",
+    "connections": [
+      "oscillator",
+      "receiver",
+      "colpitts-hartley"
+    ]
+  },
+  {
+    "id": "modulation-need",
+    "title": "הצורך הפיזיקלי באפנון",
+    "english": "Need for Modulation",
+    "lesson": "שיעור 4",
+    "lesson_file": "lesson-4-guide.md",
+    "category": "תופעות פיזיקליות",
+    "summary": "למה אי אפשר לשדר אות קולי ישירות לאוויר? אנטנה, ריבוב, וניחות.",
+    "details": "1. גודל אנטנה: תדר שמע (3kHz) דורש אנטנה של 25 קילומטר! 2. ריבוב ערוצים: ללא אפנון, כל תחנות הרדיו היו משדרות באותו תחום שמע ומפריעות זו לזו. 3. התפשטות: תדרים גבוהים נעים טוב יותר באוויר.",
+    "formulas": [
+      "L_{antenna} = \\frac{c}{4 f}"
+    ],
+    "exam_trap": "הנחה שאפנון נעשה רק כדי 'להגביר' את הקול. מטרתו הראשונית היא העתקת הספקטרום לתדר רדיו גבוה!",
+    "real_world": "הפרדת תחנות הרדיו FM באוויר (גלגלצ ב-91.8MHz, כאן ב-95.5MHz) כך שלא יתערבבו.",
+    "connections": [
+      "wavelength-antenna",
+      "carrier-wave",
+      "modulation-am"
+    ]
+  },
+  {
+    "id": "carrier-wave",
+    "title": "גל נושא (Carrier) מול אות מידע",
+    "english": "Carrier Wave vs. Modulating Signal",
+    "lesson": "שיעור 4",
+    "lesson_file": "lesson-4-guide.md",
+    "category": "שיטות אפנון",
+    "summary": "השחקנים הראשיים באפנון: גל נושא מהיר c(t) המסיע את אות המידע האיטי m(t).",
+    "details": "הגל הנושא c(t) = A_c cos(ω_c t) הוא סינוס בתדר גבוה שמייצר המתנד. אות המידע m(t) = A_m cos(ω_m t) הוא האות המקורי (קול/נתונים) בתדר נמוך הרבה יותר (f_c >> f_m).",
+    "formulas": [
+      "c(t) = A_c \\cos(\\omega_c t)",
+      "m(t) = A_m \\cos(\\omega_m t)"
+    ],
+    "exam_trap": "בלבול בין תדר הנושא f_c לתדר המידע f_m. תדר הנושא תמיד גדול בהרבה!",
+    "real_world": "משאית המשלוחים (הגל הנושא) המובילה את החבילה (אות המידע) ליעדה.",
+    "connections": [
+      "modulation-need",
+      "oscillator",
+      "modulation-am",
+      "envelope-ma"
+    ]
+  },
+  {
+    "id": "modulation-am",
+    "title": "אפנון תנופה (AM)",
+    "english": "Amplitude Modulation (AM)",
+    "lesson": "שיעור 4",
+    "lesson_file": "lesson-4-guide.md",
+    "category": "שיטות אפנון",
+    "summary": "הרכבת המידע על אמפליטודת הגל הנושא: תדר הנושא נשאר קבוע, האמפליטודה משתנה.",
+    "details": "באפנון AM, אמפליטודת הגל המאופן משתנה בצורה פרופורציונלית לאות המידע: A(t) = A_c + m(t). הביטוי בזמן הוא u_AM(t) = [A_c + A_m cos(ω_m t)] cos(ω_c t).",
+    "formulas": [
+      "u_{AM}(t) = A_c [1 + m_a \\cos(\\omega_m t)] \\cos(\\omega_c t)"
+    ],
+    "exam_trap": "הנחה שתדר הגל הנושא משתנה ב-AM. התדר נשאר f_c קבוע לחלוטין!",
+    "real_world": "שידורי רדיו AM בתחום התדרים הבינוני (530kHz - 1700kHz) לקשר לטווחים ארוכים.",
+    "connections": [
+      "carrier-wave",
+      "envelope-ma",
+      "spectrum-am",
+      "power-efficiency-am"
+    ]
+  },
+  {
+    "id": "envelope-ma",
+    "title": "מעטפת האות ומקדם אפנון (ma)",
+    "english": "AM Envelope & Modulation Index (ma)",
+    "lesson": "שיעור 4",
+    "lesson_file": "lesson-4-guide.md",
+    "category": "שיטות אפנון",
+    "summary": "מדד עומק האפנון ma והסכנה שבאפנון-יתר (Over-Modulation).",
+    "details": "מקדם האפנון מוגדר כ-ma = A_m / A_c. מתוך מעטפת האות באוסצילוסקופ: ma = (Vmax - Vmin) / (Vmax + Vmin). באפנון תקין ma <= 1. באפנון-יתר (ma > 1) המעטפת נקטמת ונוצר היפוך פאזה המשוות את הגילוי.",
+    "formulas": [
+      "m_a = \\frac{A_m}{A_c}",
+      "m_a = \\frac{V_{max} - V_{min}}{V_{max} + V_{min}}"
+    ],
+    "exam_trap": "הצבת מתח מקצה-לקצה (Vpp) במקום תנופת שיא (A_c) בחישוב ma.",
+    "real_world": "כוון עוצמת המיקרופון במשדר כדי למנוע עיוותי קול וקיטועים ברדיו.",
+    "connections": [
+      "modulation-am",
+      "time-freq-domains",
+      "spectrum-am"
+    ]
+  },
+  {
+    "id": "spectrum-am",
+    "title": "ספקטרום AM ורוחב פס (USB/LSB)",
+    "english": "AM Spectrum & Sidebands (USB/LSB)",
+    "lesson": "שיעור 4",
+    "lesson_file": "lesson-4-guide.md",
+    "category": "ניתוח ספקטרלי",
+    "summary": "פירוק טריגונומטרי של אות AM ל-3 מחטים בספקטרום: הנושא f_c, ופסי הצד USB ו-LSB.",
+    "details": "מכפלת קוסינוסים נפתחת לפי הזהות הטריגונומטרית ל: 1. גל נושא ב-f_c. 2. פס צד עליון (USB) ב-f_c + f_m. 3. פס צד תחתון (LSB) ב-f_c - f_m. רוחב הפס הכולל הוא BW_AM = 2·f_m.",
+    "formulas": [
+      "f_{USB} = f_c + f_m",
+      "f_{LSB} = f_c - f_m",
+      "BW_{AM} = 2 f_m"
+    ],
+    "exam_trap": "שכחת הכפלת תדר המידע ב-2 בחישוב רוחב הפס של אות AM!",
+    "real_world": "הקצאת רוחב פס של 10kHz לכל תחנת רדיו AM (עבור אות שמע בתדר מירבי של 5kHz).",
+    "connections": [
+      "modulation-am",
+      "bandwidth",
+      "power-efficiency-am"
+    ]
+  },
+  {
+    "id": "power-efficiency-am",
+    "title": "מאזן הספקים ונצילות שידור AM",
+    "english": "AM Power Balance & Efficiency",
+    "lesson": "שיעור 4",
+    "lesson_file": "lesson-4-guide.md",
+    "category": "שיטות אפנון",
+    "summary": "החיסרון הגדול של AM: הגל הנושא גוזל רוב ההספק, והנצילות המרבית היא 33.3% בלבד.",
+    "details": "הספק השידור הכולל מורכב מהספק הנושא והספק פסי הצד: P_AM = P_c (1 + ma^2 / 2). נצילות השידור היא יחס הספק פסי הצד (נושאי המידע) להספק הכולל: η = ma^2 / (2 + ma^2). עבור ma = 1 הנצילות היא 1/3 (33.3%).",
+    "formulas": [
+      "P_c = \\frac{A_c^2}{2 R}",
+      "P_{SB} = P_c \\cdot \\frac{m_a^2}{2}",
+      "P_{AM} = P_c \\left(1 + \\frac{m_a^2}{2}\\right)",
+      "\\eta = \\frac{m_a^2}{2 + m_a^2}"
+    ],
+    "exam_trap": "בלבול בין הספק פס צד יחיד (P_c · ma^2 / 4) לבין הספק שני פסי הצד יחד (P_c · ma^2 / 2).",
+    "real_world": "פיתוח שיטות אפנון מתקדמות כמו SSB (Single Sideband) לחיסכון באנרגיה במשדרים מוטסים.",
+    "connections": [
+      "modulation-am",
+      "spectrum-am",
+      "transmitter"
+    ]
+  }
+]

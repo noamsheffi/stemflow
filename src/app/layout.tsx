@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "STEMFlow | Product Lab #01",
-  description: "שאלון אנונימי לגילוי בעיות למידה בקורס מערכות תקשורת",
+  title: "STEMFlow | מערכות תקשורת",
+  description: "מרכז התוכן והמחקר של קורס מערכות תקשורת",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
