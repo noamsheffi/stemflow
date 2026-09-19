@@ -33,11 +33,11 @@ export default function CourseLayout({ children }: { children: React.ReactNode }
       aria-label={sidebarCollapsed ? "פתיחת סרגל הניווט" : "קיפול סרגל הניווט"}
       title={sidebarCollapsed ? "פתיחת ניווט" : "קיפול ניווט"}
     >
-      <span aria-hidden="true">{sidebarCollapsed ? "‹" : "›"}</span>
+      <span aria-hidden="true" dir="ltr">{sidebarCollapsed ? "←" : "→"}</span>
     </button>
     <aside className="course-sidebar" aria-label="ניווט סביבת הלמידה">
       <Link className="course-brand" href="/" aria-label="Syllo — דף הבית"><img className="brand-logo" src="/brand/syllo-logo.png" alt="Syllo" width="132" height="56" /></Link>
-      <Link className="course-rail-brand" href="/" aria-label="Syllo — דף הבית"><span aria-hidden="true">∞</span></Link>
+      <Link className="course-rail-brand" href="/" aria-label="Syllo — דף הבית"><span aria-hidden="true" /></Link>
       {productNavigation}
       <div className="course-divider" />
       <p className="course-nav-label">קורס</p>
