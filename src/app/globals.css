@@ -1583,7 +1583,8 @@ th {
   }
 
   .course-brand {
-    display: block;
+    display: flex;
+    justify-content: center;
     padding: 4px 10px 28px;
     color: var(--ink);
     text-decoration: none;
@@ -1617,7 +1618,7 @@ th {
     transition: all 0.18s var(--ease);
   }
 
-  .course-nav a span {
+  .course-nav a > span:first-child {
     display: grid;
     width: 22px;
     color: var(--accent);

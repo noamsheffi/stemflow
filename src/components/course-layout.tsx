@@ -38,7 +38,7 @@ export default function CourseLayout({ children }: { children: React.ReactNode }
     <aside className="course-sidebar" aria-label="ניווט סביבת הלמידה">
       <Link className="course-brand" href="/" aria-label="Syllo — דף הבית"><img className="brand-logo" src="/brand/syllo-logo.png" alt="Syllo" width="132" height="56" /></Link>
       <Link className="course-rail-brand" href="/" aria-label="Syllo — דף הבית"><span aria-hidden="true">∞</span></Link>
-      <p className="course-nav-label">Syllo</p>{productNavigation}
+      {productNavigation}
       <div className="course-divider" />
       <p className="course-nav-label">קורס</p>
       <Link className="course-context" href={courseAppPath()}><strong>{course.title}</strong><span dir="ltr">{course.titleEnglish}</span></Link>
