@@ -25,7 +25,7 @@ export default async function LecturerPage() {
     return (
       <main className="page-shell">
         <section className="results-card" aria-labelledby="results-title">
-          <p className="eyebrow">STEMFlow · Product Lab #01</p>
+          <p className="eyebrow">Syllo · Product Lab #01</p>
           <h1 id="results-title">תוצאות הסקר</h1>
           <p className="results-total">סה״כ הגשות: <strong>{results.totalSubmissions}</strong></p>
 
@@ -57,7 +57,7 @@ export default async function LecturerPage() {
     return (
       <main className="page-shell">
         <section className="results-card" aria-labelledby="results-title">
-          <p className="eyebrow">STEMFlow · Product Lab #01</p>
+          <p className="eyebrow">Syllo · Product Lab #01</p>
           <h1 id="results-title">התוצאות אינן זמינות כרגע</h1>
           <p>יש לוודא שמסד הנתונים הוגדר ושקובץ הסכימה הורץ.</p>
         </section>

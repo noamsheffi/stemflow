@@ -8,7 +8,7 @@ export default function CourseLayout({ children }: { children: React.ReactNode }
       <aside className="course-sidebar" aria-label="ניווט הקורס">
         <Link className="course-brand" href="/course/communication-systems">
           <span className="course-mark" aria-hidden="true">S</span>
-          <span><strong>STEMFlow</strong><small>{course.title}</small></span>
+          <span><strong>Syllo</strong><small>{course.title}</small></span>
         </Link>
         <p className="course-nav-label">הקורס שלי</p>
         <nav className="course-nav">
@@ -24,7 +24,7 @@ export default function CourseLayout({ children }: { children: React.ReactNode }
       </aside>
       <section className="course-workspace">
         <header className="course-mobile-header">
-          <Link className="course-mobile-brand" href="/course/communication-systems"><span className="course-mark" aria-hidden="true">S</span><strong>STEMFlow</strong></Link>
+          <Link className="course-mobile-brand" href="/course/communication-systems"><span className="course-mark" aria-hidden="true">S</span><strong>Syllo</strong></Link>
           <nav className="course-mobile-nav" aria-label="ניווט הקורס">
             <Link href="/course/communication-systems">בית</Link><Link href="/lessons">שיעורים</Link><Link href="/formulas">נוסחאון</Link><Link href="/concepts">מושגים</Link>
           </nav>

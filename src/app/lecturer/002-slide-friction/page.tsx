@@ -21,7 +21,7 @@ export default async function SlideFrictionLecturerPage() {
     return (
       <main className="page-shell">
         <section className="results-card" aria-labelledby="results-title">
-          <p className="eyebrow">STEMFlow · Product Lab #02</p>
+          <p className="eyebrow">Syllo · Product Lab #02</p>
           <h1 id="results-title">איפה איבדתי אותך? — תוצאות</h1>
           <p className="results-total">סה״כ הגשות: <strong>{results.totalResponses}</strong></p>
 
@@ -66,7 +66,7 @@ export default async function SlideFrictionLecturerPage() {
     );
   } catch {
     return (
-      <main className="page-shell"><section className="results-card" aria-labelledby="results-title"><p className="eyebrow">STEMFlow · Product Lab #02</p><h1 id="results-title">התוצאות אינן זמינות כרגע</h1><p>יש לוודא שמסד הנתונים הוגדר ושקובץ הסכימה של ניסוי #002 הורץ.</p></section></main>
+      <main className="page-shell"><section className="results-card" aria-labelledby="results-title"><p className="eyebrow">Syllo · Product Lab #02</p><h1 id="results-title">התוצאות אינן זמינות כרגע</h1><p>יש לוודא שמסד הנתונים הוגדר ושקובץ הסכימה של ניסוי #002 הורץ.</p></section></main>
     );
   }
 }

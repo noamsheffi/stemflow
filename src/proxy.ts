@@ -4,7 +4,7 @@ import type { NextRequest } from "next/server";
 function unauthorized() {
   return new NextResponse("גישה למרצה בלבד", {
     status: 401,
-    headers: { "WWW-Authenticate": 'Basic realm="STEMFlow Lecturer", charset="UTF-8"' },
+    headers: { "WWW-Authenticate": 'Basic realm="Syllo Lecturer", charset="UTF-8"' },
   });
 }
 
