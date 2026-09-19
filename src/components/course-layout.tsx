@@ -21,8 +21,8 @@ export default function CourseLayout({ children }: { children: React.ReactNode }
   const pathname = usePathname();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const context = breadcrumbLabel(pathname);
-  const productNavigation = <nav className="product-nav" aria-label="ניווט Syllo"><Link href="/">בית</Link><Link href="/">הקורסים שלי</Link></nav>;
-  const courseNavigation = <nav className="course-nav" aria-label={`ניווט ${course.title}`}><Link href={courseAppPath()}><span aria-hidden="true">⌂</span>בית הקורס</Link><Link href={courseAppPath("lessons")}><span aria-hidden="true">▤</span>מערכי שיעור</Link><Link href={courseAppPath("formulas")}><span aria-hidden="true">ƒ</span>נוסחאון</Link><Link href={courseAppPath("concepts")}><span aria-hidden="true">⌘</span>מפת מושגים</Link></nav>;
+  const productNavigation = <nav className="product-nav" aria-label="ניווט Syllo"><Link href="/"><span aria-hidden="true">⌂</span><span className="nav-label">בית</span></Link><Link href="/"><span aria-hidden="true">▦</span><span className="nav-label">הקורסים שלי</span></Link></nav>;
+  const courseNavigation = <nav className="course-nav" aria-label={`ניווט ${course.title}`}><Link href={courseAppPath()}><span aria-hidden="true">⌂</span><span className="nav-label">בית הקורס</span></Link><Link href={courseAppPath("lessons")}><span aria-hidden="true">▤</span><span className="nav-label">מערכי שיעור</span></Link><Link href={courseAppPath("formulas")}><span aria-hidden="true">ƒ</span><span className="nav-label">נוסחאון</span></Link><Link href={courseAppPath("concepts")}><span aria-hidden="true">⌘</span><span className="nav-label">מפת מושגים</span></Link></nav>;
 
   return <div className={`course-shell${sidebarCollapsed ? " sidebar-collapsed" : ""}`}>
     <button
@@ -37,6 +37,7 @@ export default function CourseLayout({ children }: { children: React.ReactNode }
     </button>
     <aside className="course-sidebar" aria-label="ניווט סביבת הלמידה">
       <Link className="course-brand" href="/" aria-label="Syllo — דף הבית"><img className="brand-logo" src="/brand/syllo-logo.png" alt="Syllo" width="132" height="56" /></Link>
+      <Link className="course-rail-brand" href="/" aria-label="Syllo — דף הבית"><span aria-hidden="true">∞</span></Link>
       <p className="course-nav-label">Syllo</p>{productNavigation}
       <div className="course-divider" />
       <p className="course-nav-label">קורס</p>

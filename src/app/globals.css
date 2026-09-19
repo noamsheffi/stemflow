@@ -524,6 +524,10 @@ th {
   display: none;
 }
 
+.course-rail-brand {
+  display: none;
+}
+
 .workspace-sidebar {
   display: none;
 }
@@ -534,12 +538,19 @@ th {
 }
 
 .product-nav a {
+  display: flex;
+  gap: 10px;
+  align-items: center;
   padding: 8px 12px;
   color: var(--muted);
   border-radius: 10px;
   font-size: 0.88rem;
   font-weight: 600;
   text-decoration: none;
+}
+
+.product-nav a > span:first-child {
+  display: none;
 }
 
 .product-nav a:hover,
@@ -1472,15 +1483,65 @@ th {
   }
 
   .course-shell.sidebar-collapsed .course-sidebar {
-    transform: translateX(100%);
+    width: 68px;
+    padding: 16px 10px;
+    overflow: hidden;
   }
 
   .course-shell.sidebar-collapsed .course-workspace {
-    margin-inline-start: 0;
+    margin-inline-start: 68px;
   }
 
   .course-shell.sidebar-collapsed .course-sidebar-toggle {
-    inset-inline-start: 0;
+    inset-inline-start: 68px;
+  }
+
+  .course-shell.sidebar-collapsed .course-brand,
+  .course-shell.sidebar-collapsed .course-nav-label,
+  .course-shell.sidebar-collapsed .course-context,
+  .course-shell.sidebar-collapsed .course-divider,
+  .course-shell.sidebar-collapsed .nav-label {
+    display: none;
+  }
+
+  .course-shell.sidebar-collapsed .course-rail-brand {
+    display: grid;
+    width: 44px;
+    height: 44px;
+    margin: 0 auto 22px;
+    color: #fff;
+    background: linear-gradient(135deg, var(--accent), var(--violet));
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(6, 182, 212, 0.28);
+    font-family: Georgia, serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    line-height: 1;
+    place-items: center;
+    text-decoration: none;
+  }
+
+  .course-shell.sidebar-collapsed .product-nav,
+  .course-shell.sidebar-collapsed .course-nav {
+    gap: 8px;
+  }
+
+  .course-shell.sidebar-collapsed .product-nav a,
+  .course-shell.sidebar-collapsed .course-nav a {
+    justify-content: center;
+    width: 44px;
+    min-height: 44px;
+    padding: 10px 0;
+  }
+
+  .course-shell.sidebar-collapsed .product-nav a > span:first-child,
+  .course-shell.sidebar-collapsed .course-nav a > span:first-child {
+    display: grid;
+    width: 22px;
+    color: var(--accent);
+    font-family: Georgia, serif;
+    font-size: 1.15rem;
+    place-items: center;
   }
 
   .workspace-shell {
