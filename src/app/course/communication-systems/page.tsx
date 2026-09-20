@@ -29,6 +29,13 @@ export default function CourseHomePage() {
         <Link href={courseAppPath("concepts")}><i aria-hidden="true">⌘</i><strong>מפת מושגים</strong><span>הקשרים בין הנושאים שלמדנו</span><bdi aria-hidden="true">←</bdi></Link>
       </section>
 
+      <section className="course-page-hero" aria-labelledby="survey-invite-title">
+        <p className="item-kicker">הקול שלכם · שאלון 02</p>
+        <h2 id="survey-invite-title">מה קורה אחרי השיעור?</h2>
+        <p>שאלון אנונימי קצר על השימוש בחומרי הקורס · 3–4 דקות</p>
+        <Link className="button button-primary" href={courseAppPath("surveys/002-post-class-behavior")}>לשאלון השני ←</Link>
+      </section>
+
       <section className="course-status" aria-label="סטטוס תוכן הקורס">
         <div><span>שיעורים זמינים</span><strong>{lessons.length}</strong><small>כולל מערכים ותרגולים</small></div>
         <div><span>השיעור האחרון</span><strong>{latestLesson ? `שיעור ${latestLesson.number.toString().padStart(2, "0")}` : "טרם נרשם"}</strong><small>{latestLesson?.title ?? ""}</small></div>
