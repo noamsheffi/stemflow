@@ -13,3 +13,9 @@
 .results nav { display: flex; flex-wrap: wrap; gap: 20px; margin-block-end: 24px; }
 .results nav a { color: var(--accent-dark); }
 .results article { overflow-wrap: anywhere; white-space: pre-wrap; }
+.standalone { min-height: 100svh; padding: 24px 16px 48px; }
+.brand { display: flex; justify-content: center; margin-block-end: 24px; }
+.brand img { object-fit: contain; }
+@media (min-width: 640px) {
+  .standalone { padding: 40px 24px 64px; }
+}
