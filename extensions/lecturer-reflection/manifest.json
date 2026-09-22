@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Lesson lecturer reflection",
-  "version": "0.2.2",
+  "version": "0.2.3",
   "description": "Local active-slide timing and pedagogical reflection, enabled by the lecturer.",
   "permissions": [
     "activeTab",
