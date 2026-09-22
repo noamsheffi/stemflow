@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import LogoutButton from "./logout-button";
 import { usePathname } from "next/navigation";
 import { useLayoutEffect, useState } from "react";
 import { course, courseAppPath, getLesson } from "../lib/course-data";
+import LectureExtension from "./lecture-extension";
 
 const sidebarStorageKey = "syllo:course-sidebar-collapsed";
 
@@ -53,10 +55,11 @@ export default function CourseLayout({ children }: { children: React.ReactNode }
     const href = courseAppPath(section);
     return pathname === href || (section && pathname.startsWith(`${href}/`)) ? "active" : undefined;
   };
-  const productNavigation = <nav className="product-nav" aria-label="ניווט Syllo"><Link href="/"><span aria-hidden="true">⌂</span><span className="nav-label">בית</span></Link><Link href="/"><span aria-hidden="true">▦</span><span className="nav-label">הקורסים שלי</span></Link></nav>;
+  const productNavigation = <nav className="product-nav" aria-label="ניווט Syllo"><Link href="/"><span aria-hidden="true">⌂</span><span className="nav-label">בית</span></Link><Link href="/workspace"><span aria-hidden="true">▦</span><span className="nav-label">הקורסים שלי</span></Link><LogoutButton /></nav>;
   const courseNavigation = <nav className="course-nav" aria-label={`ניווט ${course.title}`}><Link className={navigationClass()} href={courseAppPath()} aria-current={navigationClass() ? "page" : undefined}><span aria-hidden="true">⌂</span><span className="nav-label">בית הקורס</span></Link><Link className={navigationClass("lessons")} href={courseAppPath("lessons")} aria-current={navigationClass("lessons") ? "page" : undefined}><span aria-hidden="true">▤</span><span className="nav-label">מערכי שיעור</span></Link><Link className={navigationClass("formulas")} href={courseAppPath("formulas")} aria-current={navigationClass("formulas") ? "page" : undefined}><span aria-hidden="true">ƒ</span><span className="nav-label">נוסחאון</span></Link><Link className={navigationClass("concepts")} href={courseAppPath("concepts")} aria-current={navigationClass("concepts") ? "page" : undefined}><span aria-hidden="true">⌘</span><span className="nav-label">מפת מושגים</span></Link></nav>;
 
   return <div className={`course-shell${sidebarCollapsed ? " sidebar-collapsed" : ""}`}>
+    <LectureExtension />
     <button
       className="course-sidebar-toggle"
       type="button"

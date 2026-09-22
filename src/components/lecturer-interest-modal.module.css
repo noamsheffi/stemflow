@@ -1,0 +1,22 @@
+.trigger { display: inline-flex; align-items: center; gap: 18px; padding: 12px 18px; border: 1px solid #cddae2; border-radius: 8px; background: white; color: #122b46; font: inherit; font-size: .9375rem; font-weight: 600; cursor: pointer; }
+.trigger:hover { background: #eff9fa; border-color: #087c89; }
+.backdrop { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 24px; background: #122b4670; }
+.dialog { position: relative; width: min(100%, 500px); max-height: min(760px, calc(100svh - 48px)); overflow: auto; padding: 38px 40px; border-radius: 20px; background: white; color: #122b46; box-shadow: 0 24px 90px #122b4640; }
+.close { position: absolute; top: 12px; left: 16px; border: 0; background: transparent; color: #50647a; font-size: 1.8rem; line-height: 1; cursor: pointer; }
+.eyebrow { margin: 0 0 10px; color: #087c89; font-size: .875rem; font-weight: 600; }
+.dialog h2 { margin: 0 0 10px; font-size: 2rem; }
+.description { margin: 0; color: #50647a; line-height: 1.7; }
+.form { display: grid; gap: 13px; margin-top: 24px; }
+.form label { display: grid; gap: 6px; color: #29435b; font-size: .875rem; font-weight: 600; }
+.form input { width: 100%; box-sizing: border-box; padding: 12px 13px; border: 1px solid #b9cbd4; border-radius: 8px; background: white; color: #122b46; font: inherit; font-weight: 400; }
+.form input:focus-visible, .submit:focus-visible, .close:focus-visible, .trigger:focus-visible { outline: 3px solid #087c89; outline-offset: 3px; }
+.twoColumns { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.submit { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 7px; padding: 14px 17px; border: 0; border-radius: 8px; background: #122b46; color: white; font: inherit; font-weight: 600; cursor: pointer; }
+.submit:hover { background: #20536b; }
+.submit:disabled { cursor: wait; opacity: .65; }
+.error { margin: 0; color: #b42318; font-size: .875rem; }
+.success { text-align: center; padding-block: 18px 4px; }
+.success h2 { margin-top: 16px; }
+.success p { margin: 0 0 24px; color: #50647a; }
+.check { display: grid; place-items: center; width: 48px; height: 48px; margin: 0 auto; border-radius: 50%; background: #e3f6f3; color: #087c89; font-size: 1.5rem; }
+@media (max-width: 520px) { .dialog { padding: 32px 24px 26px; } .twoColumns { grid-template-columns: 1fr; } }

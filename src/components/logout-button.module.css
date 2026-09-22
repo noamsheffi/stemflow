@@ -1,0 +1,4 @@
+.form { margin: 0; }
+.button { font: inherit; font-size: .875rem; padding: 10px 14px; border: 1px solid #cbd5e1; border-radius: 8px; color: #334155; background: white; cursor: pointer; }
+.button:hover { background: #ecfeff; }
+.button:focus-visible { outline: 3px solid #087c89; outline-offset: 3px; }

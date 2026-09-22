@@ -26,6 +26,7 @@ declare global {
 }
 
 const gaId = process.env.NEXT_PUBLIC_GA_ID;
+let lastTrackedPagePath: string | undefined;
 
 function sendToGoogleAnalytics(command: "event", eventName: string, properties: Record<string, string>) {
   if (typeof window === "undefined" || !gaId) return;
@@ -45,5 +46,7 @@ export function trackEvent(eventName: CourseEventName, properties: CourseEventPr
 }
 
 export function trackPageView(pathname: string) {
+  if (lastTrackedPagePath === pathname) return;
+  lastTrackedPagePath = pathname;
   sendToGoogleAnalytics("event", "page_view", { page_path: pathname });
 }

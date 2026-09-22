@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { ACCESS_COOKIE, validAccessSession } from "./lib/access-session";
 
 function unauthorized() {
   return new NextResponse("גישה למרצה בלבד", {
@@ -9,6 +10,21 @@ function unauthorized() {
 }
 
 export function proxy(request: NextRequest) {
+  if (!validAccessSession(request.cookies.get(ACCESS_COOKIE)?.value)) {
+    if (request.nextUrl.pathname.startsWith("/api/")) {
+      return NextResponse.json({ error: "authentication_required" }, { status: 401, headers: { "Cache-Control": "no-store" } });
+    }
+    const login = new URL("/login", request.url);
+    login.searchParams.set("next", request.nextUrl.pathname + request.nextUrl.search);
+    const response = NextResponse.redirect(login);
+    response.headers.set("Cache-Control", "no-store");
+    return response;
+  }
+  if (!request.nextUrl.pathname.startsWith("/lecturer")) {
+    const response = NextResponse.next();
+    response.headers.set("Cache-Control", "private, no-store");
+    return response;
+  }
   const username = process.env.LECTURER_USERNAME;
   const password = process.env.LECTURER_PASSWORD;
 
@@ -34,4 +50,8 @@ export function proxy(request: NextRequest) {
   return NextResponse.next();
 }
 
-export const config = { matcher: "/lecturer/:path*" };
+export const config = { matcher: [
+  "/workspace/:path*", "/course/:path*", "/courses/:path*", "/lessons/:path*",
+  "/formulas/:path*", "/concepts/:path*", "/slide-friction/:path*", "/lecturer/:path*",
+  "/api/submissions/:path*", "/api/learning-events/:path*",
+] };

@@ -1,0 +1,17 @@
+.page { min-height: 100svh; display: grid; place-items: center; padding: 88px 20px 48px; background: #f2f8fa; color: #122b46; }
+.back { position: absolute; top: 28px; right: 32px; color: #50647a; text-decoration: none; font-size: .9375rem; }
+.back:hover { color: #087c89; }
+.card { width: min(100%, 450px); padding: 38px 40px; background: white; border: 1px solid #dfe9ed; border-radius: 20px; box-shadow: 0 20px 70px #122b4609; }
+.logo { width: 155px; height: auto; display: block; margin: 0 auto 24px; }
+.eyebrow { color: #087c89; font-size: .875rem; margin: 0 0 14px; }
+.card h1 { margin: 0 0 14px; font-size: 2.25rem; }
+.description { margin: 0; color: #50647a; line-height: 1.8; font-size: 1rem; }
+.form { display: grid; gap: 12px; margin-top: 30px; }
+.form label { font-weight: 600; font-size: .9375rem; }
+.form input:not([type="hidden"]) { width: 100%; min-width: 0; padding: 14px 16px; border: 1px solid #a9bcc7; border-radius: 8px; font: inherit; background: white; color: #122b46; }
+.form button { display: flex; justify-content: space-between; padding: 15px 18px; margin-top: 8px; border: 0; border-radius: 8px; background: #122b46; color: white; cursor: pointer; font-weight: 600; }
+.form button:hover { background: #20536b; }
+.form input:focus-visible, .form button:focus-visible, .back:focus-visible { outline: 3px solid #087c89; outline-offset: 3px; }
+.error { color: #b42318; font-size: .9375rem; margin: 0; line-height: 1.6; }
+.note { color: #50647a; margin: 24px 0 0; font-size: .875rem; line-height: 1.7; }
+@media (max-width: 480px) { .card { padding: 30px 24px; } .back { right: 22px; } }

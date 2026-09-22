@@ -19,9 +19,12 @@ export default function LessonOpenLink({ href, lessonId, resourceId, resourceKin
       href={href}
       onClick={() => {
         const context = { workspace_id: workspace.workspaceId, course_id: course.courseId, lesson_id: lessonId, resource_id: resourceId };
-        trackEvent("lesson_open", context);
-        trackEvent("resource_open", { workspace_id: context.workspace_id, course_id: context.course_id, resource_id: context.resource_id });
-        if (resourceKind === "simulation") trackEvent("simulation_start", context);
+        if (resourceKind === "lesson-html") {
+          trackEvent("lesson_open", context);
+        } else {
+          trackEvent("resource_open", { workspace_id: context.workspace_id, course_id: context.course_id, resource_id: context.resource_id });
+          if (resourceKind === "simulation") trackEvent("simulation_start", context);
+        }
       }}
     >
       {children}

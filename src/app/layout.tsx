@@ -13,6 +13,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="he" dir="rtl">
       <body>{children}<AnalyticsPageView /></body>
+      {/* GA4 page views are dispatched by AnalyticsPageView on hydration and route changes.
+          Keep Enhanced Measurement's Page views disabled in the GA4 property to avoid duplicates. */}
       {gaId && <><Script src={`https://www.googletagmanager.com/gtag/js?id=${gaId}`} strategy="afterInteractive" /><Script id="google-analytics" strategy="afterInteractive">{`window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} window.gtag = gtag; gtag('js', new Date()); gtag('config', '${gaId}', { send_page_view: false });`}</Script></>}
     </html>
   );
