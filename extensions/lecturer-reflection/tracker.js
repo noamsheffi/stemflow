@@ -52,7 +52,7 @@
   const favicon = document.createElement("img");
   favicon.className = "logo";
   favicon.alt = "";
-  favicon.src = document.querySelector('link[rel~="icon"]')?.href || new URL("/favicon.ico", location.origin).href;
+  favicon.src = new URL("/icon.png?v=0.2.4", location.origin).href;
   const timerLabel = document.createElement("span");
   timerLabel.className = "timer";
   timerLabel.dir = "ltr";
