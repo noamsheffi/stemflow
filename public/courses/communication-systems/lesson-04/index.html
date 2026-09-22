@@ -138,17 +138,100 @@
   .section{background:linear-gradient(145deg,#0f172a 0%,#1e293b 55%,#0e7490 140%);color:#ecfeff;place-items:center;text-align:center;grid-template-rows:1fr auto}.section .main{place-items:center}.section .big{-webkit-text-fill-color:#ecfeff;background:none;color:#ecfeff}.section .takeaway{width:min(900px,90vw);color:var(--ink)}
   .notes{display:none;position:absolute;z-index:90;right:4%;left:4%;bottom:6%;background:var(--ink);color:#f1f5f9;border:2px solid var(--accent);border-radius:var(--radius);padding:16px 22px;font-size:clamp(14px,1.15vw,20px);line-height:1.45;box-shadow:var(--shadow-lg)}.notes.show{display:block}
   .nav{position:fixed;z-index:100;bottom:18px;left:50%;transform:translateX(-50%);direction:ltr;display:flex;gap:6px;background:var(--ink);padding:6px;border-radius:12px;box-shadow:var(--shadow-lg)}.nav button{width:46px;height:38px;border:none;border-radius:8px;background:transparent;color:#f1f5f9;font-weight:700;cursor:pointer;transition:background .15s}.nav button:hover{background:var(--accent)}
-  .counter{position:fixed;z-index:100;bottom:18px;right:24px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:6px 14px;font-family:var(--display);font-weight:700;font-size:14px;box-shadow:var(--shadow-sm);color:var(--ink)}.progress{position:fixed;z-index:100;bottom:0;right:0;height:4px;background:linear-gradient(90deg,var(--accent),var(--violet));transition:width .2s;border-radius:2px 0 0 0}
+  .counter{position:fixed;z-index:100;bottom:18px;right:24px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:6px 14px;font-family:var(--display);font-weight:700;font-size:14px;box-shadow:var(--shadow-sm);color:var(--ink);direction:ltr;unicode-bidi:isolate}.progress{position:fixed;z-index:100;bottom:0;right:0;height:4px;background:linear-gradient(90deg,var(--accent),var(--violet));transition:width .2s;border-radius:2px 0 0 0}
   .top-actions{position:fixed;z-index:100;top:14px;left:18px;display:flex;gap:6px}.top-actions button{border:1px solid var(--line);background:var(--surface);height:36px;min-width:42px;padding:0 10px;border-radius:10px;font-weight:700;cursor:pointer;box-shadow:var(--shadow-sm);transition:border-color .15s}.top-actions button:hover{border-color:var(--accent)}
-  @media(max-width:900px){.slide{padding:20px 22px 60px}.two,.two-visual{grid-template-columns:1fr}.sim{grid-template-columns:200px 1fr}.mini-grid{grid-template-columns:1fr 1fr}.cover .main{grid-template-columns:1fr}.osc-layout{grid-template-columns:1fr}}
-  @media(max-height:650px){:root{--body-size:clamp(15px,1.5vw,22px);--title:clamp(28px,3.6vw,48px)}.slide{padding-top:18px}}
+  @media(max-width:900px){
+    .slide{
+      height:100%;
+      grid-template-rows:auto auto auto auto;
+      align-content:start;
+      overflow-y:auto;
+      overflow-x:hidden;
+      padding:28px 22px 88px;
+      -webkit-overflow-scrolling:touch;
+    }
+    .two,.two-visual{grid-template-columns:1fr}
+    .sim{grid-template-columns:200px 1fr}
+    .mini-grid{grid-template-columns:1fr 1fr}
+    .cover .main{grid-template-columns:1fr}
+    .osc-layout{grid-template-columns:1fr;height:auto}
+    .main.fill,.fill{height:auto}
+    .osc-card,.equal-panels>*{height:auto}
+    .diagram{height:300px}
+  }
+  /* Phones: let each slide become a readable, vertically scrollable page. */
+  @media(max-width:600px){
+    :root{--body-size:clamp(17px,5vw,21px);--title:clamp(30px,9vw,42px)}
+    html,body{overflow:hidden}
+    .deck{width:100%;height:100dvh;min-height:100svh}
+    .slide{
+      inset:0;width:100%;height:100%;min-height:100%;
+      grid-template-rows:auto auto auto auto;align-content:start;
+      gap:16px;overflow-y:auto;overflow-x:hidden;
+      padding:56px 16px calc(88px + env(safe-area-inset-bottom));
+      -webkit-overflow-scrolling:touch;
+    }
+    .slide:before{height:4px;width:42%}
+    header{padding-bottom:8px}
+    h1{font-size:clamp(36px,11vw,54px)}
+    h2{font-size:var(--title)}
+    h3{font-size:clamp(22px,7vw,30px)}
+    p,li{font-size:var(--body-size)}
+    .main,.cover .main{display:grid;grid-template-columns:1fr;align-items:stretch;gap:14px}
+    .main.fill,.fill{height:auto}
+    .stack{align-content:start;gap:14px}
+    .paper,.offset,.osc-card,.osc-controls,.channel-stage{padding:18px}
+    .formula{font-size:clamp(17px,4.8vw,23px);overflow-wrap:anywhere;padding:12px 10px}
+    .formula.small{font-size:clamp(16px,4.5vw,21px)}
+    .mini-grid{grid-template-columns:1fr;gap:10px}
+    .mini{min-height:0;padding:16px}
+    .takeaway{flex-direction:column;align-items:stretch;gap:8px;padding:13px 15px;font-size:clamp(16px,4.5vw,20px)}
+    .takeaway:before{align-self:flex-start}
+    .flow{flex-direction:column;gap:8px;width:100%}
+    .flow .box{width:100%;min-height:72px;padding:14px;font-size:clamp(17px,4.8vw,23px)}
+    .big-flow .box{min-height:110px}
+    .big-flow .block-note{font-size:13px;line-height:1.25}
+    .flow .arrow{transform:rotate(90deg);font-size:26px}
+    .channel-compare,.osc-layout,.sim{grid-template-columns:1fr;height:auto;min-height:0;gap:12px}
+    .osc-card,.equal-panels>*{height:auto}
+    .channel-stage{min-height:260px;grid-template-rows:auto minmax(120px,1fr) auto}
+    .baseband,.channels{min-height:130px}
+    .concept-table{display:block;height:auto;overflow-x:auto;white-space:normal;font-size:15px}
+    .concept-table th,.concept-table td{padding:8px 7px;min-width:86px}
+    .concept-table .symbol{min-width:52px}
+    .value-list{gap:10px}
+    .value-row{grid-template-columns:minmax(92px,30%) 1fr;min-height:76px}
+    .value-row b{font-size:clamp(20px,6vw,30px);padding:12px 8px}
+    .value-row span{font-size:clamp(16px,4.5vw,20px);padding:12px 10px}
+    .diagram{height:230px;min-height:200px}
+    .cover .diagram{min-height:230px;height:42vh}
+    .cover footer{margin-bottom:4px}
+    .controls{max-height:none;overflow:visible;padding:12px}
+    .readouts{grid-template-columns:1fr 1fr}
+    .plots{grid-template-rows:190px 190px;height:auto;overflow:visible}
+    .plot{min-height:180px}
+    .top-actions{top:calc(10px + env(safe-area-inset-top));left:12px}
+    .top-actions button{height:34px;min-width:38px}
+    .nav{bottom:calc(10px + env(safe-area-inset-bottom));padding:5px}
+    .nav button{width:42px;height:38px}
+    .counter{right:12px;bottom:calc(16px + env(safe-area-inset-bottom));padding:6px 10px;font-size:12px}
+    .notes{right:12px;left:12px;bottom:calc(72px + env(safe-area-inset-bottom));max-height:45vh;padding:14px 16px}
+  }
+  @media(max-width:380px){
+    .slide{padding-inline:12px}
+    .readouts{grid-template-columns:1fr}
+    .channel-stage{padding:14px}
+    .channel-stage h3{font-size:22px}
+    .counter{display:none}
+  }
+  @media(min-width:601px) and (max-height:650px){:root{--body-size:clamp(15px,1.5vw,22px);--title:clamp(28px,3.6vw,48px)}.slide{padding-top:18px}}
 
 </style>
 
   <script defer src="/lesson-metadata.js"></script>
   <script defer src="/slide-feedback.js"></script>
 </head>
-<body data-deck-version="01e41d25d4a8cd93" data-course-id="communication-systems" data-lesson-id="lesson-04">
+<body data-deck-version="b21de4e54d76debc" data-course-id="communication-systems" data-lesson-id="lesson-04">
 <main class="deck" id="deck">
   <div class="top-actions"><button id="notesBtn" title="הערות מרצה">N</button><button id="fsBtn" title="מסך מלא">⛶</button></div>
 
@@ -627,7 +710,7 @@
     <div class="takeaway">אפנון <span class="ltr">AM</span> מעביר מידע לתדר מתאים, במחיר רוחב פס והספק נושא.</div><footer><span>שיעור 04</span><span>43</span></footer>
   </section>
 
-  <nav class="nav"><button id="prev" aria-label="השקף הבא">→</button><button id="notesNav" aria-label="הערות">N</button><button id="next" aria-label="השקף הקודם">←</button></nav>
+  <nav class="nav"><button id="prev" aria-label="השקף הקודם">הקודם</button><button id="notesNav" aria-label="הערות">N</button><button id="next" aria-label="השקף הבא">הבא</button></nav>
   <div class="counter" id="counter">01 / 43</div><div class="progress" id="progress"></div>
 </main>
 <script>

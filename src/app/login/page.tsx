@@ -14,7 +14,7 @@ export default async function Login({ searchParams }: { searchParams: Promise<{ 
   if (validAccessSession((await cookies()).get(ACCESS_COOKIE)?.value)) redirect(next);
   const message = params.error === "invalid" ? "הקוד שהוזן אינו נכון. נסו שוב." : params.error === "unavailable" ? "הכניסה אינה זמינה כרגע. נסו שוב בהמשך." : null;
   return <main className={styles.page}>
-    <Link className={styles.back} href="/">חזרה לאתר Syllo <span aria-hidden="true">↗</span></Link>
+    <Link className={styles.back} href="/">חזרה לאתר Syllo</Link>
     <section className={styles.card} aria-labelledby="login-title">
       <Image className={styles.logo} src="/brand/syllo-logo.png" alt="Syllo" width={1584} height={672} priority />
       <p className={styles.eyebrow}>מהשיעור הזה לשיעור הבא</p>
@@ -25,7 +25,7 @@ export default async function Login({ searchParams }: { searchParams: Promise<{ 
         <label htmlFor="access-code">קוד גישה</label>
         <input id="access-code" name="code" type="password" required maxLength={128} autoComplete="current-password" autoCapitalize="none" spellCheck={false} dir="ltr" aria-invalid={params.error === "invalid" ? true : undefined} aria-describedby={message ? "login-error" : undefined} autoFocus />
         {message && <p id="login-error" role="alert" className={styles.error}>{message}</p>}
-        <button type="submit">כניסה לפלטפורמה <span aria-hidden="true">←</span></button>
+        <button type="submit">כניסה לפלטפורמה</button>
       </form>
       <p className={styles.note}>הגישה בשלב זה היא באמצעות קוד משותף.</p>
     </section>

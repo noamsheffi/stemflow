@@ -3,7 +3,6 @@ import Image from "next/image";
 import Link from "next/link";
 import styles from "./company.module.css";
 import LecturerInterestModal from "../components/lecturer-interest-modal";
-import LectureExtension from "../components/lecture-extension";
 
 export const metadata: Metadata = {
   title: "Syllo | מהשיעור הזה לשיעור הבא",
@@ -19,7 +18,6 @@ const steps = [
 export default function CompanyHome() {
   return (
     <div className={styles.site}>
-      <LectureExtension />
       <a className={styles.skip} href="#main">דילוג לתוכן</a>
       <header className={styles.header}>
         <Link className={styles.brand} href="/" aria-label="Syllo — דף הבית">
@@ -51,21 +49,16 @@ export default function CompanyHome() {
             <div className={styles.loopStep}>
               <span className={styles.stepSymbol} aria-hidden="true">01</span>
               <div><span className={styles.loopLabel}>בכיתה</span><h2>לתפוס את הרגע</h2><p>מה עבד? איפה צריך לעצור?</p></div>
-              <span className={styles.signal} aria-hidden="true">＋</span>
             </div>
-            <div className={styles.connector} aria-hidden="true">↓</div>
             <div className={styles.loopStep}>
               <span className={styles.stepSymbol} aria-hidden="true">02</span>
               <div><span className={styles.loopLabel}>אחרי השיעור</span><h2>לחבר את הידע</h2><p>שיעורים · נוסחאות · מושגים</p></div>
-              <span className={styles.signal} aria-hidden="true">↔</span>
             </div>
-            <div className={styles.connector} aria-hidden="true">↓</div>
             <div className={`${styles.loopStep} ${styles.nextStep}`}>
               <span className={styles.stepSymbol} aria-hidden="true">03</span>
               <div><span className={styles.loopLabel}>לקראת השיעור הבא</span><h2>לדעת מה לשנות</h2><p>רפלקציה שהופכת לפעולה.</p></div>
-              <span className={styles.signal} aria-hidden="true">↶</span>
             </div>
-            <p className={styles.loopReturn}>כל שיעור הוא התחלה של השיעור הבא <span aria-hidden="true">↻</span></p>
+            <p className={styles.loopReturn}>כל שיעור הוא התחלה של השיעור הבא</p>
           </div>
         </section>
         <section id="approach" className={styles.approach} aria-labelledby="approach-title">
@@ -79,7 +72,7 @@ export default function CompanyHome() {
           <div className={styles.aboutText}><p>Syllo התחילה בקורס מערכות תקשורת, מתוך צורך של מרצה להבין מה קורה ללמידה גם אחרי שהשיעור מסתיים.</p><p>היום אנחנו מפתחים ומשתמשים בה בתוך הקורס עצמו. מחברים חומרי לימוד, כלים לסטודנטים ורפלקציה למרצה — ולומדים מכל שיעור איך להשתפר.</p><span className={styles.stage}>בשלב פיתוח ושימוש ראשוני</span></div>
         </section>
       </main>
-      <footer className={styles.footer}><span dir="ltr" className={styles.wordmark}>Syllo<span>.</span></span><p>הוראה, למידה ומה שביניהן.</p><Link href="/workspace">כניסת סטודנטים <span aria-hidden="true">←</span></Link></footer>
+      <footer className={styles.footer}><span dir="ltr" className={styles.wordmark}>Syllo<span>.</span></span><p>הוראה, למידה ומה שביניהן.</p><Link href="/workspace">כניסת סטודנטים</Link></footer>
     </div>
   );
 }

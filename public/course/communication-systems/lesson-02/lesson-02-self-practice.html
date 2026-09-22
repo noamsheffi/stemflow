@@ -101,7 +101,7 @@
         <div class="plot-shell"><div class="plot-head"><span dir="ltr">OSCILLOSCOPE / TIME DOMAIN</span><strong>חלון קבוע: <bdi dir="ltr">4 ms</bdi></strong></div><canvas id="timeCanvas" aria-label="גרף רכיבי האות והסכום שלהם במישור הזמן"></canvas><div class="legend"><span class="key sum"><bdi dir="ltr">x(t)</bdi> — סכום</span><span class="key one"><bdi dir="ltr">x₁(t)</bdi></span><span class="key two"><bdi dir="ltr">x₂(t)</bdi></span></div></div>
         <div class="formula-strip"><div><span>הצורה הכללית</span><strong>x(t)=A·sin(2πft+φ)</strong></div><div><span>תדר זוויתי</span><strong>ω=2πf</strong></div><div><span>המרה להרצים</span><strong>f=ω/(2π)</strong></div></div>
         <div class="gold"><b>אזהרת הזהב:</b> המקדם של <bdi dir="ltr">t</bdi> בביטוי <bdi dir="ltr">sin(ωt+φ)</bdi> הוא <bdi dir="ltr">ω</bdi> ביחידות <bdi dir="ltr">rad/s</bdi> — ולא <bdi dir="ltr">f</bdi> ביחידות <bdi dir="ltr">Hz</bdi>.</div>
-        <nav class="footer-nav"><span></span><button class="btn" data-next>סיימתי — לתחנה 02 ←</button></nav>
+        <nav class="footer-nav"><span></span><button class="btn" data-next>סיימתי — לתחנה 02</button></nav>
       </section>
 
       <section class="stage" data-stage="1">
@@ -113,7 +113,7 @@
         <div class="plot-shell"><div class="plot-head"><span dir="ltr">ONE SHARED PERIOD</span><strong><bdi dir="ltr">0 → 2 ms</bdi></strong></div><canvas id="cycleCanvas" class="cycles" aria-label="השוואת מחזור אחד של 500 הרץ לשלושה מחזורים של 1500 הרץ"></canvas></div>
         <div class="grid3"><div class="stat"><span>תדר יסודי</span><div class="big">f₀ = 500 Hz</div></div><div class="stat"><span>זמן מחזור</span><div class="big">T = 2 ms</div></div><div class="stat"><span>יחס תדרים</span><div class="big">1 : 3</div></div></div>
         <div class="formula-strip"><div><span>מחלק משותף</span><strong>f₀=GCD(500,1500)</strong></div><div><span>מחזור</span><strong>T=1/f₀</strong></div><div><span>המרה</span><strong>0.002 s=2 ms</strong></div></div>
-        <nav class="footer-nav"><button class="btn secondary" data-prev>→ חזרה</button><button class="btn" data-next>סיימתי — לתחנה 03 ←</button></nav>
+        <nav class="footer-nav"><button class="btn secondary" data-prev>חזרה</button><button class="btn" data-next>סיימתי — לתחנה 03</button></nav>
       </section>
 
       <section class="stage" data-stage="2">
@@ -124,7 +124,7 @@
           <div class="warning-stamp"><bdi dir="ltr">φ</bdi> משנה את הגל בזמן — לא את גובה המחט בספקטרום התנופה</div>
         </div>
         <div class="card"><h3>חשבו רוחב פס</h3><p dir="ltr"><b>BW = f<sub>max</sub> − f<sub>min</sub></b></p><div class="answer-row"><label><bdi dir="ltr">BW [Hz]</bdi><input id="bwAnswer" type="number" inputmode="numeric" placeholder="fmax − fmin = ?"></label><button id="checkBw">בדיקה</button></div><div id="bwFeedback" class="feedback" aria-live="polite"></div></div>
-        <nav class="footer-nav"><button class="btn secondary" data-prev>→ חזרה</button><button class="btn" data-next>סיימתי — לתחנה 04 ←</button></nav>
+        <nav class="footer-nav"><button class="btn secondary" data-prev>חזרה</button><button class="btn" data-next>סיימתי — לתחנה 04</button></nav>
       </section>
 
       <section class="stage" data-stage="3">
@@ -139,7 +139,7 @@
         </div>
         <div class="grid2"><div class="card"><h3><bdi dir="ltr">2.4 GHz</bdi></h3><p>טווח טוב יותר וחדירה טובה יותר דרך קירות, אך לרוב יותר עומס והפרעות.</p></div><div class="card"><h3><bdi dir="ltr">5 GHz</bdi></h3><p>יותר ערוצים רחבים ופחות עומס במקרים רבים, אך טווח וחדירה חלשים יותר.</p></div></div>
         <div class="truth"><div class="mark">!</div><div><b>העמקה חשובה:</b> תדר הנושא — <bdi dir="ltr">2.4 GHz</bdi> או <bdi dir="ltr">5 GHz</bdi> — אינו רוחב הפס. תדר הנושא מציין היכן הערוץ נמצא בספקטרום; רוחב הפס מציין כמה מקום הוא תופס.</div></div>
-        <nav class="footer-nav"><button class="btn secondary" data-prev>→ חזרה</button><button class="btn" data-next>סיימתי — לבוחן ←</button></nav>
+        <nav class="footer-nav"><button class="btn secondary" data-prev>חזרה</button><button class="btn" data-next>סיימתי — לבוחן</button></nav>
       </section>
 
       <section class="stage" data-stage="4">
@@ -154,7 +154,7 @@
           <button class="btn black" type="submit">בדיקת התשובות</button>
         </form>
         <div class="result-poster" id="quizResult" aria-live="polite"><div class="eyebrow" style="color:var(--cream)" dir="ltr">YOUR RESULT</div><div class="score" id="scoreText">0 / 5</div><div id="scoreMessage"></div><div class="review" id="quizReview"></div></div>
-        <nav class="footer-nav"><button class="btn secondary" data-prev>→ חזרה</button><button class="btn" id="retryQuiz">נסו שוב</button></nav>
+        <nav class="footer-nav"><button class="btn secondary" data-prev>חזרה</button><button class="btn" id="retryQuiz">נסו שוב</button></nav>
       </section>
     </main>
   </div>

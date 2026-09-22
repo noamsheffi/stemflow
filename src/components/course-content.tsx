@@ -19,9 +19,9 @@ export function LessonCard({ lesson }: { lesson: CourseLesson }) {
       <h2>{lesson.title}</h2>
       {lesson.topics.length > 0 && <p className="topic-list">{lesson.topics.join(" · ")}</p>}
       <div className="lesson-card-actions">
-        {lessonPlan && <LessonOpenLink className="lesson-card-action primary" href={lessonPlan.href} lessonId={lesson.lessonId} resourceId={lessonPlan.resourceId} resourceKind={lessonPlan.kind}>למערך השיעור <bdi>←</bdi></LessonOpenLink>}
-        {homePractice && <LessonOpenLink className="lesson-card-action" href={homePractice.href} lessonId={lesson.lessonId} resourceId={homePractice.resourceId} resourceKind={homePractice.kind}>לתרגול אינטראקטיבי <bdi>←</bdi></LessonOpenLink>}
-        {!lessonPlan && <LessonOpenLink className="lesson-card-action primary" href={lessonHref(lesson)} lessonId={lesson.lessonId} resourceId="lesson-main-html">לחומרי השיעור <bdi>←</bdi></LessonOpenLink>}
+        {lessonPlan && <LessonOpenLink className="lesson-card-action primary" href={lessonPlan.href} lessonId={lesson.lessonId} resourceId={lessonPlan.resourceId} resourceKind={lessonPlan.kind}>למערך השיעור</LessonOpenLink>}
+        {homePractice && <LessonOpenLink className="lesson-card-action" href={homePractice.href} lessonId={lesson.lessonId} resourceId={homePractice.resourceId} resourceKind={homePractice.kind}>לתרגול אינטראקטיבי</LessonOpenLink>}
+        {!lessonPlan && <LessonOpenLink className="lesson-card-action primary" href={lessonHref(lesson)} lessonId={lesson.lessonId} resourceId="lesson-main-html">לחומרי השיעור</LessonOpenLink>}
       </div>
     </article>
   );

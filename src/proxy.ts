@@ -10,17 +10,19 @@ function unauthorized() {
 }
 
 export function proxy(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
   if (!validAccessSession(request.cookies.get(ACCESS_COOKIE)?.value)) {
-    if (request.nextUrl.pathname.startsWith("/api/")) {
+    if (pathname.startsWith("/api/")) {
       return NextResponse.json({ error: "authentication_required" }, { status: 401, headers: { "Cache-Control": "no-store" } });
     }
     const login = new URL("/login", request.url);
-    login.searchParams.set("next", request.nextUrl.pathname + request.nextUrl.search);
+    login.searchParams.set("next", pathname + request.nextUrl.search);
     const response = NextResponse.redirect(login);
     response.headers.set("Cache-Control", "no-store");
     return response;
   }
-  if (!request.nextUrl.pathname.startsWith("/lecturer")) {
+  const requiresLecturerAuth = pathname.startsWith("/lecturer") || pathname.startsWith("/admin") || pathname.startsWith("/api/admin/");
+  if (!requiresLecturerAuth) {
     const response = NextResponse.next();
     response.headers.set("Cache-Control", "private, no-store");
     return response;
@@ -33,7 +35,10 @@ export function proxy(request: NextRequest) {
   }
 
   const authorization = request.headers.get("authorization");
-  if (!authorization?.startsWith("Basic ")) return unauthorized();
+  if (!authorization?.startsWith("Basic ")) {
+    if (pathname.startsWith("/api/")) return NextResponse.json({ error: "lecturer_authentication_required" }, { status: 401, headers: { "Cache-Control": "no-store" } });
+    return unauthorized();
+  }
 
   try {
     const decoded = atob(authorization.slice(6));
@@ -53,5 +58,5 @@ export function proxy(request: NextRequest) {
 export const config = { matcher: [
   "/workspace/:path*", "/course/:path*", "/courses/:path*", "/lessons/:path*",
   "/formulas/:path*", "/concepts/:path*", "/slide-friction/:path*", "/lecturer/:path*",
-  "/api/submissions/:path*", "/api/learning-events/:path*",
+  "/admin/:path*", "/api/admin/:path*", "/api/submissions/:path*", "/api/learning-events/:path*",
 ] };

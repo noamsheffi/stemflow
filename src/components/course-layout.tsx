@@ -5,7 +5,6 @@ import LogoutButton from "./logout-button";
 import { usePathname } from "next/navigation";
 import { useLayoutEffect, useState } from "react";
 import { course, courseAppPath, getLesson } from "../lib/course-data";
-import LectureExtension from "./lecture-extension";
 
 const sidebarStorageKey = "syllo:course-sidebar-collapsed";
 
@@ -59,7 +58,6 @@ export default function CourseLayout({ children }: { children: React.ReactNode }
   const courseNavigation = <nav className="course-nav" aria-label={`ניווט ${course.title}`}><Link className={navigationClass()} href={courseAppPath()} aria-current={navigationClass() ? "page" : undefined}><span aria-hidden="true">⌂</span><span className="nav-label">בית הקורס</span></Link><Link className={navigationClass("lessons")} href={courseAppPath("lessons")} aria-current={navigationClass("lessons") ? "page" : undefined}><span aria-hidden="true">▤</span><span className="nav-label">מערכי שיעור</span></Link><Link className={navigationClass("formulas")} href={courseAppPath("formulas")} aria-current={navigationClass("formulas") ? "page" : undefined}><span aria-hidden="true">ƒ</span><span className="nav-label">נוסחאון</span></Link><Link className={navigationClass("concepts")} href={courseAppPath("concepts")} aria-current={navigationClass("concepts") ? "page" : undefined}><span aria-hidden="true">⌘</span><span className="nav-label">מפת מושגים</span></Link></nav>;
 
   return <div className={`course-shell${sidebarCollapsed ? " sidebar-collapsed" : ""}`}>
-    <LectureExtension />
     <button
       className="course-sidebar-toggle"
       type="button"
@@ -68,7 +66,7 @@ export default function CourseLayout({ children }: { children: React.ReactNode }
       aria-label={sidebarCollapsed ? "פתיחת סרגל הניווט" : "קיפול סרגל הניווט"}
       title={sidebarCollapsed ? "פתיחת ניווט" : "קיפול ניווט"}
     >
-      <span aria-hidden="true" dir="ltr">{sidebarCollapsed ? "←" : "→"}</span>
+      <span aria-hidden="true">☰</span>
     </button>
     <aside className="course-sidebar" aria-label="ניווט סביבת הלמידה">
       <Link className="course-brand" href="/" aria-label="Syllo — דף הבית"><img className="brand-logo" src="/brand/syllo-logo.png" alt="Syllo" width="132" height="56" /></Link>

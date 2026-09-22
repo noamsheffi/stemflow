@@ -112,10 +112,10 @@
   <script defer src="/lesson-metadata.js"></script>
   <script defer src="/slide-feedback.js"></script>
 </head>
-<body data-deck-version="ee808e55c7fe9439" data-course-id="communication-systems" data-lesson-id="lesson-03">
+<body data-deck-version="bf5b34672a47d616" data-course-id="communication-systems" data-lesson-id="lesson-03">
 <div class="grain"></div><div class="progress" id="progress"></div><div class="counter" id="counter">01 / 39</div>
 <button class="help" id="helpBtn" title="עזרה">? מקשים</button>
-<nav class="nav" aria-label="ניווט"><button id="prev" title="הקודם">→</button><button id="notesBtn" title="הערות מרצה">N</button><button id="full" title="מסך מלא">⛶</button><button id="next" title="הבא">←</button></nav>
+<nav class="nav" aria-label="ניווט"><button id="prev" title="הקודם">הקודם</button><button id="notesBtn" title="הערות מרצה">N</button><button id="full" title="מסך מלא">⛶</button><button id="next" title="הבא">הבא</button></nav>
 <aside class="notes" id="notes"><h3>הערות מרצה</h3><p id="notesText"></p></aside>
 <div class="modal" id="help"><div class="box"><h3>ניווט במצגת</h3><p style="margin-top:1em"><span class="key">← / Space</span> הבא &nbsp; <span class="key">→</span> הקודם &nbsp; <span class="key">N</span> הערות מרצה &nbsp; <span class="key">F</span> מסך מלא &nbsp; <span class="key">Home / End</span> התחלה / סוף</p><p class="small muted" style="margin-top:1em">לחיצה מחוץ לתיבה סוגרת את העזרה. ברכיבים אינטראקטיביים, הזזת הסליידרים אינה מעבירה שקף.</p></div></div>
 
@@ -218,7 +218,7 @@
         <text x="535" y="202" text-anchor="middle" class="svgtext" style="fill:#008f4d">סיבוב אחד בחוג</text>
       </svg>
     </div>
-    <div class="loop-guide"><p id="loopExplain">מתחילים מרעש חשמלי זעיר שקיים בכל מעגל בזמן ההדלקה.</p><button id="loopNextStep" type="button">העבירו את האות שלב נוסף ←</button></div>
+    <div class="loop-guide"><p id="loopExplain">מתחילים מרעש חשמלי זעיר שקיים בכל מעגל בזמן ההדלקה.</p><button id="loopNextStep" type="button">העבירו את האות שלב נוסף</button></div>
   </section>
 
   <section class="slide" data-section="CLOSED LOOP · 00:25–00:29" data-notes="השקף מתרגם את המסלול משקף 7 למתמטיקה. קרא משמאל לימין והגדר בקול כל סימן: xi הוא אות הכניסה למגבר; A הוא הגבר המגבר; xout הוא אות המוצא; בטא היא מקדם המשוב — החלק מן המוצא שמוחזר; xf הוא אות המשוב שחוזר לכניסה. Aβ נקרא הגבר החוג.">
@@ -484,7 +484,7 @@
   document.addEventListener('keydown',e=>{if(['INPUT','BUTTON'].includes(document.activeElement.tagName)&&!['Escape','n','N','f','F'].includes(e.key))return;if(['ArrowLeft','ArrowDown',' ','PageDown','Enter'].includes(e.key)){e.preventDefault();next()}else if(['ArrowRight','ArrowUp','PageUp'].includes(e.key)){e.preventDefault();prev()}else if(e.key==='Home')show(0);else if(e.key==='End')show(slides.length-1);else if(e.key==='n'||e.key==='N')notes.classList.toggle('show');else if(e.key==='f'||e.key==='F')document.getElementById('full').click();else if(e.key==='Escape')help.classList.remove('show')});
   let sx=0;document.addEventListener('touchstart',e=>sx=e.changedTouches[0].screenX,{passive:true});document.addEventListener('touchend',e=>{const dx=e.changedTouches[0].screenX-sx;if(Math.abs(dx)>60)(dx<0?next:prev)()},{passive:true});
   const loopCopy=['מתחילים מרעש חשמלי זעיר שקיים בכל מעגל בזמן ההדלקה.','המגבר משתמש באנרגיית ספק ה־DC ומגדיל את האות פי A.','במוצא מתקבל אות מוגבר: xout=A·xᵢ.','רשת המשוב בוחרת את התדר הרצוי ומחזירה חלק β מן המוצא.','האות xf חוזר לכניסה. אם הוא זהה ל־xᵢ בגודל ובמופע — מתחיל סיבוב נוסף.'];let loopStep=0;
-  function setLoopStep(n){loopStep=(n+loopNodes.length)%loopNodes.length;loopNodes.forEach((node,i)=>node.classList.toggle('active',i===loopStep));loopExplain.textContent=loopCopy[loopStep];loopNextStep.textContent=loopStep===loopNodes.length-1?'התחילו סיבוב חדש ↻':'העבירו את האות שלב נוסף ←'}
+  function setLoopStep(n){loopStep=(n+loopNodes.length)%loopNodes.length;loopNodes.forEach((node,i)=>node.classList.toggle('active',i===loopStep));loopExplain.textContent=loopCopy[loopStep];loopNextStep.textContent=loopStep===loopNodes.length-1?'התחילו סיבוב חדש':'העבירו את האות שלב נוסף'}
   loopNextStep.addEventListener('click',()=>setLoopStep(loopStep+1));loopNodes.forEach((node,i)=>node.addEventListener('click',()=>setLoopStep(i)));
   function drawWave(canvas,mode='clean'){if(!canvas)return;const dpr=devicePixelRatio||1,r=canvas.getBoundingClientRect();canvas.width=r.width*dpr;canvas.height=r.height*dpr;const c=canvas.getContext('2d');c.scale(dpr,dpr);c.clearRect(0,0,r.width,r.height);c.strokeStyle='#355b47';c.lineWidth=1;c.globalAlpha=.45;for(let y=30;y<r.height;y+=40){c.beginPath();c.moveTo(0,y);c.lineTo(r.width,y);c.stroke()}for(let x=0;x<r.width;x+=55){c.beginPath();c.moveTo(x,0);c.lineTo(x,r.height);c.stroke()}c.globalAlpha=1;c.strokeStyle='#00a85d';c.lineWidth=4;c.beginPath();let lg=parseFloat(document.getElementById('loopGain')?.textContent||1);for(let x=0;x<r.width;x++){let amp=r.height*.26;if(mode==='gain'){const t=x/r.width*8;if(lg<.97)amp*=Math.exp(-(1-lg)*t*2.2);else if(lg>1.03)amp=Math.min(r.height*.39,amp*Math.exp((lg-1)*t*1.2));}let y=r.height/2-amp*Math.sin(x/r.width*Math.PI*8);if(mode==='gain'&&lg>1.18)y=Math.max(r.height*.14,Math.min(r.height*.86,y));x?c.lineTo(x,y):c.moveTo(x,y)}c.stroke()}
   function updateGain(){const A=+gainA.value,b=+beta.value,lg=A*b;gainAOut.value=A.toFixed(2);betaOut.value=b.toFixed(2);loopGain.textContent=lg.toFixed(2);gainStatus.className='status ';if(lg<.97){gainStatus.textContent='האות דועך — הגבר החוג קטן מ־1';gainStatus.classList.add('bad')}else if(lg<=1.06){gainStatus.textContent='קרוב למצב יציב — הגבר החוג ≈ 1';gainStatus.classList.add('ok')}else if(lg<1.18){gainStatus.textContent='התנעה: התנופה גדלה עד לייצוב';gainStatus.classList.add('warn')}else{gainStatus.textContent='גידול ורוויה — מתקבל עיוות';gainStatus.classList.add('bad')}drawWave(gainWave,'gain')}

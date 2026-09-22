@@ -23,7 +23,7 @@ export default function FormulasPage() {
         <table className={styles.table}><caption className={styles.srOnly}>משתנים ויחידות — {formula.name}</caption><thead><tr><th scope="col">סמל</th><th scope="col">משמעות</th><th scope="col">יחידות</th></tr></thead><tbody>
           {formula.params.map((param) => <tr key={param.symbol}><td><FormulaMath tex={param.symbol} /></td><td>{param.name}</td><td>{param.unit.includes("\\") ? <FormulaMath tex={param.unit} /> : param.unit}</td></tr>)}
         </tbody></table>
-        <details className={styles.context}><summary>הנוסחה בשיעור</summary><p>{formula.usage}</p>{lesson ? <Link className={styles.lessonButton} href={lessonHref(lesson)} aria-label={`פתיחת מערך שיעור ${lesson.number}: ${lesson.title}`}>פתיחת מערך שיעור {lesson.number} <span aria-hidden="true">←</span></Link> : <span className={styles.pending}>מערך שיעור {formula.lesson} טרם זמין באתר</span>}</details>
+        <details className={styles.context}><summary>הנוסחה בשיעור</summary><p>{formula.usage}</p>{lesson ? <Link className={styles.lessonButton} href={lessonHref(lesson)} aria-label={`פתיחת מערך שיעור ${lesson.number}: ${lesson.title}`}>פתיחת מערך שיעור {lesson.number}</Link> : <span className={styles.pending}>מערך שיעור {formula.lesson} טרם זמין באתר</span>}</details>
         <details className={styles.trap}><summary>שימו לב בבחינה</summary><p>{formula.trap}</p></details>
       </article>,
     };

@@ -40,12 +40,10 @@
 .loopLabel { color: var(--company-muted); font-size: .8125rem; }
 .loopStep h2 { font-size: 1.25rem; font-weight: 600; margin-block: 5px; }
 .loopStep p { font-size: .875rem; line-height: 1.6; color: var(--company-muted); }
-.signal { margin-inline-start: auto; font-size: 1.6rem; color: var(--company-teal); }
-.connector { color: #65949e; padding-block: 3px; padding-inline-start: 21px; font-size: 1.125rem; }
 .nextStep { background: #12384a; border-color: #12384a; color: white; }
 .nextStep .loopLabel, .nextStep p { color: #d3e7ec; }
-.nextStep .signal, .nextStep .stepSymbol { color: #70e0e4; }
-.loop .loopReturn { display: flex; justify-content: space-between; gap: 10px; margin-top: 22px; color: var(--company-teal); font-size: .8125rem; }
+.nextStep .stepSymbol { color: #70e0e4; }
+.loop .loopReturn { margin-top: 22px; color: var(--company-teal); font-size: .8125rem; }
 .approach { border-top: 1px solid #e4ecf0; padding-block: 66px 80px; scroll-margin-top: 32px; }
 .sectionHeading { display: flex; justify-content: space-between; align-items: flex-start; gap: 32px; }
 .sectionHeading h2 { font-size: 2rem; line-height: 1.4; font-weight: 600; width: 66%; }

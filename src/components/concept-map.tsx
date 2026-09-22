@@ -22,7 +22,7 @@ export default function ConceptMap({ entries }: { entries: Entry[] }) {
     return <Link className={compact ? styles.node : styles.card} key={entry.id} href={`${courseAppPath("concepts")}/${entry.id}`}>
       {!compact && <span className={styles.badges}><span>{entry.lesson}</span><span>{entry.category}</span></span>}
       <strong>{entry.title}</strong><span className={styles.english} dir="ltr">{entry.english}</span>
-      {!compact && <><span className={styles.description}>{entry.summary}</span><span className={styles.cardFooter}><span>{entry.connections.length} מושגים קשורים</span><b>לגלות את הקשרים ←</b></span></>}
+      {!compact && <><span className={styles.description}>{entry.summary}</span><span className={styles.cardFooter}><span>{entry.connections.length} מושגים קשורים</span><b>לגלות את הקשרים</b></span></>}
     </Link>;
   }
   return <div className={styles.map} dir="rtl">

@@ -192,6 +192,43 @@
   /* frac defined above with formula-box */
 
   footer.note{text-align:center;font-size:13px;color:var(--muted);margin-top:32px;padding-top:16px;border-top:1px solid var(--line)}
+  @media(max-width:600px){
+    .app{padding:18px 12px 40px}
+    .mast{align-items:stretch;gap:12px;padding-bottom:14px;margin-bottom:18px}
+    .mast-note{max-width:none;font-size:14px;padding-right:10px}
+    .nav-tabs{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:16px}
+    .tab-btn{min-height:46px;padding:9px 8px;font-size:13px;line-height:1.2}
+    .card{padding:16px 14px;margin-bottom:14px;border-radius:12px}
+    .card h2{font-size:clamp(20px,6vw,25px);line-height:1.2}
+    .card h3{font-size:16px;line-height:1.35}
+    .card p,.card li{font-size:15px;line-height:1.55}
+    .formula-box{padding:12px 8px;margin:11px 0;overflow-x:auto}
+    .formula-box .math{min-width:0;font-size:clamp(13px,3.8vw,17px);line-height:1.55;overflow-wrap:anywhere}
+    .formula-box .math .line{overflow-wrap:anywhere}
+    .formula-box .he{font-size:13px}
+    .controls-grid{grid-template-columns:1fr 1fr;gap:12px;padding:12px}
+    .control-group label{font-size:13px}
+    .canvas-container{gap:12px;margin:12px 0}
+    canvas{height:180px}
+    .metrics-grid{grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}
+    .metric-card{padding:10px 6px}
+    .metric-card .value{font-size:16px}
+    .input-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:center}
+    .input-row label{font-size:14px}
+    .input-row input[type=number]{width:100%;min-width:0;padding:8px 6px}
+    .input-row .btn{width:100%;padding-inline:8px}
+    .step-box{padding:13px 12px;margin-bottom:12px}
+    .step-box p{font-size:15px}
+    .exam-trap{padding:12px;margin:10px 0}
+    textarea{min-height:110px}
+    footer.note{margin-top:22px;font-size:12px}
+  }
+  @media(max-width:380px){
+    .nav-tabs{grid-template-columns:1fr}
+    .controls-grid{grid-template-columns:1fr}
+    .input-row{grid-template-columns:1fr}
+    .input-row .btn{width:100%}
+  }
 </style>
 </head>
 <body data-course-id="communication-systems" data-lesson-id="lesson-04" data-deck-version="lesson-04-practice-v1">

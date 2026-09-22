@@ -38,6 +38,6 @@ export function validAccessSession(token: string | undefined, now = Date.now()) 
 }
 
 export function safeReturnPath(value: unknown) {
-  if (typeof value !== "string" || !/^\/(workspace|course|courses|lessons|formulas|concepts|slide-friction|lecturer)(\/|\?|$)/.test(value) || /[\\\r\n]/.test(value)) return "/workspace";
+  if (typeof value !== "string" || !/^\/(admin|workspace|course|courses|lessons|formulas|concepts|slide-friction|lecturer)(\/|\?|$)/.test(value) || /[\\\r\n]/.test(value)) return "/workspace";
   return value;
 }
