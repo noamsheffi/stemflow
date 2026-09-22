@@ -18,7 +18,7 @@
 .brand img { width: 100%; height: auto; display: block; }
 .nav { display: flex; gap: 32px; font-size: .9375rem; }
 .nav a:hover, .secondary:hover, .footer a:hover { color: var(--company-teal); }
-.entry { margin-inline-start: auto; display: flex; align-items: center; gap: 18px; padding: 12px 18px; border: 1px solid #cddae2; border-radius: 8px; font-size: .9375rem; font-weight: 600; }
+.entry { margin-inline-start: auto; display: flex; align-items: center; gap: 18px; padding: 12px 18px; border: 1px solid #cddae2; border-radius: 8px; background: #F1F8F9; font-size: .9375rem; font-weight: 600; }
 .entry:hover { background: #eff9fa; border-color: var(--company-teal); }
 .headerActions { margin-inline-start: auto; display: flex; align-items: center; gap: 10px; }
 .hero { display: grid; grid-template-columns: 1.12fr 1fr; gap: 76px; align-items: center; padding-block: 88px 100px; }

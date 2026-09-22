@@ -28,7 +28,7 @@ export default function LecturerInterestModal() {
   }
 
   return <>
-    <button type="button" className={styles.trigger} onClick={() => { setStatus("idle"); setOpen(true); }}>כניסת מרצים <span aria-hidden="true">↗</span></button>
+    <button type="button" className={styles.trigger} onClick={() => { setStatus("idle"); setOpen(true); }}>כניסת מרצים</button>
     {open && <div className={styles.backdrop} role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) close(); }}>
       <section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="lecturer-interest-title" dir="rtl">
         <button type="button" className={styles.close} onClick={close} aria-label="סגירת החלון">×</button>
@@ -51,7 +51,7 @@ export default function LecturerInterestModal() {
             <label>מכללה / אוניברסיטה<input name="institution" required maxLength={160} /></label>
             <label>קורס<input name="course" required maxLength={160} /></label>
             {status === "error" && <p className={styles.error} role="alert">לא הצלחנו לשמור את הפרטים. נסו שוב.</p>}
-            <button className={styles.submit} type="submit" disabled={status === "submitting"}>{status === "submitting" ? "שולחים…" : "השאירו פרטים"}<span aria-hidden="true">←</span></button>
+            <button className={styles.submit} type="submit" disabled={status === "submitting"}>{status === "submitting" ? "שולחים…" : "השאירו פרטים"}</button>
           </form>
         </>}
       </section>

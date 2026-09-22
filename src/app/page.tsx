@@ -30,7 +30,7 @@ export default function CompanyHome() {
           <a href="#about">על Syllo</a>
         </nav>
         <div className={styles.headerActions}>
-          <Link className={styles.entry} href="/workspace">כניסת סטודנטים <span aria-hidden="true">↖</span></Link>
+          <Link className={styles.entry} href="/workspace">כניסת סטודנטים</Link>
           <LecturerInterestModal />
         </div>
       </header>
@@ -41,8 +41,8 @@ export default function CompanyHome() {
             <h1 id="hero-title">השיעור נגמר.<br /><span>הלמידה ממשיכה.</span></h1>
             <p className={styles.intro}>בין מה שלימדנו למה שהובן, יש עוד מה לגלות. Syllo מחברת בין ההוראה בכיתה ללמידה שאחריה, כדי לעזור למרצים לשפר את השיעור הבא.</p>
             <div className={styles.actions}>
-              <Link className={styles.primary} href="/workspace">כניסת סטודנטים <span aria-hidden="true">←</span></Link>
-              <a className={styles.secondary} href="#approach">להכיר את הדרך שלנו <span aria-hidden="true">↓</span></a>
+              <Link className={styles.primary} href="/workspace">כניסת סטודנטים</Link>
+              <a className={styles.secondary} href="#approach">להכיר את הדרך שלנו</a>
             </div>
             <p className={styles.note}>נבנית מתוך הוראה אמיתית, בקורס STEM פעיל.</p>
           </div>
