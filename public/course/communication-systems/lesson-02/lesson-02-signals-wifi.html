@@ -7,13 +7,13 @@
   <style>
 
     :root {
-      --bg: #C8B99A;
-      --bg-dark: #B8A98A;
-      --green: #008F4D;
-      --green-light: #00A85D;
-      --black: #1A1A1A;
-      --white: #F4EFE6;
-      --line: #1A1A1A;
+      --bg: #F1F5F9;
+      --bg-dark: #E2E8F0;
+      --green: #06B6D4;
+      --green-light: #22D3EE;
+      --black: #0F172A;
+      --white: #FFFFFF;
+      --line: #0F172A;
     }
 
     * {
@@ -1337,8 +1337,10 @@
       .harmonic-card { min-height:150px; }
     }
   </style>
+  <script defer src="/lesson-metadata.js"></script>
+  <script defer src="/slide-feedback.js"></script>
 </head>
-<body>
+<body data-course-id="communication-systems" data-lesson-id="lesson-02" data-deck-version="lesson-02-signals-v2">
 
   <!-- Grain texture overlay -->
   <div class="grain-overlay"></div>
@@ -1363,8 +1365,8 @@
       <div class="cover-visual" aria-hidden="true">
         <div class="cover-sheet"></div>
         <div class="cover-board">
-          <div class="cover-sketch"><svg viewBox="0 0 620 205"><line x1="45" y1="174" x2="575" y2="174" stroke="#1A1A1A" stroke-width="5"/><line x1="45" y1="24" x2="45" y2="174" stroke="#1A1A1A" stroke-width="5"/><path d="M45 104 C92 10 139 10 186 104 S280 198 327 104 S421 10 468 104 S540 170 575 92" fill="none" stroke="#008F4D" stroke-width="12"/><text x="555" y="155" font-size="24" font-weight="900">t</text></svg></div>
-          <div class="cover-sketch"><svg viewBox="0 0 620 205"><line x1="45" y1="174" x2="575" y2="174" stroke="#1A1A1A" stroke-width="5"/><line x1="45" y1="24" x2="45" y2="174" stroke="#1A1A1A" stroke-width="5"/><line x1="165" y1="174" x2="165" y2="54" stroke="#008F4D" stroke-width="14"/><line x1="315" y1="174" x2="315" y2="94" stroke="#008F4D" stroke-width="14"/><line x1="465" y1="174" x2="465" y2="126" stroke="#008F4D" stroke-width="14"/><text x="555" y="155" font-size="24" font-weight="900">f</text></svg></div>
+          <div class="cover-sketch"><svg viewBox="0 0 620 205"><line x1="45" y1="174" x2="575" y2="174" stroke="#0F172A" stroke-width="5"/><line x1="45" y1="24" x2="45" y2="174" stroke="#0F172A" stroke-width="5"/><path d="M45 104 C92 10 139 10 186 104 S280 198 327 104 S421 10 468 104 S540 170 575 92" fill="none" stroke="#06B6D4" stroke-width="12"/><text x="555" y="155" font-size="24" font-weight="900">t</text></svg></div>
+          <div class="cover-sketch"><svg viewBox="0 0 620 205"><line x1="45" y1="174" x2="575" y2="174" stroke="#0F172A" stroke-width="5"/><line x1="45" y1="24" x2="45" y2="174" stroke="#0F172A" stroke-width="5"/><line x1="165" y1="174" x2="165" y2="54" stroke="#06B6D4" stroke-width="14"/><line x1="315" y1="174" x2="315" y2="94" stroke="#06B6D4" stroke-width="14"/><line x1="465" y1="174" x2="465" y2="126" stroke="#06B6D4" stroke-width="14"/><text x="555" y="155" font-size="24" font-weight="900">f</text></svg></div>
         </div>
       </div>
       <div class="cover-copy">
@@ -1447,8 +1449,8 @@
       <div class="lesson-body">
         <div class="three-col">
           <div class="card"><span class="card-label">מחזורי</span><div class="formula small">x(t)=x(t+T)</div><h3>חזרה מדויקת</h3><p>גל סינוס או גל ריבועי החוזר לאחר זמן יסודי קבוע. (אותות מחזוריים בסילבוס)</p></div>
-          <div class="card khaki"><span class="card-label">לא־מחזורי דטרמיניסטי</span><div class="signal-box" style="min-height:150px;"><svg viewBox="0 0 420 150" role="img" aria-label="פולס יחיד שאינו חוזר"><line x1="20" y1="110" x2="400" y2="110" stroke="#1A1A1A" stroke-width="3"/><polyline points="20,110 150,110 150,35 240,35 240,110 400,110" fill="none" stroke="#008F4D" stroke-width="7"/></svg></div><p>פולס יחיד מתוכנן מראש: אינו חוזר, אך אינו אקראי.</p></div>
-          <div class="card"><span class="card-label">אקראי</span><div class="signal-box" style="min-height:150px;"><svg viewBox="0 0 420 150" role="img" aria-label="אות רעש אקראי"><polyline points="20,80 40,45 60,110 80,30 100,95 120,62 140,120 160,40 180,88 200,25 220,105 240,54 260,115 280,35 300,85 320,50 340,122 360,68 400,92" fill="none" stroke="#1A1A1A" stroke-width="6"/></svg></div><p>אות אקראי מתואר באמצעות הסתברויות; ערכיו אינם ידועים מראש באופן ודאי. (אותות אקראיים בסילבוס)</p></div>
+          <div class="card khaki"><span class="card-label">לא־מחזורי דטרמיניסטי</span><div class="signal-box" style="min-height:150px;"><svg viewBox="0 0 420 150" role="img" aria-label="פולס יחיד שאינו חוזר"><line x1="20" y1="110" x2="400" y2="110" stroke="#0F172A" stroke-width="3"/><polyline points="20,110 150,110 150,35 240,35 240,110 400,110" fill="none" stroke="#06B6D4" stroke-width="7"/></svg></div><p>פולס יחיד מתוכנן מראש: אינו חוזר, אך אינו אקראי.</p></div>
+          <div class="card"><span class="card-label">אקראי</span><div class="signal-box" style="min-height:150px;"><svg viewBox="0 0 420 150" role="img" aria-label="אות רעש אקראי"><polyline points="20,80 40,45 60,110 80,30 100,95 120,62 140,120 160,40 180,88 200,25 220,105 240,54 260,115 280,35 300,85 320,50 340,122 360,68 400,92" fill="none" stroke="#0F172A" stroke-width="6"/></svg></div><p>אות אקראי מתואר באמצעות הסתברויות; ערכיו אינם ידועים מראש באופן ודאי. (אותות אקראיים בסילבוס)</p></div>
         </div>
         <div class="checkpoint" style="margin-top:18px;">זהו סעיף 1.5 בתוכנית הלימודים: אפיון אותות — מחזוריים ואקראיים</div>
       </div>
@@ -1466,13 +1468,13 @@
         <div class="formula big">x(t) = x(t + T)</div>
         <div class="signal-box" style="margin-top:10px;min-height:285px;">
           <svg viewBox="0 0 1000 300" role="img" aria-label="שלושה מחזורים של אות סינוס">
-            <line x1="50" y1="150" x2="950" y2="150" stroke="#1A1A1A" stroke-width="3"/>
-            <line x1="50" y1="35" x2="50" y2="265" stroke="#1A1A1A" stroke-width="3"/>
-            <path d="M50 150 C100 40 150 40 200 150 S300 260 350 150 S450 40 500 150 S600 260 650 150 S750 40 800 150 S900 260 950 150" fill="none" stroke="#008F4D" stroke-width="8"/>
-            <line x1="50" y1="270" x2="350" y2="270" stroke="#1A1A1A" stroke-width="4"/>
-            <line x1="50" y1="258" x2="50" y2="282" stroke="#1A1A1A" stroke-width="4"/>
-            <line x1="350" y1="258" x2="350" y2="282" stroke="#1A1A1A" stroke-width="4"/>
-            <text x="188" y="296" font-size="26" fill="#008F4D">T</text>
+            <line x1="50" y1="150" x2="950" y2="150" stroke="#0F172A" stroke-width="3"/>
+            <line x1="50" y1="35" x2="50" y2="265" stroke="#0F172A" stroke-width="3"/>
+            <path d="M50 150 C100 40 150 40 200 150 S300 260 350 150 S450 40 500 150 S600 260 650 150 S750 40 800 150 S900 260 950 150" fill="none" stroke="#06B6D4" stroke-width="8"/>
+            <line x1="50" y1="270" x2="350" y2="270" stroke="#0F172A" stroke-width="4"/>
+            <line x1="50" y1="258" x2="50" y2="282" stroke="#0F172A" stroke-width="4"/>
+            <line x1="350" y1="258" x2="350" y2="282" stroke="#0F172A" stroke-width="4"/>
+            <text x="188" y="296" font-size="26" fill="#06B6D4">T</text>
           </svg>
         </div>
         <div class="three-col" style="margin-top:18px;">
@@ -1595,13 +1597,13 @@
         <div class="angular-grid">
           <div class="angle-wheel">
             <svg viewBox="0 0 360 360" role="img" aria-label="מעגל שלם השווה ל־360 מעלות או 2π רדיאנים">
-              <circle cx="180" cy="180" r="125" fill="none" stroke="#1A1A1A" stroke-width="6"/>
-              <line x1="180" y1="180" x2="305" y2="180" stroke="#008F4D" stroke-width="8"/>
-              <path d="M270 92 A125 125 0 1 1 298 148" fill="none" stroke="#008F4D" stroke-width="7"/>
-              <path d="M294 130 L307 151 L282 153" fill="#008F4D"/>
-              <circle cx="180" cy="180" r="8" fill="#1A1A1A"/>
-              <text x="180" y="47" text-anchor="middle" font-size="25" font-weight="900" fill="#008F4D">מחזור אחד</text>
-              <text x="180" y="322" text-anchor="middle" font-size="26" font-weight="900" fill="#1A1A1A">360° = 2π rad</text>
+              <circle cx="180" cy="180" r="125" fill="none" stroke="#0F172A" stroke-width="6"/>
+              <line x1="180" y1="180" x2="305" y2="180" stroke="#06B6D4" stroke-width="8"/>
+              <path d="M270 92 A125 125 0 1 1 298 148" fill="none" stroke="#06B6D4" stroke-width="7"/>
+              <path d="M294 130 L307 151 L282 153" fill="#06B6D4"/>
+              <circle cx="180" cy="180" r="8" fill="#0F172A"/>
+              <text x="180" y="47" text-anchor="middle" font-size="25" font-weight="900" fill="#06B6D4">מחזור אחד</text>
+              <text x="180" y="322" text-anchor="middle" font-size="26" font-weight="900" fill="#0F172A">360° = 2π rad</text>
             </svg>
           </div>
           <div class="angular-steps">
@@ -1658,9 +1660,9 @@
 <section class="slide lesson-slide" data-index="13" data-time="3 דקות">
       <header class="lesson-header"><div><div class="lesson-kicker">BUILDING A COMPLEX SIGNAL</div><h2 class="lesson-title">בכל רגע מחברים את ערכי שני האותות</h2></div><div class="time-chip">3 MIN</div></header>
       <div class="lesson-body three-col">
-        <div class="card"><span class="card-label">רכיב 1</span><h3><span class="latin"><bdi class="latin">100 Hz</bdi> · <bdi class="latin">1 V</bdi></span></h3><div class="signal-box" style="min-height:220px;border-width:2px;"><svg viewBox="0 0 360 210"><line x1="20" y1="105" x2="340" y2="105" stroke="#1A1A1A" stroke-width="2"/><path d="M20 105 C60 25 100 25 140 105 S220 185 260 105 S320 45 340 75" fill="none" stroke="#008F4D" stroke-width="6"/></svg></div></div>
-        <div class="card khaki"><span class="card-label">רכיב 2</span><h3><span class="latin"><bdi class="latin">200 Hz</bdi> · <bdi class="latin">0.5 V</bdi></span></h3><div class="signal-box" style="min-height:220px;border-width:2px;"><svg viewBox="0 0 360 210"><line x1="20" y1="105" x2="340" y2="105" stroke="#1A1A1A" stroke-width="2"/><path d="M20 105 C40 60 60 60 80 105 S120 150 140 105 S180 60 200 105 S240 150 260 105 S300 60 320 105 S340 130 340 120" fill="none" stroke="#1A1A1A" stroke-width="5"/></svg></div></div>
-        <div class="card green"><span class="card-label" style="background:var(--black);">הסכום</span><h3><span class="latin">x₁(t)+x₂(t)</span></h3><div class="signal-box" style="min-height:220px;border-width:2px;"><svg viewBox="0 0 360 210"><line x1="20" y1="105" x2="340" y2="105" stroke="#1A1A1A" stroke-width="2"/><path d="M20 105 C40 35 70 45 90 82 C110 120 120 165 150 153 C180 140 175 80 205 57 C235 34 250 78 270 112 C290 146 315 153 340 95" fill="none" stroke="#008F4D" stroke-width="7"/></svg></div></div>
+        <div class="card"><span class="card-label">רכיב 1</span><h3><span class="latin"><bdi class="latin">100 Hz</bdi> · <bdi class="latin">1 V</bdi></span></h3><div class="signal-box" style="min-height:220px;border-width:2px;"><svg viewBox="0 0 360 210"><line x1="20" y1="105" x2="340" y2="105" stroke="#0F172A" stroke-width="2"/><path d="M20 105 C60 25 100 25 140 105 S220 185 260 105 S320 45 340 75" fill="none" stroke="#06B6D4" stroke-width="6"/></svg></div></div>
+        <div class="card khaki"><span class="card-label">רכיב 2</span><h3><span class="latin"><bdi class="latin">200 Hz</bdi> · <bdi class="latin">0.5 V</bdi></span></h3><div class="signal-box" style="min-height:220px;border-width:2px;"><svg viewBox="0 0 360 210"><line x1="20" y1="105" x2="340" y2="105" stroke="#0F172A" stroke-width="2"/><path d="M20 105 C40 60 60 60 80 105 S120 150 140 105 S180 60 200 105 S240 150 260 105 S300 60 320 105 S340 130 340 120" fill="none" stroke="#0F172A" stroke-width="5"/></svg></div></div>
+        <div class="card green"><span class="card-label" style="background:var(--black);">הסכום</span><h3><span class="latin">x₁(t)+x₂(t)</span></h3><div class="signal-box" style="min-height:220px;border-width:2px;"><svg viewBox="0 0 360 210"><line x1="20" y1="105" x2="340" y2="105" stroke="#0F172A" stroke-width="2"/><path d="M20 105 C40 35 70 45 90 82 C110 120 120 165 150 153 C180 140 175 80 205 57 C235 34 250 78 270 112 C290 146 315 153 340 95" fill="none" stroke="#06B6D4" stroke-width="7"/></svg></div></div>
       </div>
       <div class="checkpoint" style="margin-top:18px;">בדוגמה זו התדר היסודי הוא f₀ = <bdi class="latin">100 Hz</bdi>, כי כל הרכיבים חוזרים יחד לאחר T = <bdi class="latin">10 ms</bdi>; הרכיב ב־<bdi class="latin">200 Hz</bdi> משלים בדיוק שני מחזורים בזמן זה</div>
       <div class="lesson-footer"><span class="hour-tag">HOUR B · 00:58–01:01</span><span>בניית אות מהרמוניות</span></div>
@@ -1723,15 +1725,15 @@
         <div class="carrier-purpose-grid">
           <article class="carrier-purpose-card">
             <div><span class="card-label">אות המידע</span><h3>מה רוצים להעביר?</h3><p>קול, תמונה או ביטים יוצרים אות שמשתנה בהתאם למסר.</p></div>
-            <div class="wave-strip" aria-label="אות מידע איטי"><svg viewBox="0 0 320 82" role="img"><line x1="4" y1="41" x2="316" y2="41" stroke="currentColor" stroke-width="2"/><path d="M4 41 C30 8 56 8 82 41 S134 74 160 41 S212 8 238 41 S290 74 316 41" fill="none" stroke="#008F4D" stroke-width="6"/></svg></div>
+            <div class="wave-strip" aria-label="אות מידע איטי"><svg viewBox="0 0 320 82" role="img"><line x1="4" y1="41" x2="316" y2="41" stroke="currentColor" stroke-width="2"/><path d="M4 41 C30 8 56 8 82 41 S134 74 160 41 S212 8 238 41 S290 74 316 41" fill="none" stroke="#06B6D4" stroke-width="6"/></svg></div>
           </article>
           <article class="carrier-purpose-card">
             <div><span class="card-label">גל נושא</span><h3>באיזה תחום תדרים?</h3><p>בשידור רדיו משתמשים בגל בתדר גבוה שמתאים לתחום השידור ולאנטנה. כשהוא קבוע, הוא צפוי ואינו נושא מסר חדש.</p></div>
-            <div class="wave-strip" aria-label="גל נושא מהיר ובתנופה קבועה"><svg viewBox="0 0 320 82" role="img"><line x1="4" y1="41" x2="316" y2="41" stroke="currentColor" stroke-width="2"/><path d="M4 41 Q14 7 24 41 T44 41 T64 41 T84 41 T104 41 T124 41 T144 41 T164 41 T184 41 T204 41 T224 41 T244 41 T264 41 T284 41 T304 41 T324 41" fill="none" stroke="#1A1A1A" stroke-width="4"/></svg></div>
+            <div class="wave-strip" aria-label="גל נושא מהיר ובתנופה קבועה"><svg viewBox="0 0 320 82" role="img"><line x1="4" y1="41" x2="316" y2="41" stroke="currentColor" stroke-width="2"/><path d="M4 41 Q14 7 24 41 T44 41 T64 41 T84 41 T104 41 T124 41 T144 41 T164 41 T184 41 T204 41 T224 41 T244 41 T264 41 T284 41 T304 41 T324 41" fill="none" stroke="#0F172A" stroke-width="4"/></svg></div>
           </article>
           <article class="carrier-purpose-card">
             <div><span class="card-label" style="background:var(--black);">אות מאופנן</span><h3>איך המידע מצטרף?</h3><p>אות המידע גורם לשינוי מבוקר בגל הנושא. המקלט מודד את השינוי ומשחזר ממנו את המסר.</p></div>
-            <div class="wave-strip" aria-label="גל נושא שהתנופה שלו משתנה"><svg viewBox="0 0 320 82" role="img"><line x1="4" y1="41" x2="316" y2="41" stroke="currentColor" stroke-width="2"/><path d="M4 41 Q14 29 24 41 T44 41 Q54 12 64 41 T84 41 Q94 4 104 41 T124 41 Q134 14 144 41 T164 41 Q174 32 184 41 T204 41 Q214 18 224 41 T244 41 Q254 6 264 41 T284 41 Q294 25 304 41 T324 41" fill="none" stroke="#F4EFE6" stroke-width="4"/></svg></div>
+            <div class="wave-strip" aria-label="גל נושא שהתנופה שלו משתנה"><svg viewBox="0 0 320 82" role="img"><line x1="4" y1="41" x2="316" y2="41" stroke="currentColor" stroke-width="2"/><path d="M4 41 Q14 29 24 41 T44 41 Q54 12 64 41 T84 41 Q94 4 104 41 T124 41 Q134 14 144 41 T164 41 Q174 32 184 41 T204 41 Q214 18 224 41 T244 41 Q254 6 264 41 T284 41 Q294 25 304 41 T324 41" fill="none" stroke="#FFFFFF" stroke-width="4"/></svg></div>
           </article>
         </div>
         <div class="concept-equation"><div>אות מידע<br><bdi class="latin">m(t)</bdi></div><div class="operator">+</div><div>גל נושא<br><bdi class="latin">c(t)</bdi></div><div class="operator">⇢</div><div class="result">אות משודר<br><bdi class="latin">s(t)</bdi></div></div>
@@ -1753,17 +1755,17 @@
           <article class="modulation-card">
             <h3><span>שינוי תנופה</span><bdi class="latin">AM</bdi></h3>
             <p>גובה הגל משתנה לפי אות המידע. קצב התנודות המהיר של הנושא נשאר בקירוב קבוע.</p>
-            <div class="wave-strip" aria-label="אפנון תנופה"><svg viewBox="0 0 320 82" role="img"><line x1="4" y1="41" x2="316" y2="41" stroke="currentColor" stroke-width="2"/><path d="M4 41 Q14 32 24 41 T44 41 Q54 18 64 41 T84 41 Q94 5 104 41 T124 41 Q134 17 144 41 T164 41 Q174 32 184 41 T204 41 Q214 17 224 41 T244 41 Q254 5 264 41 T284 41 Q294 29 304 41 T324 41" fill="none" stroke="#008F4D" stroke-width="4"/></svg></div>
+            <div class="wave-strip" aria-label="אפנון תנופה"><svg viewBox="0 0 320 82" role="img"><line x1="4" y1="41" x2="316" y2="41" stroke="currentColor" stroke-width="2"/><path d="M4 41 Q14 32 24 41 T44 41 Q54 18 64 41 T84 41 Q94 5 104 41 T124 41 Q134 17 144 41 T164 41 Q174 32 184 41 T204 41 Q214 17 224 41 T244 41 Q254 5 264 41 T284 41 Q294 29 304 41 T324 41" fill="none" stroke="#06B6D4" stroke-width="4"/></svg></div>
           </article>
           <article class="modulation-card">
             <h3><span>שינוי תדר</span><bdi class="latin">FM</bdi></h3>
             <p>כאשר ערך המידע משתנה, המרווח בין המחזורים מתקצר או מתארך. התנופה נשארת בקירוב קבועה.</p>
-            <div class="wave-strip" aria-label="אפנון תדר"><svg viewBox="0 0 320 82" role="img"><line x1="4" y1="41" x2="316" y2="41" stroke="currentColor" stroke-width="2"/><path d="M4 41 Q18 8 32 41 T60 41 Q70 8 80 41 T100 41 Q107 8 114 41 T128 41 Q135 8 142 41 T156 41 Q166 8 176 41 T196 41 Q210 8 224 41 T252 41 Q268 8 284 41 T316 41" fill="none" stroke="#1A1A1A" stroke-width="4"/></svg></div>
+            <div class="wave-strip" aria-label="אפנון תדר"><svg viewBox="0 0 320 82" role="img"><line x1="4" y1="41" x2="316" y2="41" stroke="currentColor" stroke-width="2"/><path d="M4 41 Q18 8 32 41 T60 41 Q70 8 80 41 T100 41 Q107 8 114 41 T128 41 Q135 8 142 41 T156 41 Q166 8 176 41 T196 41 Q210 8 224 41 T252 41 Q268 8 284 41 T316 41" fill="none" stroke="#0F172A" stroke-width="4"/></svg></div>
           </article>
           <article class="modulation-card">
             <h3><span>שינוי מופע</span><bdi class="latin">PM / PSK</bdi></h3>
             <p>נקודת ההתחלה של הגל משתנה. בתקשורת ספרתית מצבי מופע שונים יכולים לייצג סמלים שונים.</p>
-            <div class="wave-strip" aria-label="שינוי מופע באמצע האות"><svg viewBox="0 0 320 82" role="img"><line x1="4" y1="41" x2="316" y2="41" stroke="currentColor" stroke-width="2"/><path d="M4 41 Q17 8 30 41 T56 41 T82 41 T108 41 T134 41 L148 12 Q161 74 174 41 T200 41 T226 41 T252 41 T278 41 T304 41" fill="none" stroke="#F4EFE6" stroke-width="4"/><line x1="148" y1="8" x2="148" y2="74" stroke="#1A1A1A" stroke-width="2" stroke-dasharray="5 5"/></svg></div>
+            <div class="wave-strip" aria-label="שינוי מופע באמצע האות"><svg viewBox="0 0 320 82" role="img"><line x1="4" y1="41" x2="316" y2="41" stroke="currentColor" stroke-width="2"/><path d="M4 41 Q17 8 30 41 T56 41 T82 41 T108 41 T134 41 L148 12 Q161 74 174 41 T200 41 T226 41 T252 41 T278 41 T304 41" fill="none" stroke="#FFFFFF" stroke-width="4"/><line x1="148" y1="8" x2="148" y2="74" stroke="#0F172A" stroke-width="2" stroke-dasharray="5 5"/></svg></div>
           </article>
         </div>
         <div class="student-note"><b>העיקרון שצריך לזכור:</b> המקלט מודד את השינויים בגל ומתרגם אותם בחזרה למידע. הנוסחאות המלאות של AM ו־FM (כולל מקדם אפנון, רוחב פס לפי Carson וכו') יופיעו בפרקים 4 ו־6. כאן מספיק להבין <em>למה</em> אפנון נחוץ ומה הוא משנה בגל.</div>
@@ -1988,7 +1990,7 @@
       <div class="lesson-body">
         <button class="solution-toggle" type="button" aria-expanded="false">חשפו ספקטרום וחישוב</button>
         <div class="solution-panel two-col" hidden>
-          <div class="signal-box"><svg viewBox="0 0 650 350" role="img" aria-label="מחט של 3 וולט ב־500 הרץ, מחט של 2 וולט ב־1500 הרץ וסוגר רוחב פס ביניהן"><line x1="70" y1="286" x2="600" y2="286" stroke="#1A1A1A" stroke-width="4"/><line x1="70" y1="45" x2="70" y2="286" stroke="#1A1A1A" stroke-width="4"/><line x1="230" y1="286" x2="230" y2="72" stroke="#008F4D" stroke-width="13"/><line x1="510" y1="286" x2="510" y2="142" stroke="#1A1A1A" stroke-width="13"/><path d="M230 42 V24 H510 V42" fill="none" stroke="#008F4D" stroke-width="5"/><text x="370" y="20" text-anchor="middle" font-size="22" font-weight="900" fill="#008F4D">BW = 1000 Hz</text><text x="200" y="322" font-size="24">500 Hz</text><text x="470" y="322" font-size="24">1500 Hz</text><text x="190" y="64" font-size="24">3 V</text><text x="525" y="136" font-size="24">2 V</text><text x="510" y="345" text-anchor="middle" font-size="18" font-weight="900">הרמוניה 3</text></svg></div>
+          <div class="signal-box"><svg viewBox="0 0 650 350" role="img" aria-label="מחט של 3 וולט ב־500 הרץ, מחט של 2 וולט ב־1500 הרץ וסוגר רוחב פס ביניהן"><line x1="70" y1="286" x2="600" y2="286" stroke="#0F172A" stroke-width="4"/><line x1="70" y1="45" x2="70" y2="286" stroke="#0F172A" stroke-width="4"/><line x1="230" y1="286" x2="230" y2="72" stroke="#06B6D4" stroke-width="13"/><line x1="510" y1="286" x2="510" y2="142" stroke="#0F172A" stroke-width="13"/><path d="M230 42 V24 H510 V42" fill="none" stroke="#06B6D4" stroke-width="5"/><text x="370" y="20" text-anchor="middle" font-size="22" font-weight="900" fill="#06B6D4">BW = 1000 Hz</text><text x="200" y="322" font-size="24">500 Hz</text><text x="470" y="322" font-size="24">1500 Hz</text><text x="190" y="64" font-size="24">3 V</text><text x="525" y="136" font-size="24">2 V</text><text x="510" y="345" text-anchor="middle" font-size="18" font-weight="900">הרמוניה 3</text></svg></div>
           <div class="card offset-card"><span class="card-label">רכיבי <bdi class="latin">AC</bdi></span><div class="formula big" style="font-size:clamp(34px,4vw,62px);"><bdi class="latin">BW</bdi>=1500−500</div><div class="metric"><bdi class="latin">1 kHz</bdi></div><p class="lesson-text" style="text-align:center;"><b>המחט השנייה בציור היא ההרמוניה השלישית:</b> <bdi class="latin">1500 Hz = 3 × 500 Hz</bdi>.</p><p class="lesson-text" style="text-align:center;">בתרגיל זה מחשבים את התחום שבין התדר הנמוך לגבוה בספקטרום החיובי.</p></div>
         </div>
       </div>

@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#C8B99A">
+  <meta name="theme-color" content="#F1F5F9">
   <meta name="description" content="מסלול תרגול עצמי לשיעור 2: אותות, פורייה, Wi-Fi, ניחות, רעש ומסנן BPF">
   <title>מסלול האות — מערכת תרגול אינטראקטיבית לשיעור 2</title>
   <style>
-    :root{--khaki:#C8B99A;--khaki2:#B8A98A;--green:#008F4D;--green2:#00A85D;--ink:#1A1A1A;--paper:#F4EFE6;--muted:#5B5347;--red:#9C3340;--amber:#B66A1D}
+    :root{--khaki:#F1F5F9;--khaki2:#E2E8F0;--green:#06B6D4;--green2:#22D3EE;--ink:#0F172A;--paper:#FFFFFF;--muted:#5B5347;--red:#9C3340;--amber:#B66A1D}
     *{box-sizing:border-box}
     html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--khaki);color:var(--ink);font-family:Arial,"Noto Sans Hebrew",sans-serif}
     button,input,select{font:inherit}
@@ -70,7 +70,7 @@
   </style>
   <script defer src="/_vercel/insights/script.js"></script>
 </head>
-<body>
+<body data-course-id="communication-systems" data-lesson-id="lesson-02-practice" data-deck-version="lesson-02-practice-v2">
 <div class="grain"></div>
 <div class="confetti" id="confetti" aria-hidden="true"></div>
 <div class="app">
@@ -316,7 +316,7 @@
   function award(module,points){
     if(!state.done[module]){state.done[module]=true;state.score+=points;save();paintState();burst()}
   }
-  function burst(){const box=document.getElementById('confetti');box.innerHTML='';for(let i=0;i<28;i++){const x=document.createElement('i');x.style.left=(Math.random()*100)+'vw';x.style.animationDelay=(Math.random()*.25)+'s';x.style.background=i%3===0?'#008F4D':i%3===1?'#1A1A1A':'#F4EFE6';box.appendChild(x)}setTimeout(()=>box.innerHTML='',1900)}
+  function burst(){const box=document.getElementById('confetti');box.innerHTML='';for(let i=0;i<28;i++){const x=document.createElement('i');x.style.left=(Math.random()*100)+'vw';x.style.animationDelay=(Math.random()*.25)+'s';x.style.background=i%3===0?'#06B6D4':i%3===1?'#0F172A':'#FFFFFF';box.appendChild(x)}setTimeout(()=>box.innerHTML='',1900)}
   nav.forEach(b=>b.addEventListener('click',()=>go(Number(b.dataset.go))));
   document.getElementById('prevBtn').addEventListener('click',()=>go(state.current-1));
   document.getElementById('nextBtn').addEventListener('click',()=>go(state.current+1));
