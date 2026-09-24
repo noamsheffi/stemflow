@@ -4,7 +4,9 @@ export type CourseEventName =
   | "formula_open"
   | "concept_open"
   | "simulation_start"
-  | "resource_open";
+  | "resource_open"
+  | "supporting_material_open"
+  | "supporting_materials_open";
 
 export type AnalyticsContext = {
   workspace_id?: string;
@@ -14,6 +16,7 @@ export type AnalyticsContext = {
   concept_id?: string;
   formula_id?: string;
   resource_id?: string;
+  material_id?: string;
 };
 
 export type CourseEventProperties = AnalyticsContext;

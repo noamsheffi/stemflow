@@ -1,8 +1,11 @@
 import "server-only";
 import { getSql } from "./db";
+import { ensureLecturerReflectionSchema, ensureLecturerSessionSchema } from "./learning-schema";
 
 export type SessionListItem = { sessionId: string; courseId: string; lessonId: string; deckVersion: string | null; startedAt: string; endedAt: string | null; totalDurationMs: number; slidesShown: number; annotationsCount: number; syncedAt: string };
 export type SessionDetail = SessionListItem & { workspaceId: string | null; slides: Array<{ slideId: string; idSource: string; slideNumber: number; plannedDurationMinutes: number | null; actualActiveDurationMs: number; annotations: Array<{ type: string; timestamp: string }> }> };
+export type LecturerSessionReflection = { whatWorked: string; whatWasDifficult: string; whatWillChange: string };
+export type PreviousLecturerAction = { sessionId: string; startedAt: string; whatWillChange: string };
 
 export async function getLecturerSessions(): Promise<SessionListItem[]> {
   const rows = await getSql()`
@@ -21,4 +24,30 @@ export async function getLecturerSession(sessionId: string): Promise<SessionDeta
   for (const row of rows) { if (!grouped.has(row.id)) grouped.set(row.id, { slideId: row.slideId, idSource: row.idSource, slideNumber: row.slideNumber, plannedDurationMinutes: row.plannedDurationMinutes, actualActiveDurationMs: row.actualActiveDurationMs, annotations: [] }); if (row.type && row.timestamp) grouped.get(row.id)!.annotations.push({ type: row.type, timestamp: row.timestamp }); }
   const slides = [...grouped.values()];
   return { ...sessions[0], slides, slidesShown: slides.length, annotationsCount: slides.reduce((total, slide) => total + slide.annotations.length, 0) };
+}
+
+export async function getLecturerSessionReflection(sessionId: string): Promise<LecturerSessionReflection | null> {
+  await ensureLecturerSessionSchema();
+  await ensureLecturerReflectionSchema();
+  const rows = await getSql()`
+    SELECT what_worked AS "whatWorked", what_was_difficult AS "whatWasDifficult", what_will_change AS "whatWillChange"
+    FROM lecturer_session_reflections WHERE session_id = ${sessionId}
+  ` as unknown as LecturerSessionReflection[];
+  return rows[0] ?? null;
+}
+
+export async function getPreviousLecturerAction(session: Pick<SessionDetail, "courseId" | "lessonId" | "startedAt">): Promise<PreviousLecturerAction | null> {
+  await ensureLecturerSessionSchema();
+  await ensureLecturerReflectionSchema();
+  const rows = await getSql()`
+    SELECT s.session_id AS "sessionId", s.started_at AS "startedAt", r.what_will_change AS "whatWillChange"
+    FROM lecturer_sessions s
+    INNER JOIN lecturer_session_reflections r ON r.session_id = s.session_id
+    WHERE s.course_id = ${session.courseId}
+      AND s.lesson_id = ${session.lessonId}
+      AND s.started_at < ${session.startedAt}
+    ORDER BY s.started_at DESC
+    LIMIT 1
+  ` as unknown as PreviousLecturerAction[];
+  return rows[0] ?? null;
 }

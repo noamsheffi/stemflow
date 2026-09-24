@@ -1,0 +1,90 @@
+.returnSection,
+.reflectionSection {
+  display: grid;
+  gap: 1rem;
+  margin-top: 2.5rem;
+}
+
+.previousAction {
+  margin: 1.25rem 0;
+  padding: 0.75rem 0;
+  border-top: 1px solid #d8dee8;
+  border-bottom: 1px solid #d8dee8;
+  line-height: 1.6;
+}
+
+.returnSection h2,
+.reflectionSection h2 {
+  margin: 0;
+}
+
+.returnSection h3 {
+  margin: 0.5rem 0 0;
+}
+
+.reflectionForm {
+  display: grid;
+  gap: 0.75rem;
+  max-width: 48rem;
+}
+
+.reflectionForm label {
+  margin-top: 0.5rem;
+  font-weight: 650;
+}
+
+.reflectionForm textarea {
+  width: 100%;
+  min-height: 5.5rem;
+  padding: 0.75rem;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.5rem;
+  color: #172033;
+  background: #fff;
+  font: inherit;
+  line-height: 1.5;
+  resize: vertical;
+}
+
+.reflectionForm textarea:focus-visible {
+  outline: 3px solid #94b8f8;
+  outline-offset: 2px;
+}
+
+.submitButton {
+  justify-self: start;
+  min-height: 2.75rem;
+  margin-top: 0.5rem;
+  padding: 0.55rem 1rem;
+  border: 0;
+  border-radius: 0.5rem;
+  color: #fff;
+  background: #19345f;
+  font: inherit;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.submitButton:hover {
+  background: #25477d;
+}
+
+.submitButton:focus-visible {
+  outline: 3px solid #94b8f8;
+  outline-offset: 2px;
+}
+
+.notice,
+.error {
+  margin: 0;
+  padding: 0.25rem 0;
+  font-weight: 600;
+}
+
+.notice {
+  color: #17603a;
+}
+
+.error {
+  color: #a22d2d;
+}

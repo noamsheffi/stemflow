@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { ACCESS_COOKIE, validAccessSession } from "./lib/access-session";
+import { ACCESS_COOKIE, accessScopeForPath, validAccessSession } from "./lib/access-session";
 
 function unauthorized() {
   return new NextResponse("גישה למרצה בלבד", {
@@ -11,7 +11,8 @@ function unauthorized() {
 
 export function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
-  if (!validAccessSession(request.cookies.get(ACCESS_COOKIE)?.value)) {
+  const accessScope = accessScopeForPath(pathname);
+  if (!validAccessSession(request.cookies.get(ACCESS_COOKIE)?.value, accessScope)) {
     if (pathname.startsWith("/api/")) {
       return NextResponse.json({ error: "authentication_required" }, { status: 401, headers: { "Cache-Control": "no-store" } });
     }
@@ -58,5 +59,6 @@ export function proxy(request: NextRequest) {
 export const config = { matcher: [
   "/workspace/:path*", "/course/:path*", "/courses/:path*", "/lessons/:path*",
   "/formulas/:path*", "/concepts/:path*", "/slide-friction/:path*", "/lecturer/:path*",
-  "/admin/:path*", "/api/admin/:path*", "/api/submissions/:path*", "/api/learning-events/:path*",
+  "/survey/:path*", "/admin/:path*", "/api/admin/:path*", "/api/submissions/:path*",
+  "/api/learning-events/:path*", "/api/student/:path*",
 ] };

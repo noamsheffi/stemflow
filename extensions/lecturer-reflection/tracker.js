@@ -9,37 +9,37 @@
   let active = null, openedAt = null, ended = false, reviewing = false, collapsed = false;
   const host = document.createElement("div"); host.style.cssText = "position:fixed;top:80px;right:16px;z-index:2147483647";
   const root = host.attachShadow({ mode: "open" });
-  root.innerHTML = `<style>:host{font:13px Arial,sans-serif;color:#17202a;direction:rtl}*{box-sizing:border-box}button{font:inherit;color:inherit;cursor:pointer;background:#fff;border:1px solid #d6dde5;border-radius:7px}.bar{height:36px;display:flex;align-items:center;gap:3px;padding:3px;background:#fff;border:1px solid #cbd5e1;border-radius:10px;box-shadow:0 1px 5px #0002}.collapsed{padding:0 8px;gap:6px}.toggle{border:0;background:transparent;font-variant-numeric:tabular-nums;white-space:nowrap}.icon{width:28px;height:28px;padding:0;font-weight:700}.drag{cursor:move;touch-action:none;color:#64748b}.over{border-color:#94a3b8}.badge{font-size:10px;color:#475569}dialog{direction:rtl;position:fixed;inset:0;width:min(1000px,94vw);max-height:85vh;overflow:auto;background:white;color:#17202a;border:1px solid #cbd5e1;border-radius:14px;padding:20px;font:14px Arial,sans-serif}dialog::backdrop{background:#0007}.tools{display:flex;gap:8px;flex-wrap:wrap}.tools button{padding:8px 12px}table{border-collapse:collapse;width:100%;margin-top:15px}th,td{padding:9px;border-bottom:1px solid #ddd;text-align:right;white-space:pre-line}.signal td{background:#fffbeb}.mark{font-weight:bold;color:#804400}.save{color:#475569}.warning{padding:9px;background:#fffbeb;border:1px solid #fde68a;border-radius:7px}@media print{.bar{display:none}}</style><div class="bar"><button class="toggle" title="קיפול או פתיחת כלי המרצה" aria-label="קיפול או פתיחת כלי המרצה"><span class="timer" dir="ltr"></span><span class="badge" aria-hidden="true"></span></button><button class="drag icon" title="הזזת הכלי" aria-label="הזזת הכלי">⠿</button><div class="actions">${Object.entries(labels).map(([type, [icon, label]]) => `<button class="icon" data-mark="${type}" title="${label}" aria-label="${label}">${icon}</button>`).join("")}<button class="icon review" title="סקירת מפגש" aria-label="סקירת מפגש">☷</button></div></div><dialog aria-label="סקירת מפגש"><h2>סקירת מפגש</h2><p class="summary"></p><p>זמן ארוך מהמתוכנן הוא אות להתבוננות, לא אבחנה של קושי.</p><p class="warning" hidden>זהות חלק מהשקפים נוצרה לפי מיקום; ייתכן שהשתנתה בין גרסאות המצגת.</p><div class="tools"><button class="close">חזרה למצגת</button><button class="end">סיום שיעור</button><button class="sync" disabled>סנכרון ל־Syllo</button><button class="export">ייצוא JSON</button></div><p class="save" role="status"></p><table><thead><tr><th>שקף</th><th>מתוכנן</th><th>פעיל בפועל</th><th>סימון</th><th>סומן ב־</th></tr></thead><tbody></tbody></table></dialog>`;
+  root.innerHTML = `<style>:host{font:13px Arial,sans-serif;color:#17202a;direction:rtl}*{box-sizing:border-box}button{font:inherit;color:inherit;cursor:pointer;background:#fff;border:1px solid #d6dde5;border-radius:7px}.bar{height:43px;display:flex;align-items:center;gap:4px;padding:4px;background:#fff;border:1px solid #cbd5e1;border-radius:12px;box-shadow:0 1px 6px #0002}.collapsed{padding:0 10px;gap:7px}.toggle{border:0;background:transparent;font-variant-numeric:tabular-nums;white-space:nowrap}.icon{width:34px;height:34px;padding:0;font-weight:700}.drag{cursor:move;touch-action:none;color:#64748b}.over{border-color:#94a3b8}.badge{font-size:12px;color:#475569}dialog{direction:rtl;position:fixed;inset:0;width:min(1000px,94vw);max-height:85vh;overflow:auto;background:white;color:#17202a;border:1px solid #cbd5e1;border-radius:14px;padding:20px;font:14px Arial,sans-serif}dialog::backdrop{background:#0007}.tools{display:flex;gap:8px;flex-wrap:wrap}.tools button{padding:8px 12px}table{border-collapse:collapse;width:100%;margin-top:15px}th,td{padding:9px;border-bottom:1px solid #ddd;text-align:right;white-space:pre-line}.signal td{background:#fffbeb}.mark{font-weight:bold;color:#804400}.save{color:#475569}.warning{padding:9px;background:#fffbeb;border:1px solid #fde68a;border-radius:7px}@media print{.bar{display:none}}</style><div class="bar"><button class="toggle" title="קיפול או פתיחת כלי המרצה" aria-label="קיפול או פתיחת כלי המרצה"><span class="timer" dir="ltr"></span><span class="badge" aria-hidden="true"></span></button><button class="drag icon" title="הזזת הכלי" aria-label="הזזת הכלי">⠿</button><div class="actions">${Object.entries(labels).map(([type, [icon, label]]) => `<button class="icon" data-mark="${type}" title="${label}" aria-label="${label}">${icon}</button>`).join("")}<button class="icon review" title="סקירת מפגש" aria-label="סקירת מפגש">☷</button></div></div><dialog aria-label="סקירת מפגש"><h2>סקירת מפגש</h2><p class="summary"></p><p>זמן ארוך מהמתוכנן הוא אות להתבוננות, לא אבחנה של קושי.</p><p class="warning" hidden>זהות חלק מהשקפים נוצרה לפי מיקום; ייתכן שהשתנתה בין גרסאות המצגת.</p><div class="tools"><button class="close">חזרה למצגת</button><button class="end">סיום שיעור</button><button class="sync" disabled>סנכרון ל־Syllo</button><button class="export">ייצוא JSON</button></div><p class="save" role="status"></p><table><thead><tr><th>שקף</th><th>מתוכנן</th><th>פעיל בפועל</th><th>סימון</th><th>סומן ב־</th></tr></thead><tbody></tbody></table></dialog>`;
   document.documentElement.append(host);
   root.querySelector("style").textContent = `
     :host{font:13px Arial,sans-serif;color:#17202a;direction:rtl}
     *{box-sizing:border-box}
     button{font:inherit;color:inherit;cursor:pointer}
-    .bar{display:flex;flex-direction:column;align-items:center;gap:5px;width:39px;padding:6px 5px 5px;background:rgba(255,255,255,.97);border:1px solid #d9dfe7;border-radius:22px;box-shadow:0 9px 21px #41516a2b,0 1px 4px #41516a18;backdrop-filter:blur(12px)}
-    .bar.horizontal{flex-direction:row;width:max-content;height:32px;padding:4px 6px;gap:4px;border-radius:18px}
-    .toggle{display:flex;flex:0 0 auto;flex-direction:column;align-items:center;justify-content:center;gap:3px;width:100%;min-width:0;height:auto;min-height:31px;padding:1px;border:0;background:transparent;border-radius:9px;overflow:hidden}
-    .bar.horizontal .toggle{flex-direction:row;width:auto;height:23px;gap:4px}
-    .logo{display:block;flex:0 0 20px;width:20px;height:20px;max-width:100%;object-fit:contain;overflow:hidden}
-    .bar.horizontal .logo{flex-basis:18px;width:18px;height:18px}
-    .timer{display:block;width:100%;max-width:100%;font-size:8px;font-variant-numeric:tabular-nums;white-space:pre-line;overflow-wrap:normal;text-align:center;line-height:1.2;color:#526176;direction:ltr;unicode-bidi:isolate}
-    .bar.horizontal .timer{width:auto;max-width:none;font-size:10px;white-space:nowrap}
-    .icon{width:26px;height:23px;padding:0;border:0;background:#f1f2f3;border-radius:50%;font-weight:700;font-size:10px}
-    .drag{width:12px;height:10px;background:transparent;cursor:move;touch-action:none;color:#b6b8bc;font-size:0}
-    .drag:after{content:'•••';display:block;transform:rotate(90deg);font-size:10px;line-height:8px;letter-spacing:0}
-    .bar.horizontal .drag{width:10px;height:18px}
+    .bar{display:flex;flex-direction:column;align-items:center;gap:6px;width:47px;padding:7px 6px 6px;background:rgba(255,255,255,.97);border:1px solid #d9dfe7;border-radius:26px;box-shadow:0 11px 25px #41516a2b,0 1px 5px #41516a18;backdrop-filter:blur(12px)}
+    .bar.horizontal{flex-direction:row;width:max-content;height:38px;padding:5px 7px;gap:5px;border-radius:22px}
+    .toggle{display:flex;flex:0 0 auto;flex-direction:column;align-items:center;justify-content:center;gap:4px;width:100%;min-width:0;height:auto;min-height:37px;padding:1px;border:0;background:transparent;border-radius:11px;overflow:hidden}
+    .bar.horizontal .toggle{flex-direction:row;width:auto;height:28px;gap:5px}
+    .logo{display:block;flex:0 0 24px;width:24px;height:24px;max-width:100%;object-fit:contain;overflow:hidden}
+    .bar.horizontal .logo{flex-basis:22px;width:22px;height:22px}
+    .timer{display:block;width:100%;max-width:100%;font-size:10px;font-variant-numeric:tabular-nums;white-space:pre-line;overflow-wrap:normal;text-align:center;line-height:1.2;color:#526176;direction:ltr;unicode-bidi:isolate}
+    .bar.horizontal .timer{width:auto;max-width:none;font-size:12px;white-space:nowrap}
+    .icon{width:31px;height:28px;padding:0;border:0;background:#f1f2f3;border-radius:50%;font-weight:700;font-size:12px}
+    .drag{width:14px;height:12px;background:transparent;cursor:move;touch-action:none;color:#b6b8bc;font-size:0}
+    .drag:after{content:'•••';display:block;transform:rotate(90deg);font-size:12px;line-height:10px;letter-spacing:0}
+    .bar.horizontal .drag{width:12px;height:22px}
     .bar.horizontal .drag:after{transform:none}
     .actions{display:flex;flex-direction:column;align-items:center;gap:4px;width:100%}
-    .bar.horizontal .actions{flex-direction:row;width:auto;gap:3px}
-    .actions .icon{width:26px;height:23px;border-radius:50%;font-size:11px;transition:background .15s,border-color .15s,box-shadow .15s}
-    .bar.horizontal .actions .icon{width:23px;height:23px}
+    .bar.horizontal .actions{flex-direction:row;width:auto;gap:4px}
+    .actions .icon{width:31px;height:28px;border-radius:50%;font-size:13px;transition:background .15s,border-color .15s,box-shadow .15s}
+    .bar.horizontal .actions .icon{width:28px;height:28px}
     .actions .icon:hover,.icon:focus-visible{background:#e9eaeb;outline:2px solid #b9dfe2;outline-offset:1px}
     .actions .icon.marked[data-mark="PASS"]{background:#d9f1e6;box-shadow:inset 0 0 0 1px #53a980;color:#24714b}
     .actions .icon.marked[data-mark="HARD"]{background:#ffe8d5;box-shadow:inset 0 0 0 1px #d89455;color:#95551e}
     .actions .icon.marked[data-mark="DEEPEN"]{background:#fff2bf;box-shadow:inset 0 0 0 1px #d7b84e;color:#806410}
     .actions .icon.marked[data-mark="REVISIT"]{background:#e9e1ff;box-shadow:inset 0 0 0 1px #9a80d0;color:#5b4395}
-    .review{font-size:12px!important}
+    .review{font-size:14px!important}
     .over{box-shadow:0 0 0 2px #f5c7c7,0 9px 21px #41516a2b}
-    .badge{display:block;max-width:10px;overflow:hidden;font-size:7px;color:#087c89}
+    .badge{display:block;max-width:12px;overflow:hidden;font-size:8px;color:#087c89}
     dialog{direction:rtl;position:fixed;inset:0;width:min(1000px,94vw);max-height:85vh;overflow:auto;background:white;color:#17202a;border:1px solid #cbd5e1;border-radius:14px;padding:20px;font:14px Arial,sans-serif}
     dialog::backdrop{background:#0007}
     .tools{display:flex;gap:8px;flex-wrap:wrap}.tools button{padding:8px 12px}
@@ -49,17 +49,18 @@
     @media print{.bar{display:none}}
   `;
   const toggle = root.querySelector(".toggle");
-  const favicon = document.createElement("img");
-  favicon.className = "logo";
-  favicon.alt = "";
-  favicon.src = new URL("/icon.png?v=0.2.4", location.origin).href;
+  const extensionLogo = document.createElement("img");
+  extensionLogo.className = "logo";
+  extensionLogo.alt = "";
+  extensionLogo.src = chrome.runtime.getURL("icons/icon32.png");
   const timerLabel = document.createElement("span");
   timerLabel.className = "timer";
   timerLabel.dir = "ltr";
   const badgeIndicator = document.createElement("span");
   badgeIndicator.className = "badge";
   badgeIndicator.setAttribute("aria-hidden", "true");
-  toggle.replaceChildren(favicon, timerLabel, badgeIndicator);
+  toggle.replaceChildren(extensionLogo, timerLabel, badgeIndicator);
+  host.style.top = `${Math.max(6, Math.min(80, innerHeight - host.offsetHeight - 6))}px`;
   for (const event of ["click", "dblclick", "keydown", "keyup", "pointerdown", "touchstart"]) host.addEventListener(event, event => event.stopPropagation());
   const $ = selector => root.querySelector(selector), timer = $(".timer"), badge = $(".badge"), dialog = $("dialog");
   const elapsed = index => index === null ? 0 : session.slides[index].actual_active_duration_ms + (openedAt === null ? 0 : performance.now() - openedAt), fmt = ms => `${Math.floor(ms / 60000)}:${String(Math.floor(ms / 1000) % 60).padStart(2, "0")}`;
@@ -105,11 +106,9 @@
   chrome.storage.local.get("lecturerToolbarPosition").then(({ lecturerToolbarPosition }) => {
     if (!lecturerToolbarPosition || lecturerToolbarPosition.left < 0 || lecturerToolbarPosition.top < 0 || lecturerToolbarPosition.left >= innerWidth - 20 || lecturerToolbarPosition.top >= innerHeight - 20) return;
     host.style.right = "auto";
-    host.style.left = `${lecturerToolbarPosition.left}px`;
-    host.style.top = `${lecturerToolbarPosition.top}px`;
     const dock = dockAt(lecturerToolbarPosition.top + host.offsetHeight / 2);
-    if (dock.top) host.style.top = "8px";
-    if (dock.bottom) host.style.top = `${Math.max(6, innerHeight - host.offsetHeight - 8)}px`;
+    host.style.left = `${Math.max(6, Math.min(innerWidth - host.offsetWidth - 6, lecturerToolbarPosition.left))}px`;
+    host.style.top = dock.top ? "8px" : dock.bottom ? `${Math.max(6, innerHeight - host.offsetHeight - 8)}px` : `${Math.max(6, Math.min(innerHeight - host.offsetHeight - 6, lecturerToolbarPosition.top))}px`;
   });
   const uiTick = setInterval(updateUi, 1000), saveTick = setInterval(persist, 5000); transition(); persist();
 })();

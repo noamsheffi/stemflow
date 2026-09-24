@@ -30,7 +30,7 @@ npm run dev
 ```
 
 1. העתיקו את `.env.example` ל-`.env.local` והזינו ערכים מקומיים אמיתיים עבור מסד הנתונים וגישה למרצה.
-2. הריצו את קובץ הסכימה `db/migrations/001_create_survey_submissions.sql` ב-Neon SQL Editor.
+2. הריצו לפי הסדר את כל קובצי ה־SQL בתיקייה `db/migrations/` ב-Neon SQL Editor. יש להריץ את המיגרציות `001` עד `007` פעם אחת לכל מסד נתונים.
 3. הפעילו:
 
 ```bash
@@ -44,7 +44,7 @@ npm run dev
 
 1. צרו פרויקט Vercel חדש וחברו אליו את GitHub repository `noamsheffi/stemflow`.
 2. בפרויקט Vercel, הוסיפו **Neon Postgres** דרך Vercel Marketplace וחברו אותו לאותו פרויקט. ודאו ש-`DATABASE_URL` הוזרק ל-Production ול-Preview לפי הצורך.
-3. פתחו את Neon SQL Editor והריצו פעם אחת את `db/migrations/001_create_survey_submissions.sql`, `db/migrations/002_create_slide_friction_submissions.sql` ו־`db/migrations/003_create_lecturer_sessions.sql`.
+3. פתחו את Neon SQL Editor והריצו לפי הסדר את כל קובצי ה־SQL בתיקייה `db/migrations/` — מיגרציות `001` עד `007`. כל מיגרציה מיועדת להרצה פעם אחת לכל מסד נתונים.
 4. ב-Vercel → Settings → Environment Variables הגדירו ערכים פרטיים ל-`LECTURER_USERNAME`, `LECTURER_PASSWORD` ו־`LECTURER_SYNC_TOKEN_SECRET`. אין להגדיר אותם כ-`NEXT_PUBLIC_*`. בעת אריזת התוסף הגדירו גם `SYLLO_EXTENSION_ORIGIN` ל־`chrome-extension://<extension-id>`.
 5. לבדיקות מקומיות, העתיקו את אותם שמות משתנים ל-`.env.local` עם `DATABASE_URL` המתאים. קובץ זה מתעלם מ-Git.
 
@@ -68,7 +68,8 @@ npm run dev
 
 אתר החברה (`/`) ציבורי. סביבת הלמידה, קובצי השיעורים ונתיבי איסוף הנתונים דורשים כניסה דרך `/login`. הקוד נבדק בשרת ונוצר cookie חתום מסוג HttpOnly, בתוקף ל־24 שעות. כפתור יציאה מוחק אותו. אזור המרצה שומר גם על הגנת המרצה הקיימת; API התוסף ממשיך להשתמש באימות העצמאי שלו.
 
-- `SYLLO_ACCESS_CODE`: קוד הכניסה, ברירת המחדל הזמנית היא `system99`.
+- `SYLLO_ACCESS_CODE`: קוד הסטודנטים, ברירת המחדל הזמנית היא `system99`.
+- `SYLLO_ADMIN_ACCESS_CODE`: קוד מנהל נפרד, ללא ברירת מחדל; `/admin` ונתיבי ה־API שלו לא מקבלים את קוד הסטודנטים.
 - `SYLLO_SESSION_SECRET`: מפתח אקראי של לפחות 32 תווים. חובה להגדיר בנפרד בכל סביבת פריסה; אינו נחשף לדפדפן. בהיעדר מפתח תקין הכניסה חסומה.
 - זו כניסה משותפת ראשונית, ללא חשבונות או תפקידים אישיים. לפני פתיחה רחבה יש להחליף למערכת זהויות ולצרף הגבלת ניסיונות מבוזרת.
 

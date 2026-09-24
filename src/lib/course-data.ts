@@ -10,6 +10,14 @@ export type CourseResource = {
   href: string;
 };
 
+export type SupportingMaterial = {
+  materialId: string;
+  title: string;
+  description: string;
+  href: string;
+  kind: "book" | "syllabus" | "formula-sheet";
+};
+
 export const resourceKindLabels: Record<ResourceKind, string> = {
   "lesson-html": "מערך שיעור",
   simulation: "סימולציה",
@@ -91,6 +99,12 @@ export const workspace: Workspace = {
 };
 
 export const courseAppPath = (section = "") => `/course/${course.courseId}${section ? `/${section}` : ""}`;
+
+export const supportingMaterials: SupportingMaterial[] = [
+  { materialId: "communication-systems-book", title: "תקשורת תקבילית וספרתית", description: "ספר הקורס לעיון ולהעמקה בנושאי תקשורת אנלוגית וספרתית.", href: "/course-resources/communication-systems/analog-digital-communications.pdf", kind: "book" },
+  { materialId: "communication-systems-syllabus-2025", title: "תוכנית לימודים במערכות תקשורת", description: "הסילבוס המעודכן למסלול י״ג, יולי 2025.", href: "/course-resources/communication-systems/syllabus-2025.pdf", kind: "syllabus" },
+  { materialId: "communication-systems-formula-sheet", title: "נוסחאון מערכות תקשורת", description: "דף נוסחאות מרוכז לשימוש בזמן הלמידה והתרגול.", href: "/course-resources/communication-systems/formula-sheet.pdf", kind: "formula-sheet" },
+];
 
 // Register each hosted item here instead of duplicating course structure across pages.
 export const lessons: CourseLesson[] = [

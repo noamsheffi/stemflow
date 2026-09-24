@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Lesson lecturer reflection",
-  "version": "0.2.6",
+  "version": "0.2.7",
   "description": "Local active-slide timing and pedagogical reflection, enabled by the lecturer.",
   "icons": {
     "16": "icons/icon16.png",
@@ -28,6 +28,16 @@
       ],
       "js": ["config.js", "auto-start.js", "tracker.js"],
       "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["icons/icon32.png"],
+      "matches": [
+        "http://localhost:3000/courses/communication-systems/lesson-*",
+        "https://syllo.live/courses/communication-systems/lesson-*",
+        "https://stemflow-noamsheffi-gmailcoms-projects.vercel.app/courses/communication-systems/lesson-*"
+      ]
     }
   ],
   "action": {

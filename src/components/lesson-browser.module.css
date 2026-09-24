@@ -2,8 +2,19 @@
 .search, .selectLabel { display: grid; gap: 8px; min-width: 0; color: var(--muted); font-size: .82rem; font-weight: 700; }
 .search input, .selectLabel select { width: 100%; min-width: 0; padding: 12px 16px; color: var(--ink); background: var(--canvas); border: 1px solid var(--line-strong); border-radius: var(--radius-sm); font: inherit; font-weight: 400; }
 .selectLabel select { padding-inline: 12px 38px; font-size: .92rem; }
-.summary { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin: 18px 0; color: var(--muted); font-size: .85rem; }
-.summary button { padding: 0; color: var(--accent-dark); background: transparent; border: 0; cursor: pointer; font: inherit; font-size: .85rem; text-decoration: underline; text-underline-offset: 4px; }
-.controls :is(input, select, button):focus-visible, .summary button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.controls :is(input, select):focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.content > :global(.lesson-list), .content > .tableScroll { margin-top: 0; }
+.tableScroll { overflow-x: auto; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-md); box-shadow: var(--shadow-sm); }
+.lessonTable { width: 100%; min-width: 680px; overflow: visible; border: 0; border-radius: 0; border-collapse: collapse; text-align: start; }
+.lessonTable th, .lessonTable td { padding: 14px 18px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.lessonTable thead th { color: var(--muted); background: var(--canvas); font-size: .8rem; font-weight: 700; white-space: nowrap; }
+.lessonTable tbody tr:last-child > * { border-bottom: 0; }
+.lessonTable tbody tr:hover { background: color-mix(in srgb, var(--accent-pale) 35%, var(--surface)); }
+.lessonTable tbody th { min-width: 230px; color: var(--ink); background: transparent; font-weight: 700; }
+.lessonNumber { display: inline-grid; width: 34px; height: 34px; margin-inline-end: 10px; place-items: center; color: white; background: linear-gradient(135deg, var(--accent), var(--violet)); border-radius: 10px; font-size: .85rem; }
+.lessonTitle { vertical-align: middle; }
+.lessonTable tbody td:nth-child(2) { min-width: 190px; color: var(--muted); line-height: 1.6; }
+.tableActions { display: flex; flex-wrap: wrap; gap: 8px; min-width: 270px; }
+.tableActions :global(.lesson-card-action) { width: auto; }
+.visuallyHidden { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
 @media (min-width: 760px) { .controls { grid-template-columns: minmax(0, 1fr) minmax(260px, .55fr); align-items: end; } }
-@media (max-width: 500px) { .summary { align-items: flex-start; flex-direction: column; gap: 10px; } }

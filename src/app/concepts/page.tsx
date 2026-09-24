@@ -4,7 +4,7 @@ import ConceptMap from "../../components/concept-map";
 import ConceptDetails from "../../components/concept-details";
 import { conceptMap } from "../../lib/concept-map";
 
-export const metadata: Metadata = { title: "מפת מושגים | מערכות תקשורת", description: "24 מושגים במערכות תקשורת, עם הסברים, נוסחאות, דוגמאות וקשרים בין שיעורים." };
+export const metadata: Metadata = { title: "מפת מושגים | מערכות תקשורת", description: "35 מושגים במערכות תקשורת, עם הסברים, נוסחאות, דוגמאות וקשרים בין שיעורים." };
 
 export default function ConceptsPage() {
   const entries = conceptMap.map((concept) => ({

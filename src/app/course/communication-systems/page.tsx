@@ -25,6 +25,7 @@ export default function CourseHomePage() {
 
       <section className="course-shortcuts" aria-label="גישה מהירה">
         <Link href={courseAppPath("lessons")}><i aria-hidden="true">▤</i><strong>מערכי שיעור</strong><span>מצגות, חומרים ותרגול עצמי</span></Link>
+        <Link href={courseAppPath("materials")}><i aria-hidden="true">▰</i><strong>חומרי עזר</strong><span>הספר, הסילבוס והנוסחאון</span></Link>
         <Link href={courseAppPath("formulas")}><i aria-hidden="true">ƒ</i><strong>נוסחאון</strong><span>נוסחה, משמעות והקשר בקורס</span></Link>
         <Link href={courseAppPath("concepts")}><i aria-hidden="true">⌘</i><strong>מפת מושגים</strong><span>הקשרים בין הנושאים שלמדנו</span></Link>
       </section>

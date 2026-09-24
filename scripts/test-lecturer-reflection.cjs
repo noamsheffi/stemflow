@@ -8,11 +8,12 @@ const path = require('node:path');
     await page.goto('http://localhost:8765/courses/communication-systems/lesson-03/index.html');
     await page.evaluate(() => {
       window.saved = {};
-      window.chrome = {storage:{local:{set: async values => Object.assign(window.saved, values), get: async key => typeof key === 'string' ? {[key]: window.saved[key]} : window.saved}}};
+      window.chrome = {runtime:{getURL: resource => `chrome-extension://test-extension/${resource}`},storage:{local:{set: async values => Object.assign(window.saved, values), get: async key => typeof key === 'string' ? {[key]: window.saved[key]} : window.saved}}};
       window.SYLLO_WORKSPACE_ID = null;
       document.querySelector('.slide').dataset.minutes = '0.0001';
     });
     await page.addScriptTag({path:path.resolve('extensions/lecturer-reflection/tracker.js')});
+    assert.equal(await page.locator('.logo').getAttribute('src'), 'chrome-extension://test-extension/icons/icon32.png');
     const snapshot = () => page.evaluate(() => Object.values(window.saved)[0]);
     await page.waitForTimeout(120);
     await page.locator('.toggle').click();

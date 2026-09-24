@@ -1,0 +1,176 @@
+.map {
+  overflow: hidden;
+  background: #f8fbff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+.instructions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 20px;
+  padding: 12px 18px;
+  color: var(--muted);
+  background: white;
+  border-bottom: 1px solid var(--line);
+  font-size: .78rem;
+}
+
+.instructions span::before {
+  content: "•";
+  margin-inline-end: 7px;
+  color: var(--accent);
+  font-size: 1.2em;
+}
+
+.canvas {
+  width: 100%;
+  height: min(80vh, 920px);
+  min-height: 620px;
+  background: radial-gradient(ellipse at center, #fbfdff, #f5f9fd);
+}
+
+.node {
+  display: flex;
+  align-items: center;
+  direction: ltr;
+  gap: 12px;
+  width: 312px;
+  min-height: 94px;
+}
+
+.rootNode {
+  width: 312px;
+}
+
+.nodeText {
+  display: grid;
+  flex: 1;
+  align-content: center;
+  gap: 5px;
+  min-width: 0;
+  min-height: 80px;
+  padding: 14px 17px;
+  direction: rtl;
+  color: #111827;
+  background: #e5efff;
+  border: 1px solid #d1dced;
+  border-radius: 11px;
+  box-shadow: 0 2px 5px #172c4b0c;
+  text-align: right;
+  transition: border-color .16s ease, box-shadow .16s ease, background .16s ease;
+}
+
+.nodeText > strong,
+.nodeLink {
+  color: inherit;
+  font-size: .92rem;
+  font-weight: 700;
+  line-height: 1.4;
+  text-decoration: none;
+}
+
+.nodeLink:hover,
+.nodeLink:focus-visible {
+  color: var(--accent-dark);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.nodeText small {
+  overflow: hidden;
+  color: #70829c;
+  font-size: .73rem;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.map :global(.react-flow__node:hover) .nodeText {
+  border-color: #afc8ef;
+  box-shadow: 0 4px 12px #172c4b14;
+}
+
+.rootNode .nodeText {
+  background: #dcdcff;
+  border-color: #cfceff;
+  text-align: center;
+}
+
+.rootNode .nodeText small {
+  color: #747caa;
+  white-space: normal;
+}
+
+.expandButton {
+  display: grid;
+  flex: 0 0 auto;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  color: #17212f;
+  background: #c4dcfa;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+  font: inherit;
+  font-size: 1.1rem;
+  font-weight: 800;
+  place-items: center;
+  transition: background .16s ease, transform .16s ease;
+}
+
+.expandButton span {
+  display: block;
+  line-height: 1;
+}
+
+.expandButton:hover,
+.expandButton:focus-visible {
+  background: #add0f8;
+  outline: 2px solid #789df2;
+  outline-offset: 2px;
+}
+
+.expandButton:active {
+  transform: scale(.94);
+}
+
+.flowHandle {
+  width: 8px;
+  height: 8px;
+  background: transparent;
+  border: 2px solid white;
+  opacity: 0;
+}
+
+.map :global(.react-flow__controls) {
+  overflow: hidden;
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  box-shadow: 0 3px 12px #19345212;
+}
+
+.map :global(.react-flow__controls-button) {
+  width: 34px;
+  height: 34px;
+  background: white;
+  border-bottom-color: var(--line);
+}
+
+.map :global(.react-flow__controls-button:hover) {
+  background: var(--accent-pale);
+}
+
+.map :global(.react-flow__attribution) {
+  display: none;
+}
+
+@media (max-width: 700px) {
+  .instructions { padding-inline: 13px; font-size: .72rem; }
+  .canvas { height: 68vh; min-height: 500px; }
+  .map :global(.react-flow__controls) { display: flex; }
+}
