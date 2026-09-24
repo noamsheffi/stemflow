@@ -62,12 +62,16 @@ export type CourseConcept = {
   formulaIds: string[];
 };
 
+export type CourseSectionId = "lessons" | "materials" | "formulas" | "concepts";
+
 export type Course = {
   workspaceId: string;
   courseId: string;
   title: string;
   courseNumber: string;
   lecturer: string;
+  status: "active" | "archived";
+  sections: CourseSectionId[];
   lessonIds: string[];
   formulaIds: string[];
   conceptIds: string[];
@@ -87,6 +91,8 @@ export const course: Course = {
   title: "מערכות תקשורת",
   courseNumber: "11.9004",
   lecturer: "נועם שפי",
+  status: "active",
+  sections: ["lessons", "materials", "formulas", "concepts"],
   lessonIds: [],
   formulaIds: [],
   conceptIds: [],

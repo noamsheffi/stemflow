@@ -5,6 +5,7 @@ import LogoutButton from "./logout-button";
 import { usePathname } from "next/navigation";
 import { useLayoutEffect, useState } from "react";
 import { course, courseAppPath, getLesson, workspace } from "../lib/course-data";
+import CourseTree from "./course-tree";
 
 const sidebarStorageKey = "syllo:course-sidebar-collapsed";
 
@@ -33,7 +34,6 @@ function breadcrumbLabel(pathname: string) {
 export default function CourseLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [expandedCourses, setExpandedCourses] = useState<Record<string, boolean>>({ [course.courseId]: true });
   useLayoutEffect(() => {
     setSidebarCollapsed(getStoredSidebarState());
   }, []);
@@ -56,8 +56,13 @@ export default function CourseLayout({ children }: { children: React.ReactNode }
     return pathname === href || (section && pathname.startsWith(`${href}/`)) ? "active" : undefined;
   };
   const productNavigation = <nav className="product-nav" aria-label="ניווט Syllo"><Link href="/"><span aria-hidden="true">⌂</span><span className="nav-label">בית</span></Link></nav>;
-  const courseNavigation = <nav className="course-nav course-tree-children" aria-label={`ניווט ${course.title}`}><Link className={navigationClass()} href={courseAppPath()} aria-current={navigationClass() ? "page" : undefined}><span aria-hidden="true">⌂</span><span className="nav-label">בית הקורס</span></Link><Link className={navigationClass("lessons")} href={courseAppPath("lessons")} aria-current={navigationClass("lessons") ? "page" : undefined}><span aria-hidden="true">▤</span><span className="nav-label">מערכי שיעור</span></Link><Link className={navigationClass("materials")} href={courseAppPath("materials")} aria-current={navigationClass("materials") ? "page" : undefined}><span aria-hidden="true">▰</span><span className="nav-label">חומרי עזר</span></Link><Link className={navigationClass("formulas")} href={courseAppPath("formulas")} aria-current={navigationClass("formulas") ? "page" : undefined}><span aria-hidden="true">ƒ</span><span className="nav-label">נוסחאון</span></Link><Link className={navigationClass("concepts")} href={courseAppPath("concepts")} aria-current={navigationClass("concepts") ? "page" : undefined}><span aria-hidden="true">⌘</span><span className="nav-label">מפת מושגים</span></Link></nav>;
-  const courseTree = <section className="course-tree" aria-label="הקורסים שלי"><p className="course-tree-label">הקורסים שלי</p><ul className="course-tree-list" role="tree">{workspace.courses.map((item) => { const isCurrent = item.courseId === course.courseId; const isExpanded = expandedCourses[item.courseId] ?? false; return <li className="course-tree-item" key={item.courseId} role="treeitem" aria-expanded={isCurrent ? isExpanded : undefined}><div className={`course-tree-course${isCurrent ? " current" : ""}`}><button className="course-tree-toggle" type="button" onClick={() => setExpandedCourses((expanded) => ({ ...expanded, [item.courseId]: !isExpanded }))} aria-label={`${isExpanded ? "סגירת" : "פתיחת"} ${item.title}`} aria-expanded={isExpanded}><span aria-hidden="true">{isExpanded ? "⌄" : "›"}</span></button><Link href={`/course/${item.courseId}`}><span className="course-tree-folder" aria-hidden="true">▾</span><span className="course-tree-course-name">{item.title}</span><span className="course-tree-course-number" dir="ltr">{item.courseNumber}</span></Link></div>{isCurrent && isExpanded ? courseNavigation : null}</li>; })}</ul></section>;
+  const courseNavigation = <nav className="course-nav" aria-label={`ניווט ${course.title}`}>
+    <Link className={navigationClass()} href={courseAppPath()} aria-current={navigationClass() ? "page" : undefined}><span aria-hidden="true">⌂</span><span>בית הקורס</span></Link>
+    <Link className={navigationClass("lessons")} href={courseAppPath("lessons")} aria-current={navigationClass("lessons") ? "page" : undefined}><span aria-hidden="true">▤</span><span>מערכי שיעור</span></Link>
+    <Link className={navigationClass("materials")} href={courseAppPath("materials")} aria-current={navigationClass("materials") ? "page" : undefined}><span aria-hidden="true">▰</span><span>חומרי עזר</span></Link>
+    <Link className={navigationClass("formulas")} href={courseAppPath("formulas")} aria-current={navigationClass("formulas") ? "page" : undefined}><span aria-hidden="true">ƒ</span><span>נוסחאון</span></Link>
+    <Link className={navigationClass("concepts")} href={courseAppPath("concepts")} aria-current={navigationClass("concepts") ? "page" : undefined}><span aria-hidden="true">⌘</span><span>מפת מושגים</span></Link>
+  </nav>;
 
   return <div className={`course-shell${sidebarCollapsed ? " sidebar-collapsed" : ""}`}>
     <aside className="course-sidebar" aria-label="ניווט סביבת הלמידה">
@@ -65,7 +70,7 @@ export default function CourseLayout({ children }: { children: React.ReactNode }
       <Link className="course-rail-brand" href="/" aria-label="Syllo — דף הבית"><span aria-hidden="true" /></Link>
       {productNavigation}
       <div className="course-divider" />
-      {courseTree}
+      <CourseTree courses={workspace.courses} />
       <div className="course-sidebar-actions">
         <LogoutButton variant="sidebar" compact={sidebarCollapsed} />
         <button
