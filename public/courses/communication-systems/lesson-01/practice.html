@@ -7,9 +7,9 @@
   <meta name="description" content="מערכת תרגול עצמית לשיעור 1 במערכות תקשורת: תרשים מלבנים, כיווניות, תווך, התפשטות גלים ואנטנות">
   <title>מעבדת הקשר — מערכת תרגול אינטראקטיבית לשיעור 1</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
-    :root{--bg:#C8B99A;--bg-dark:#B8A98A;--panel:#F4EFE6;--panel2:#B8A98A;--ink:#1A1A1A;--muted:#585044;--black:#1A1A1A;--cyan:#008F4D;--blue:#008F4D;--green:#00A85D;--red:#9C3340;--amber:#6B5D45;--paper:#F4EFE6}
-    *{box-sizing:border-box;border-radius:0!important}
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Hebrew:wght@400;500;600;700&display=swap');
+    :root{--bg:#f6f7f9;--bg-dark:#eef1f5;--panel:#fff;--panel2:#eef1f5;--ink:#141a26;--muted:#4a5263;--black:#141a26;--cyan:#137a86;--blue:#137a86;--green:#19a7ad;--red:#b54750;--amber:#b77818;--paper:#fff}
+    *{box-sizing:border-box}
     html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font-family:'Space Grotesk',Arial,"Noto Sans Hebrew",sans-serif}
     button,input,select,textarea{font:inherit}button{color:inherit}:focus-visible{outline:4px solid var(--cyan);outline-offset:3px}
     .grain{position:fixed;inset:0;z-index:999;pointer-events:none;opacity:.07;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");background-size:200px}
@@ -47,6 +47,44 @@
     @media(max-width:950px){html,body{overflow:auto}.app{height:auto;min-height:100%;grid-template-columns:1fr;grid-template-rows:auto auto minmax(720px,1fr) auto;grid-template-areas:"top" "side" "main" "foot"}.top{grid-template-columns:1fr auto;padding:12px 15px}.top>div:nth-child(2){grid-column:1/-1}.side{display:flex;overflow-x:auto;padding:10px;border-left:0;border-bottom:3px solid var(--black)}.side h2,.reset{display:none}.nav{display:flex}.nav button{min-width:155px}.module{padding:25px 17px 45px}.module-head{grid-template-columns:1fr}.time{justify-self:start}.grid2,.grid3,.metrics{grid-template-columns:1fr}.mission-grid{grid-template-columns:1fr}.mission{border-left:0;border-bottom:2px solid var(--black)}.mission:last-child{border-bottom:0}.flow{grid-template-columns:1fr}.flow-arrow{transform:rotate(90deg)}.noise-inject{position:static;margin-top:18px;display:inline-block}.main{min-height:830px}.foot{padding:10px 14px;gap:10px}.foot .center{display:none}.direction-stage{grid-template-columns:80px 1fr 80px}.canvas-card canvas{height:300px}}
     @media(max-width:520px){.brand{font-size:15px}.score{padding:6px 8px}.wire-bank,.choice-grid{grid-template-columns:1fr}.direction-stage{grid-template-columns:62px 1fr 62px;padding:12px}.station{height:86px}.module-head h1{font-size:31px}.foot{position:sticky;bottom:0}.top{position:sticky;top:0}}
     @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+    /* Syllo student workspace visual language */
+    html,body{font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;background:var(--bg);color:var(--ink)}
+    .grain{display:none}
+    .top{background:#fff;border-bottom:1px solid #e6e8ee;box-shadow:0 1px 2px rgba(20,26,38,.05)}
+    .brand{font:600 18px 'IBM Plex Sans Hebrew',Arial,sans-serif;letter-spacing:0;display:flex;align-items:center;gap:12px}
+    .brand img{display:block;width:92px;height:auto;object-fit:contain}
+    .brand small{font:500 10px 'IBM Plex Mono',monospace;color:#8a90a0}
+    .progress-track,.snr,.quality{border:1px solid #e6e8ee;border-radius:999px;background:#f6f7f9;overflow:hidden}
+    .score{background:#13233a;border:0;border-radius:999px;padding:8px 14px;transform:none;color:#fff}
+    .score b{color:#19a7ad}
+    .side{background:#fff;color:var(--ink);border-left:1px solid #e6e8ee}
+    .side h2{font:600 16px 'IBM Plex Sans Hebrew',Arial,sans-serif;color:#8a90a0;letter-spacing:0}
+    .nav button{border:1px solid transparent;border-radius:8px;background:transparent;color:#4a5263;padding:10px}
+    .nav button:hover,.nav button.active{background:#e8f3f3;color:#137a86;border-color:#d7e9ea;box-shadow:none}
+    .nav-num{color:#8a90a0;font:500 13px 'IBM Plex Mono',monospace}
+    .reset{border:1px solid #e6e8ee;border-radius:8px;color:#4a5263}
+    .module{padding:clamp(20px,3vw,34px) clamp(16px,4vw,42px) 48px}
+    .module-head{border-color:#e6e8ee}
+    .module-head h1,.cover-head h1{color:#13233a}
+    .eyebrow,.value,.card h2,.mission b{color:#137a86}
+    .time,.stamp{background:#e8f3f3;border:1px solid #cfe4e5;border-radius:999px;color:#137a86;padding:7px 12px;transform:none;font:500 12px 'IBM Plex Mono',monospace}
+    .card,.mission-grid,.pipeline,.direction-stage,.metric,.canvas-card,.antenna-ruler,.wire-card,.drop-zone,.flow-box,.station,.feedback,details,.formula,.btn,select,input[type=number],textarea{border:1px solid #e6e8ee;border-radius:10px}
+    .card,.mission-grid,.pipeline,.direction-stage,.metric,.canvas-card,.flow-box,.station,.quiz-q,details{background:#fff}
+    .card{box-shadow:0 1px 2px rgba(20,26,38,.05)}
+    .card.offset,.card.blue,.canvas-card{box-shadow:0 8px 24px rgba(20,26,38,.08)}
+    .wire-card{background:#137a86;color:#fff;cursor:grab}
+    .drop-zone,.flow-box,.station{background:#f6f7f9}
+    .btn{box-shadow:var(--shadow-low,0 1px 2px rgba(20,26,38,.08));font-weight:700;padding:10px 15px}
+    .btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(20,26,38,.12)}
+    .btn.primary,.btn.green,.btn.selected{background:#137a86;color:#fff}
+    .feedback{background:#eef3f8}.feedback.good{background:#e8f3f3;color:#137a86}.feedback.bad{background:#fbecee;color:#9f3540}
+    details .deep,.caption{border-color:#e6e8ee}
+    .mission-grid{border-radius:10px;overflow:hidden}.mission{border-color:#e6e8ee}
+    .snr i,.quality i,.progress{background:#19a7ad}
+    .metric strong{color:#137a86}
+    .foot{background:#fff;border-top:1px solid #e6e8ee}
+    .cover-wave path{stroke:#137a86}.cover-wave line,.cover-wave circle{stroke:#13233a;fill:#13233a}
+    button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:2px solid #137a86;outline-offset:2px}
   </style>
   <script defer src="/_vercel/insights/script.js"></script>
 </head>
@@ -54,7 +92,7 @@
 <div class="grain"></div><div class="confetti" id="confetti" aria-hidden="true"></div>
 <div class="app">
   <header class="top">
-    <div class="brand">מעבדת הקשר <small>COMMUNICATION SYSTEMS · LESSON 01 · 11.9004</small></div>
+    <div class="brand"><img src="/brand/syllo-logo.png" alt="Syllo"><span>מעבדת הקשר <small>COMMUNICATION SYSTEMS · LESSON 01 · 11.9004</small></span></div>
     <div><div class="progress-track" id="progressTrack" role="progressbar" aria-label="התקדמות" aria-valuemin="0" aria-valuemax="6" aria-valuenow="0"><div class="progress" id="progress"></div></div><div class="progress-label" id="progressLabel">0 מתוך 6 תחנות הושלמו</div></div>
     <div class="score">נקודות <b id="score">0</b> / 100</div>
   </header>

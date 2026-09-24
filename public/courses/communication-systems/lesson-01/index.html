@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>מערכות תקשורת 11.9004 — שיעור 1: מבוא והתפשטות גלים</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Caveat:wght@500;700&family=Space+Grotesk:wght@400;500;600;700&display=swap');
-    :root{--bg:#C8B99A;--bg2:#B8A98A;--green:#008F4D;--green2:#00A85D;--black:#1A1A1A;--paper:#F4EFE6;--muted:#585044;--red:#9C3340}
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Hebrew:wght@400;500;600;700&display=swap');
+    :root{--bg:#f6f7f9;--bg2:#eef1f5;--green:#137a86;--green2:#19a7ad;--black:#141a26;--paper:#fff;--muted:#4a5263;--red:#b54750}
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--black);font-family:'Space Grotesk',Arial,sans-serif}
     button,input,select{font:inherit}
@@ -90,12 +90,45 @@
     @media(max-width:900px){.slide{padding:30px 24px 55px;overflow-y:auto}.slide>header.head{grid-template-columns:1fr}.time{justify-self:start}.two,.three,.choice-grid{grid-template-columns:1fr}.four,.steps{grid-template-columns:1fr 1fr}.flow{grid-template-columns:1fr}.arrow{transform:rotate(90deg);text-align:center}.noise{display:none}.title{font-size:34px}.diagram{min-height:210px}.footer{margin-top:14px}.opts{grid-template-columns:1fr}}
     @media print{html,body{height:auto;overflow:visible}.slide{position:relative;opacity:1;pointer-events:auto;transform:none;page-break-after:always;min-height:100vh}.notes-btn,.notes,.nav,.counter,.progress,.grain{display:none!important}}
     @media(prefers-reduced-motion:reduce){.slide,.notes,.progress{transition:none}}
+    /* Syllo student workspace visual language */
+    html,body{background:var(--bg);color:var(--black);font-family:'IBM Plex Sans Hebrew',Arial,sans-serif}
+    .grain{display:none}
+    .slide{padding:clamp(24px,4vw,46px) clamp(20px,5vw,58px) 62px}
+    .slide>header.head{border-bottom:1px solid #e6e8ee}
+    .kicker,.tag,.counter,.metric,.formula,.step-n{font-family:'IBM Plex Mono',monospace;letter-spacing:0}
+    .kicker,.hand,.notes h2{color:var(--green)}
+    .time,.stamp{background:#e8f3f3;color:var(--green);border:1px solid #cfe4e5;border-radius:999px;padding:7px 13px;transform:none;font:500 13px 'IBM Plex Mono',monospace}
+    .footer{border-top:1px solid #e6e8ee;color:var(--muted)}
+    .hour,.label,.ribbon{background:var(--green);border-radius:999px;color:#fff}
+    .card,.formula,.diagram,.block,.quiz-q,.spectrum,.matrix,.steps,.four,.answer,.result,.opts button,.field input,.field select,.notes-btn,.counter,.nav{border:1px solid #e6e8ee;border-radius:10px}
+    .card{background:#fff;padding:clamp(16px,2vw,24px);box-shadow:0 1px 2px rgba(20,26,38,.06)}
+    .card.offset,.card.green,.card.black{box-shadow:0 8px 24px rgba(20,26,38,.10);margin:0}
+    .card.khaki,.answer,.opts button{background:#f6f7f9}
+    .card.green,.card.black,.checkpoint,.result{background:#13233a;color:#fff}
+    .card.green h3,.card.black h3{color:#fff}
+    .formula{background:#f6f7f9;color:var(--green)}
+    .checkpoint{border-radius:10px}
+    .block,.step,.choice,.quiz-q{background:#fff}
+    .step{border-left:1px solid #e6e8ee}
+    .choice{border:1px solid #e6e8ee;border-radius:10px;background:#fff;transition:background .15s,border-color .15s,transform .15s}
+    .choice:hover,.choice.active{background:#e8f3f3;border-color:#b7d8da;color:#13233a;transform:translateY(-2px)}
+    .field input,.field select{background:#fff;padding:11px;color:var(--black)}
+    .result{border-color:#13233a}.result strong{color:#19a7ad}
+    .row{border-color:#e6e8ee}.row>*{border-color:#e6e8ee}.row.head{background:#e8f3f3;color:#13233a}
+    .opts button{padding:10px;background:#f6f7f9;cursor:pointer;text-align:right}.opts button:hover{background:#e8f3f3}
+    .notes-btn,.counter{background:#fff;box-shadow:0 1px 2px rgba(20,26,38,.06)}
+    .notes{background:#fff;border-right:1px solid #e6e8ee}.source{border-color:#e6e8ee}
+    .progress{background:var(--green);height:4px}
+    .nav{background:#13233a;color:#fff}
+    .hero h1{color:#13233a}.hero .kicker{color:#19a7ad}
+    button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #137a86;outline-offset:2px}
+    @media(max-width:900px){.slide{padding:24px 18px 55px}}
   </style>
   <script defer src="/_vercel/insights/script.js"></script>
   <script defer src="/lesson-metadata.js"></script>
   <script defer src="/slide-feedback.js"></script>
 </head>
-<body data-deck-version="f789208e86bbbc5b" data-course-id="communication-systems" data-lesson-id="lesson-01">
+<body data-deck-version="074dc5e7cc8388ad" data-course-id="communication-systems" data-lesson-id="lesson-01">
   <div class="grain"></div>
   <div class="progress" id="progress"></div>
   <div class="counter" id="counter">01 / 20</div>
