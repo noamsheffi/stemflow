@@ -10,13 +10,17 @@ type LessonOpenLinkProps = {
   resourceKind?: ResourceKind;
   className?: string;
   children: React.ReactNode;
+  target?: "_blank" | "_self";
+  rel?: string;
 };
 
-export default function LessonOpenLink({ href, lessonId, resourceId, resourceKind = "lesson-html", className, children }: LessonOpenLinkProps) {
+export default function LessonOpenLink({ href, lessonId, resourceId, resourceKind = "lesson-html", className, children, target, rel }: LessonOpenLinkProps) {
   return (
     <a
       className={className}
       href={href}
+      target={target}
+      rel={rel}
       onClick={() => {
         const context = { workspace_id: workspace.workspaceId, course_id: course.courseId, lesson_id: lessonId, resource_id: resourceId };
         if (resourceKind === "lesson-html") {

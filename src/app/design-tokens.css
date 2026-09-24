@@ -1,0 +1,96 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Hebrew:wght@400;500;600;700&display=swap');
+
+/* Scoped to the student workspace so public pages retain their own theme. */
+.syllo-student-app {
+  --accent: #137a86;
+  --navy: #13233a;
+  --acc-soft: color-mix(in oklch, var(--accent) 10%, white);
+  --acc-mid: color-mix(in oklch, var(--accent) 22%, white);
+  --ink: #141a26;
+  --ink2: #4a5263;
+  --ink3: #8a90a0;
+  --bg: #f6f7f9;
+  --surface: #ffffff;
+  --rail: #141a26;
+  --white: #ffffff;
+  --paper-note: #fffdf6;
+  --slide-stage: #eceef2;
+  --rail-divider: color-mix(in srgb, white 14%, transparent);
+  --rail-muted: color-mix(in srgb, white 76%, transparent);
+  --rail-hover: color-mix(in srgb, white 12%, transparent);
+  --on-navy: color-mix(in srgb, white 72%, transparent);
+  --on-navy-muted: color-mix(in srgb, white 66%, transparent);
+  --panel-glass: color-mix(in srgb, var(--bg) 90%, transparent);
+  --ink-shadow: color-mix(in srgb, var(--ink) 10%, transparent);
+  --panel-shadow: color-mix(in srgb, var(--ink) 15%, transparent);
+  --white-muted: color-mix(in srgb, white 76%, transparent);
+  --shadow-low: 0 1px 2px var(--ink-shadow);
+  --shadow-panel: 0 8px 30px var(--panel-shadow);
+  --line: #e6e8ee;
+  --line2: #eff1f5;
+  --topic-bg: #efeafd;
+  --topic-fg: #6247c9;
+  --font: 'IBM Plex Sans Hebrew', sans-serif;
+  --mono: 'IBM Plex Mono', monospace;
+  --fs-meta: 11px;
+  --fs-sm: 12px;
+  --fs-body: 14px;
+  --fs-h2: 15px;
+  --fs-h1: 26px;
+  --fs-display: 34px;
+  --r: 10px;
+  --r-sm: 8px;
+  --r-xs: 6px;
+  --pad: 28px;
+  --pad-compact: 20px;
+  --pad-mobile: 18px;
+  --pad-mobile-inline: 14px;
+  --pad-mobile-bottom: 32px;
+  --row: 32px;
+  --u-1: 1px; --u-2: 2px; --u-3: 3px; --u-4: 4px; --u-5: 5px; --u-6: 6px;
+  --u-7: 7px; --u-8: 8px; --u-9: 9px; --u-10: 10px; --u-11: 11px; --u-12: 12px;
+  --u-13: 13px; --u-14: 14px; --u-15: 15px; --u-16: 16px; --u-17: 17px; --u-18: 18px;
+  --u-19: 19px; --u-20: 20px; --u-22: 22px; --u-24: 24px; --u-26: 26px; --u-28: 28px;
+  --u-30: 30px; --u-32: 32px; --u-34: 34px; --u-36: 36px; --u-38: 38px; --u-40: 40px;
+  --u-42: 42px; --u-44: 44px; --u-46: 46px; --u-48: 48px; --u-52: 52px; --u-58: 58px;
+  --u-68: 68px; --u-72: 72px; --u-76: 76px; --u-99: 99px; --u-110: 110px; --u-160: 160px;
+  --u-170: 170px; --u-200: 200px; --u-210: 210px; --u-220: 220px; --u-230: 230px; --u-240: 240px;
+  --u-260: 260px; --u-280: 280px; --u-300: 300px; --u-320: 320px; --u-420: 420px; --u-600: 600px;
+  --u-720: 720px; --u-760: 760px; --u-999: 999px;
+  --u-neg-6: -6px; --u-neg-8: -8px;
+  --w-rail: 60px;
+  --w-tree: 264px;
+  --w-ctx: 300px;
+  --w-page-max: 1080px;
+
+  /* Aliases used by the existing course collection components. */
+  --muted: var(--ink2);
+  --muted-light: var(--ink3);
+  --line-strong: var(--ink3);
+  --canvas: var(--bg);
+  --canvas-deep: var(--line2);
+  --accent-dark: var(--accent);
+  --accent-hover: var(--navy);
+  --accent-pale: var(--acc-soft);
+  --violet: var(--topic-fg);
+  --violet-pale: var(--topic-bg);
+  --success: var(--accent);
+  --radius-sm: var(--r-sm);
+  --radius-md: var(--r);
+  --radius-lg: var(--r);
+  --radius-xl: 14px;
+  --ease: cubic-bezier(.2,.7,.2,1);
+  color: var(--ink);
+  background: var(--bg);
+  font-family: var(--font);
+}
+
+.syllo-student-app *,
+.syllo-student-app *::before,
+.syllo-student-app *::after { box-sizing: border-box; }
+
+.syllo-student-app :is(button, input, textarea, select) { font: inherit; }
+.syllo-student-app :is(a, button, input, textarea, select):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
