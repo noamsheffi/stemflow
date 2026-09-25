@@ -16,6 +16,7 @@
   ],
   "host_permissions": [
     "http://localhost:3000/*",
+    "http://127.0.0.1/*",
     "https://syllo.live/*",
     "https://stemflow-noamsheffi-gmailcoms-projects.vercel.app/*"
   ],
@@ -23,6 +24,8 @@
     {
       "matches": [
         "http://localhost:3000/courses/communication-systems/lesson-*",
+        "http://127.0.0.1/courses/communication-systems/lesson-*",
+        "http://127.0.0.1/course/communication-systems/*",
         "http://localhost:3000/course/communication-systems/*",
         "https://syllo.live/courses/communication-systems/lesson-*",
         "https://syllo.live/course/communication-systems/*",
@@ -39,6 +42,7 @@
       "resources": ["icons/icon32.png", "panel.css"],
       "matches": [
         "http://localhost/*",
+        "http://127.0.0.1/*",
         "https://syllo.live/*",
         "https://stemflow-noamsheffi-gmailcoms-projects.vercel.app/*"
       ]

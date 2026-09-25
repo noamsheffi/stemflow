@@ -2,6 +2,13 @@ chrome.action.onClicked.addListener(async (tab) => {
   if (!tab.id) return;
   try {
     await chrome.scripting.executeScript({ target: { tabId: tab.id, allFrames: true }, files: ['config.js', 'auto-start.js', 'tracker.js'] });
+    await chrome.scripting.executeScript({
+      target: { tabId: tab.id, allFrames: true },
+      func: () => {
+        if (globalThis.__lecturerReflection) globalThis.__lecturerReflection();
+        else globalThis.__lecturerReflectionOpenRequested = true;
+      }
+    });
     await chrome.action.setBadgeText({ tabId: tab.id, text: '' });
   } catch {
     await chrome.action.setBadgeText({ tabId: tab.id, text: '!' });

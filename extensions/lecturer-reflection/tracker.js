@@ -1,6 +1,6 @@
 (() => {
   if (globalThis.__lecturerReflection) { globalThis.__lecturerReflection(); return; }
-  if (globalThis.__lecturerReflectionStarted) return;
+  if (globalThis.__lecturerReflectionStarted) { globalThis.__lecturerReflectionOpenRequested = true; return; }
 
   const playerAtStart = document.querySelector("[data-lesson-player]");
   let reactSlides = [];
@@ -227,6 +227,10 @@
     startTiming(); render(); void persist();
     const uiTick = setInterval(() => { if (activeSince !== null) { render(); void persist(); } else if (!reviewing) render(); }, 1000);
     window.addEventListener("pagehide", () => clearInterval(uiTick), { once: true });
-    globalThis.__lecturerReflection = openReview;
+    globalThis.__lecturerReflection = () => setExpanded(true);
+    if (globalThis.__lecturerReflectionOpenRequested) {
+      globalThis.__lecturerReflectionOpenRequested = false;
+      setExpanded(true);
+    }
   })().catch((error) => { globalThis.__lecturerReflectionStarted = false; console.error("Syllo lecturer panel could not start", error); });
 })();

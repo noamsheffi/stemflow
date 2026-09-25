@@ -98,13 +98,6 @@
 .presentControls button:hover { background: color-mix(in srgb,var(--white) 10%,transparent); }
 .player :is(button, a, textarea):focus-visible, .present :is(button, a, textarea):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 
-.rail { display: flex; width: 60px; min-width: 60px; flex: 0 0 60px; flex-direction: column; align-items: center; gap: 10px; padding-block: 14px; background: var(--rail); }
-.railBrand { display: grid; width: 44px; height: 38px; place-items: center; }
-.railBrand img { display: block; width: 40px; height: auto; }
-.railDivider { width: 32px; height: 1px; margin-block: 4px; background: var(--rail-divider); }
-.railCourse, .railUser { display: grid; width: 34px; height: 34px; place-items: center; color: var(--white); border-radius: var(--r-sm); background: var(--rail-hover); text-decoration: none; font-size: 14px; }
-.railSpacer { flex: 1; }
-.railUser { color: var(--rail); background: var(--white); border-radius: 50%; font-size: 11px; }
 .playerToolbar { min-height: 56px; flex: none; padding-inline: 18px; background: var(--surface); }
 .loopPhases { display: flex; min-width: 0; align-items: center; gap: 4px; overflow: auto; scrollbar-width: none; }
 .loopPhases::-webkit-scrollbar { display: none; }
@@ -123,7 +116,7 @@
 .flagIcon { display: grid; width: 30px; height: 30px; flex: none; place-items: center; color: var(--ink2); border-radius: 50%; background: var(--line2); }
 .chapterSegment em { transform: translateX(50%); }
 
-.loopPhases a:focus-visible, .rail a:focus-visible, .feedback :is(button, textarea):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.loopPhases a:focus-visible, .feedback :is(button, textarea):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .feedback { position: absolute; z-index: 30; inset-block-end: 22px; inset-inline-end: 30px; display: flex; flex-direction: column; align-items: center; }
 .feedbackFab { display: grid; width: 58px; height: 58px; place-items: center; color: var(--white); border: 0; border-radius: 50%; background: var(--navy); box-shadow: var(--shadow-panel), 0 0 0 4px var(--surface); cursor: pointer; transition: transform 180ms ease, background 250ms ease; }
 .feedbackFab:hover { transform: translateY(-2px) scale(1.04); }
@@ -169,14 +162,10 @@
   .outline { inset-inline-start: 0; }
   .slideContext { inset-inline-end: 0; }
   .closePanel { display: inline-flex; align-items: center; justify-content: center; }
-  .rail { z-index: 21; }
   .loopPhases a { padding-inline: 8px; font-size: 11px; }
   .stageWrap { padding: 8px; }
 }
 @container lesson-player (max-width: 760px) {
-  .rail { width: 48px; min-width: 48px; flex-basis: 48px; }
-  .railBrand { width: 40px; }
-  .railBrand img { width: 34px; }
   .playerToolbar { min-height: 52px; gap: 3px; padding-inline: 6px; }
   .loopPhases a { min-height: 30px; gap: 4px; padding-inline: 6px; font-size: 10px; }
   .toolbarActions { gap: 2px; }

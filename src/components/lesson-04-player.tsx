@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { concepts, formulas } from "../lib/course-data";
 import { L4_CHAPTERS, L4_LINKS, L4_SLIDES, Slide, Tex } from "./lesson-04-deck";
@@ -320,6 +319,5 @@ export default function Lesson04Player() {
       </footer>
     </main>
     {contextOpen && <SlideContext slide={slide} feedback={feedback} openFeedback={() => setFeedbackOpen(true)} notes={notes} setNotes={setNotes} onClose={() => setContextOpen(false)} />}
-    <nav className={styles.rail} aria-label="ניווט ראשי"><Link href="/workspace" className={styles.railBrand} aria-label="הקורסים שלי"><Image src="/brand/syllo-logo.png" width={1584} height={600} alt="Syllo" /></Link><span className={styles.railDivider} /><Link href={`/course/${courseId}`} className={styles.railCourse} aria-label="מערכות תקשורת" title="מערכות תקשורת">מ</Link><span className={styles.railSpacer} /><Link href="/workspace" className={styles.railUser} aria-label="חזרה לקורסים שלי">י״ס</Link></nav>
   </div>;
 }
