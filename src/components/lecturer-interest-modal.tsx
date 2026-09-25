@@ -5,7 +5,7 @@ import styles from "./lecturer-interest-modal.module.css";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
-export default function LecturerInterestModal() {
+export default function LecturerInterestModal({ triggerClassName = "" }: { triggerClassName?: string }) {
   const [open, setOpen] = useState(false);
   const [status, setStatus] = useState<Status>("idle");
 
@@ -28,7 +28,7 @@ export default function LecturerInterestModal() {
   }
 
   return <>
-    <button type="button" className={styles.trigger} onClick={() => { setStatus("idle"); setOpen(true); }}>כניסת מרצים</button>
+    <button type="button" className={`${styles.trigger} ${triggerClassName}`} onClick={() => { setStatus("idle"); setOpen(true); }}>כניסת מרצים</button>
     {open && <div className={styles.backdrop} role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) close(); }}>
       <section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="lecturer-interest-title" dir="rtl">
         <button type="button" className={styles.close} onClick={close} aria-label="סגירת החלון">×</button>

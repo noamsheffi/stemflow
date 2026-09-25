@@ -1,6 +1,6 @@
 .trigger { display: inline-flex; align-items: center; gap: 18px; padding: 12px 18px; border: 1px solid #cddae2; border-radius: 8px; background: white; color: #122b46; font: inherit; font-size: .9375rem; font-weight: 600; cursor: pointer; }
 .trigger:hover { background: #eff9fa; border-color: #087c89; }
-.backdrop { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; padding: 24px; background: #122b4670; }
+.backdrop { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 24px; background: #122b4670; }
 .dialog { position: relative; width: min(100%, 500px); max-height: min(760px, calc(100svh - 48px)); overflow: auto; padding: 38px 40px; border-radius: 20px; background: white; color: #122b46; box-shadow: 0 24px 90px #122b4640; }
 .close { position: absolute; top: 12px; left: 16px; border: 0; background: transparent; color: #50647a; font-size: 1.8rem; line-height: 1; cursor: pointer; }
 .eyebrow { margin: 0 0 10px; color: #087c89; font-size: .875rem; font-weight: 600; }
