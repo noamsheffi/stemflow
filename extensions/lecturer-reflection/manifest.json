@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Lesson lecturer reflection",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Floating Syllo lecturer panel for slide timing, reflection and session review.",
   "icons": {
     "16": "icons/icon16.png",
@@ -32,7 +32,7 @@
         "https://stemflow-noamsheffi-gmailcoms-projects.vercel.app/courses/communication-systems/lesson-*",
         "https://stemflow-noamsheffi-gmailcoms-projects.vercel.app/course/communication-systems/*"
       ],
-      "all_frames": true,
+      "all_frames": false,
       "js": ["config.js", "auto-start.js", "tracker.js"],
       "run_at": "document_idle"
     }

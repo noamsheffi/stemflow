@@ -112,8 +112,8 @@ export default function CourseTree({ courses, collapsed = false, onToggleCollaps
                 <span className={styles.statusDot} aria-hidden="true" />
                 <span className={styles.srOnly}>נתוני התקדמות אישיים לשיעור הזה אינם זמינים.</span>
                 <span className={styles.lessonNumber} dir="ltr">{String(lesson.number).padStart(2, "0")}</span>
-                <Link href={`${lessonPath}/slides`} className={styles.compactLessonLink} aria-label={`שיעור ${lesson.number}: ${lesson.title}`} title={lesson.title}>{String(lesson.number).padStart(2, "0")}</Link>
-                <Link href={`${lessonPath}/slides`} className={styles.lessonName} aria-current={lessonActive ? "page" : undefined}>{lesson.title}</Link>
+                <Link href={lesson.lessonId === "lesson-04" ? lessonPath : `${lessonPath}/slides`} className={styles.compactLessonLink} aria-label={`שיעור ${lesson.number}: ${lesson.title}`} title={lesson.title}>{String(lesson.number).padStart(2, "0")}</Link>
+                <Link href={lesson.lessonId === "lesson-04" ? lessonPath : `${lessonPath}/slides`} className={styles.lessonName} aria-current={lessonActive ? "page" : undefined}>{lesson.title}</Link>
                 <button type="button" className={styles.disclosure} aria-label={`${expanded ? "סגירת" : "פתיחת"} שלבי שיעור ${lesson.number}`} aria-expanded={expanded} aria-controls={childId} onClick={() => setExpandedLessons((value) => ({ ...value, [lesson.lessonId]: !expanded }))}>
                   <span aria-hidden="true">{expanded ? "⌄" : "⌃"}</span>
                 </button>

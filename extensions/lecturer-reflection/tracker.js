@@ -79,7 +79,13 @@
       <section class="lp-flyout" hidden><div class="lp-sec">הערה לשקף <span class="mono lp-fly-number"></span></div><textarea aria-label="הערה לשקף" placeholder="מה לשנות, מה עבד…" rows="3"></textarea><button class="lp-fly-done" type="button">סיום</button></section>
       <footer class="lp-foot"><button class="lp-review" type="button">${icon("list", 15)}סקירת מפגש</button><button class="lp-exp" type="button" aria-label="הרחבת הפאנל" aria-pressed="false">${icon("expand", 17)}</button></footer><div class="lp-toast" hidden role="status" aria-live="polite"></div>
     </div><div class="rv-back" hidden><section class="rv" role="dialog" aria-modal="true" aria-label="סקירת מפגש"><header class="rv-h"><div><div class="rv-eyebrow"></div><h2>סקירת מפגש</h2></div><button class="rv-x" type="button" aria-label="חזרה למצגת (Escape)">×</button></header><div class="rv-stats"></div><div class="rv-hint">זמן ארוך מהמתוכנן הוא אות להתבוננות, לא אבחנה של קושי.</div><div class="rv-tools"><div class="rv-filters"></div><span class="rv-count"></span></div><div class="rv-table"></div><footer class="rv-f"><span class="rv-save"><i></i><span></span></span><button class="rv-btn ghost export" type="button">ייצוא JSON</button><button class="rv-btn ghost sync" type="button">סנכרון ל־Syllo</button><button class="rv-btn warn end" type="button">סיום שיעור</button><button class="rv-btn primary return" type="button">חזרה למצגת</button></footer></section></div>`);
-    document.documentElement.append(host);
+    const mountOverlay = () => {
+      const target = document.fullscreenElement || document.documentElement;
+      if (host.parentElement !== target) target.append(host);
+    };
+    mountOverlay();
+    document.addEventListener("fullscreenchange", mountOverlay);
+    window.addEventListener("pagehide", () => document.removeEventListener("fullscreenchange", mountOverlay), { once: true });
     const panel = $(".lp-panel"), dialog = $(".rv-back");
     host.addEventListener("click", (event) => event.stopPropagation());
     host.addEventListener("pointerdown", (event) => event.stopPropagation());

@@ -20,7 +20,7 @@ export default function CourseLessons() {
       {filtered.map((lesson) => <article className={styles.syllabusRow} key={lesson.lessonId}>
         <span className={styles.syllabusNumber} dir="ltr">{String(lesson.number).padStart(2, "0")}</span>
         <span className={styles.syllabusText}><strong>{lesson.title}</strong><small>{lesson.topics.join(" · ")} · {lesson.resources.length} משאבים</small></span>
-        <Link className={styles.materialLink} href={`/course/${course.courseId}/lessons/${lesson.lessonId}/slides`}>פתיחת שיעור</Link>
+        <Link className={styles.materialLink} href={`/course/${course.courseId}/lessons/${lesson.lessonId}${lesson.lessonId === "lesson-04" ? "" : "/slides"}`}>פתיחת שיעור</Link>
       </article>)}
     </div></section> : <p className={styles.emptyState}>לא נמצאו שיעורים מתאימים לחיפוש.</p>}
   </>;
