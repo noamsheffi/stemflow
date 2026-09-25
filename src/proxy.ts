@@ -22,7 +22,7 @@ export function proxy(request: NextRequest) {
     response.headers.set("Cache-Control", "no-store");
     return response;
   }
-  const requiresLecturerAuth = pathname.startsWith("/lecturer") || pathname.startsWith("/admin") || pathname.startsWith("/api/admin/");
+  const requiresLecturerAuth = pathname.startsWith("/lecturer");
   if (!requiresLecturerAuth) {
     const response = NextResponse.next();
     response.headers.set("Cache-Control", "private, no-store");
