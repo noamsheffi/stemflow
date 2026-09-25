@@ -27,6 +27,5 @@ export function parseSlideFeedback(value: unknown): SlideFeedbackSubmission | nu
   if (typeof input.submittedAt !== "string" || Number.isNaN(Date.parse(input.submittedAt))) return null;
   const optionalComment = typeof input.optionalComment === "string" ? input.optionalComment.trim() : "";
   if (optionalComment.length > 800) return null;
-  if ((input.feedbackType === "NOT_UNDERSTOOD" || input.feedbackType === "NEED_EXAMPLE") && optionalComment) return null;
   return { anonymousClientId: input.anonymousClientId as string, courseId: input.courseId as string, lessonId: input.lessonId as string, slideId: input.slideId as string, slideNumber: input.slideNumber, deckVersion: input.deckVersion as string, feedbackType: input.feedbackType as SlideFeedbackType, optionalComment, submittedAt: input.submittedAt, pageUrl: input.pageUrl as string, idempotencyKey: input.idempotencyKey as string };
 }

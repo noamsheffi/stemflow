@@ -196,7 +196,7 @@ export const lessons: CourseLesson[] = [
     lessonId: "lesson-04",
     number: 4,
     title: "אפנון תנופה AM",
-    url: "/courses/communication-systems/lesson-04/",
+    url: "/course/communication-systems/lessons/lesson-04/slides",
     topics: ["אפנון", "AM", "מעטפת", "פסי צד", "רוחב פס"],
     formulaIds: [],
     conceptIds: [],
@@ -206,7 +206,7 @@ export const lessons: CourseLesson[] = [
         resourceId: "lesson-04-main-html",
         kind: "lesson-html",
         title: "מערך שיעור — אפנון תנופה AM",
-        href: "/courses/communication-systems/lesson-04/",
+        href: "/course/communication-systems/lessons/lesson-04/slides",
       },
       {
         resourceId: "lesson-04-self-practice",

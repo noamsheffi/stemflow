@@ -4,7 +4,9 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { CourseLesson } from "../lib/course-data";
 import { concepts, course, lessons } from "../lib/course-data";
+import { lesson04Slides } from "./lesson-04-data";
 import LessonOpenLink from "./lesson-open-link";
+import Lesson04Player from "./lesson-04-player";
 import styles from "./student-workspace.module.css";
 
 const phases = [
@@ -25,6 +27,7 @@ function ReflectionDraft({ lesson }: { lesson: CourseLesson }) {
   const storageKey = `syllo:reflection-draft:${course.courseId}:${lesson.lessonId}`;
   const [draft, setDraft] = useState<Draft>(emptyDraft);
   const [saveState, setSaveState] = useState<"saved" | "error" | null>(null);
+  const [unclearSlides, setUnclearSlides] = useState<number[]>([]);
   const lessonConcepts = concepts.filter((concept) => lesson.conceptIds.includes(concept.conceptId));
   const lessonConceptIds = lesson.conceptIds;
 
@@ -42,6 +45,14 @@ function ReflectionDraft({ lesson }: { lesson: CourseLesson }) {
     } catch { /* The reflection draft is still usable when storage is disabled. */ }
   }, [lessonConceptIds, storageKey]);
 
+  useEffect(() => {
+    if (lesson.lessonId !== "lesson-04") return;
+    try {
+      const saved: unknown = JSON.parse(window.localStorage.getItem("syllo:student:lesson:lesson-04:flags") ?? "[]");
+      setUnclearSlides(Array.isArray(saved) ? saved.filter((number): number is number => Number.isInteger(number) && lesson04Slides.some((slide) => slide.n === number)) : []);
+    } catch { setUnclearSlides([]); }
+  }, [lesson.lessonId]);
+
   const toggleConcept = (conceptId: string) => {
     setSaveState(null);
     setDraft((value) => ({ ...value, conceptIds: value.conceptIds.includes(conceptId) ? value.conceptIds.filter((id) => id !== conceptId) : [...value.conceptIds, conceptId] }));
@@ -55,6 +66,16 @@ function ReflectionDraft({ lesson }: { lesson: CourseLesson }) {
   };
 
   return <div className={styles.reflection}>
+    {unclearSlides.length > 0 && <section className={`${styles.card} ${styles.reflectionCard}`}>
+      <h2>השקפים שסימנת לחזרה</h2>
+      <div className={styles.conceptChoices}>{[...unclearSlides].sort((a, b) => a - b).map((number) => {
+        const slide = lesson04Slides.find((item) => item.n === number)!;
+        return <Link key={number} className={styles.conceptChoice} href={`/course/${course.courseId}/lessons/lesson-04/slides`} onClick={() => {
+          try { window.localStorage.setItem("syllo:student:lesson:lesson-04:index", JSON.stringify(number - 1)); }
+          catch { /* The slide remains reachable through the lesson outline. */ }
+        }}>שקף {String(number).padStart(2, "0")} · {slide.h}</Link>;
+      })}</div>
+    </section>}
     <section className={`${styles.card} ${styles.reflectionCard}`}>
       <fieldset>
         <legend>עד כמה הבנת את החומר בשיעור?</legend>
@@ -114,11 +135,12 @@ export default function LessonPhase({ lesson, phase }: { lesson: CourseLesson; p
 
     <section aria-labelledby="phase-heading">
       <div className={styles.phaseIntro}><h2 id="phase-heading">{phaseContent.title}</h2><p>{phaseContent.description}</p></div>
-      {phase === "slides" && resource && <div className={styles.viewer}>
+      {phase === "slides" && lesson.lessonId === "lesson-04" && <Lesson04Player />}
+      {phase === "slides" && lesson.lessonId !== "lesson-04" && resource && <div className={styles.viewer}>
         <iframe className={styles.viewerFrame} src={resource.href} title={`מערך שיעור ${lesson.number}: ${lesson.title}`} allowFullScreen />
         <div className={styles.viewerFooter}><span>{resource.title}</span><LessonOpenLink className={styles.materialLink} href={resource.href} lessonId={lesson.lessonId} resourceId={resource.resourceId} resourceKind={resource.kind} target="_blank" rel="noreferrer">פתיחה בחלון חדש</LessonOpenLink></div>
       </div>}
-      {phase === "slides" && !resource && <p className={styles.emptyState}>מערך השיעור עדיין לא זמין.</p>}
+      {phase === "slides" && lesson.lessonId !== "lesson-04" && !resource && <p className={styles.emptyState}>מערך השיעור עדיין לא זמין.</p>}
       {phase === "practice" && resource && <>
         <iframe className={styles.practiceFrame} src={resource.href} title={`תרגול שיעור ${lesson.number}: ${lesson.title}`} />
         <div className={styles.viewerFooter}><LessonOpenLink className={styles.materialLink} href={resource.href} lessonId={lesson.lessonId} resourceId={resource.resourceId} resourceKind={resource.kind} target="_blank" rel="noreferrer">פתיחה בחלון חדש</LessonOpenLink></div>

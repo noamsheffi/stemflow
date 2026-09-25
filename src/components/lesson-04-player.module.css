@@ -1,0 +1,190 @@
+.player {
+  position: relative;
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  min-height: 0;
+  container-name: lesson-player;
+  container-type: inline-size;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.playerMain { display: flex; min-width: 0; min-height: 0; flex: 1 1 0; flex-direction: column; }
+.outline, .slideContext { display: flex; width: 280px; min-width: 0; min-height: 0; flex: 0 0 280px; flex-direction: column; background: var(--surface); }
+.outline { border-inline-end: 1px solid var(--line); }
+.slideContext { width: 290px; flex-basis: 290px; border-inline-start: 1px solid var(--line); }
+.outlineHeader, .contextHeader { display: grid; gap: 7px; padding: 14px 16px; border-block-end: 1px solid var(--line); }
+.outlineHeader h2 { margin: 0; font-size: 16px; }
+.closePanel { display: none; padding: 5px 8px; color: var(--ink2); border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--surface); cursor: pointer; font-size: 12px; }
+.backLink { display: flex; align-items: center; gap: 4px; color: var(--ink3); font-size: 12px; text-decoration: none; }
+.backLink:hover { color: var(--accent); }
+.backLink svg, .navButton svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.7; }
+.previousIcon { transform: scaleX(-1); }
+.eyebrow { color: var(--ink3); font-size: 11px; }
+.outlineScroll { min-height: 0; flex: 1; overflow: auto; padding: 8px; }
+.chapter { margin-block-end: 2px; }
+.chapterButton, .slideLink { display: flex; width: 100%; align-items: center; gap: 8px; padding: 8px; color: var(--ink2); border: 0; border-radius: var(--r-sm); background: transparent; text-align: start; cursor: pointer; }
+.chapterButton { font-size: 13px; font-weight: 600; }
+.chapterButton:hover, .slideLink:hover { background: var(--line2); }
+.chapterActive { color: var(--accent); }
+.chapterNumber, .slideNumber { width: 22px; flex: none; color: var(--ink3); font-family: var(--mono); font-size: 11px; }
+.chapterTitle, .slideTitle { min-width: 0; flex: 1; line-height: 1.35; }
+.progressRing { width: 14px; height: 14px; flex: none; border-radius: 50%; background: conic-gradient(var(--accent) calc(var(--progress, 0) * 360deg), var(--line) 0); mask: radial-gradient(circle, transparent 3.5px, #000 4px); }
+.flagCount { padding-inline: 5px; color: var(--feedback-count); background: var(--feedback-count-soft); border-radius: 8px; font: 11px var(--mono); }
+.chapterSlides { margin-inline-start: 18px; padding-inline-start: 6px; border-inline-start: 1px solid var(--line); }
+.slideLink { gap: 7px; padding: 6px 8px; font-size: 12px; }
+.slideSeen .slideNumber, .slideActive { color: var(--accent); }
+.slideActive { background: var(--acc-soft); font-weight: 600; }
+.flagDot { width: 6px; height: 6px; flex: none; border-radius: 50%; background: var(--accent); }
+.feedbackMarker { display: grid; width: 16px; height: 16px; flex: none; place-items: center; }
+.interactiveMark { color: var(--topic-fg); font-size: 9px; }
+.playerToolbar { display: flex; min-height: 58px; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 12px; border-block-end: 1px solid var(--line); }
+.playerTitle { display: grid; min-width: 0; gap: 2px; }
+.playerTitle strong { overflow: hidden; font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
+.toolbarActions { display: flex; flex: none; align-items: center; gap: 4px; }
+.toolbarButton, .presentButton, .navButton, .presentControls button { min-height: 32px; padding: 5px 9px; color: var(--ink2); border: 1px solid transparent; border-radius: var(--r-sm); background: transparent; cursor: pointer; font-size: 12px; }
+.toolbarButton[aria-pressed="true"] { color: var(--accent); background: var(--acc-soft); }
+.presentButton { color: var(--white); background: var(--accent); }
+.stageWrap { display: flex; min-height: 0; flex: 1; padding: 10px; background: var(--slide-stage); }
+.stage { display: grid; min-width: 0; min-height: 0; flex: 1; place-items: center; }
+.stageBox { position: relative; overflow: hidden; flex: none; border-radius: var(--r-sm); background: var(--surface); box-shadow: var(--shadow-panel); }
+.slideCanvas { position: absolute; inset-block-start: 0; inset-inline-start: 0; width: 1600px; height: 900px; direction: ltr; transform-origin: 0 0; }
+.playerFooter { flex: none; padding: 0 12px 10px; }
+.chapterBar { display: flex; height: 14px; align-items: center; gap: 4px; }
+.chapterSegment { position: relative; height: 6px; min-width: 0; padding: 0; overflow: visible; border: 0; border-radius: 3px; background: var(--line); cursor: pointer; }
+.chapterSegment i { position: absolute; inset-block: 0; inset-inline-start: 0; display: block; border-radius: 3px; background: var(--acc-mid); }
+.segmentActive i { background: var(--accent); }
+.chapterSegment em { position: absolute; inset-block-start: -4px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.slideNav { display: flex; min-height: 38px; align-items: center; gap: 5px; margin-block-start: 5px; }
+.navButton { display: grid; width: 32px; flex: none; padding: 4px; place-items: center; }
+.navButton:hover, .toolbarButton:hover { background: var(--line2); }
+.slideCount { min-width: 58px; color: var(--ink2); font: 12px var(--mono); text-align: center; }
+.chapterLabel { min-width: 0; overflow: hidden; margin-inline-start: 5px; font-size: 12px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.timeLeft { flex: none; margin-inline-start: auto; color: var(--ink3); font-size: 11px; white-space: nowrap; }
+.practiceLink { flex: none; color: var(--accent); font-size: 11px; text-decoration: none; }
+.contextHeader { display: flex; min-height: 50px; align-items: center; justify-content: space-between; color: var(--ink3); font-size: 11px; }
+.contextHeader b { font: 12px var(--mono); }
+.contextBody { min-height: 0; flex: 1; overflow: auto; padding: 12px; }
+.flagButton { display: flex; width: 100%; align-items: center; gap: 10px; padding: 10px; border: 1px dashed var(--line); border-radius: var(--r); background: transparent; text-align: start; cursor: pointer; }
+.flagButton b, .flagButton small { display: block; }
+.flagButton b { font-size: 12px; }
+.flagButton small { margin-block-start: 3px; color: var(--ink3); font-size: 10px; }
+.flagIcon { display: grid; width: 28px; height: 28px; flex: none; border-radius: 50%; color: var(--ink2); background: var(--line2); font-weight: 700; place-items: center; }
+.flagged { border-color: var(--accent); background: var(--acc-soft); }
+.flagged .flagIcon { color: var(--white); background: var(--accent); }
+.takeaway { margin-block-start: 12px; padding: 10px; color: var(--ink); background: var(--acc-soft); border-radius: var(--r-sm); font-size: 12px; line-height: 1.55; }
+.takeaway small { display: block; margin-block-end: 2px; color: var(--accent); font-size: 10px; font-weight: 600; }
+.contextSection { margin-block-start: 14px; }
+.contextSection h3 { display: flex; gap: 6px; margin: 0 0 5px; color: var(--ink3); font-size: 11px; }
+.contextSection h3 span { font-family: var(--mono); }
+.formulaCard, .conceptCard { display: grid; gap: 6px; padding: 10px 8px; border-block-end: 1px solid var(--line2); }
+.formulaCard b, .conceptCard b { color: var(--ink2); font-size: 11px; font-weight: 500; }
+.formulaCard > div { overflow-x: auto; color: var(--accent); font-size: 12px; }
+.contextMore { display: block; padding-block: 8px; color: var(--accent); font-size: 11px; text-decoration: none; }
+.noteLabel { display: grid; gap: 5px; margin-block-start: 16px; color: var(--ink2); font-size: 11px; }
+.noteLabel textarea { width: 100%; min-height: 88px; resize: vertical; padding: 9px; border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--paper-note); line-height: 1.5; }
+.localNote { color: var(--ink3); font-size: 10px; line-height: 1.5; }
+.present { position: fixed; z-index: 100; inset: 0; display: flex; flex-direction: column; padding: 14px; background: var(--navy); }
+.presentStage { display: grid; min-height: 0; flex: 1; place-items: center; }
+.presentCanvas { position: relative; width: min(100%, calc((100vh - 100px) * 1.7778)); aspect-ratio: 16 / 9; overflow: hidden; border-radius: var(--r-xs); }
+.presentCanvas > div { position: absolute; inset: 0; transform: scale(var(--present-scale, 1)); transform-origin: top left; }
+.speakerNotes { position: absolute; inset-block-end: 86px; inset-inline-end: 24px; max-width: 460px; padding: 14px 16px; color: var(--ink); background: var(--paper-note); border-radius: var(--r); box-shadow: var(--shadow-panel); font-size: 14px; line-height: 1.55; }
+.speakerNotes p { margin-block: 6px 0; }
+.presentControls { display: flex; justify-content: center; align-items: center; gap: 4px; padding: 5px; color: var(--white); border-radius: var(--r); background: color-mix(in srgb,var(--navy) 92%,transparent); }
+.presentControls span { padding-inline: 10px; color: var(--ink2); font: 12px var(--mono); }
+.presentControls button { color: var(--white); }
+.presentControls button:hover { background: color-mix(in srgb,var(--white) 10%,transparent); }
+.player :is(button, a, textarea):focus-visible, .present :is(button, a, textarea):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.rail { display: flex; width: 60px; min-width: 60px; flex: 0 0 60px; flex-direction: column; align-items: center; gap: 10px; padding-block: 14px; background: var(--rail); }
+.railBrand { display: grid; width: 44px; height: 38px; place-items: center; }
+.railBrand img { display: block; width: 40px; height: auto; }
+.railDivider { width: 32px; height: 1px; margin-block: 4px; background: var(--rail-divider); }
+.railCourse, .railUser { display: grid; width: 34px; height: 34px; place-items: center; color: var(--white); border-radius: var(--r-sm); background: var(--rail-hover); text-decoration: none; font-size: 14px; }
+.railSpacer { flex: 1; }
+.railUser { color: var(--rail); background: var(--white); border-radius: 50%; font-size: 11px; }
+.playerToolbar { min-height: 56px; flex: none; padding-inline: 18px; background: var(--surface); }
+.loopPhases { display: flex; min-width: 0; align-items: center; gap: 4px; overflow: auto; scrollbar-width: none; }
+.loopPhases::-webkit-scrollbar { display: none; }
+.loopPhases a { display: inline-flex; min-height: 32px; flex: 0 0 auto; align-items: center; gap: 6px; padding-inline: 12px; color: var(--ink3); border: 1px solid transparent; border-radius: 999px; font-size: 13px; text-decoration: none; }
+.loopPhases a span { font: 11px var(--mono); }
+.loopPhases a:hover { color: var(--ink); border-color: var(--line); }
+.loopPhases a.phaseActive { color: var(--white); background: var(--navy); font-weight: 600; }
+.toolbarButton { display: grid; width: 34px; padding: 5px; place-items: center; border-color: var(--line); }
+.toolbarButton svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+.toolbarButton[aria-pressed="true"] { color: var(--accent); background: var(--acc-soft); }
+.stageWrap { position: relative; min-width: 0; padding: 16px 20px 12px; }
+.playerFooter { padding-inline: 20px; padding-block-end: 14px; background: var(--surface); }
+.flagButton { border-color: var(--line); }
+.flagged { border-color: var(--feedback-color); background: var(--feedback-soft); }
+.flagged .flagIcon { color: var(--white); background: var(--feedback-color); }
+.flagIcon { display: grid; width: 30px; height: 30px; flex: none; place-items: center; color: var(--ink2); border-radius: 50%; background: var(--line2); }
+.chapterSegment em { transform: translateX(50%); }
+
+.loopPhases a:focus-visible, .rail a:focus-visible, .feedback :is(button, textarea):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.feedback { position: absolute; z-index: 30; inset-block-end: 22px; inset-inline-end: 30px; display: flex; flex-direction: column; align-items: center; }
+.feedbackFab { display: grid; width: 58px; height: 58px; place-items: center; color: var(--white); border: 0; border-radius: 50%; background: var(--navy); box-shadow: var(--shadow-panel), 0 0 0 4px var(--surface); cursor: pointer; transition: transform 180ms ease, background 250ms ease; }
+.feedbackFab:hover { transform: translateY(-2px) scale(1.04); }
+.feedbackFabOpen { color: var(--ink2); background: var(--surface); box-shadow: var(--shadow-panel); font-size: 24px; }
+.feedbackTag { position: absolute; inset-block-end: 64px; white-space: nowrap; padding: 2px 9px; border-radius: 10px; background: var(--surface); box-shadow: var(--shadow-low); font-size: 11px; font-weight: 700; pointer-events: none; }
+.feedbackPopover { position: absolute; inset-block-end: 72px; inset-inline-end: 0; width: min(340px, calc(100vw - 30px)); overflow: hidden; border-radius: 16px; background: var(--surface); box-shadow: var(--shadow-panel); animation: feedback-in 180ms ease; transform-origin: bottom right; }
+@keyframes feedback-in { from { opacity: 0; transform: translateY(8px) scale(.97); } }
+.feedbackHeader { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding: 14px 16px 12px; color: var(--white); background: var(--navy); }
+.feedbackHeader b, .feedbackHeader span { display: block; }
+.feedbackHeader b { font-size: 14px; }
+.feedbackHeader span { max-width: 250px; overflow: hidden; margin-block-start: 2px; color: var(--on-navy); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.feedbackHeader i { font-family: var(--mono); font-style: normal; }
+.feedbackHeader button { width: 28px; height: 28px; color: var(--on-navy); border: 0; border-radius: var(--r-xs); background: transparent; cursor: pointer; font-size: 20px; }
+.feedbackBody, .feedbackSent { padding: 14px 16px 16px; }
+.feedbackBody > b { display: block; margin-block-end: 10px; color: var(--ink2); font-size: 13px; }
+.feedbackOptions { display: flex; flex-direction: column; gap: 6px; }
+.feedbackOptions button { display: flex; width: 100%; align-items: center; gap: 10px; padding: 8px 10px; color: var(--ink2); border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--surface); text-align: start; cursor: pointer; }
+.feedbackOptions button > span:first-child, .feedbackSentCard > span { display: grid; width: 32px; height: 32px; flex: 0 0 32px; place-items: center; color: var(--feedback-color); border-radius: var(--r-sm); background: var(--feedback-soft); }
+.feedbackOptions button > span:last-child { display: grid; gap: 2px; }
+.feedbackOptions button b { font-size: 12px; }
+.feedbackOptions button small { color: var(--ink3); font-size: 10px; }
+.feedbackOptions button.feedbackOptionSelected { color: var(--feedback-color); border-color: var(--feedback-color); background: var(--feedback-soft); }
+.feedbackOptions button.feedbackOptionSelected > span:first-child { color: var(--white); background: var(--feedback-color); }
+.feedbackBody textarea { display: block; width: 100%; min-height: 72px; margin-block-start: 10px; padding: 9px 11px; resize: vertical; color: var(--ink); border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--surface); font-size: 13px; }
+.feedbackBody footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-block-start: 10px; }
+.feedbackBody footer button { min-width: 86px; min-height: 38px; padding-inline: 14px; color: var(--white); border: 0; border-radius: var(--r-sm); background: var(--accent); cursor: pointer; }
+.feedbackBody footer button:disabled { opacity: .5; cursor: default; }
+.feedbackBody footer small { color: var(--ink3); font-size: 10px; }
+.feedbackError { margin: 8px 0 0; color: var(--feedback-error); font-size: 12px; }
+.feedbackSentCard { display: flex; align-items: flex-start; gap: 10px; padding: 12px; color: var(--feedback-color); border-radius: var(--r-sm); background: var(--feedback-soft); }
+.feedbackSentCard b { font-size: 13px; }
+.feedbackSentCard p { margin: 5px 0; color: var(--ink2); font-size: 12px; }
+.feedbackSentCard small { color: var(--ink3); font-size: 10px; }
+.feedbackActions { display: flex; gap: 14px; padding-block-start: 12px; }
+.feedbackActions button { padding: 0; color: var(--accent); border: 0; background: transparent; cursor: pointer; font-size: 12px; }
+.feedbackActions button:last-child { color: var(--feedback-error); }
+.feedbackDark { position: fixed; inset-inline-start: 24px; inset-inline-end: auto; inset-block-end: 44px; }
+.feedbackDark .feedbackFab { width: 50px; height: 50px; box-shadow: var(--shadow-panel), 0 0 0 3px var(--on-navy); }
+.feedbackDark .feedbackPopover { inset-inline-start: 0; inset-inline-end: auto; }
+
+@container lesson-player (max-width: 1100px) {
+  .outline, .slideContext { position: absolute; z-index: 20; inset-block: 0; width: min(280px, 84%); box-shadow: var(--shadow-panel); }
+  .outline { inset-inline-start: 0; }
+  .slideContext { inset-inline-end: 0; }
+  .closePanel { display: inline-flex; align-items: center; justify-content: center; }
+  .rail { z-index: 21; }
+  .loopPhases a { padding-inline: 8px; font-size: 11px; }
+  .stageWrap { padding: 8px; }
+}
+@container lesson-player (max-width: 760px) {
+  .rail { width: 48px; min-width: 48px; flex-basis: 48px; }
+  .railBrand { width: 40px; }
+  .railBrand img { width: 34px; }
+  .playerToolbar { min-height: 52px; gap: 3px; padding-inline: 6px; }
+  .loopPhases a { min-height: 30px; gap: 4px; padding-inline: 6px; font-size: 10px; }
+  .toolbarActions { gap: 2px; }
+  .toolbarButton, .presentButton { min-width: 30px; min-height: 30px; padding: 4px; }
+  .stageWrap { padding: 5px; }
+  .slideNav { flex-wrap: wrap; }
+  .timeLeft { margin-inline-start: 4px; }
+  .feedback { inset-inline-end: 15px; }
+  .feedbackFab { width: 50px; height: 50px; }
+  .feedbackPopover { width: min(340px, calc(100vw - 66px)); }
+}

@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import AnalyticsPageView from "../components/analytics-page-view";
 import "@xyflow/react/dist/style.css";
+import "katex/dist/katex.min.css";
 import "./design-tokens.css";
 import "./globals.css";
+import "./lesson-04-deck.css";
 
 export const metadata: Metadata = {
   title: "Syllo | סביבת למידה",

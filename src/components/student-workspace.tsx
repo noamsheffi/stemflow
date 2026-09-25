@@ -119,7 +119,7 @@ export default function StudentWorkspace({ children }: { children: ReactNode }) 
   const route = currentRoute(pathname);
   const [contextOpen, setContextOpen] = useState(true);
   const [navigationCollapsed, setNavigationCollapsed] = useState(false);
-  const contextAvailable = pathname !== "/workspace";
+  const contextAvailable = pathname !== "/workspace" && pathname !== "/course/communication-systems/lessons/lesson-04/slides";
   const showContext = contextOpen && contextAvailable;
 
   useEffect(() => {
