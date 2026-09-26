@@ -207,6 +207,7 @@ export default function Lesson04Player() {
   const [opened, setOpened] = useState(false);
   const [showSpeakerNotes, setShowSpeakerNotes] = useState(false);
   const slide = L4_SLIDES[index];
+  const previewSlide = L4_SLIDES[0];
   const chapter = L4_CHAPTERS.find((item) => item.id === slide.ch)!;
   const minutesRemaining = useMemo(() => L4_SLIDES.slice(index).reduce((sum, item) => sum + item.min, 0), [index]);
   const go = useCallback((next: number) => setIndex(Math.max(0, Math.min(L4_SLIDES.length - 1, next))), [setIndex]);
@@ -293,8 +294,8 @@ export default function Lesson04Player() {
   useEffect(() => { setFeedbackError(""); }, [slide.n]);
 
   if (!opened) return <section className={styles.preview} aria-label="תצוגה מקדימה של מערך השיעור" data-lesson-player="true" data-course-id={courseId} data-lesson-id={lessonId} data-deck-version="lesson-04-am-v1" data-slides={extensionSlideCatalog}>
-    <div className={styles.previewStage}><ScaledSlide slide={slide} className={styles.stage} /></div>
-    <footer className={styles.previewFooter}><div><strong>מערך שיעור 04 · אפנון תנופה AM ומשדר</strong><span>{L4_SLIDES.length} שקפים · כ־{L4_SLIDES.reduce((sum, item) => sum + item.min, 0)} דקות</span></div><button ref={previewButtonRef} type="button" className={styles.openLessonButton} onClick={() => { notifyLecturer("open"); setOutlineOpen(true); setContextOpen(true); setOpened(true); }}>פתיחת מערך השיעור <span aria-hidden="true">←</span></button></footer>
+    <div className={styles.previewStage}><ScaledSlide slide={previewSlide} className={styles.stage} /></div>
+    <footer className={styles.previewFooter}><div><strong>מערך שיעור 04 · אפנון תנופה AM ומשדר</strong><span>{L4_SLIDES.length} שקפים · כ־{L4_SLIDES.reduce((sum, item) => sum + item.min, 0)} דקות</span></div><button ref={previewButtonRef} type="button" className={styles.openLessonButton} onClick={() => { notifyLecturer("open"); setIndex(0); setOutlineOpen(true); setContextOpen(true); setOpened(true); }}>פתיחת מערך השיעור <span aria-hidden="true">←</span></button></footer>
   </section>;
 
   if (typeof document === "undefined") return null;

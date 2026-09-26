@@ -25,7 +25,7 @@ function currentRoute(pathname: string) {
   return { courseId, course: activeCourse, rest, lesson, phase };
 }
 
-function BreadcrumbBar({ pathname, contextOpen, contextAvailable, onToggleContext }: { pathname: string; contextOpen: boolean; contextAvailable: boolean; onToggleContext: () => void }) {
+function BreadcrumbBar({ pathname, contextOpen, contextAvailable, navigationCollapsed, onToggleContext, onToggleNavigation }: { pathname: string; contextOpen: boolean; contextAvailable: boolean; navigationCollapsed: boolean; onToggleContext: () => void; onToggleNavigation: () => void }) {
   const route = currentRoute(pathname);
   const courseHref = appCourseHref(route.courseId);
   const crumbs: Array<{ label: string; href?: string }> = [{ label: route.course.title, href: courseHref }];
@@ -42,6 +42,9 @@ function BreadcrumbBar({ pathname, contextOpen, contextAvailable, onToggleContex
 
   return <header className={styles.topBar}>
     <nav aria-label="פירורי לחם" className={styles.breadcrumbs}>
+      <button type="button" className={`${styles.contextToggle} ${styles.navigationToggle}`} onClick={onToggleNavigation} aria-expanded={!navigationCollapsed} aria-controls="course-navigation" aria-label={`${navigationCollapsed ? "הרחבת" : "צמצום"} פאנל הניווט`} title={`${navigationCollapsed ? "הרחבת" : "צמצום"} פאנל הניווט`}>
+        <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="3" width="15" height="14" rx="1.5"/><path d="M7.5 3v14M11 10h3m-1.5-1.5L14 10l-1.5 1.5"/></svg>
+      </button>
       {crumbs.map((crumb, index) => <span className={styles.crumbGroup} key={`${crumb.label}-${index}`}>
         {index > 0 && <span className={styles.crumbSeparator} aria-hidden="true">›</span>}
         {crumb.href && index < crumbs.length - 1 ? <Link href={crumb.href} className={styles.crumb}>{crumb.label}</Link> : <span className={styles.crumbCurrent} aria-current="page">{crumb.label}</span>}
@@ -135,6 +138,22 @@ export default function StudentWorkspace({ children }: { children: ReactNode }) 
     } catch { /* Navigation remains expanded if browser storage is disabled. */ }
   }, []);
 
+  useEffect(() => {
+    const handleNavigationShortcut = (event: KeyboardEvent) => {
+      const target = event.target;
+      if (event.key !== "[" || target instanceof HTMLElement && target.closest("input, textarea, select, [contenteditable=true]")) return;
+      event.preventDefault();
+      setNavigationCollapsed((collapsed) => {
+        const next = !collapsed;
+        try { window.localStorage.setItem(navigationKey, String(next)); }
+        catch { /* The navigation still toggles when browser storage is disabled. */ }
+        return next;
+      });
+    };
+    window.addEventListener("keydown", handleNavigationShortcut);
+    return () => window.removeEventListener("keydown", handleNavigationShortcut);
+  }, []);
+
   const toggleContext = () => setContextOpen((open) => {
     const next = !open;
     try { window.localStorage.setItem(contextKey, String(next)); }
@@ -159,7 +178,7 @@ export default function StudentWorkspace({ children }: { children: ReactNode }) 
 
   return <div className={`${styles.shell} syllo-student-app ${showContext ? styles.withContext : ""} ${navigationCollapsed ? styles.navCollapsed : ""}`}>
     <a className={styles.skipLink} href="#student-main">דילוג לתוכן</a>
-    <CourseTree courses={workspace.courses} collapsed={navigationCollapsed} onToggleCollapsed={toggleNavigation} />
+    <CourseTree courses={workspace.courses} collapsed={navigationCollapsed} onToggleNavigation={toggleNavigation} />
     <div className={styles.mainColumn}>
       <div className={styles.mobileHeader}>
         <Link href="/workspace" className={styles.mobileBrand} aria-label="Syllo — סביבת הלמידה"><Image src="/brand/syllo-logo.png" width={1584} height={600} alt="Syllo" loading="eager" /></Link>
@@ -171,7 +190,7 @@ export default function StudentWorkspace({ children }: { children: ReactNode }) 
           return <Link key={item.href} href={item.href} aria-current={active ? "page" : undefined}>{item.label}</Link>;
         })}
       </nav>
-      <BreadcrumbBar pathname={pathname} contextOpen={contextOpen} contextAvailable={contextAvailable} onToggleContext={toggleContext} />
+      <BreadcrumbBar pathname={pathname} contextOpen={contextOpen} contextAvailable={contextAvailable} navigationCollapsed={navigationCollapsed} onToggleContext={toggleContext} onToggleNavigation={toggleNavigation} />
       <main className={styles.pageScroll} id="student-main" tabIndex={-1}>
         <div className={styles.pageContent}>{children}</div>
       </main>
