@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { concepts, formulas } from "../lib/course-data";
 import { L4_CHAPTERS, L4_LINKS, L4_SLIDES, Slide, Tex } from "./lesson-04-deck";
 import styles from "./lesson-04-player.module.css";
@@ -198,7 +199,9 @@ export default function Lesson04Player() {
   const [feedbackError, setFeedbackError] = useState("");
   const [compact, setCompact] = useState(false);
   const playerRef = useRef<HTMLDivElement>(null);
-  const wasCompact = useRef(false);
+  const previewButtonRef = useRef<HTMLButtonElement>(null);
+  const closeLessonButtonRef = useRef<HTMLButtonElement>(null);
+  const wasOpened = useRef(false);
   const [present, setPresent] = useState(false);
   const [opened, setOpened] = useState(false);
   const [showSpeakerNotes, setShowSpeakerNotes] = useState(false);
@@ -221,14 +224,14 @@ export default function Lesson04Player() {
     const observer = new ResizeObserver(([entry]) => {
       const nextCompact = entry.contentRect.width <= 1100;
       setCompact(nextCompact);
-      if (nextCompact && !wasCompact.current) {
-        setOutlineOpen(false);
-        setContextOpen(false);
-      }
-      wasCompact.current = nextCompact;
     });
     observer.observe(player);
     return () => observer.disconnect();
+  }, [opened]);
+  useEffect(() => {
+    if (opened) closeLessonButtonRef.current?.focus();
+    else if (wasOpened.current) previewButtonRef.current?.focus();
+    wasOpened.current = opened;
   }, [opened]);
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -237,14 +240,14 @@ export default function Lesson04Player() {
       if (event.key === " " && target.closest("button")) return;
       if (["ArrowLeft", "PageDown", " "].includes(event.key)) { event.preventDefault(); go(index + 1); }
       else if (["ArrowRight", "PageUp"].includes(event.key)) { event.preventDefault(); go(index - 1); }
-      else if (event.key === "Escape") { if (feedbackOpen) setFeedbackOpen(false); else { setPresent(false); setShowSpeakerNotes(false); } }
+      else if (event.key === "Escape") { if (feedbackOpen) setFeedbackOpen(false); else if (present) { setPresent(false); setShowSpeakerNotes(false); } else setOpened(false); }
       else if (event.key.toLowerCase() === "p") setPresent((value) => !value);
       else if (event.key.toLowerCase() === "n") setShowSpeakerNotes((value) => !value);
       else if (event.key.toLowerCase() === "f") setFeedbackOpen((value) => !value);
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [feedbackOpen, go, index]);
+  }, [feedbackOpen, go, index, present]);
 
   const saveFeedback = async (value: SlideFeedbackValue): Promise<boolean> => {
     setFeedbackError("");
@@ -282,10 +285,12 @@ export default function Lesson04Player() {
 
   if (!opened) return <section className={styles.preview} aria-label="תצוגה מקדימה של מערך השיעור" data-lesson-player="true" data-course-id={courseId} data-lesson-id={lessonId} data-deck-version="lesson-04-am-v1" data-slides={extensionSlideCatalog}>
     <div className={styles.previewStage}><ScaledSlide slide={slide} className={styles.stage} /></div>
-    <footer className={styles.previewFooter}><div><strong>מערך שיעור 04 · אפנון תנופה AM ומשדר</strong><span>{L4_SLIDES.length} שקפים · כ־{L4_SLIDES.reduce((sum, item) => sum + item.min, 0)} דקות</span></div><button type="button" className={styles.openLessonButton} onClick={() => setOpened(true)}>פתיחת מערך השיעור <span aria-hidden="true">←</span></button></footer>
+    <footer className={styles.previewFooter}><div><strong>מערך שיעור 04 · אפנון תנופה AM ומשדר</strong><span>{L4_SLIDES.length} שקפים · כ־{L4_SLIDES.reduce((sum, item) => sum + item.min, 0)} דקות</span></div><button ref={previewButtonRef} type="button" className={styles.openLessonButton} onClick={() => { setOutlineOpen(true); setContextOpen(true); setOpened(true); }}>פתיחת מערך השיעור <span aria-hidden="true">←</span></button></footer>
   </section>;
 
-  if (present) return <div className={[styles.present, "l4-player", "syllo-student-app"].join(" ")} data-lesson-player="true" data-course-id={courseId} data-lesson-id={lessonId} data-deck-version="lesson-04-am-v1" data-slides={extensionSlideCatalog} role="dialog" aria-label="הצגת שקף">
+  if (typeof document === "undefined") return null;
+
+  if (present) return createPortal(<div dir="rtl" className={[styles.present, "l4-player", "syllo-student-app"].join(" ")} data-lesson-player="true" data-course-id={courseId} data-lesson-id={lessonId} data-deck-version="lesson-04-am-v1" data-slides={extensionSlideCatalog} role="dialog" aria-label="הצגת שקף">
     <ScaledSlide slide={slide} className={styles.presentStage} />
     <FeedbackPopover slide={slide} feedback={feedback} open={feedbackOpen} setOpen={setFeedbackOpen} onSave={saveFeedback} onDelete={deleteFeedback} busy={feedbackBusy} error={feedbackError} dark />
     {showSpeakerNotes && slide.notes && <aside className={styles.speakerNotes}><b>הערות מרצה</b><p>{slide.notes}</p></aside>}
@@ -295,9 +300,9 @@ export default function Lesson04Player() {
       <button type="button" onClick={() => setPresent(false)}>יציאה · Esc</button>
     </div>
     <ChapterBar index={index} go={go} feedback={feedback} />
-  </div>;
+  </div>, document.body);
 
-  return <div ref={playerRef} className={["l4-player", "syllo-student-app", styles.player, outlineOpen ? styles.withOutline : "", contextOpen ? styles.withContext : ""].join(" ")} data-lesson-player="true" data-course-id={courseId} data-lesson-id={lessonId} data-deck-version="lesson-04-am-v1" data-slides={extensionSlideCatalog}>
+  return createPortal(<div dir="rtl" ref={playerRef} className={["l4-player", "syllo-student-app", styles.player, outlineOpen ? styles.withOutline : "", contextOpen ? styles.withContext : ""].join(" ")} data-lesson-player="true" data-course-id={courseId} data-lesson-id={lessonId} data-deck-version="lesson-04-am-v1" data-slides={extensionSlideCatalog}>
     {outlineOpen && <Outline index={index} go={go} feedback={feedback} seen={seen} onClose={() => setOutlineOpen(false)} />}
     <main className={styles.playerMain} aria-label="נגן שיעור 04">
       <header className={styles.playerToolbar}>
@@ -310,6 +315,7 @@ export default function Lesson04Player() {
           <button type="button" className={styles.toolbarButton} aria-pressed={outlineOpen} aria-label="מבנה השיעור" title="מבנה השיעור" onClick={() => { const next = !outlineOpen; setOutlineOpen(next); if (compact && next) setContextOpen(false); }}><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14"/></svg></button>
           <button type="button" className={styles.toolbarButton} aria-pressed={contextOpen} aria-label="הקשר לשקף" title="הקשר לשקף" onClick={() => { const next = !contextOpen; setContextOpen(next); if (compact && next) setOutlineOpen(false); }}><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="3" width="16" height="14" rx="1.5"/><path d="M13 3v14"/></svg></button>
           <button type="button" className={styles.presentButton} onClick={() => setPresent(true)}>הצגה</button>
+          <button ref={closeLessonButtonRef} type="button" className={styles.closeLessonButton} onClick={() => setOpened(false)}>חזרה לשיעור</button>
         </div>
       </header>
       <div className={styles.stageWrap}><ScaledSlide slide={slide} className={styles.stage} /><FeedbackPopover slide={slide} feedback={feedback} open={feedbackOpen} setOpen={setFeedbackOpen} onSave={saveFeedback} onDelete={deleteFeedback} busy={feedbackBusy} error={feedbackError} /></div>
@@ -325,5 +331,5 @@ export default function Lesson04Player() {
       </footer>
     </main>
     {contextOpen && <SlideContext slide={slide} feedback={feedback} openFeedback={() => setFeedbackOpen(true)} notes={notes} setNotes={setNotes} onClose={() => setContextOpen(false)} />}
-  </div>;
+  </div>, document.body);
 }
