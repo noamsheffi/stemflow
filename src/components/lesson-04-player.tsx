@@ -200,6 +200,7 @@ export default function Lesson04Player() {
   const playerRef = useRef<HTMLDivElement>(null);
   const wasCompact = useRef(false);
   const [present, setPresent] = useState(false);
+  const [opened, setOpened] = useState(false);
   const [showSpeakerNotes, setShowSpeakerNotes] = useState(false);
   const slide = L4_SLIDES[index];
   const chapter = L4_CHAPTERS.find((item) => item.id === slide.ch)!;
@@ -228,7 +229,7 @@ export default function Lesson04Player() {
     });
     observer.observe(player);
     return () => observer.disconnect();
-  }, []);
+  }, [opened]);
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement;
@@ -278,6 +279,11 @@ export default function Lesson04Player() {
   };
 
   useEffect(() => { setFeedbackError(""); }, [slide.n]);
+
+  if (!opened) return <section className={styles.preview} aria-label="תצוגה מקדימה של מערך השיעור" data-lesson-player="true" data-course-id={courseId} data-lesson-id={lessonId} data-deck-version="lesson-04-am-v1" data-slides={extensionSlideCatalog}>
+    <div className={styles.previewStage}><ScaledSlide slide={slide} className={styles.stage} /></div>
+    <footer className={styles.previewFooter}><div><strong>מערך שיעור 04 · אפנון תנופה AM ומשדר</strong><span>{L4_SLIDES.length} שקפים · כ־{L4_SLIDES.reduce((sum, item) => sum + item.min, 0)} דקות</span></div><button type="button" className={styles.openLessonButton} onClick={() => setOpened(true)}>פתיחת מערך השיעור <span aria-hidden="true">←</span></button></footer>
+  </section>;
 
   if (present) return <div className={[styles.present, "l4-player", "syllo-student-app"].join(" ")} data-lesson-player="true" data-course-id={courseId} data-lesson-id={lessonId} data-deck-version="lesson-04-am-v1" data-slides={extensionSlideCatalog} role="dialog" aria-label="הצגת שקף">
     <ScaledSlide slide={slide} className={styles.presentStage} />
