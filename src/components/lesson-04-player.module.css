@@ -171,16 +171,114 @@
 .feedbackDark .feedbackFab { width: 50px; height: 50px; box-shadow: var(--shadow-panel), 0 0 0 3px var(--on-navy); }
 .feedbackDark .feedbackPopover { inset-inline-start: 0; inset-inline-end: auto; }
 
+/* The opened lesson has its own visual shell, distinct from the course workspace. */
+.player { flex-direction: column; background: #e6edf2; }
+.withOutline {}
+.withContext {}
+.playerWorkspace { position: relative; display: flex; width: 100%; min-width: 0; min-height: 0; flex: 1 1 0; }
+.playerToolbar {
+  z-index: 2;
+  width: 100%;
+  min-height: 64px;
+  flex: 0 0 64px;
+  justify-content: flex-start;
+  gap: clamp(10px, 1.5vw, 28px);
+  padding: 8px 18px;
+  color: #f5f8fb;
+  border: 0;
+  background: #13263e;
+  box-shadow: 0 3px 14px rgb(13 28 47 / 14%);
+}
+.lessonIdentity { display: flex; min-width: 0; flex: 1 1 auto; align-items: center; gap: 14px; }
+.courseBreadcrumb { display: inline-flex; min-height: 42px; flex: none; align-items: center; gap: 10px; padding: 4px 10px 4px 6px; color: #f5f8fb; border: 1px solid rgb(255 255 255 / 15%); border-radius: 12px; background: rgb(255 255 255 / 7%); text-decoration: none; }
+.courseBreadcrumb:hover { background: rgb(255 255 255 / 13%); }
+.breadcrumbArrow { display: grid; width: 28px; height: 28px; place-items: center; color: #13263e; border-radius: 50%; background: #f7fafc; font-size: 23px; line-height: 1; }
+.courseBreadcrumb small, .courseBreadcrumb b { display: block; white-space: nowrap; }
+.courseBreadcrumb small { color: #aebdce; font-size: 9px; }
+.courseBreadcrumb b { font-size: 11px; }
+.toolbarDivider { width: 1px; height: 28px; flex: none; background: rgb(255 255 255 / 18%); }
+.lessonMode { display: flex; flex: none; align-items: center; gap: 8px; color: #c1ccd9; font-size: 12px; white-space: nowrap; }
+.lessonMode b { color: #74d3dc; font-size: 12px; }
+.lessonMode svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.lessonBadge { display: grid; width: 34px; height: 30px; flex: none; place-items: center; color: #70d0db; border: 1px solid #287c8a; border-radius: 8px; background: rgb(42 128 140 / 14%); font: 12px var(--mono); }
+.lessonTitle { min-width: 0; overflow: hidden; color: #fff; font-size: 12px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+.loopPhases { flex: 0 1 auto; gap: 3px; }
+.loopPhases a { min-height: 36px; padding-inline: 10px; color: #a9b7c7; font-size: 11px; }
+.loopPhases a:hover { color: #fff; border-color: rgb(255 255 255 / 20%); }
+.loopPhases a.phaseActive { color: #13263e; background: #f7fafc; }
+.toolbarActions { gap: 6px; }
+.toolbarButton, .toolbarButton[aria-pressed="true"] { width: 36px; min-height: 36px; color: #eaf1f7; border-color: rgb(255 255 255 / 15%); background: rgb(255 255 255 / 8%); }
+.toolbarButton[aria-pressed="true"] { color: #73d5df; border-color: rgb(115 213 223 / 45%); }
+.toolbarButton:hover { color: #fff; background: rgb(255 255 255 / 15%); }
+.presentButton { min-height: 36px; padding-inline: 14px; color: #10253a; border-radius: 8px; background: #73d5df; font-weight: 700; }
+.presentButton:hover { background: #92e4e9; }
+.closeLessonButton { min-height: 38px; color: #f1f5f9; border-color: rgb(255 255 255 / 18%); border-radius: 10px; background: rgb(255 255 255 / 7%); }
+.closeLessonButton:hover { color: #fff; background: rgb(255 255 255 / 14%); }
+.outline, .slideContext { width: clamp(300px, 19.2vw, 580px); flex-basis: clamp(300px, 19.2vw, 580px); background: #f3f7f9; }
+.outline { border-inline-end: 1px solid #dce5eb; }
+.slideContext { border-inline-start: 1px solid #dce5eb; }
+.outlineHeader { gap: clamp(16px, .8vw, 25px); padding: clamp(20px, 1.1vw, 34px) clamp(18px, 1.4vw, 42px) clamp(20px, 1vw, 30px); background: #fff; }
+.outlineTitleRow { display: flex; min-height: clamp(60px, 2.9vw, 88px); align-items: center; gap: clamp(12px, .8vw, 24px); }
+.outlineTitleRow .lessonBadge { width: clamp(60px, 2.9vw, 88px); height: clamp(60px, 2.9vw, 88px); color: #70d0db; border: 0; border-radius: clamp(13px, .7vw, 22px); background: #13263e; font-size: clamp(17px, .8vw, 24px); }
+.outlineHeader h2 { margin-block-start: 3px; font-size: clamp(13px, .85vw, 25px); }
+.outlineHeader .eyebrow { color: #14838d; font-size: clamp(10px, .7vw, 18px); }
+.lessonProgress { display: flex; align-items: center; gap: clamp(10px, .8vw, 24px); direction: ltr; color: #7a8998; font-size: clamp(10px, .65vw, 17px); }
+.lessonProgress span { direction: rtl; white-space: nowrap; }
+.lessonProgress i { height: clamp(5px, .2vw, 7px); flex: 1; overflow: hidden; border-radius: 10px; background: #dce8ec; }
+.lessonProgress i b { display: block; height: 100%; border-radius: inherit; background: #14838d; }
+.outlineSectionHeading { padding: clamp(18px, 1vw, 30px) clamp(18px, 1.4vw, 42px) clamp(8px, .45vw, 14px); color: #8a96a6; font-size: clamp(10px, .6vw, 18px); font-weight: 700; }
+.outlineScroll { padding: 0 clamp(10px, .7vw, 22px) 16px; }
+.chapter { margin-block-end: clamp(5px, .3vw, 10px); }
+.chapterButton { min-height: clamp(44px, 1.95vw, 60px); padding-inline: clamp(8px, .6vw, 18px); }
+.chapterActive { color: #12243b; }
+.chapterTitle { font-size: clamp(11px, .7vw, 21px); }
+.chapterNumber { width: clamp(22px, 1.1vw, 32px); font-size: clamp(10px, .55vw, 16px); }
+.progressRing { width: clamp(16px, .9vw, 27px); height: clamp(16px, .9vw, 27px); }
+.progressRing { mask: radial-gradient(circle, transparent calc(50% - 4px), #000 calc(50% - 3px)); }
+.chapterSlides { margin-inline-start: clamp(14px, .8vw, 24px); padding-inline-start: clamp(6px, .4vw, 12px); border-color: #cfdee4; }
+.slideLink { min-height: clamp(36px, 1.5vw, 46px); padding-inline: clamp(7px, .45vw, 14px); font-size: clamp(10px, .63vw, 19px); }
+.slideNumber { width: clamp(22px, 1.1vw, 32px); font-size: clamp(10px, .55vw, 16px); }
+.flagCount { padding-inline: clamp(5px, .3vw, 9px); font-size: clamp(10px, .55vw, 16px); }
+.slideContext { background: #eff5f8; }
+.contextHeader { min-height: 56px; padding-inline: 18px; color: #117e8a; border-color: #d7e2e8; background: #fff; font-size: 11px; font-weight: 700; }
+.contextHeader b { color: #8492a0; font-size: 11px; }
+.contextBody { padding: 14px 18px; }
+.flagButton, .takeaway { border-radius: 10px; }
+.formulaCard, .conceptCard { padding-inline: 10px; }
+.formulaCard b, .conceptCard b { font-size: 10px; }
+.formulaCard > div { font-size: 11px; }
+.noteLabel textarea { background: #fffdf7; }
+.stageWrap { background: linear-gradient(135deg, #e5edf2 0%, #dce7ed 100%); }
+.stageBox { box-shadow: 0 10px 34px rgb(22 43 64 / 15%); }
+.playerFooter { background: #e6edf2; }
+.playerFooter .chapterSegment { background: #cad8df; }
+.playerFooter .slideNav { min-height: 40px; }
+.progressRing { background: conic-gradient(var(--accent) calc(var(--progress, 0) * 360deg), #14838d 0); }
+.slideLink { border: 1px solid transparent; }
+.slideActive { border-color: #c9dce2; background: #fff; box-shadow: 0 1px 4px rgb(23 54 74 / 7%); }
+
 @container lesson-player (max-width: 1100px) {
   .outline, .slideContext { position: absolute; z-index: 20; inset-block: 0; width: min(280px, 84%); box-shadow: var(--shadow-panel); }
   .outline { inset-inline-start: 0; }
   .slideContext { inset-inline-end: 0; }
+  .player.withOutline.withContext .slideContext { display: none; }
   .closePanel { display: inline-flex; align-items: center; justify-content: center; }
   .loopPhases a { padding-inline: 8px; font-size: 11px; }
   .stageWrap { padding: 8px; }
+  .playerToolbar { min-height: 104px; flex: 0 0 auto; flex-wrap: wrap; gap: 5px 10px; }
+  .lessonIdentity { order: 0; flex-basis: 100%; }
+  .loopPhases { order: 1; }
+  .toolbarActions { order: 2; margin-inline-start: auto; }
 }
 @container lesson-player (max-width: 760px) {
-  .playerToolbar { min-height: 52px; gap: 3px; padding-inline: 6px; }
+  .playerToolbar { min-height: 0; gap: 3px; padding-inline: 6px; }
+  .lessonIdentity { gap: 7px; }
+  .courseBreadcrumb { min-height: 34px; gap: 6px; padding-inline: 5px; }
+  .courseBreadcrumb small { display: none; }
+  .courseBreadcrumb b, .lessonMode, .lessonMode b { font-size: 10px; }
+  .breadcrumbArrow { width: 23px; height: 23px; }
+  .lessonBadge { width: 28px; height: 26px; }
+  .lessonTitle { font-size: 11px; }
   .loopPhases a { min-height: 30px; gap: 4px; padding-inline: 6px; font-size: 10px; }
   .toolbarActions { gap: 2px; }
   .toolbarButton, .presentButton { min-width: 30px; min-height: 30px; padding: 4px; }

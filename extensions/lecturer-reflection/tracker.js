@@ -163,6 +163,16 @@
       if (ui.running === next || ended) return;
       if (!next) commitTiming(); ui.running = next; if (next) activeSince = active !== null && !reviewing && document.visibilityState === "visible" ? performance.now() : null; render(); void persist();
     }
+    function stopForLessonExit() {
+      if (reviewing) { reviewing = false; dialog.hidden = true; }
+      $(".lp-flyout").hidden = true;
+      if (ui.running && !ended) setRunning(false);
+      host.hidden = true;
+    }
+    function resumeForLessonOpen() {
+      host.hidden = false;
+      if (!ended && !ui.running) setRunning(true);
+    }
     function setExpanded(next) { ui.expanded = next; updateUiConfig(); render(); }
     function setSide(next) { ui.side = next; updateUiConfig(); render(); }
     function openReview() { commitTiming(); reviewing = true; dialog.hidden = false; renderReview(); void persist(); dialog.querySelector(".rv-x").focus(); }
@@ -227,6 +237,8 @@
     [$(".lp-note textarea"), $(".lp-flyout textarea")].forEach((textarea) => textarea.addEventListener("input", () => { if (active === null) return; notes[slideMeta[active].number] = textarea.value; $(".lp-note textarea").value = textarea.value; $(".lp-flyout textarea").value = textarea.value; $(".note-toggle").classList.toggle("has", Boolean(textarea.value)); void persist(); }));
 
     await updateUiConfig();
+    window.addEventListener("syllo:lesson-player-exit", stopForLessonExit);
+    window.addEventListener("syllo:lesson-player-open", resumeForLessonOpen);
     active = getCurrentIndex();
     if (active < 0) active = Math.max(0, Math.min(slideMeta.length - 1, Number(restored?.current) || 0));
     const restoredNumber = slideMeta[restored?.current]?.number;
@@ -234,7 +246,7 @@
     startTiming(); render(); void persist();
     const uiTick = setInterval(() => { if (activeSince !== null) { render(); void persist(); } else if (!reviewing) render(); }, 1000);
     window.addEventListener("pagehide", () => clearInterval(uiTick), { once: true });
-    globalThis.__lecturerReflection = () => setExpanded(true);
+    globalThis.__lecturerReflection = () => { host.hidden = false; setExpanded(true); };
     if (globalThis.__lecturerReflectionOpenRequested) {
       globalThis.__lecturerReflectionOpenRequested = false;
       setExpanded(true);

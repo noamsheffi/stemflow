@@ -93,10 +93,11 @@ function Outline({ index, go, feedback, seen, onClose }: { index: number; go: (i
   useEffect(() => setOpen((value) => ({ ...value, [current.ch]: true })), [current.ch]);
   return <aside className={styles.outline} aria-label="מבנה השיעור">
     <header className={styles.outlineHeader}>
-      <Link href={"/course/" + courseId + "/lessons"} className={styles.backLink}><Chevron back />מערכות תקשורת</Link>
-      <span className={styles.eyebrow}>שיעור 04 · 11.9004</span><h2>אפנון תנופה AM ומשדר</h2>
+      <div className={styles.outlineTitleRow}><span className={styles.lessonBadge} dir="ltr">04</span><div><span className={styles.eyebrow}>מערך השיעור · שיעור 26.03</span><h2>אפנון תנופה AM ומשדר</h2></div></div>
+      <div className={styles.lessonProgress}><span>{seen.length}/{L4_SLIDES.length} שקפים נצפו</span><i><b style={{ width: `${Math.min(100, seen.length / L4_SLIDES.length * 100)}%` }} /></i></div>
       <button type="button" className={styles.closePanel} onClick={onClose}>סגירה</button>
     </header>
+    <div className={styles.outlineSectionHeading}>מבנה השיעור</div>
     <nav className={styles.outlineScroll} aria-label="פרקי השיעור">
       {L4_CHAPTERS.map((chapter) => {
         const items = L4_SLIDES.filter((slide) => slide.ch === chapter.id && !slide.sec);
@@ -200,7 +201,7 @@ export default function Lesson04Player() {
   const [compact, setCompact] = useState(false);
   const playerRef = useRef<HTMLDivElement>(null);
   const previewButtonRef = useRef<HTMLButtonElement>(null);
-  const closeLessonButtonRef = useRef<HTMLButtonElement>(null);
+  const exitLessonLinkRef = useRef<HTMLAnchorElement>(null);
   const wasOpened = useRef(false);
   const [present, setPresent] = useState(false);
   const [opened, setOpened] = useState(false);
@@ -209,6 +210,13 @@ export default function Lesson04Player() {
   const chapter = L4_CHAPTERS.find((item) => item.id === slide.ch)!;
   const minutesRemaining = useMemo(() => L4_SLIDES.slice(index).reduce((sum, item) => sum + item.min, 0), [index]);
   const go = useCallback((next: number) => setIndex(Math.max(0, Math.min(L4_SLIDES.length - 1, next))), [setIndex]);
+  const notifyLecturer = useCallback((type: "open" | "exit") => {
+    window.dispatchEvent(new CustomEvent(`syllo:lesson-player-${type}`));
+  }, []);
+  const exitLesson = useCallback(() => {
+    notifyLecturer("exit");
+    setOpened(false);
+  }, [notifyLecturer]);
   useEffect(() => { setSeen((value) => value.includes(slide.n) ? value : [...value, slide.n]); }, [setSeen, slide.n]);
   useEffect(() => {
     const handleLecturerNavigation = (event: Event) => {
@@ -224,12 +232,13 @@ export default function Lesson04Player() {
     const observer = new ResizeObserver(([entry]) => {
       const nextCompact = entry.contentRect.width <= 1100;
       setCompact(nextCompact);
+      if (nextCompact && outlineOpen && contextOpen) setContextOpen(false);
     });
     observer.observe(player);
     return () => observer.disconnect();
-  }, [opened]);
+  }, [contextOpen, opened, outlineOpen]);
   useEffect(() => {
-    if (opened) closeLessonButtonRef.current?.focus();
+    if (opened) exitLessonLinkRef.current?.focus();
     else if (wasOpened.current) previewButtonRef.current?.focus();
     wasOpened.current = opened;
   }, [opened]);
@@ -240,14 +249,14 @@ export default function Lesson04Player() {
       if (event.key === " " && target.closest("button")) return;
       if (["ArrowLeft", "PageDown", " "].includes(event.key)) { event.preventDefault(); go(index + 1); }
       else if (["ArrowRight", "PageUp"].includes(event.key)) { event.preventDefault(); go(index - 1); }
-      else if (event.key === "Escape") { if (feedbackOpen) setFeedbackOpen(false); else if (present) { setPresent(false); setShowSpeakerNotes(false); } else setOpened(false); }
+      else if (event.key === "Escape") { if (feedbackOpen) setFeedbackOpen(false); else if (present) { setPresent(false); setShowSpeakerNotes(false); } else exitLesson(); }
       else if (event.key.toLowerCase() === "p") setPresent((value) => !value);
       else if (event.key.toLowerCase() === "n") setShowSpeakerNotes((value) => !value);
       else if (event.key.toLowerCase() === "f") setFeedbackOpen((value) => !value);
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [feedbackOpen, go, index, present]);
+  }, [exitLesson, feedbackOpen, go, index, present]);
 
   const saveFeedback = async (value: SlideFeedbackValue): Promise<boolean> => {
     setFeedbackError("");
@@ -285,7 +294,7 @@ export default function Lesson04Player() {
 
   if (!opened) return <section className={styles.preview} aria-label="תצוגה מקדימה של מערך השיעור" data-lesson-player="true" data-course-id={courseId} data-lesson-id={lessonId} data-deck-version="lesson-04-am-v1" data-slides={extensionSlideCatalog}>
     <div className={styles.previewStage}><ScaledSlide slide={slide} className={styles.stage} /></div>
-    <footer className={styles.previewFooter}><div><strong>מערך שיעור 04 · אפנון תנופה AM ומשדר</strong><span>{L4_SLIDES.length} שקפים · כ־{L4_SLIDES.reduce((sum, item) => sum + item.min, 0)} דקות</span></div><button ref={previewButtonRef} type="button" className={styles.openLessonButton} onClick={() => { setOutlineOpen(true); setContextOpen(true); setOpened(true); }}>פתיחת מערך השיעור <span aria-hidden="true">←</span></button></footer>
+    <footer className={styles.previewFooter}><div><strong>מערך שיעור 04 · אפנון תנופה AM ומשדר</strong><span>{L4_SLIDES.length} שקפים · כ־{L4_SLIDES.reduce((sum, item) => sum + item.min, 0)} דקות</span></div><button ref={previewButtonRef} type="button" className={styles.openLessonButton} onClick={() => { notifyLecturer("open"); setOutlineOpen(true); setContextOpen(true); setOpened(true); }}>פתיחת מערך השיעור <span aria-hidden="true">←</span></button></footer>
   </section>;
 
   if (typeof document === "undefined") return null;
@@ -303,21 +312,28 @@ export default function Lesson04Player() {
   </div>, document.body);
 
   return createPortal(<div dir="rtl" ref={playerRef} className={["l4-player", "syllo-student-app", styles.player, outlineOpen ? styles.withOutline : "", contextOpen ? styles.withContext : ""].join(" ")} data-lesson-player="true" data-course-id={courseId} data-lesson-id={lessonId} data-deck-version="lesson-04-am-v1" data-slides={extensionSlideCatalog}>
-    {outlineOpen && <Outline index={index} go={go} feedback={feedback} seen={seen} onClose={() => setOutlineOpen(false)} />}
-    <main className={styles.playerMain} aria-label="נגן שיעור 04">
-      <header className={styles.playerToolbar}>
+    <header className={styles.playerToolbar}>
+        <div className={styles.lessonIdentity}>
+          <Link ref={exitLessonLinkRef} href={`/course/${courseId}`} onClick={exitLesson} className={styles.courseBreadcrumb} aria-label="חזרה לקורס מערכות תקשורת"><span className={styles.breadcrumbArrow} aria-hidden="true">›</span><span><small>חזרה לקורס</small><b>מערכות תקשורת</b></span></Link>
+          <span className={styles.toolbarDivider} aria-hidden="true" />
+          <span className={styles.lessonMode}><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3" y="3" width="14" height="11" rx="1.5"/><path d="M7 17h6M10 14v3"/></svg><b>מערך שיעור</b></span>
+          <span className={styles.lessonBadge} dir="ltr">04</span>
+          <span className={styles.lessonTitle}>אפנון תנופה AM ומשדר</span>
+        </div>
         <nav className={styles.loopPhases} aria-label="שלבי הלמידה">
           <Link aria-current="page" className={styles.phaseActive} href={`/course/${courseId}/lessons/${lessonId}/slides`}><span dir="ltr">01</span>בכיתה</Link>
-          <Link href={`/course/${courseId}/lessons/${lessonId}/practice`}><span dir="ltr">02</span>אחרי השיעור</Link>
-          <Link href={`/course/${courseId}/lessons/${lessonId}/summary`}><span dir="ltr">03</span>לקראת השיעור הבא</Link>
+          <Link href={`/course/${courseId}/lessons/${lessonId}/practice`} onClick={exitLesson}><span dir="ltr">02</span>אחרי השיעור</Link>
+          <Link href={`/course/${courseId}/lessons/${lessonId}/summary`} onClick={exitLesson}><span dir="ltr">03</span>לקראת השיעור הבא</Link>
         </nav>
         <div className={styles.toolbarActions}>
           <button type="button" className={styles.toolbarButton} aria-pressed={outlineOpen} aria-label="מבנה השיעור" title="מבנה השיעור" onClick={() => { const next = !outlineOpen; setOutlineOpen(next); if (compact && next) setContextOpen(false); }}><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14"/></svg></button>
           <button type="button" className={styles.toolbarButton} aria-pressed={contextOpen} aria-label="הקשר לשקף" title="הקשר לשקף" onClick={() => { const next = !contextOpen; setContextOpen(next); if (compact && next) setOutlineOpen(false); }}><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="3" width="16" height="14" rx="1.5"/><path d="M13 3v14"/></svg></button>
           <button type="button" className={styles.presentButton} onClick={() => setPresent(true)}>הצגה</button>
-          <button ref={closeLessonButtonRef} type="button" className={styles.closeLessonButton} onClick={() => setOpened(false)}>חזרה לשיעור</button>
         </div>
-      </header>
+    </header>
+    <div className={styles.playerWorkspace}>
+      {outlineOpen && <Outline index={index} go={go} feedback={feedback} seen={seen} onClose={() => setOutlineOpen(false)} />}
+      <main className={styles.playerMain} aria-label="נגן שיעור 04">
       <div className={styles.stageWrap}><ScaledSlide slide={slide} className={styles.stage} /><FeedbackPopover slide={slide} feedback={feedback} open={feedbackOpen} setOpen={setFeedbackOpen} onSave={saveFeedback} onDelete={deleteFeedback} busy={feedbackBusy} error={feedbackError} /></div>
       <footer className={styles.playerFooter}>
         <ChapterBar index={index} go={go} feedback={feedback} />
@@ -329,7 +345,8 @@ export default function Lesson04Player() {
           {index === L4_SLIDES.length - 1 && <Link className={styles.practiceLink} href={"/course/" + courseId + "/lessons/" + lessonId + "/practice"}>לתרגול האינטראקטיבי ←</Link>}
         </div>
       </footer>
-    </main>
-    {contextOpen && <SlideContext slide={slide} feedback={feedback} openFeedback={() => setFeedbackOpen(true)} notes={notes} setNotes={setNotes} onClose={() => setContextOpen(false)} />}
+      </main>
+      {contextOpen && <SlideContext slide={slide} feedback={feedback} openFeedback={() => setFeedbackOpen(true)} notes={notes} setNotes={setNotes} onClose={() => setContextOpen(false)} />}
+    </div>
   </div>, document.body);
 }
