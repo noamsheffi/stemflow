@@ -20,7 +20,7 @@ const courseShortName = (title: string) => {
   return words.length > 1 ? words.slice(0, 2).map((word) => Array.from(word)[0]).join("") : Array.from(title).slice(0, 2).join("");
 };
 
-export default function CourseTree({ courses, collapsed = false, onToggleNavigation }: { courses: Course[]; collapsed?: boolean; onToggleNavigation: () => void }) {
+export default function CourseTree({ courses, collapsed = false, onToggleNavigation }: { courses: Course[]; collapsed?: boolean; onToggleNavigation?: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
   const [expandedLessons, setExpandedLessons] = useState<Record<string, boolean>>({});
@@ -65,9 +65,9 @@ export default function CourseTree({ courses, collapsed = false, onToggleNavigat
         <Link href="/workspace" className={styles.treeBrand} aria-label="Syllo — סביבת הלמידה">
           <svg viewBox="0 0 26 14" aria-hidden="true"><path d="M7 2a5 5 0 1 0 0 10c4 0 8-10 12-10a5 5 0 1 1 0 10c-4 0-8-10-12-10z" /></svg><span>Syllo</span>
         </Link>
-        <button type="button" className={styles.panelHeaderToggle} onClick={onToggleNavigation} aria-expanded={!collapsed} aria-controls="course-navigation" aria-label={collapsed ? "הרחבת פאנל הניווט" : "צמצום פאנל הניווט"} title={collapsed ? "הרחבת פאנל הניווט" : "צמצום פאנל הניווט"}>
+        {onToggleNavigation && <button type="button" className={styles.panelHeaderToggle} onClick={onToggleNavigation} aria-expanded={!collapsed} aria-controls="course-navigation" aria-label={collapsed ? "הרחבת פאנל הניווט" : "צמצום פאנל הניווט"} title={collapsed ? "הרחבת פאנל הניווט" : "צמצום פאנל הניווט"}>
           <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="3" width="15" height="14" rx="1.5"/><path d="M7.5 3v14M11 10h3m-1.5-1.5L14 10l-1.5 1.5"/></svg>
-        </button>
+        </button>}
         <Link href="/workspace" className={styles.compactBrand} aria-label="Syllo — סביבת הלמידה" title="Syllo">
           <svg viewBox="0 0 26 14" aria-hidden="true"><path d="M7 2a5 5 0 1 0 0 10c4 0 8-10 12-10a5 5 0 1 1 0 10c-4 0-8-10-12-10z" /></svg>
         </Link>
