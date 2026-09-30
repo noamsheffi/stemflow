@@ -10,7 +10,10 @@ import "./lesson-04-deck.css";
 export const metadata: Metadata = {
   title: "Syllo | סביבת למידה",
   description: "סביבת הלמידה של Syllo",
-  icons: { icon: [{ url: "/favicon-32.png", sizes: "32x32", type: "image/png" }] },
+  icons: {
+    icon: [{ url: "/favicon-32.png", sizes: "32x32", type: "image/png" }],
+    apple: [{ url: "/favicon-192.png", sizes: "192x192", type: "image/png" }],
+  },
   manifest: "/manifest.webmanifest",
 };
 
