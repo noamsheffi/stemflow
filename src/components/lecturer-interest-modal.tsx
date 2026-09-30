@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useState } from "react";
+import { createPortal } from "react-dom";
 import styles from "./lecturer-interest-modal.module.css";
 
 type Status = "idle" | "submitting" | "success" | "error";
@@ -29,7 +30,7 @@ export default function LecturerInterestModal({ triggerClassName = "" }: { trigg
 
   return <>
     <button type="button" className={`${styles.trigger} ${triggerClassName}`} onClick={() => { setStatus("idle"); setOpen(true); }}>כניסת מרצים</button>
-    {open && <div className={styles.backdrop} role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) close(); }}>
+    {open && typeof document !== "undefined" && createPortal(<div className={styles.backdrop} role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) close(); }}>
       <section className={styles.dialog} role="dialog" aria-modal="true" aria-labelledby="lecturer-interest-title" dir="rtl">
         <button type="button" className={styles.close} onClick={close} aria-label="סגירת החלון">×</button>
         {status === "success" ? <div className={styles.success}>
@@ -55,6 +56,6 @@ export default function LecturerInterestModal({ triggerClassName = "" }: { trigg
           </form>
         </>}
       </section>
-    </div>}
+    </div>, document.body)}
   </>;
 }

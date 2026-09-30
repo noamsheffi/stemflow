@@ -10,6 +10,7 @@ import "./lesson-04-deck.css";
 export const metadata: Metadata = {
   title: "Syllo | סביבת למידה",
   description: "סביבת הלמידה של Syllo",
+  manifest: "/manifest.webmanifest",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
