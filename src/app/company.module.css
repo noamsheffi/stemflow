@@ -26,7 +26,7 @@
 .skip:focus { inset-block-start: 12px; }
 .mono { font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; unicode-bidi: isolate; }
 
-.header, .hero, .howSection, .demoWrap, .lecturersSection, .aboutSection, .finalCta, .footer { width: min(var(--wrap), calc(100% - 64px)); margin-inline: auto; }
+.header, .hero, .howSection, .lecturersSection, .aboutSection, .finalCta, .footer { width: min(var(--wrap), calc(100% - 64px)); margin-inline: auto; }
 .header { position: sticky; z-index: 30; inset-block-start: 0; display: flex; min-height: 74px; align-items: center; gap: 36px; background: #ffffffe8; border-block-end: 1px solid var(--line); backdrop-filter: blur(10px); }
 .brandLink { display: inline-flex; flex: 0 0 auto; }
 .brand { display: inline-flex; align-items: center; gap: 8px; color: var(--navy); font-size: 21px; font-weight: 700; letter-spacing: -.04em; }
@@ -134,25 +134,6 @@
 .metricBar > div { height: 6px; overflow: hidden; border-radius: 3px; background: #ffffff1a; }
 .metricBar > div > i { display: block; height: 100%; border-radius: 3px; background: #6fd0da; }
 
-.demoSection { color: white; background: var(--navy); scroll-margin-top: 74px; }
-.demoWrap { padding-block: 90px; }
-.demoWrap .sectionHeading h2 { color: white; }
-.demoWrap .sectionHeading > p:last-child { color: #a9b8c9; }
-.demoWrap .eyebrow { color: #6fd0da; }
-.demoTabs { display: flex; flex-wrap: wrap; gap: 6px; margin-block-end: 16px; }
-.demoTabs button { min-height: 36px; padding: 0 16px; border: 1px solid #ffffff24; border-radius: 18px; color: #a9b8c9; background: transparent; cursor: pointer; font-size: 14px; }
-.demoTabs button:hover { border-color: #ffffff70; color: white; }
-.demoTabs .demoTabActive { border-color: white; color: var(--navy); background: white; font-weight: 600; }
-.demoWindow { overflow: hidden; border: 1px solid #ffffff1c; border-radius: 14px; background: #0d1a2c; box-shadow: 0 30px 80px #0006; }
-.windowBar { display: flex; height: 40px; align-items: center; gap: 7px; padding-inline: 16px; border-block-end: 1px solid #ffffff14; }
-.windowBar > i { width: 10px; height: 10px; border-radius: 50%; background: #ffffff26; }
-.windowBar > span { margin-inline-start: auto; color: #6f8198; font-size: 11px; }
-.windowBody { position: relative; overflow: hidden; background: #f6f7f9; }
-.windowBody iframe { position: absolute; inset-block-start: 0; inset-inline-end: 0; width: 1440px; height: 900px; border: 0; transform-origin: top right; background: #f6f7f9; }
-.demoNote { display: flex; justify-content: space-between; gap: 16px; margin-block-start: 14px; color: #8597ac; font-size: 13px; }
-.demoNote a { color: #6fd0da; font-weight: 600; }
-.demoNote a:hover { color: white; }
-
 .lecturersSection { border-block-start: 0; }
 .lecturerGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; overflow: hidden; border: 1px solid var(--line); border-radius: 14px; background: var(--line); }
 .lecturerGrid article { min-height: 190px; padding: 28px; background: #fff; }
@@ -190,7 +171,7 @@
   .aboutSection { gap: 36px; padding: 34px; }
 }
 @media (max-width: 720px) {
-  .header, .hero, .howSection, .demoWrap, .lecturersSection, .aboutSection, .finalCta, .footer { width: calc(100% - 40px); }
+  .header, .hero, .howSection, .lecturersSection, .aboutSection, .finalCta, .footer { width: calc(100% - 40px); }
   .header { min-height: 70px; flex-wrap: wrap; gap: 12px; padding-block: 10px; }
   .brand { font-size: 19px; }
   .brand svg { width: 27px; }
@@ -217,10 +198,6 @@
   .formulaPreview { grid-template-columns: 1fr; }
   .equation { justify-self: start; max-width: 100%; overflow-x: auto; font-size: 12px; }
   .metricBar { grid-template-columns: 110px minmax(20px,1fr) 34px; gap: 6px; font-size: 10px; }
-  .demoWrap { padding-block: 60px; }
-  .windowBar { height: 36px; }
-  .windowBody iframe { inset-inline-start: 0; }
-  .demoNote { flex-direction: column; gap: 7px; font-size: 12px; }
   .lecturerGrid { grid-template-columns: 1fr; }
   .lecturerGrid article { min-height: 0; padding: 21px; }
   .lecturerCta { align-items: flex-start; flex-direction: column; padding: 16px; font-size: 14px; }

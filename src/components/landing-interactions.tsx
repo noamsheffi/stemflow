@@ -1,7 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import { useEffect, useState } from "react";
 import styles from "../app/company.module.css";
 
 const phases = [
@@ -28,41 +27,5 @@ export function LearningLoop() {
       </button>)}
     </div>
     <p className={styles.loopReturn}>כל שיעור הוא התחלה של השיעור הבא <span aria-hidden="true">↺</span></p>
-  </div>;
-}
-
-const demoViews = [
-  { id: "workspace", label: "הקורסים שלי", url: "/workspace", address: "syllo.live/workspace" },
-  { id: "lesson", label: "מערך שיעור 04", url: "/course/communication-systems/lessons/lesson-04/slides", address: "syllo.live/courses/11.9004/lessons/4" },
-] as const;
-
-export default function LandingDemo() {
-  const [active, setActive] = useState(0);
-  const frameBody = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(0.5);
-  const view = demoViews[active];
-
-  useEffect(() => {
-    const element = frameBody.current;
-    if (!element) return;
-    const resize = () => setScale(Math.min(1, element.clientWidth / 1440));
-    resize();
-    const observer = new ResizeObserver(resize);
-    observer.observe(element);
-    return () => observer.disconnect();
-  }, []);
-
-  return <div className={styles.demoWrap}>
-    <header className={styles.sectionHeading}><p className={styles.eyebrow}>לראות מבפנים</p><h2 id="demo-title">ככה זה נראה בקורס אמיתי.</h2><p>מערכות תקשורת, סמסטר א׳. עברו בין מסך הקורסים למערך השיעור.</p></header>
-    <div className={styles.demoTabs} role="tablist" aria-label="בחירת מסך להדגמה">
-      {demoViews.map((item, index) => <button type="button" aria-pressed={active === index} className={active === index ? styles.demoTabActive : ""} key={item.id} onClick={() => setActive(index)}>{item.label}</button>)}
-    </div>
-    <div className={styles.demoWindow}>
-      <div className={styles.windowBar} aria-hidden="true"><i /><i /><i /><span className={styles.mono} dir="ltr">{view.address}</span></div>
-      <div className={styles.windowBody} ref={frameBody} style={{ height: Math.max(340, 900 * scale) }}>
-        <iframe key={view.id} src={view.url} title={`הדגמה אינטראקטיבית: ${view.label}`} loading="lazy" style={{ transform: `scale(${scale})` }} />
-      </div>
-    </div>
-    <div className={styles.demoNote}><span>ההדגמה מציגה את סביבת הלמידה.</span><Link href={view.url}>לפתיחה בחלון מלא ←</Link></div>
   </div>;
 }

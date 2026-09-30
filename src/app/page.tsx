@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import LecturerInterestModal from "../components/lecturer-interest-modal";
-import LandingDemo, { LearningLoop } from "../components/landing-interactions";
+import { LearningLoop } from "../components/landing-interactions";
 import styles from "./company.module.css";
 
 export const metadata: Metadata = {
@@ -96,8 +96,6 @@ export default function CompanyHome() {
           <div className={styles.stepVisual}><StepVisual index={index} /></div>
         </article>)}</div>
       </section>
-
-      <section id="demo" className={styles.demoSection} aria-labelledby="demo-title"><LandingDemo /></section>
 
       <section id="lecturers" className={styles.lecturersSection} aria-labelledby="lecturers-title"><div className={styles.sectionHeading}><p className={styles.eyebrow}>למרצים</p><h2 id="lecturers-title">לדעת מה קרה בכיתה, לפני שנכנסים לשיעור הבא.</h2><p>המערך שכבר בנית הופך לחוויה מלאה לסטודנטים, והלמידה שלהם חוזרת אליך כמידע שאפשר לפעול לפיו.</p></div>
         <div className={styles.lecturerGrid}><article><span className={styles.mono} dir="ltr">01</span><h3>המערך שלך, כמו שהוא</h3><p>משלבים מערך שיעור קיים, פרקים וחומרי עזר הקשורים לנושאים בקורס.</p></article><article><span className={styles.mono} dir="ltr">02</span><h3>מצב הצגה בכיתה</h3><p>מציגים את המערך בכיתה, עם הערות מרצה, סימולציות ומשוב מהסטודנטים.</p></article><article><span className={styles.mono} dir="ltr">03</span><h3>תמונת מצב לפני כל שיעור</h3><p>רואים אילו שקפים סומנו, באילו נושאים כדאי להתמקד, ומה לחזק בשיעור הבא.</p></article></div>
