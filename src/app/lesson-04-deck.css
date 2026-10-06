@@ -111,14 +111,14 @@
 .l4-player .sl-card.center{align-items:center;text-align:center;justify-content:center}
 .l4-player .sl-card.ask{background:var(--acc-soft);border-color:var(--acc-mid)}
 .l4-player .sl-card.ask .sl-lab{color:var(--accent)}
-.l4-player .exercise-layout{display:grid;flex:1;min-height:0;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);grid-template-rows:auto minmax(0,1fr);grid-template-areas:'given given' 'standard questions';align-content:stretch;gap:14px}
+.l4-player .exercise-layout{display:grid;flex:1;min-height:0;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:auto minmax(0,1fr);grid-template-areas:'given given' 'standard questions';align-content:stretch;gap:14px}
 .l4-player .exercise-given{grid-area:given;align-items:stretch;padding:18px 28px}
 .l4-player .exercise-given .sl-fx.big{font-size:clamp(30px,2.4vw,40px);padding:8px 12px;white-space:nowrap}
 .l4-player .exercise-standard{grid-area:standard;justify-content:center;padding:18px 22px}
-.l4-player .exercise-standard .sl-fx{font-size:clamp(22px,2vw,32px);padding:12px}
-.l4-player .exercise-standard p{margin:0;font-size:24px}
+.l4-player .exercise-standard .sl-fx{font-size:clamp(18px,1.4vw,24px);padding:10px 8px}
+.l4-player .exercise-standard p{margin:0;font-size:20px}
 .l4-player .exercise-questions{grid-area:questions;padding:16px 24px}
-.l4-player .exercise-asks{margin:0;padding-inline-start:1.5em;display:grid;gap:5px;font-size:20px;line-height:1.18}
+.l4-player .exercise-asks{margin:0;padding-inline-start:1.5em;display:grid;gap:4px;font-size:18px;line-height:1.16}
 .l4-player .exercise-asks li{padding-inline-start:4px}
 .l4-player .sl-card.warn{border-color:var(--acc-mid)}
 .l4-player .sl-card.warn .sl-lab{color:var(--accent)}
