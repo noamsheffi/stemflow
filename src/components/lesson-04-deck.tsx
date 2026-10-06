@@ -122,7 +122,7 @@ function AMSim() {
         <div className={'status ' + st[0]}>{st[1]}</div>
       </div>
       <div className="sim-plots">
-        <div className="plot-card"><span className="pc-lab">תחום הזמן</span><AMPlot w={1040} h={170} m={ma} cycles={Math.min(22, Math.max(8, Math.round(p.fc / p.fm / 8)))} amp={0.44 * (p.ac + p.am) / 160 + 0.08} /></div>
+        <div className="plot-card"><span className="pc-lab">תחום הזמן · חלון קבוע ⅓ ms</span><AMPlot w={1040} h={170} m={ma} periods={p.fm / 3} cycles={p.fc / (p.fm * 8)} amp={0.44 * (p.ac + p.am) / 160 + 0.08} /></div>
         <div className="plot-card"><span className="pc-lab">תחום התדר</span><SpectrumPlot w={1040} h={150} ac={p.ac / 100} side={p.am / 200} fcN={p.fc} fmN={p.fm} /></div>
       </div>
     </div>
