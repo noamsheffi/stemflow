@@ -25,5 +25,5 @@ export const config = { matcher: [
   "/workspace/:path*", "/course/:path*", "/courses/:path*", "/lessons/:path*",
   "/formulas/:path*", "/concepts/:path*", "/slide-friction/:path*", "/lecturer/:path*",
   "/survey/:path*", "/admin/:path*", "/api/admin/:path*", "/api/submissions/:path*",
-  "/api/learning-events/:path*", "/api/student/:path*",
+  "/api/learning-events/:path*", "/api/student/:path*", "/api/midterm-practice/:path*",
 ] };

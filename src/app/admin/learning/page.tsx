@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { getLearningSummaries } from "../../../lib/student-learning-results";
 import { getSlideFeedbackResults } from "../../../lib/slide-feedback-results";
+import { getMidtermPracticeResults } from "../../../lib/midterm-practice-results";
+import { midtermQuestions } from "../../../lib/midterm-practice";
 
 const fmt = (ms: number) => `${Math.floor(ms / 60000)}:${String(Math.floor(ms / 1000) % 60).padStart(2, "0")}`;
 
@@ -13,6 +15,10 @@ export default async function LecturerLearningPage() {
     let feedbackUnavailable = false;
     try { feedbackResults = await getSlideFeedbackResults(); }
     catch { feedbackUnavailable = true; }
+    let practiceResults: Awaited<ReturnType<typeof getMidtermPracticeResults>> | null = null;
+    let practiceUnavailable = false;
+    try { practiceResults = await getMidtermPracticeResults(); }
+    catch { practiceUnavailable = true; }
     return <main className="page-shell" dir="rtl"><section className="results-card" aria-labelledby="learning-title">
       <p className="eyebrow">Syllo · למידה אנונימית</p><h1 id="learning-title">שימוש במערכי השיעור</h1>
       <p className="privacy-note">הנתונים מצטברים לפי מזהה דפדפן אקראי. משוב לשקפים עשוי לכלול טקסט חופשי אנונימי.</p>
@@ -26,6 +32,12 @@ export default async function LecturerLearningPage() {
           <h3>תגובות פתוחות</h3>
           {feedbackResults.comments.length === 0 ? <p className="empty-results">לא נכתבו תגובות פתוחות.</p> : <div className="response-list">{feedbackResults.comments.map((item, index) => <article className="response-card" key={`${item.submittedAt}-${index}`}><p className="response-time">שקף {item.slideNumber} · {feedbackTypeLabel(item.feedbackType)} · {new Intl.DateTimeFormat("he-IL", { dateStyle: "short", timeStyle: "short", timeZone: "Asia/Jerusalem" }).format(new Date(item.submittedAt))}</p><p>{item.comment}</p></article>)}</div>}
         </>}
+      </section>
+      <section className="results-section" aria-labelledby="midterm-practice-title">
+        <h2 id="midterm-practice-title">הכנה לבוחן אמצע · תרגול מדורג</h2>
+        <p>הנתונים אנונימיים ומוצגים לפי שאלה. “נדרש חיזוק” הוא מספר משיבי התרגול שסימנו שלא הבינו.</p>
+        {practiceUnavailable ? <p>נתוני התרגול אינם זמינים כרגע.</p> : !practiceResults?.questions.length ? <p className="empty-results">עדיין לא נצברו נתונים על התרגול.</p> : <><table><thead><tr><th>שאלה</th><th>התחלות</th><th>השלמות</th><th>צעדים שנפתחו</th><th>ביטחון ממוצע</th><th>עזרת ההסבר</th><th>נדרש חיזוק</th><th>תגובות כתובות</th></tr></thead><tbody>{practiceResults.questions.map(row => { const question = midtermQuestions.find(item => item.id === row.question_id); return <tr key={row.question_id}><td>{question?.title ?? row.question_id}</td><td>{row.starts}</td><td>{row.completions}</td><td>{row.steps_revealed}</td><td>{row.average_confidence ?? "—"}</td><td>{row.average_helpfulness ?? "—"}</td><td>{row.needs_support}</td><td>{row.feedback_count}</td></tr>; })}</tbody></table>
+          <h3>תגובות פתוחות אנונימיות</h3>{practiceResults.comments.length === 0 ? <p className="empty-results">עדיין לא נכתבו תגובות פתוחות.</p> : <div className="response-list">{practiceResults.comments.map((item, index) => { const question = midtermQuestions.find(entry => entry.id === item.question_id); return <article className="response-card" key={`${item.question_id}-${index}`}><p className="response-time">{question?.title ?? item.question_id} · {new Intl.DateTimeFormat("he-IL", { dateStyle: "short", timeStyle: "short", timeZone: "Asia/Jerusalem" }).format(new Date(item.occurred_at))}</p><p>{item.feedback}</p></article>; })}</div>}</>}
       </section>
       <p><Link href="/admin">מפגשי המרצה</Link></p>
     </section></main>;
