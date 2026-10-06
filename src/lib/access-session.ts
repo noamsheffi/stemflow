@@ -2,7 +2,7 @@ import { createHmac, timingSafeEqual, randomBytes } from "node:crypto";
 
 export const ACCESS_COOKIE = "syllo_access";
 export const SESSION_SECONDS = 60 * 60 * 24;
-export type AccessScope = "platform" | "admin";
+export type AccessScope = "platform" | "lecturer" | "admin";
 
 function secret() {
   const value = process.env.SYLLO_SESSION_SECRET;
@@ -11,17 +11,23 @@ function secret() {
 }
 
 export function accessScopeForPath(path: string): AccessScope {
-  return path === "/admin" || path.startsWith("/admin/") || path === "/api/admin" || path.startsWith("/api/admin/")
-    ? "admin"
-    : "platform";
+  if (path === "/admin" || path.startsWith("/admin/") || path === "/api/admin" || path.startsWith("/api/admin/")) return "admin";
+  if (["/lecturer/learning", "/lecturer/002-slide-friction", "/lecturer/002-post-class-behavior"].includes(path)) return "admin";
+  if (path === "/lecturer" || path.startsWith("/lecturer/") || path === "/api/lecturer" || path.startsWith("/api/lecturer/")) return "lecturer";
+  return "platform";
 }
 
 export function validAccessCode(value: string, scope: AccessScope = "platform") {
-  const configuredCode = scope === "admin" ? process.env.SYLLO_ADMIN_ACCESS_CODE : process.env.SYLLO_ACCESS_CODE;
-  if (scope === "admin" && !configuredCode) return false;
-  const expected = Buffer.from(configuredCode || "system99");
+  const configuredCodes = scope === "admin"
+    ? [process.env.SYLLO_ADMIN_ACCESS_CODE]
+    : scope === "lecturer"
+      ? [process.env.SYLLO_LECTURER_ACCESS_CODE, process.env.SYLLO_ADMIN_ACCESS_CODE]
+      : [process.env.SYLLO_ACCESS_CODE || "system99"];
   const actual = Buffer.from(value);
-  return expected.length === actual.length && timingSafeEqual(expected, actual);
+  return configuredCodes.filter((code): code is string => Boolean(code)).some((code) => {
+    const expected = Buffer.from(code);
+    return expected.length === actual.length && timingSafeEqual(expected, actual);
+  });
 }
 
 function signature(payload: string) {
@@ -36,8 +42,11 @@ export function createAccessSession(scope: AccessScope, now = Date.now()) {
 export function validAccessSession(token: string | undefined, requiredScope?: AccessScope, now = Date.now()) {
   if (!token || token.length > 256) return false;
   const parts = token.split(".");
-  if (parts.length !== 4 || !/^\d+$/.test(parts[0]) || !/^[a-f0-9]{32}$/.test(parts[1]) || (parts[2] !== "platform" && parts[2] !== "admin")) return false;
-  if (requiredScope && parts[2] !== requiredScope) return false;
+  if (parts.length !== 4 || !/^\d+$/.test(parts[0]) || !/^[a-f0-9]{32}$/.test(parts[1]) || !(["platform", "lecturer", "admin"] as string[]).includes(parts[2])) return false;
+  // Platform admins can also use lecturer tools (for example, opening a
+  // lecturer session review from the admin dashboard). Lecturer sessions do
+  // not grant access to admin routes.
+  if (requiredScope && parts[2] !== requiredScope && !(requiredScope === "lecturer" && parts[2] === "admin")) return false;
   const expiry = Number(parts[0]);
   if (expiry <= Math.floor(now / 1000) || expiry > Math.floor(now / 1000) + SESSION_SECONDS) return false;
   try {

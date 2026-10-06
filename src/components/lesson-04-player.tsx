@@ -62,7 +62,7 @@ function ScaledSlide({ slide, className }: { slide: (typeof L4_SLIDES)[number]; 
     if (!element) return;
     const update = () => {
       const rect = element.getBoundingClientRect();
-      if (rect.width && rect.height) setScale(Math.min(rect.width / 1600, rect.height / 900));
+      if (rect.width) setScale(rect.width / 1600);
     };
     update();
     const observer = new ResizeObserver(update);
@@ -287,6 +287,7 @@ export default function Lesson04Player() {
       const response = await fetch("/api/student/slide-feedback", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ anonymousClientId, courseId, lessonId, slideId: `lesson-04-am-${pad2(slide.n)}`, slideNumber: slide.n, deckVersion: "lesson-04-am-v1", feedbackType: apiTypes[value.t], optionalComment: value.text, submittedAt: new Date(value.ts).toISOString(), pageUrl: window.location.href, idempotencyKey: `${courseId}:${lessonId}:slide-${pad2(slide.n)}` }) });
       if (!response.ok) throw new Error("לא הצלחנו לשמור את המשוב. נסו שוב.");
       setFeedback((previous) => ({ ...previous, [slide.n]: value }));
+      window.dispatchEvent(new CustomEvent("syllo:lesson-feedback-update", { detail: { feedback: { ...feedback, [slide.n]: value } } }));
       setFlags((previous) => value.t === "unclear" ? previous.includes(slide.n) ? previous : [...previous, slide.n] : previous.filter((n) => n !== slide.n));
       setFeedbackOpen(false);
       return true;
@@ -303,6 +304,9 @@ export default function Lesson04Player() {
         if (!response.ok) throw new Error("לא הצלחנו לבטל את המשוב. נסו שוב.");
       }
       setFeedback((previous) => { const next = { ...previous }; delete next[slide.n]; return next; });
+      const nextFeedback = { ...feedback };
+      delete nextFeedback[slide.n];
+      window.dispatchEvent(new CustomEvent("syllo:lesson-feedback-update", { detail: { feedback: nextFeedback } }));
       setFlags((previous) => previous.filter((n) => n !== slide.n));
     } catch (error) { setFeedbackError(error instanceof Error ? error.message : "לא הצלחנו לבטל את המשוב. נסו שוב."); }
     finally { setFeedbackBusy(false); }
@@ -310,7 +314,7 @@ export default function Lesson04Player() {
 
   useEffect(() => { setFeedbackError(""); }, [slide.n]);
 
-  if (!opened) return <section className={styles.preview} aria-label="תצוגה מקדימה של מערך השיעור" data-lesson-player="true" data-course-id={courseId} data-lesson-id={lessonId} data-deck-version="lesson-04-am-v1" data-slides={extensionSlideCatalog}>
+  if (!opened) return <section className={["l4-player", styles.preview].join(" ")} aria-label="תצוגה מקדימה של מערך השיעור" data-lesson-player="true" data-course-id={courseId} data-lesson-id={lessonId} data-deck-version="lesson-04-am-v1" data-slides={extensionSlideCatalog}>
     <div className={styles.previewStage}><ScaledSlide slide={previewSlide} className={styles.stage} /></div>
     <footer className={styles.previewFooter}><div><strong>מערך שיעור 04 · אפנון תנופה AM ומשדר</strong><span>{L4_SLIDES.length} שקפים · כ־{L4_SLIDES.reduce((sum, item) => sum + item.min, 0)} דקות</span></div><button ref={previewButtonRef} type="button" className={styles.openLessonButton} onClick={() => { notifyLecturer("open"); setIndex(0); setOutlineOpen(true); setContextOpen(true); setOpened(true); }}>פתיחת מערך השיעור <span aria-hidden="true">←</span></button></footer>
   </section>;

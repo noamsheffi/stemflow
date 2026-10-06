@@ -1,5 +1,6 @@
 import "server-only";
 import { createHmac, timingSafeEqual } from "node:crypto";
+import { validAccessCode } from "./access-session";
 
 const encoder = new TextEncoder();
 const base64url = (value: Uint8Array | string) => Buffer.from(value).toString("base64url");
@@ -7,10 +8,13 @@ const sign = (value: string, secret: string) => createHmac("sha256", secret).upd
 
 export function isLecturerBasicAuth(authorization: string | null) {
   const username = process.env.LECTURER_USERNAME; const password = process.env.LECTURER_PASSWORD;
-  if (!username || !password || !authorization?.startsWith("Basic ")) return false;
+  if (!authorization?.startsWith("Basic ")) return false;
   try {
     const [candidateUser, ...rest] = Buffer.from(authorization.slice(6), "base64").toString("utf8").split(":");
-    const candidate = `${candidateUser}:${rest.join(":")}`; const expected = `${username}:${password}`;
+    const candidatePassword = rest.join(":");
+    if (candidateUser === "admin") return validAccessCode(candidatePassword, "admin");
+    if (!username || !password) return false;
+    const candidate = `${candidateUser}:${candidatePassword}`; const expected = `${username}:${password}`;
     return candidate.length === expected.length && timingSafeEqual(encoder.encode(candidate), encoder.encode(expected));
   } catch { return false; }
 }

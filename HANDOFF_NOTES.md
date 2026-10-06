@@ -23,6 +23,11 @@
 
 ## Follow-up work
 
+- The supplied UI fixes explicitly identify lessons 01–03 as complete. The navigation now shows those three as complete and the current lesson as in progress; this is a screen-specific assumption, because the registered course data still has no student phase-progress model. Other lessons remain unstarted until progress data exists.
+- The current code-only access session has no user name, initials, or role payload. The workspace footer can show a generic unavailable-name label and student role, but needs a profile/auth source before it can display a real user's name.
+- The formula dataset has Hebrew names only. Concept data has English names for some concepts, now shown inline when present; formula names need an English-name field before bilingual formula titles can be completed.
+- The context-panel feedback list reads the current browser's Lesson 04 feedback cache. The API has no read route to restore feedback on a different browser/device.
+
 - Add a per-course and per-lesson phase progress model with read/write APIs before showing completion status or locked lessons.
 - Decide whether reflection drafts should stay private/local or be submitted anonymously to a new API, including retention and privacy behavior.
 - Register lesson 5 and associate its existing formulas and concepts with actual course material when that content is ready.

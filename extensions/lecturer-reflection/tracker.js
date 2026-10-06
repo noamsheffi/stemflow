@@ -48,7 +48,7 @@
   const uiKey = "lecturerPanelUi";
   const fmt = (ms) => { const seconds = Math.floor(Math.max(0, ms) / 1000); return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`; };
   const icon = (id, size = 18) => {
-    const data = markById[id]?.icon || ({ syllo: "M7 8a4 4 0 1 0 0 8c3.2 0 6.8-8 10-8a4 4 0 1 1 0 8c-3.2 0-6.8-8-10-8", note: "M5 19l1-4L15.5 5.5a2 2 0 0 1 2.9 2.9L9 18z", list: "M9 7h10M9 12h10M9 17h10|dot1|dot2|dot3", expand: "M9 6l6 6-6 6", collapse: "M15 6l-6 6 6 6", swap: "M4 8h14l-3-3m5 11H6l3 3" })[id] || "";
+    const data = markById[id]?.icon || ({ syllo: "M7 8a4 4 0 1 0 0 8c3.2 0 6.8-8 10-8a4 4 0 1 1 0 8c-3.2 0-6.8-8-10-8", note: "M5 19l1-4L15.5 5.5a2 2 0 0 1 2.9 2.9L9 18z", list: "M9 7h10M9 12h10M9 17h10|dot1|dot2|dot3", expand: "M9 6l6 6-6 6", collapse: "M15 6l-6 6 6 6", swap: "M4 8h14l-3-3m5 11H6l3 3", orientation: "M4 5h16v14H4z|M10 5v14" })[id] || "";
     const paths = data.split("|").filter((part) => !part.startsWith("dot"));
     const circles = data.includes("dot1") ? `<circle cx="5" cy="7" r=".8" fill="currentColor"/><circle cx="5" cy="12" r=".8" fill="currentColor"/><circle cx="5" cy="17" r=".8" fill="currentColor"/>` : id === "hard" ? '<circle cx="12" cy="18.6" r=".9" fill="currentColor"/>' : "";
     return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths.map((path) => `<path d="${path}"/>`).join("")}${circles}</svg>`;
@@ -61,7 +61,7 @@
     let session = reusable ? restored.session : defaultSession();
     let notes = reusable && restored.notes && typeof restored.notes === "object" ? restored.notes : {};
     const savedUi = stored[uiKey] || {};
-    const ui = { expanded: Boolean(savedUi.expanded), minimized: Boolean(savedUi.minimized), bottom: Boolean(savedUi.bottom), x: Number.isFinite(savedUi.x) ? Math.max(-600, Math.min(600, savedUi.x)) : 0, side: savedUi.side === "right" ? "right" : "left", y: Number.isFinite(savedUi.y) ? Math.max(-260, Math.min(260, savedUi.y)) : 0, running: reusable ? savedUi.running !== false : true };
+    const ui = { expanded: Boolean(savedUi.expanded), minimized: Boolean(savedUi.minimized), bottom: Boolean(savedUi.bottom), x: Number.isFinite(savedUi.x) ? Math.max(-600, Math.min(600, savedUi.x)) : 0, bubbleX: Number.isFinite(savedUi.bubbleX) ? savedUi.bubbleX : null, bubbleY: Number.isFinite(savedUi.bubbleY) ? savedUi.bubbleY : null, side: savedUi.side === "right" ? "right" : "left", y: Number.isFinite(savedUi.y) ? Math.max(-260, Math.min(260, savedUi.y)) : 0, running: reusable ? savedUi.running !== false : true };
     let active = null, activeSince = null, ended = Boolean(session.ended_at), reviewing = false, filter = "all", toastTimer;
     const $ = (selector) => root.querySelector(selector);
     const host = document.createElement("div");
@@ -77,7 +77,7 @@
       <section class="lp-tl" hidden><div class="lp-sec">השיעור עד כה</div><div class="lp-tl-bars"></div></section>
       <section class="lp-tools"><button class="lp-tool note-toggle" type="button" aria-label="הערה לשקף" aria-pressed="false" title="הערה לשקף">${icon("note", 17)}</button><button class="lp-tool review-toggle" type="button" aria-label="סקירת מפגש" title="סקירת מפגש">${icon("list", 17)}</button></section>
       <section class="lp-flyout" hidden><div class="lp-sec">הערה לשקף <span class="mono lp-fly-number"></span></div><textarea aria-label="הערה לשקף" placeholder="מה לשנות, מה עבד…" rows="3"></textarea><button class="lp-fly-done" type="button">סיום</button></section>
-      <footer class="lp-foot"><button class="lp-review" type="button">${icon("list", 15)}סקירת מפגש</button><button class="lp-exp" type="button" aria-label="הרחבת הפאנל" aria-pressed="false">${icon("expand", 17)}</button></footer><div class="lp-toast" hidden role="status" aria-live="polite"></div>
+      <footer class="lp-foot"><button class="lp-orientation" type="button" aria-label="הצמדת הפאנל לתחתית המסך" title="הצמדת הפאנל לתחתית המסך">${icon("orientation", 17)}<span>אופקי</span></button><button class="lp-review" type="button">${icon("list", 15)}סקירת מפגש</button><button class="lp-exp" type="button" aria-label="הרחבת הפאנל" aria-pressed="false">${icon("expand", 17)}</button></footer><div class="lp-toast" hidden role="status" aria-live="polite"></div>
     </div><div class="rv-back" hidden><section class="rv" role="dialog" aria-modal="true" aria-label="סקירת מפגש"><header class="rv-h"><div><div class="rv-eyebrow"></div><h2>סקירת מפגש</h2></div><button class="rv-x" type="button" aria-label="חזרה למצגת (Escape)">×</button></header><div class="rv-stats"></div><div class="rv-hint">זמן ארוך מהמתוכנן הוא אות להתבוננות, לא אבחנה של קושי.</div><div class="rv-tools"><div class="rv-filters"></div><span class="rv-count"></span></div><div class="rv-table"></div><footer class="rv-f"><span class="rv-save"><i></i><span></span></span><button class="rv-btn ghost export" type="button">ייצוא JSON</button><button class="rv-btn ghost sync" type="button">סנכרון ל־Syllo</button><button class="rv-btn warn end" type="button">סיום שיעור</button><button class="rv-btn primary return" type="button">חזרה למצגת</button></footer></section></div>`;
     const mountOverlay = () => {
       const target = document.fullscreenElement || document.documentElement;
@@ -93,8 +93,21 @@
       panel.classList.toggle("minimized", ui.minimized);
       panel.classList.toggle("side-left", ui.side === "left");
       panel.classList.toggle("side-right", ui.side === "right");
-      panel.style.transform = ui.bottom ? `translateX(calc(-50% + ${ui.x}px))` : `translateY(calc(-50% + ${ui.y}px))`;
+      if (ui.minimized) {
+        const bounds = panel.getBoundingClientRect();
+        if (!Number.isFinite(ui.bubbleX) || !Number.isFinite(ui.bubbleY)) {
+          ui.bubbleX = ui.bottom ? innerWidth / 2 + ui.x - bounds.width / 2 : ui.side === "right" ? innerWidth - 18 - bounds.width : 18;
+          ui.bubbleY = ui.bottom ? innerHeight - 14 - bounds.height : innerHeight / 2 + ui.y - bounds.height / 2;
+        }
+        ui.bubbleX = Math.max(0, Math.min(innerWidth - bounds.width, ui.bubbleX));
+        ui.bubbleY = Math.max(0, Math.min(innerHeight - bounds.height, ui.bubbleY));
+        panel.style.left = `${ui.bubbleX}px`; panel.style.right = "auto"; panel.style.top = `${ui.bubbleY}px`; panel.style.bottom = "auto"; panel.style.transform = "none";
+      } else {
+        panel.style.left = ""; panel.style.right = ""; panel.style.top = ""; panel.style.bottom = "";
+        panel.style.transform = ui.bottom ? `translateX(calc(-50% + ${ui.x}px))` : `translateY(calc(-50% + ${ui.y}px))`;
+      }
     };
+    window.addEventListener("resize", () => { if (ui.minimized) applyPanelLayout(); });
     host.addEventListener("click", (event) => event.stopPropagation());
     host.addEventListener("pointerdown", (event) => event.stopPropagation());
     const slideIndexByNumber = (number) => slideMeta.findIndex((item) => item.number === number);
@@ -125,7 +138,7 @@
     const startTiming = () => { if (!ended && ui.running && !reviewing && active !== null && document.visibilityState === "visible" && activeSince === null) activeSince = performance.now(); };
     const stopTiming = () => { if (activeSince !== null && active !== null) session.slides[active].actual_active_duration_ms += Math.max(0, performance.now() - activeSince); activeSince = null; };
     const updateSaveLabel = () => { const label = $(".rv-save span"); if (!label) return; label.textContent = session.sync_status === "synced" ? "נשמר מקומית · סונכרן ל־Syllo" : session.sync_status === "failed" ? `נשמר מקומית · הסנכרון נכשל${session.last_sync_error ? `: ${session.last_sync_error}` : ""}` : session.sync_status === "syncing" ? "נשמר מקומית · הסנכרון מתבצע" : "נשמר מקומית · טרם סונכרן"; };
-    const updateUiConfig = async () => { host.dataset.side = ui.side; panel.classList.toggle("exp", ui.expanded); applyPanelLayout(); $(".lp-title").hidden = !ui.expanded; $(".lp-sync").hidden = !ui.expanded; $(".lp-side").hidden = !ui.expanded; $(".lp-minimize").hidden = !ui.expanded; $(".lp-expanded-now").hidden = !ui.expanded; $(".lp-timebox").hidden = ui.expanded; $(".lp-note").hidden = !ui.expanded; $(".lp-tl").hidden = !ui.expanded || innerHeight <= 760; $(".lp-exp").setAttribute("aria-label", ui.expanded ? "כיווץ הפאנל" : "הרחבת הפאנל"); $(".lp-exp").setAttribute("aria-pressed", String(ui.expanded)); $(".lp-exp").innerHTML = icon(ui.expanded ? "collapse" : "expand", 17); $(".lp-sync").textContent = "מסונכרן מקומית"; await persist(); };
+    const updateUiConfig = async () => { host.dataset.side = ui.side; panel.classList.toggle("exp", ui.expanded); applyPanelLayout(); $(".lp-title").hidden = !ui.expanded; $(".lp-sync").hidden = !ui.expanded; $(".lp-side").hidden = !ui.expanded; $(".lp-minimize").hidden = !ui.expanded; $(".lp-orientation").hidden = !ui.expanded; $(".lp-orientation").setAttribute("aria-label", ui.bottom ? "החזרת הפאנל לתצוגה אנכית" : "הצמדת הפאנל לתחתית המסך"); $(".lp-orientation").title = ui.bottom ? "החזרת הפאנל לתצוגה אנכית" : "הצמדת הפאנל לתחתית המסך"; $(".lp-orientation span").textContent = ui.bottom ? "אנכי" : "אופקי"; $(".lp-expanded-now").hidden = !ui.expanded; $(".lp-timebox").hidden = ui.expanded; $(".lp-note").hidden = !ui.expanded; $(".lp-tl").hidden = !ui.expanded || innerHeight <= 760; $(".lp-exp").setAttribute("aria-label", ui.expanded ? "כיווץ הפאנל" : "הרחבת הפאנל"); $(".lp-exp").setAttribute("aria-pressed", String(ui.expanded)); $(".lp-exp").innerHTML = icon(ui.expanded ? "collapse" : "expand", 17); $(".lp-sync").textContent = "מסונכרן מקומית"; await persist(); };
     const setMark = (number, markId) => {
       const index = slideIndexByNumber(number); if (index < 0 || ended) return;
       const slide = session.slides[index], current = markFor(slide), next = current === markId ? null : markId;
@@ -182,7 +195,10 @@
     }
     function setExpanded(next) { ui.expanded = next; if (next) ui.minimized = false; updateUiConfig(); render(); }
     function setSide(next) { ui.side = next; updateUiConfig(); render(); }
-    function setMinimized(next) { ui.minimized = next; if (!next && ui.bottom) ui.expanded = true; void updateUiConfig(); render(); }
+    function setMinimized(next) {
+      if (next && !ui.minimized) { const bounds = panel.getBoundingClientRect(); ui.bubbleX = bounds.left; ui.bubbleY = bounds.top; }
+      ui.minimized = next; if (!next && ui.bottom) ui.expanded = true; void updateUiConfig(); render();
+    }
     function openReview() { commitTiming(); reviewing = true; dialog.hidden = false; renderReview(); void persist(); dialog.querySelector(".rv-x").focus(); }
     function closeReview() { if (!reviewing) return; reviewing = false; dialog.hidden = true; if (ui.running && !ended && document.visibilityState === "visible" && active !== null) activeSince = performance.now(); render(); void persist(); }
     function renderReview() {
@@ -245,12 +261,18 @@
     };
     $(".lp-grip").addEventListener("pointerdown", (event) => {
       if (event.target.closest("button")) return;
-      const grip = event.currentTarget, startX = event.clientX, startY = event.clientY, startOffsetY = ui.y, startOffsetX = ui.x;
+      const grip = event.currentTarget, startX = event.clientX, startY = event.clientY, startOffsetY = ui.y, startOffsetX = ui.x, startBubbleX = ui.bubbleX, startBubbleY = ui.bubbleY;
       let moved = false;
       grip.setPointerCapture(event.pointerId);
       const move = (next) => {
         if (Math.abs(next.clientX - startX) + Math.abs(next.clientY - startY) > 5) moved = true;
         panel.classList.add("dragging");
+        if (ui.minimized) {
+          const bounds = panel.getBoundingClientRect();
+          ui.bubbleX = Math.max(0, Math.min(innerWidth - bounds.width, startBubbleX + next.clientX - startX));
+          ui.bubbleY = Math.max(0, Math.min(innerHeight - bounds.height, startBubbleY + next.clientY - startY));
+          applyPanelLayout(); return;
+        }
         const enteringBottom = !ui.bottom && next.clientY > innerHeight * .7;
         const leavingBottom = ui.bottom && next.clientY < innerHeight * .66;
         if (enteringBottom) { ui.bottom = true; ui.expanded = true; ui.minimized = false; ui.x = dockOffsetAt(next.clientX); render(); }
@@ -267,7 +289,7 @@
       grip.addEventListener("pointermove", move); grip.addEventListener("pointerup", up, { once: true }); grip.addEventListener("pointercancel", up, { once: true });
     });
     $(".lp-grip").addEventListener("click", (event) => { if (!ui.minimized || suppressGripClick || event.target.closest("button")) return; setMinimized(false); });
-    $(".lp-exp").addEventListener("click", () => ui.bottom ? setMinimized(true) : setExpanded(!ui.expanded)); $(".lp-minimize").addEventListener("click", () => setMinimized(true)); $(".lp-side").addEventListener("click", () => setSide(ui.side === "left" ? "right" : "left")); $(".lp-timebox").addEventListener("click", () => setRunning(!ui.running)); $(".lp-play").addEventListener("click", () => setRunning(!ui.running));
+    $(".lp-exp").addEventListener("click", () => ui.bottom ? setMinimized(true) : setExpanded(!ui.expanded)); $(".lp-minimize").addEventListener("click", () => setMinimized(true)); $(".lp-orientation").addEventListener("click", () => { ui.bottom = !ui.bottom; ui.minimized = false; ui.expanded = true; ui.x = 0; ui.y = 0; void updateUiConfig(); render(); }); $(".lp-side").addEventListener("click", () => setSide(ui.side === "left" ? "right" : "left")); $(".lp-timebox").addEventListener("click", () => setRunning(!ui.running)); $(".lp-play").addEventListener("click", () => setRunning(!ui.running));
     root.querySelectorAll("[data-mark]").forEach((button) => button.addEventListener("click", () => { if (active !== null) setMark(slideMeta[active].number, button.dataset.mark); }));
     $(".lp-review").addEventListener("click", openReview); $(".review-toggle").addEventListener("click", openReview); $(".rv-x").addEventListener("click", closeReview); $(".return").addEventListener("click", closeReview); $(".rv-back").addEventListener("click", (event) => { if (event.target === dialog) closeReview(); }); $(".export").addEventListener("click", exportJson); $(".sync").addEventListener("click", () => void syncSession()); $(".end").addEventListener("click", () => { commitTiming(); ended = true; ui.running = false; session.ended_at = new Date().toISOString(); render(); void persist(); });
     $(".note-toggle").addEventListener("click", () => { const flyout = $(".lp-flyout"); flyout.hidden = !flyout.hidden; $(".note-toggle").setAttribute("aria-pressed", String(!flyout.hidden)); if (!flyout.hidden) $(".lp-flyout textarea").focus(); }); $(".lp-fly-done").addEventListener("click", () => { $(".lp-flyout").hidden = true; $(".note-toggle").setAttribute("aria-pressed", "false"); });

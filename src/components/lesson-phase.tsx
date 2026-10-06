@@ -134,7 +134,7 @@ export default function LessonPhase({ lesson, phase }: { lesson: CourseLesson; p
     </nav>
 
     <section aria-labelledby="phase-heading">
-      <div className={styles.phaseIntro}><h2 id="phase-heading">{phaseContent.title}</h2><p>{phaseContent.description}</p></div>
+      {phase !== "slides" && <div className={styles.phaseIntro}><h2 id="phase-heading">{phaseContent.title}</h2><p>{phaseContent.description}</p></div>}
       {phase === "slides" && lesson.lessonId === "lesson-04" && <Lesson04Player />}
       {phase === "slides" && lesson.lessonId !== "lesson-04" && resource && <div className={styles.viewer}>
         <iframe className={styles.viewerFrame} src={resource.href} title={`מערך שיעור ${lesson.number}: ${lesson.title}`} allowFullScreen />

@@ -8,6 +8,7 @@ export type LecturerSessionReflection = { whatWorked: string; whatWasDifficult: 
 export type PreviousLecturerAction = { sessionId: string; startedAt: string; whatWillChange: string };
 
 export async function getLecturerSessions(): Promise<SessionListItem[]> {
+  await ensureLecturerSessionSchema();
   const rows = await getSql()`
     SELECT s.session_id AS "sessionId", s.course_id AS "courseId", s.lesson_id AS "lessonId", s.deck_version AS "deckVersion", s.started_at AS "startedAt", s.ended_at AS "endedAt", s.total_duration_ms AS "totalDurationMs", s.updated_at AS "syncedAt", COUNT(DISTINCT o.id)::int AS "slidesShown", COUNT(a.id)::int AS "annotationsCount"
     FROM lecturer_sessions s LEFT JOIN lecturer_slide_observations o ON o.lecturer_session_id = s.id LEFT JOIN lecturer_annotation_events a ON a.lecturer_slide_observation_id = o.id

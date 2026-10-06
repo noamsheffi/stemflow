@@ -4,16 +4,18 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import styles from "./admin.module.css";
 
-type Section = "overview" | "requests" | "surveys" | "users" | "content";
+type Section = "overview" | "requests" | "surveys" | "sessions" | "users" | "content";
 type RequestStatus = "חדש" | "בבדיקה" | "אושר";
 
 type Request = { id: string; databaseId?: string; name: string; email: string; institution: string; subject: string; date: string; status: RequestStatus; initials: string; color: string };
 type OverviewData = { activeLearners30d: number; surveyResponses: number; pendingRequests: number; courseCount: number; surveys: Array<{ id: string; title: string; type: string; responses: number | null; questionnaireUrl: string }> };
+type LecturerSession = { sessionId: string; courseId: string; lessonId: string; startedAt: string; totalDurationMs: number; slidesShown: number; annotationsCount: number; syncedAt: string };
 
 const navItems: Array<{ id: Section; label: string; icon: string; count?: number }> = [
   { id: "overview", label: "סקירה כללית", icon: "⌂" },
   { id: "requests", label: "בקשות הצטרפות", icon: "＋" },
   { id: "surveys", label: "שאלונים", icon: "☷" },
+  { id: "sessions", label: "מפגשי מרצה", icon: "◷" },
   { id: "users", label: "משתמשים", icon: "♙" },
   { id: "content", label: "תוכן וקורסים", icon: "▤" },
 ];
@@ -27,6 +29,9 @@ export default function AdminPage() {
   const [requestsError, setRequestsError] = useState(false);
   const [overviewData, setOverviewData] = useState<OverviewData | null>(null);
   const [overviewError, setOverviewError] = useState(false);
+  const [lecturerSessions, setLecturerSessions] = useState<LecturerSession[]>([]);
+  const [lecturerSessionsLoading, setLecturerSessionsLoading] = useState(true);
+  const [lecturerSessionsError, setLecturerSessionsError] = useState(false);
   const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);
   const [notice, setNotice] = useState("");
 
@@ -40,6 +45,11 @@ export default function AdminPage() {
       .then((response) => response.ok ? response.json() : Promise.reject(new Error("request failed")))
       .then((payload: OverviewData) => setOverviewData(payload))
       .catch(() => setOverviewError(true));
+    fetch("/api/admin/lecturer-sessions", { cache: "no-store" })
+      .then((response) => response.ok ? response.json() : Promise.reject(new Error("request failed")))
+      .then((payload: { sessions: LecturerSession[] }) => setLecturerSessions(payload.sessions))
+      .catch(() => setLecturerSessionsError(true))
+      .finally(() => setLecturerSessionsLoading(false));
   }, []);
 
   const filteredRequests = useMemo(() => requestData.filter((request) => {
@@ -65,6 +75,10 @@ export default function AdminPage() {
         <nav className={styles.nav} aria-label="ניווט מנהל">
           <p className={styles.navLabel}>ניהול פלטפורמה</p>
           {navItems.map((item) => { const count = item.id === "requests" ? overviewData?.pendingRequests : item.count; return <button className={`${styles.navItem} ${active === item.id ? styles.activeNav : ""}`} key={item.id} onClick={() => selectSection(item.id)}><span className={styles.navIcon}>{item.icon}</span><span>{item.label}</span>{count ? <span className={styles.navCount}>{count}</span> : null}</button>; })}
+          <p className={styles.navLabel}>דוחות סטודנטים · אדמין בלבד</p>
+          <Link className={styles.navItem} href="/admin/learning"><span className={styles.navIcon}>⌁</span><span>נתוני למידה ומשוב</span></Link>
+          <Link className={styles.navItem} href="/admin/feedback/slide-friction"><span className={styles.navIcon}>!</span><span>קושי בשקפים</span></Link>
+          <Link className={styles.navItem} href="/admin/feedback/post-class"><span className={styles.navIcon}>↻</span><span>למידה אחרי השיעור</span></Link>
           <p className={styles.navLabel}>מערכת</p>
           <button className={styles.navItem} onClick={() => showNotice("הגדרות יהיו זמינות בגרסה הבאה") }><span className={styles.navIcon}>⚙</span><span>הגדרות</span></button>
           <button className={styles.navItem} onClick={() => showNotice("מרכז העזרה נפתח בחלון חדש") }><span className={styles.navIcon}>?</span><span>עזרה ותמיכה</span></button>
@@ -79,6 +93,7 @@ export default function AdminPage() {
           {active === "overview" && <Overview requests={requestData} metrics={overviewData} metricsError={overviewError} requestsLoading={requestsLoading} requestsError={requestsError} onNavigate={selectSection} onSelectRequest={setSelectedRequest} />}
           {active === "requests" && <Requests query={query} setQuery={setQuery} status={status} setStatus={setStatus} data={filteredRequests} loading={requestsLoading} error={requestsError} onSelect={setSelectedRequest} onApprove={async (request) => { await updateRequest(request); }} />}
           {active === "surveys" && <Surveys surveys={overviewData?.surveys ?? []} error={overviewError} onCreate={() => showNotice("יצירת שאלון חדש תתווסף בקרוב")} />}
+          {active === "sessions" && <LecturerSessions sessions={lecturerSessions} loading={lecturerSessionsLoading} error={lecturerSessionsError} />}
           {active === "users" && <Placeholder title="משתמשים" description="ניהול מרצים, סטודנטים והרשאות גישה." icon="♙" action="הזמנת משתמש" onAction={() => showNotice("הזמנת משתמש תתווסף בקרוב")} />}
           {active === "content" && <Placeholder title="תוכן וקורסים" description="ניהול קורסים, שיעורים וחומרי לימוד בפלטפורמה." icon="▤" action="קורס חדש" onAction={() => showNotice("יצירת קורס חדש תתווסף בקרוב")} />}
         </div>
@@ -122,6 +137,12 @@ function ActionRow({ icon, tone, title, subtitle, onClick }: { icon: string; ton
 function Requests({ query, setQuery, status, setStatus, data, loading, error, onSelect, onApprove }: { query: string; setQuery: (v: string) => void; status: "הכול" | RequestStatus; setStatus: (v: "הכול" | RequestStatus) => void; data: Request[]; loading: boolean; error: boolean; onSelect: (request: Request) => void; onApprove: (request: Request) => Promise<void> }) { return <><div className={styles.pageHeading}><div><p className={styles.eyebrow}>ניהול פלטפורמה</p><h1>בקשות הצטרפות</h1><p className={styles.headingSub}>בקשות אמיתיות שנשמרו במסד הנתונים.</p></div><button className={styles.secondaryButton} onClick={() => alert("ייצוא יתווסף בקרוב")}>ייצוא CSV</button></div><section className={styles.panel}><div className={styles.toolbar}><label className={styles.search}><span>⌕</span><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="חיפוש לפי שם, מוסד או קורס" /></label><div className={styles.filters}>{(["הכול", "חדש", "בבדיקה", "אושר"] as const).map((item) => <button key={item} className={status === item ? styles.filterActive : ""} onClick={() => setStatus(item)}>{item}{item === "חדש" && <b>{data.filter((request) => request.status === "חדש").length}</b>}</button>)}</div></div>{error ? <div className={styles.emptyState} role="alert">טעינת הבקשות נכשלה. לא מוצגים נתוני דוגמה.</div> : loading ? <div className={styles.emptyState}>טוען בקשות…</div> : <><div className={styles.tableWrap}><RequestTable data={data} onSelect={onSelect} onApprove={onApprove} /></div>{data.length === 0 && <div className={styles.emptyState}>לא נמצאו בקשות התואמות לסינון.</div>}<div className={styles.tableFooter}><span>מוצגות {data.length} בקשות</span></div></>}</section></>; }
 
 function RequestTable({ data, onSelect, onApprove }: { data: Request[]; onSelect: (request: Request) => void; onApprove?: (request: Request) => Promise<void> }) { return <table className={styles.dataTable}><thead><tr><th>מבקש/ת</th><th>מוסד</th><th>קורס</th><th>התקבל</th><th>סטטוס</th><th aria-label="פעולות" /></tr></thead><tbody>{data.map((request) => <tr key={request.id} onClick={() => onSelect(request)}><td><div className={styles.person}><span className={`${styles.avatar} ${styles[request.color]}`}>{request.initials}</span><span><strong>{request.name}</strong><small>{request.email}</small></span></div></td><td>{request.institution}</td><td>{request.subject}</td><td className={styles.muted}>{request.date}</td><td><span className={`${styles.status} ${styles[`status${request.status}`]}`}>{request.status}</span></td><td><button className={styles.moreButton} aria-label={`פעולות עבור ${request.name}`} onClick={(event) => { event.stopPropagation(); void onApprove?.(request); }}>•••</button></td></tr>)}</tbody></table>; }
+
+function LecturerSessions({ sessions, loading, error }: { sessions: LecturerSession[]; loading: boolean; error: boolean }) {
+  const date = (value: string) => new Intl.DateTimeFormat("he-IL", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Jerusalem" }).format(new Date(value));
+  const duration = (milliseconds: number) => `${Math.floor(milliseconds / 60000)}:${String(Math.floor(milliseconds / 1000) % 60).padStart(2, "0")}`;
+  return <><div className={styles.pageHeading}><div><p className={styles.eyebrow}>נתוני הוראה</p><h1>מפגשי מרצה</h1><p className={styles.headingSub}>סיכומי שיעורים שסונכרנו מתוסף המרצה.</p></div></div><section className={styles.panel}>{error ? <div className={styles.emptyState} role="alert">לא ניתן לטעון מפגשי מרצה כרגע.</div> : loading ? <div className={styles.emptyState}>טוען מפגשים…</div> : sessions.length === 0 ? <div className={styles.emptyState}>עדיין לא סונכרנו מפגשי מרצה.</div> : <div className={styles.tableWrap}><table className={styles.dataTable}><thead><tr><th>תאריך</th><th>שיעור</th><th>זמן פעיל</th><th>שקפים</th><th>סימונים</th><th>עודכן</th></tr></thead><tbody>{sessions.map((session) => <tr key={session.sessionId}><td>{date(session.startedAt)}</td><td><Link href={`/lecturer/sessions/${session.sessionId}`}>{session.lessonId}</Link></td><td dir="ltr">{duration(session.totalDurationMs)}</td><td>{session.slidesShown}</td><td>{session.annotationsCount}</td><td className={styles.muted}>{date(session.syncedAt)}</td></tr>)}</tbody></table></div>}</section></>;
+}
 
 function Surveys({ surveys, error, onCreate }: { surveys: OverviewData["surveys"]; error: boolean; onCreate: () => void }) { return <><div className={styles.pageHeading}><div><p className={styles.eyebrow}>ניהול תוכן</p><h1>שאלונים</h1><p className={styles.headingSub}>קישורים לשאלונים ולסיכום התשובות שנשמרו בפועל.</p></div><button className={styles.primaryButton} onClick={onCreate}><span>＋</span> שאלון חדש</button></div>{error ? <div className={styles.emptyState}>לא ניתן לטעון נתוני שאלונים. לא מוצגים נתוני דוגמה.</div> : <section className={styles.panel}><div className={styles.tableWrap}><table className={styles.dataTable}><thead><tr><th scope="col">שאלון</th><th scope="col">סוג</th><th scope="col">תשובות</th><th scope="col">מצב</th><th scope="col">קישורים</th></tr></thead><tbody>{surveys.map((survey, index) => <tr key={survey.id}><td><div className={styles.surveyTableName}><span className={`${styles.surveyNumber} ${[styles.cyan, styles.violet, styles.amber][index]}`}>{String(index + 1).padStart(2, "0")}</span><span><strong>{survey.title}</strong><small>{survey.id}</small></span></div></td><td>{survey.type}</td><td><strong>{survey.responses ?? "—"}</strong></td><td><span className={`${styles.surveyState} ${survey.responses === null ? styles.surveyUnavailable : styles.surveyAvailable}`}>{survey.responses === null ? "טבלה לא הוגדרה" : "פעיל"}</span></td><td><div className={styles.surveyLinks}><Link href={`/admin/surveys/${survey.id}`}>סיכום תשובות</Link><Link href={survey.questionnaireUrl} target="_blank" rel="noreferrer">פתיחת השאלון ↗</Link></div></td></tr>)}</tbody></table></div></section>}</>; }
 function Placeholder({ title, description, icon, action, onAction }: { title: string; description: string; icon: string; action: string; onAction: () => void }) { return <div className={styles.placeholder}><div className={styles.placeholderIcon}>{icon}</div><p className={styles.eyebrow}>בקרוב</p><h1>{title}</h1><p>{description}</p><button className={styles.primaryButton} onClick={onAction}><span>＋</span>{action}</button></div>; }

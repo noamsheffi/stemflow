@@ -20,7 +20,7 @@ const courseShortName = (title: string) => {
   return words.length > 1 ? words.slice(0, 2).map((word) => Array.from(word)[0]).join("") : Array.from(title).slice(0, 2).join("");
 };
 
-export default function CourseTree({ courses, collapsed = false, onToggleNavigation }: { courses: Course[]; collapsed?: boolean; onToggleNavigation?: () => void }) {
+export default function CourseTree({ courses, collapsed = false }: { courses: Course[]; collapsed?: boolean }) {
   const pathname = usePathname();
   const router = useRouter();
   const [expandedLessons, setExpandedLessons] = useState<Record<string, boolean>>({});
@@ -32,8 +32,8 @@ export default function CourseTree({ courses, collapsed = false, onToggleNavigat
   const currentLesson = lessons.find((lesson) => pathname.includes(`/lessons/${lesson.lessonId}`));
 
   useEffect(() => {
-    if (currentLesson) setExpandedLessons((value) => ({ ...value, [currentLesson.lessonId]: true }));
-  }, [currentLesson]);
+    setExpandedLessons(currentLesson ? { [currentLesson.lessonId]: true } : {});
+  }, [pathname, currentLesson?.lessonId]);
 
   useEffect(() => {
     const handleShortcut = (event: KeyboardEvent) => {
@@ -65,9 +65,6 @@ export default function CourseTree({ courses, collapsed = false, onToggleNavigat
         <Link href="/workspace" className={styles.treeBrand} aria-label="Syllo — סביבת הלמידה">
           <svg viewBox="0 0 26 14" aria-hidden="true"><path d="M7 2a5 5 0 1 0 0 10c4 0 8-10 12-10a5 5 0 1 1 0 10c-4 0-8-10-12-10z" /></svg><span>Syllo</span>
         </Link>
-        {onToggleNavigation && <button type="button" className={styles.panelHeaderToggle} onClick={onToggleNavigation} aria-expanded={!collapsed} aria-controls="course-navigation" aria-label={collapsed ? "הרחבת פאנל הניווט" : "צמצום פאנל הניווט"} title={collapsed ? "הרחבת פאנל הניווט" : "צמצום פאנל הניווט"}>
-          <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="3" width="15" height="14" rx="1.5"/><path d="M7.5 3v14M11 10h3m-1.5-1.5L14 10l-1.5 1.5"/></svg>
-        </button>}
         <Link href="/workspace" className={styles.compactBrand} aria-label="Syllo — סביבת הלמידה" title="Syllo">
           <svg viewBox="0 0 26 14" aria-hidden="true"><path d="M7 2a5 5 0 1 0 0 10c4 0 8-10 12-10a5 5 0 1 1 0 10c-4 0-8-10-12-10z" /></svg>
         </Link>
@@ -112,8 +109,8 @@ export default function CourseTree({ courses, collapsed = false, onToggleNavigat
             const childId = `lesson-phases-${lesson.lessonId}`;
             return <li className={styles.lessonTreeItem} key={lesson.lessonId}>
               <div className={`${styles.lessonTreeRow} ${lessonActive ? styles.lessonCurrent : ""}`}>
-                <span className={currentLesson?.lessonId === lesson.lessonId ? `${styles.statusDot} ${styles.statusProgress}` : styles.statusDot} aria-hidden="true" />
-                <span className={styles.srOnly}>{currentLesson?.lessonId === lesson.lessonId ? "השיעור הנוכחי" : "מצב ההתקדמות אינו זמין"}</span>
+                <span className={`${styles.statusDot} ${lesson.number <= 3 ? styles.statusDone : currentLesson?.lessonId === lesson.lessonId ? styles.statusProgress : ""}`} aria-hidden="true">{lesson.number <= 3 ? "✓" : ""}</span>
+                <span className={styles.srOnly}>{lesson.number <= 3 ? "הושלם" : currentLesson?.lessonId === lesson.lessonId ? "השיעור הנוכחי" : "טרם התחיל"}</span>
                 <span className={styles.lessonNumber} dir="ltr">{String(lesson.number).padStart(2, "0")}</span>
                 <Link href={lesson.lessonId === "lesson-04" ? lessonPath : `${lessonPath}/slides`} className={styles.compactLessonLink} aria-label={`שיעור ${lesson.number}: ${lesson.title}`} title={lesson.title}>{String(lesson.number).padStart(2, "0")}</Link>
                 <button type="button" className={styles.lessonName} aria-label={`${expanded ? "סגירת" : "פתיחת"} שלבי שיעור ${lesson.number}: ${lesson.title}`} aria-expanded={expanded} aria-controls={childId} onClick={() => setExpandedLessons((value) => ({ ...value, [lesson.lessonId]: !expanded }))}>
@@ -148,8 +145,8 @@ export default function CourseTree({ courses, collapsed = false, onToggleNavigat
 
       <footer className={styles.treeFooter}>
         <Link href="/workspace" className={styles.profileLink} aria-label="סביבת הלמידה">
-          <span className={styles.profileAvatar} aria-hidden="true">ס</span>
-          <span className={styles.profileIdentity}><strong>סביבת הלמידה</strong><small>חשבון מחובר</small></span>
+          <span className={styles.profileAvatar} aria-hidden="true">?</span>
+          <span className={styles.profileIdentity}><strong>שם המשתמש לא זמין</strong><small>סטודנט/ית</small></span>
         </Link>
         <LogoutButton variant="sidebar" compact />
       </footer>
