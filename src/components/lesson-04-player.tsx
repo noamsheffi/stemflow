@@ -236,6 +236,17 @@ export default function Lesson04Player() {
     notifyLecturer("exit");
     setOpened(false);
   }, [notifyLecturer]);
+  const enterPresentation = useCallback(() => {
+    setPresent(true);
+    if (document.fullscreenEnabled && !document.fullscreenElement) {
+      void document.documentElement.requestFullscreen().catch(() => {});
+    }
+  }, []);
+  const exitPresentation = useCallback(() => {
+    setPresent(false);
+    setShowSpeakerNotes(false);
+    if (document.fullscreenElement) void document.exitFullscreen().catch(() => {});
+  }, []);
   useEffect(() => {
     if (opened) return;
     const card = previewCardRef.current;
@@ -293,7 +304,7 @@ export default function Lesson04Player() {
       else if (["ArrowRight", "PageUp"].includes(event.key)) { event.preventDefault(); go(index - 1); }
       else if (event.key === "Escape") {
         if (feedbackOpen) setFeedbackOpen(false);
-        else if (present) { setPresent(false); setShowSpeakerNotes(false); }
+        else if (present) exitPresentation();
         else if (compact && contextOpen) setContextOpen(false);
         else if (narrow && outlineOpen) setOutlineOpen(false);
         else exitLesson();
@@ -304,7 +315,7 @@ export default function Lesson04Player() {
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [compact, contextOpen, exitLesson, feedbackOpen, go, index, narrow, outlineOpen, present, setContextOpen, setOutlineOpen]);
+  }, [compact, contextOpen, exitLesson, exitPresentation, feedbackOpen, go, index, narrow, outlineOpen, present, setContextOpen, setOutlineOpen]);
 
   const saveFeedback = async (value: SlideFeedbackValue): Promise<boolean> => {
     setFeedbackError("");
@@ -358,7 +369,7 @@ export default function Lesson04Player() {
     <div className={styles.presentControls}>
       <button type="button" onClick={() => go(index - 1)}>הקודם</button><span dir="ltr">{pad2(slide.n)} / {L4_SLIDES.length}</span>
       <button type="button" onClick={() => go(index + 1)}>הבא</button><button type="button" aria-pressed={showSpeakerNotes} onClick={() => setShowSpeakerNotes((value) => !value)}>הערות מרצה · N</button>
-      <button type="button" onClick={() => setPresent(false)}>יציאה · Esc</button>
+      <button type="button" onClick={exitPresentation}>יציאה · Esc</button>
     </div>
     <ChapterBar index={index} go={go} feedback={feedback} />
   </div>, document.body);
@@ -380,7 +391,7 @@ export default function Lesson04Player() {
         <div className={styles.toolbarActions}>
           <button type="button" className={styles.toolbarButton} aria-pressed={outlineOpen} aria-label="מבנה השיעור" title="מבנה השיעור" onClick={() => { const next = !outlineOpen; setOutlineOpen(next); if (compact && next) setContextOpen(false); }}><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14"/></svg></button>
           <button type="button" className={styles.toolbarButton} aria-pressed={contextOpen} aria-label="הקשר לשקף" title="הקשר לשקף" onClick={() => { const next = !contextOpen; setContextOpen(next); if (compact && next) setOutlineOpen(false); }}><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="3" width="16" height="14" rx="1.5"/><path d="M13 3v14"/></svg></button>
-          <button type="button" className={styles.presentButton} onClick={() => setPresent(true)}>הצגה</button>
+          <button type="button" className={styles.presentButton} onClick={enterPresentation}>הצגה</button>
         </div>
     </header>
     <div className={styles.loopProgress} aria-hidden="true" />
