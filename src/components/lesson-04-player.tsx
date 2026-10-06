@@ -64,7 +64,8 @@ function ScaledSlide({ slide, className }: { slide: (typeof L4_SLIDES)[number]; 
     if (!element) return;
     const update = () => {
       const rect = element.getBoundingClientRect();
-      if (rect.width) setScale(rect.width / 1600);
+      const nextScale = Math.min(rect.width / 1600, rect.height / 900);
+      if (Number.isFinite(nextScale) && nextScale > 0) setScale(nextScale);
     };
     update();
     const observer = new ResizeObserver(update);
