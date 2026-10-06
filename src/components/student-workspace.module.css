@@ -52,21 +52,23 @@
 .treeList { display: grid; gap: 0; padding: 0; margin: 0; list-style: none; }
 .treeSectionHeading { margin: var(--u-20) var(--u-10) var(--u-6); color: var(--ink3); font-size: var(--fs-label); font-weight: var(--fw-strong); letter-spacing: .02em; }
 .treeLink { display: flex; min-height: var(--u-32); align-items: center; gap: var(--u-10); padding-inline: var(--u-10); color: var(--ink2); border-radius: var(--r-sm); font-size: var(--fs-nav); text-decoration: none; transition: background-color 150ms, color 150ms; }
+.treeLink, .lessonTreeRow { font-size: var(--fs-nav); font-weight: var(--fw-regular); }
 .treeLink:hover, .phaseLink:hover { color: var(--ink); background: var(--line2); }
 .treeLink.active, .phaseLink.active { color: var(--accent); background: var(--acc-soft); font-weight: var(--fw-strong); }
 .navIcon { display: grid; width: var(--u-20); flex: 0 0 var(--u-20); color: var(--ink3); font-size: var(--u-16); place-items: center; }
 .treeLink.active .navIcon { color: var(--accent); }
 .treeCount { margin-inline-start: auto; color: var(--ink3); font-family: var(--mono); font-size: var(--fs-meta); }
 .lessonTreeItem { min-width: 0; }
-.lessonTreeRow { display: flex; min-height: var(--u-32); align-items: center; gap: var(--u-7); padding-inline: var(--u-10); border-radius: var(--r-sm); }
+.lessonTreeRow { display: flex; min-height: var(--u-32); align-items: center; gap: var(--u-6); padding-inline: var(--u-10); border-radius: var(--r-sm); }
 .lessonCurrent .lessonName { color: var(--ink); font-weight: var(--fw-strong); }
 .statusDot { display: grid; width: var(--u-16); height: var(--u-16); flex: 0 0 var(--u-16); border: 1.5px solid var(--status-ring); border-radius: 50%; place-items: center; }
 .statusProgress { border-color: var(--accent); background: conic-gradient(from 180deg, var(--accent) 0 50%, transparent 0); }
 .statusDone { color: var(--white); background: var(--accent); border-color: var(--accent); font-size: var(--fs-label); line-height: 1; }
 .lessonNumber, .phaseNumber { color: var(--ink3); font-family: var(--mono); font-size: var(--fs-meta); }
-.lessonName { display: grid; min-width: 0; min-height: var(--u-32); flex: 1; grid-template-columns: minmax(0, 1fr) var(--u-12); align-items: center; gap: var(--u-5); padding: var(--u-4) 0; color: var(--ink2); background: transparent; border: 0; cursor: pointer; font-family: var(--font); font-size: var(--fs-nav); text-align: start; }
-.lessonName span { min-width: 0; overflow-wrap: anywhere; white-space: normal; line-height: 1.3; }
+.lessonName { display: flex; min-width: 0; min-height: var(--u-32); flex: 0 1 auto; align-items: center; gap: var(--u-6); padding: var(--u-4) 0; color: var(--ink2); background: transparent; border: 0; cursor: pointer; font-family: var(--font); font-size: inherit; font-weight: inherit; text-align: start; }
+.lessonName span { min-width: 0; overflow: hidden; flex: 0 1 auto; line-height: 1.3; text-overflow: ellipsis; white-space: nowrap; }
 .lessonName svg { width: var(--u-12); height: var(--u-12); flex: 0 0 var(--u-12); fill: none; stroke: var(--ink3); stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.5; transform: rotate(90deg); transition: transform 150ms; }
+.lessonRowSpacer { min-width: 0; flex: 1 1 auto; }
 .lessonTreeItem:has(.phaseList:not([hidden])) .lessonName svg { transform: none; }
 .lessonTreeRow:hover { background: var(--line2); }
 .lessonTreeRow:hover .lessonName { color: var(--ink); }
@@ -128,7 +130,8 @@
 .pageContent { width: min(100%, var(--w-page-max)); min-width: 0; margin-inline: auto; padding: var(--pad); }
 .mobileHeader, .mobileNav { display: none; }
 
-.contextPanel { display: flex; min-width: 0; min-height: 0; flex-direction: column; background: var(--surface); border-inline-start: var(--u-1) solid var(--line); animation: panel-in 150ms ease-out; }
+.contextPanel { display: flex; box-sizing: border-box; width: var(--w-ctx); min-width: var(--w-ctx); min-height: 0; flex: 0 0 var(--w-ctx); flex-direction: column; background: var(--surface); border-inline-start: var(--u-1) solid var(--line); animation: panel-in 150ms ease-out; }
+.contextScrim { display: none; }
 @keyframes panel-in { from { opacity: .75; } to { opacity: 1; } }
 .contextHeader { display: flex; min-height: var(--u-76); align-items: center; justify-content: space-between; gap: var(--u-10); padding: var(--u-12) var(--u-16); border-block-end: var(--u-1) solid var(--line); }
 .eyebrow { display: block; margin: 0 0 var(--u-3); color: var(--ink3); font-size: var(--fs-meta); }
@@ -142,9 +145,11 @@
 .contextBody { min-height: 0; flex: 1; overflow: auto; padding: var(--u-12); }
 .contextFormula, .contextConcept { display: grid; gap: var(--u-7); padding: var(--u-12); border: var(--u-1) solid var(--line2); border-radius: 9px; margin-block-end: var(--u-8); }
 .contextFormula h3, .contextConcept h3 { margin: 0; color: var(--ink); font-size: var(--fs-sm); font-weight: var(--fw-strong); }
+.contextFormula h3 { display: flex; align-items: baseline; flex-wrap: wrap; column-gap: var(--u-6); }
 .contextFormulaMath { max-width: 100%; overflow-x: auto; color: var(--ink); font-size: var(--fs-formula); white-space: nowrap; direction: ltr; text-align: left; }
 .contextFormula .katex { color: var(--ink); font-size: 1em; }
-.formulaOverflow { mask-image: linear-gradient(to right, transparent, #000 12px, #000 calc(100% - 12px), transparent); }
+.formulaOverflow { -webkit-mask-image: linear-gradient(to right, #000 82%, transparent); mask-image: linear-gradient(to right, #000 82%, transparent); }
+.contextFormulaMath.formulaOverflow.formulaAtEnd, .resourceEquation.formulaOverflow.formulaAtEnd { -webkit-mask-image: none; mask-image: none; }
 .contextConcept > span { color: var(--ink3); font-family: var(--mono); font-size: var(--u-10); text-align: start; }
 .contextConcept h3 span { margin-inline-start: var(--u-6); color: var(--ink3); font-family: var(--mono); font-size: var(--fs-meta); font-weight: var(--fw-regular); }
 .contextConcept p { margin: 0; color: var(--ink2); font-size: var(--fs-meta); }
@@ -268,7 +273,9 @@
 .stepText small { color: var(--ink3); font-size: var(--fs-meta); }
 .stepActive .stepText small { color: var(--on-navy-muted); }
 .stepText strong { overflow: hidden; font-size: var(--fs-sm); text-overflow: ellipsis; white-space: nowrap; }
-.stepMeta { margin-inline-start: auto; color: var(--ink3); font-size: var(--fs-meta); white-space: nowrap; }
+.stepMeta { display: inline-flex; align-items: center; gap: var(--u-6); margin-inline-start: auto; color: var(--ink3); font-size: var(--fs-meta); white-space: nowrap; }
+.stepMeta::before { width: var(--u-6); height: var(--u-6); flex: 0 0 var(--u-6); border-radius: 50%; background: var(--step-dot, #cdd3dc); content: ""; }
+.stepAvailable { --step-dot: var(--accent); }
 .stepActive .stepMeta { color: var(--on-navy-muted); }
 .stepMeta, .stepText small { font-size: var(--fs-meta); }
 .stepActive .stepMeta, .stepActive .stepText small { color: #9fb0c4; }
@@ -296,7 +303,8 @@
 .nextPhaseButton:hover { color: var(--accent); background: var(--line2); border-color: var(--accent); }
 
 @container workspace-shell (max-width: 1192px) {
-  .contextPanel { position: absolute; z-index: 5; inset-block: 0; inset-inline-end: 0; width: min(var(--w-ctx), calc(100% - var(--u-32))); min-width: var(--w-ctx); border-inline-start: var(--u-1) solid var(--line); box-shadow: var(--shadow-panel); }
+  .contextScrim { position: absolute; z-index: 4; inset: 0; display: block; width: 100%; height: 100%; padding: 0; border: 0; background: #13233a33; cursor: pointer; }
+  .contextPanel { position: absolute; z-index: 5; inset-block: 0; inset-inline-end: 0; width: var(--w-ctx); min-width: var(--w-ctx); border-inline-start: var(--u-1) solid var(--line); box-shadow: -8px 0 24px #13233a26; }
 }
 
 @media(max-width:900px) { .lessonOverviewPhases { grid-template-columns: 1fr; } .lessonOverviewPhase { min-height: 0; } }
@@ -307,7 +315,8 @@
 .groupHeading span { color: var(--ink3); font-family: var(--mono); font-size: var(--fs-meta); font-weight: 400; }
 .resourceRow { display: grid; grid-template-columns: var(--u-200) minmax(0, 1.2fr) minmax(0, 1fr); gap: var(--u-14); align-items: center; padding: var(--u-13) var(--u-16); border-block-end: var(--u-1) solid var(--line2); }
 .resourceRow:last-child { border-block-end: 0; }
-.resourceName { display: grid; gap: var(--u-3); color: var(--ink); font-size: var(--fs-body); font-weight: 600; }
+.resourceName { display: flex; flex-wrap: wrap; align-items: baseline; column-gap: var(--u-6); row-gap: var(--u-3); color: var(--ink); font-size: var(--fs-body); font-weight: 600; }
+.resourceName .topicLabel { flex-basis: 100%; }
 .formulaEnglish { color: var(--ink3); font-family: var(--mono); font-size: 10.5px; font-weight: 400; text-align: start; }
 .resourceEquation { max-width: 100%; overflow-x: auto; color: var(--ink); font-size: var(--u-15); white-space: nowrap; }
 .resourceEquation .katex { color: var(--ink); }
@@ -430,7 +439,7 @@
   .shell, .withContext { grid-template-columns: var(--u-230) minmax(0, 1fr); }
   .shell.navCollapsed { grid-template-columns: var(--u-76) minmax(0, 1fr); }
   .shell.navCollapsed.withContext { grid-template-columns: var(--u-76) minmax(0, 1fr) var(--w-ctx); }
-  .contextPanel { position: absolute; z-index: 5; inset-block: 0; inset-inline-end: 0; width: min(var(--w-ctx), 90vw); border: var(--u-1) solid var(--line); box-shadow: var(--shadow-panel); }
+  .contextPanel { position: absolute; z-index: 5; inset-block: 0; inset-inline-end: 0; width: var(--w-ctx); min-width: var(--w-ctx); border: var(--u-1) solid var(--line); box-shadow: -8px 0 24px #13233a26; }
 }
 
 @media (max-width: 760px) {
@@ -448,7 +457,8 @@
   .topBar { min-height: var(--u-46); padding-inline: var(--u-12); }
   .breadcrumbs { font-size: var(--fs-meta); }
   .pageContent { padding: var(--u-18) var(--u-14) var(--u-32); }
-  .contextPanel { position: absolute; z-index: 6; inset-block: 0; inset-inline-end: 0; width: min(var(--u-320), 92vw); }
+  .contextScrim { z-index: 5; }
+  .contextPanel { position: absolute; z-index: 6; inset-block: 0; inset-inline-end: 0; width: min(var(--w-ctx), 92vw); min-width: min(var(--w-ctx), 92vw); }
   .viewerFrame { min-height: var(--u-260); }
   .practiceFrame { min-height: 66vh; }
 }

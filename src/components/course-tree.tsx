@@ -115,9 +115,10 @@ export default function CourseTree({ courses, collapsed = false }: { courses: Co
                 <span className={styles.srOnly}>{lesson.number <= 3 ? "הושלם" : currentLesson?.lessonId === lesson.lessonId ? "השיעור הנוכחי" : "טרם התחיל"}</span>
                 <span className={styles.lessonNumber} dir="ltr">{String(lesson.number).padStart(2, "0")}</span>
                 <Link href={lesson.lessonId === "lesson-04" ? lessonPath : `${lessonPath}/slides`} className={styles.compactLessonLink} aria-label={`שיעור ${lesson.number}: ${lesson.title}`} title={lesson.title}>{String(lesson.number).padStart(2, "0")}</Link>
-                <button type="button" className={styles.lessonName} aria-label={`${expanded ? "סגירת" : "פתיחת"} שלבי שיעור ${lesson.number}: ${lesson.title}`} aria-expanded={expanded} aria-controls={childId} onClick={() => setExpandedLessons((value) => ({ ...value, [lesson.lessonId]: !expanded }))}>
+                <button type="button" className={styles.lessonName} title={lesson.title} aria-label={`${expanded ? "סגירת" : "פתיחת"} שלבי שיעור ${lesson.number}: ${lesson.title}`} aria-expanded={expanded} aria-controls={childId} onClick={() => setExpandedLessons((value) => ({ ...value, [lesson.lessonId]: !expanded }))}>
                   <span>{lesson.title}</span><svg viewBox="0 0 12 12" aria-hidden="true"><path d="m2 4 4 4 4-4" /></svg>
                 </button>
+                <span className={styles.lessonRowSpacer} aria-hidden="true" />
               </div>
               <ul className={styles.phaseList} id={childId} hidden={!expanded}>
                 {phases.map((phase) => {

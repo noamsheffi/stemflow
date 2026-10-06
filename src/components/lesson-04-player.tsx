@@ -164,7 +164,7 @@ function SlideContext({ slide, feedback, openFeedback, notes, setNotes, onClose 
       {slideFormulas.length > 0 && <section className={styles.contextSection}><h3>נוסחאות <span dir="ltr">{slideFormulas.length}</span></h3>
         {slideFormulas.map((item) => {
           const name = splitFormulaName(item.name);
-          return <article className={styles.formulaCard} key={item.formulaId}><b><span>{name.hebrew}</span>{name.english && <span className={styles.formulaEnglish} dir="ltr">{name.english}</span>}</b><FormulaScroll className={styles.formulaScroll} fadeClassName={styles.formulaOverflow}><Tex tex={item.expression} /></FormulaScroll></article>;
+          return <article className={styles.formulaCard} key={item.formulaId}><b><span>{name.hebrew}</span>{name.english && <span className={styles.formulaEnglish} dir="ltr">{name.english}</span>}</b><FormulaScroll className={styles.formulaScroll} fadeClassName={styles.formulaOverflow} atEndClassName={styles.formulaAtEnd}><Tex tex={item.expression} /></FormulaScroll></article>;
         })}
         <Link href={"/course/" + courseId + "/formulas"} className={styles.contextMore}>לנוסחאון המלא ←</Link>
       </section>}

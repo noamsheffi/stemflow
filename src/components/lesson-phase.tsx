@@ -128,7 +128,7 @@ export default function LessonPhase({ lesson, phase }: { lesson: CourseLesson; p
         const phaseResource = lesson.resources.some((resourceItem) => item.id === "slides" ? resourceItem.kind === "lesson-html" : item.id === "practice" ? resourceItem.kind === "exercise" : false);
         const meta = item.id === "summary" ? "לא מחובר" : phaseResource ? "זמין" : "לא זמין";
         return <Link className={`${styles.step} ${isActive ? styles.stepActive : ""}`} href={phaseHref(lesson.lessonId, item.id)} key={item.id} aria-current={isActive ? "step" : undefined}>
-          <span className={styles.stepNumber} dir="ltr">{item.number}</span><span className={styles.stepText}><small>{item.phase}</small><strong>{item.label}</strong></span><span className={styles.stepMeta}>{meta}</span>
+          <span className={styles.stepNumber} dir="ltr">{item.number}</span><span className={styles.stepText}><small>{item.phase}</small><strong>{item.label}</strong></span><span className={`${styles.stepMeta} ${phaseResource ? styles.stepAvailable : ""}`}>{meta}</span>
         </Link>;
       })}
     </nav>

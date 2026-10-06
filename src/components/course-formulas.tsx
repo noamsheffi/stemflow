@@ -38,7 +38,7 @@ export default function CourseFormulas() {
           return <article className={styles.formulaDetail} id={formula.id} key={formula.id}>
             <div className={styles.resourceRow}>
               <div className={styles.resourceName}><span>{name.hebrew}</span>{name.english && <span className={styles.formulaEnglish} dir="ltr">{name.english}</span>}<small className={styles.topicLabel}>{formula.topic}</small></div>
-              <FormulaScroll className={styles.resourceEquation} fadeClassName={styles.formulaOverflow}><span dir="ltr"><FormulaMath tex={formula.formula_latex} /></span></FormulaScroll>
+              <FormulaScroll className={styles.resourceEquation} fadeClassName={styles.formulaOverflow} atEndClassName={styles.formulaAtEnd}><span dir="ltr"><FormulaMath tex={formula.formula_latex} /></span></FormulaScroll>
               <div className={styles.variables}>
                 {formula.params.map((param) => <span className={styles.variable} key={`${formula.id}-${param.symbol}`}><b className={styles.variableSymbol} dir="ltr">{param.symbol}</b><span>{param.name}</span><span className={styles.variableUnit}>{param.unit}</span></span>)}
               </div>

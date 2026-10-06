@@ -13,9 +13,9 @@
 }
 
 .preview { overflow: hidden; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); box-shadow: var(--shadow-low); }
-.previewStage { position: relative; display: grid; width: 100%; aspect-ratio: 16 / 9; height: auto; overflow: hidden; padding: 12px; background: var(--slide-stage); place-items: center; }
+.previewStage { position: relative; display: grid; width: min(100%, calc(max(0px, 100dvh - 334px) * 16 / 9)); aspect-ratio: 16 / 9; height: auto; margin-inline: auto; overflow: hidden; padding: 12px; background: var(--slide-stage); place-items: center; }
 .previewStage > div { width: 100%; height: 100%; }
-.previewFooter { display: flex; min-height: 78px; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 18px; }
+.previewFooter { display: flex; min-height: 64px; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 18px; }
 .previewFooter > div { display: grid; gap: 3px; }
 .previewFooter strong { color: var(--ink); font-size: 14px; }
 .previewFooter span { color: var(--ink3); font-size: 12px; }
@@ -65,10 +65,11 @@
 .stage { display: grid; min-width: 0; min-height: 0; flex: 1; place-items: center; }
 .stageBox { position: relative; overflow: hidden; flex: none; border-radius: var(--r-sm); background: var(--surface); box-shadow: var(--shadow-panel); }
 .slideCanvas { position: absolute; inset-block-start: 0; inset-inline-start: auto; inset-inline-end: 0; width: 1600px; height: 900px; direction: ltr; transform-origin: top right; }
-.formulaEnglish { display: block; margin-block-start: 2px; color: var(--ink3); font-family: var(--mono); font-size: 10.5px; font-weight: 400; }
+.formulaEnglish { display: inline; margin: 0; color: var(--ink3); font-family: var(--mono); font-size: 10.5px; font-weight: 400; }
 .formulaScroll { max-width: 100%; overflow-x: auto; color: var(--ink); font-size: var(--u-15); white-space: nowrap; direction: ltr; }
 .formulaScroll .katex { color: var(--ink); }
-.formulaOverflow { mask-image: linear-gradient(to right, transparent, #000 12px, #000 calc(100% - 12px), transparent); }
+.formulaOverflow { -webkit-mask-image: linear-gradient(to right, #000 82%, transparent); mask-image: linear-gradient(to right, #000 82%, transparent); }
+.formulaScroll.formulaOverflow.formulaAtEnd { -webkit-mask-image: none; mask-image: none; }
 .playerFooter { flex: none; padding: 0 12px 10px; }
 .chapterBar { display: flex; height: 14px; align-items: center; gap: 4px; }
 .chapterSegment { position: relative; height: 6px; min-width: 0; padding: 0; overflow: visible; border: 0; border-radius: 3px; background: var(--line); cursor: pointer; }
@@ -99,6 +100,7 @@
 .contextSection h3 span { font-family: var(--mono); }
 .formulaCard, .conceptCard { display: grid; gap: 6px; padding: 10px 8px; border-block-end: 1px solid var(--line2); }
 .formulaCard b, .conceptCard b { color: var(--ink2); font-size: 11px; font-weight: 500; }
+.formulaCard b { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px; }
 .formulaCard > div { overflow-x: auto; color: var(--accent); font-size: 12px; }
 .contextMore { display: block; padding-block: 8px; color: var(--accent); font-size: 11px; text-decoration: none; }
 .noteLabel { display: grid; gap: 5px; margin-block-start: 16px; color: var(--ink2); font-size: 11px; }

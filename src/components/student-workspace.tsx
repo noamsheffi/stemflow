@@ -122,7 +122,7 @@ function ContextPanel({ pathname }: { pathname: string }) {
       {tab === "formulas" && <>
         {selectedLesson ? lessonFormulas.map((item) => {
           const name = splitFormulaName(item.name);
-          return <article className={styles.contextFormula} key={item.formulaId}><h3><span>{name.hebrew}</span>{name.english && <span className={styles.formulaEnglish} dir="ltr">{name.english}</span>}</h3><FormulaScroll className={styles.contextFormulaMath} fadeClassName={styles.formulaOverflow}><FormulaMath tex={item.expression} /></FormulaScroll></article>;
+          return <article className={styles.contextFormula} key={item.formulaId}><h3><span>{name.hebrew}</span>{name.english && <span className={styles.formulaEnglish} dir="ltr">{name.english}</span>}</h3><FormulaScroll className={styles.contextFormulaMath} fadeClassName={styles.formulaOverflow} atEndClassName={styles.formulaAtEnd}><FormulaMath tex={item.expression} /></FormulaScroll></article>;
         }) : <p className={styles.contextEmpty}>בחרו שיעור כדי לראות את הנוסחאות שלו בהקשר.</p>}
         <Link className={styles.contextMore} href={appCourseHref(route.courseId, "formulas")}>לנוסחאון המלא <span aria-hidden="true">←</span></Link>
       </>}
@@ -164,6 +164,18 @@ export default function StudentWorkspace({ children }: { children: ReactNode }) 
       if (stored !== null) setContextOpen(stored === "true");
     } catch { /* The default open panel remains available without storage. */ }
   }, []);
+
+  useEffect(() => {
+    if (!showContext) return;
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key !== "Escape") return;
+      setContextOpen(false);
+      try { window.localStorage.setItem(contextKey, "false"); }
+      catch { /* The panel still closes when browser storage is disabled. */ }
+    };
+    window.addEventListener("keydown", closeOnEscape);
+    return () => window.removeEventListener("keydown", closeOnEscape);
+  }, [showContext]);
 
   useEffect(() => {
     try {
@@ -228,6 +240,13 @@ export default function StudentWorkspace({ children }: { children: ReactNode }) 
         <div className={styles.pageContent}>{children}</div>
       </main>
     </div>
-    {showContext && <ContextPanel pathname={pathname} />}
+    {showContext && <>
+      <button type="button" className={styles.contextScrim} onClick={() => {
+        setContextOpen(false);
+        try { window.localStorage.setItem(contextKey, "false"); }
+        catch { /* The panel still closes when browser storage is disabled. */ }
+      }} aria-label="סגירת פאנל ההקשר" />
+      <ContextPanel pathname={pathname} />
+    </>}
   </div>;
 }
