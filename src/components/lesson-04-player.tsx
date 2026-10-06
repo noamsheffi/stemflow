@@ -204,6 +204,7 @@ export default function Lesson04Player() {
   const exitLessonLinkRef = useRef<HTMLAnchorElement>(null);
   const wasOpened = useRef(false);
   const [present, setPresent] = useState(false);
+  const [fullscreen, setFullscreen] = useState(false);
   const [opened, setOpened] = useState(false);
   const [showSpeakerNotes, setShowSpeakerNotes] = useState(false);
   const slide = L4_SLIDES[index];
@@ -218,6 +219,21 @@ export default function Lesson04Player() {
     notifyLecturer("exit");
     setOpened(false);
   }, [notifyLecturer]);
+  const toggleFullscreen = useCallback(async () => {
+    const target = playerRef.current;
+    if (!target) return;
+    try {
+      if (document.fullscreenElement) await document.exitFullscreen();
+      else await target.requestFullscreen();
+    } catch {
+      // Fullscreen can be unavailable in embedded or restricted browser contexts.
+    }
+  }, []);
+  useEffect(() => {
+    const syncFullscreen = () => setFullscreen(document.fullscreenElement === playerRef.current);
+    document.addEventListener("fullscreenchange", syncFullscreen);
+    return () => document.removeEventListener("fullscreenchange", syncFullscreen);
+  }, []);
   useEffect(() => { setSeen((value) => value.includes(slide.n) ? value : [...value, slide.n]); }, [setSeen, slide.n]);
   useEffect(() => {
     const handleLecturerNavigation = (event: Event) => {
@@ -234,6 +250,7 @@ export default function Lesson04Player() {
       const nextCompact = entry.contentRect.width <= 1100;
       setCompact(nextCompact);
       if (nextCompact && outlineOpen && contextOpen) setContextOpen(false);
+      if (!nextCompact && !outlineOpen && !contextOpen) setOutlineOpen(true);
     });
     observer.observe(player);
     return () => observer.disconnect();
@@ -329,6 +346,7 @@ export default function Lesson04Player() {
         <div className={styles.toolbarActions}>
           <button type="button" className={styles.toolbarButton} aria-pressed={outlineOpen} aria-label="מבנה השיעור" title="מבנה השיעור" onClick={() => { const next = !outlineOpen; setOutlineOpen(next); if (compact && next) setContextOpen(false); }}><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14"/></svg></button>
           <button type="button" className={styles.toolbarButton} aria-pressed={contextOpen} aria-label="הקשר לשקף" title="הקשר לשקף" onClick={() => { const next = !contextOpen; setContextOpen(next); if (compact && next) setOutlineOpen(false); }}><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="3" width="16" height="14" rx="1.5"/><path d="M13 3v14"/></svg></button>
+          <button type="button" className={styles.toolbarButton} aria-label={fullscreen ? "יציאה ממסך מלא" : "מסך מלא"} title={fullscreen ? "יציאה ממסך מלא" : "מסך מלא"} aria-pressed={fullscreen} onClick={() => void toggleFullscreen()}><svg viewBox="0 0 20 20" aria-hidden="true"><path d={fullscreen ? "M7 3v4H3M13 3v4h4M7 17v-4H3m10 4v-4h4" : "M3 7V3h4M13 3h4v4M17 13v4h-4M7 17H3v-4"} /></svg></button>
           <button type="button" className={styles.presentButton} onClick={() => setPresent(true)}>הצגה</button>
         </div>
     </header>
