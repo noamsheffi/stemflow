@@ -283,6 +283,7 @@
 .chapterLabel { flex: 0 1 auto; max-width: 30%; font-size: 13px; white-space: nowrap; }
 .timeLeft { flex: none; margin-inline-start: 0; color: var(--ink3); font-size: 12px; white-space: nowrap; }
 .feedback { inset-block-end: 16px; inset-inline-end: 24px; }
+.present .feedbackDark { inset-block-end: 52px; inset-inline-start: auto; inset-inline-end: 24px; }
 .toolbarButton, .toolbarButton[aria-pressed="true"] { width: 34px; min-height: 34px; color: #9fb0c4; border-color: transparent; border-radius: 8px; background: transparent; }
 .toolbarButton[aria-pressed="true"] { color: #fff; background: #ffffff1f; }
 .toolbarButton:hover { color: #fff; background: #ffffff1f; }
