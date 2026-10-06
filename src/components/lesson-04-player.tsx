@@ -153,6 +153,7 @@ function SlideContext({ slide, feedback, openFeedback, notes, setNotes, onClose 
   const slideFormulas = formulas.filter((item) => formulaIds.includes(item.formulaId));
   const slideConcepts = concepts.filter((item) => conceptIds.includes(item.conceptId));
   const currentFeedback = feedback[slide.n];
+  const hasSlideContext = Boolean(slide.tk || slideFormulas.length || slideConcepts.length);
   const currentFeedbackType = currentFeedback ? feedbackType(currentFeedback.t) : undefined;
   return <aside className={styles.slideContext} aria-label="מידע והערות לשקף">
     <header className={styles.contextHeader}><span>בשקף הזה</span><b dir="ltr">{pad2(slide.n)}</b><button type="button" className={styles.closePanel} onClick={onClose}>סגירה</button></header>
@@ -161,6 +162,13 @@ function SlideContext({ slide, feedback, openFeedback, notes, setNotes, onClose 
         <span className={styles.flagIcon}><FeedbackIcon type={currentFeedback?.t ?? "syllo"} size={18} /></span><span><b>{currentFeedbackType?.label ?? "משוב על השקף"}</b><small>{currentFeedback?.text ? `“${currentFeedback.text}”` : currentFeedback ? "נשלח · לחצו לעריכה" : "לא הבנתי, דוגמה, שאלה או טעות"}</small></span>
       </button>
       {slide.tk && <div className={styles.takeaway}><small>העיקר</small>{slide.tk}</div>}
+      {!hasSlideContext && <section className={styles.lessonOverview}><h3>מפת השיעור</h3>
+        {L4_CHAPTERS.slice(1, 5).map((chapter, i) => {
+          const end = L4_CHAPTERS[i + 2].start - 1;
+          return <div className={styles.lessonOverviewRow} key={chapter.id}><b dir="ltr">{pad2(chapter.id)}</b><span>{chapter.title}</span><small dir="ltr">{pad2(chapter.start)}–{pad2(end)}</small></div>;
+        })}
+        {L4_SLIDES[L4_SLIDES.length - 1]?.tk && <p><b>העיקר בשיעור</b>{L4_SLIDES[L4_SLIDES.length - 1].tk}</p>}
+      </section>}
       {slideFormulas.length > 0 && <section className={styles.contextSection}><h3>נוסחאות <span dir="ltr">{slideFormulas.length}</span></h3>
         {slideFormulas.map((item) => {
           const name = splitFormulaName(item.name);
@@ -209,9 +217,12 @@ export default function Lesson04Player() {
   const exitLessonLinkRef = useRef<HTMLAnchorElement>(null);
   const wasOpened = useRef(false);
   const [present, setPresent] = useState(false);
-  const [fullscreen, setFullscreen] = useState(false);
   const [opened, setOpened] = useState(false);
   const [showSpeakerNotes, setShowSpeakerNotes] = useState(false);
+  const [previewAbove, setPreviewAbove] = useState(300);
+  const [previewWidth, setPreviewWidth] = useState(700);
+  const previewCardRef = useRef<HTMLElement>(null);
+  const [narrow, setNarrow] = useState(false);
   const slide = L4_SLIDES[index];
   const previewSlide = L4_SLIDES[0];
   const chapter = L4_CHAPTERS.find((item) => item.id === slide.ch)!;
@@ -224,21 +235,26 @@ export default function Lesson04Player() {
     notifyLecturer("exit");
     setOpened(false);
   }, [notifyLecturer]);
-  const toggleFullscreen = useCallback(async () => {
-    const target = playerRef.current;
-    if (!target) return;
-    try {
-      if (document.fullscreenElement) await document.exitFullscreen();
-      else await target.requestFullscreen();
-    } catch {
-      // Fullscreen can be unavailable in embedded or restricted browser contexts.
-    }
-  }, []);
   useEffect(() => {
-    const syncFullscreen = () => setFullscreen(document.fullscreenElement === playerRef.current);
-    document.addEventListener("fullscreenchange", syncFullscreen);
-    return () => document.removeEventListener("fullscreenchange", syncFullscreen);
-  }, []);
+    if (opened) return;
+    const card = previewCardRef.current;
+    if (!card) return;
+    const scroller = card.closest("main");
+    const measure = () => {
+      const above = Math.max(0, Math.ceil(card.getBoundingClientRect().top + (scroller?.scrollTop ?? 0)));
+      const stageHeight = Math.max(0, window.innerHeight - above - 64 - 24);
+      const availableWidth = card.parentElement?.clientWidth ?? window.innerWidth;
+      setPreviewAbove(above);
+      setPreviewWidth(Math.min(availableWidth, Math.floor(stageHeight * 16 / 9)));
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    const observer = new ResizeObserver(measure);
+    const pageContent = scroller?.firstElementChild;
+    if (pageContent) observer.observe(pageContent);
+    observer.observe(card);
+    return () => { window.removeEventListener("resize", measure); observer.disconnect(); };
+  }, [opened]);
   useEffect(() => { setSeen((value) => value.includes(slide.n) ? value : [...value, slide.n]); }, [setSeen, slide.n]);
   useEffect(() => {
     const handleLecturerNavigation = (event: Event) => {
@@ -252,8 +268,10 @@ export default function Lesson04Player() {
     const player = playerRef.current;
     if (!player || typeof ResizeObserver === "undefined") return;
     const observer = new ResizeObserver(([entry]) => {
-      const nextCompact = entry.contentRect.width <= 1100;
+      const nextCompact = entry.contentRect.width < 1192;
+      const nextNarrow = entry.contentRect.width < 900;
       setCompact(nextCompact);
+      setNarrow(nextNarrow);
       if (nextCompact && outlineOpen && contextOpen) setContextOpen(false);
       if (!nextCompact && !outlineOpen && !contextOpen) setOutlineOpen(true);
     });
@@ -272,14 +290,20 @@ export default function Lesson04Player() {
       if (event.key === " " && target.closest("button")) return;
       if (["ArrowLeft", "PageDown", " "].includes(event.key)) { event.preventDefault(); go(index + 1); }
       else if (["ArrowRight", "PageUp"].includes(event.key)) { event.preventDefault(); go(index - 1); }
-      else if (event.key === "Escape") { if (feedbackOpen) setFeedbackOpen(false); else if (present) { setPresent(false); setShowSpeakerNotes(false); } else exitLesson(); }
+      else if (event.key === "Escape") {
+        if (feedbackOpen) setFeedbackOpen(false);
+        else if (present) { setPresent(false); setShowSpeakerNotes(false); }
+        else if (compact && contextOpen) setContextOpen(false);
+        else if (narrow && outlineOpen) setOutlineOpen(false);
+        else exitLesson();
+      }
       else if (event.key.toLowerCase() === "p") setPresent((value) => !value);
       else if (event.key.toLowerCase() === "n") setShowSpeakerNotes((value) => !value);
       else if (event.key.toLowerCase() === "f") setFeedbackOpen((value) => !value);
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [exitLesson, feedbackOpen, go, index, present]);
+  }, [compact, contextOpen, exitLesson, feedbackOpen, go, index, narrow, outlineOpen, present, setContextOpen, setOutlineOpen]);
 
   const saveFeedback = async (value: SlideFeedbackValue): Promise<boolean> => {
     setFeedbackError("");
@@ -319,9 +343,9 @@ export default function Lesson04Player() {
 
   useEffect(() => { setFeedbackError(""); }, [slide.n]);
 
-  if (!opened) return <section className={["l4-player", styles.preview].join(" ")} aria-label="תצוגה מקדימה של מערך השיעור" data-lesson-player="true" data-course-id={courseId} data-lesson-id={lessonId} data-deck-version="lesson-04-am-v1" data-slides={extensionSlideCatalog}>
+  if (!opened) return <section ref={previewCardRef} style={{ "--above": `${previewAbove}px`, "--preview-width": `${previewWidth}px` } as React.CSSProperties} className={["l4-player", styles.preview].join(" ")} aria-label="תצוגה מקדימה של מערך השיעור" data-lesson-player="true" data-course-id={courseId} data-lesson-id={lessonId} data-deck-version="lesson-04-am-v1" data-slides={extensionSlideCatalog}>
     <div className={styles.previewStage}><ScaledSlide slide={previewSlide} className={styles.stage} /></div>
-    <footer className={styles.previewFooter}><div><strong>מערך שיעור 04 · אפנון תנופה AM ומשדר</strong><span>{L4_SLIDES.length} שקפים · כ־{L4_SLIDES.reduce((sum, item) => sum + item.min, 0)} דקות</span></div><button ref={previewButtonRef} type="button" className={styles.openLessonButton} onClick={() => { notifyLecturer("open"); setIndex(0); setOutlineOpen(true); setContextOpen(true); setOpened(true); }}>פתיחת מערך השיעור <span aria-hidden="true">←</span></button></footer>
+    <footer className={styles.previewFooter}><div><strong>מערך שיעור 04 · אפנון תנופה AM ומשדר</strong><span>{L4_SLIDES.length} שקפים · כ־{L4_SLIDES.reduce((sum, item) => sum + item.min, 0)} דקות</span></div><button ref={previewButtonRef} type="button" className={styles.openLessonButton} onClick={() => { notifyLecturer("open"); setIndex(0); setOutlineOpen(true); setContextOpen(window.innerWidth > 1191); setOpened(true); }}>פתיחת מערך השיעור <span aria-hidden="true">←</span></button></footer>
   </section>;
 
   if (typeof document === "undefined") return null;
@@ -355,11 +379,12 @@ export default function Lesson04Player() {
         <div className={styles.toolbarActions}>
           <button type="button" className={styles.toolbarButton} aria-pressed={outlineOpen} aria-label="מבנה השיעור" title="מבנה השיעור" onClick={() => { const next = !outlineOpen; setOutlineOpen(next); if (compact && next) setContextOpen(false); }}><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14"/></svg></button>
           <button type="button" className={styles.toolbarButton} aria-pressed={contextOpen} aria-label="הקשר לשקף" title="הקשר לשקף" onClick={() => { const next = !contextOpen; setContextOpen(next); if (compact && next) setOutlineOpen(false); }}><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="3" width="16" height="14" rx="1.5"/><path d="M13 3v14"/></svg></button>
-          <button type="button" className={styles.toolbarButton} aria-label={fullscreen ? "יציאה ממסך מלא" : "מסך מלא"} title={fullscreen ? "יציאה ממסך מלא" : "מסך מלא"} aria-pressed={fullscreen} onClick={() => void toggleFullscreen()}><svg viewBox="0 0 20 20" aria-hidden="true"><path d={fullscreen ? "M7 3v4H3M13 3v4h4M7 17v-4H3m10 4v-4h4" : "M3 7V3h4M13 3h4v4M17 13v4h-4M7 17H3v-4"} /></svg></button>
           <button type="button" className={styles.presentButton} onClick={() => setPresent(true)}>הצגה</button>
         </div>
     </header>
+    <div className={styles.loopProgress} aria-hidden="true" />
     <div className={styles.playerWorkspace}>
+      {compact && (contextOpen || narrow && outlineOpen) && <button type="button" className={styles.drawerScrim} onClick={() => contextOpen ? setContextOpen(false) : setOutlineOpen(false)} aria-label={contextOpen ? "סגירת פאנל ההקשר" : "סגירת מבנה השיעור"} />}
       {outlineOpen && <Outline index={index} go={go} feedback={feedback} seen={seen} onClose={() => setOutlineOpen(false)} />}
       <main className={styles.playerMain} aria-label="נגן שיעור 04">
       <div className={styles.stageWrap}><ScaledSlide slide={slide} className={styles.stage} /><FeedbackPopover slide={slide} feedback={feedback} open={feedbackOpen} setOpen={setFeedbackOpen} onSave={saveFeedback} onDelete={deleteFeedback} busy={feedbackBusy} error={feedbackError} /></div>

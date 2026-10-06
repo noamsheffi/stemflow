@@ -12,14 +12,16 @@
   background: var(--bg);
 }
 
-.preview { overflow: hidden; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); box-shadow: var(--shadow-low); }
-.previewStage { position: relative; display: grid; width: min(100%, calc(max(0px, 100dvh - 334px) * 16 / 9)); aspect-ratio: 16 / 9; height: auto; margin-inline: auto; overflow: hidden; padding: 12px; background: var(--slide-stage); place-items: center; }
+.preview { box-sizing: border-box; width: min(var(--preview-width, 100%), 100%); max-width: 100%; overflow: hidden; margin-inline: auto; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); box-shadow: var(--shadow-low); container-type: inline-size; }
+.previewStage { --stage-max-height: max(0px, calc(100dvh - var(--above, 300px) - var(--card-row, 64px) - 24px)); position: relative; display: grid; width: 100%; height: min(var(--stage-max-height), calc(100cqi * 9 / 16)); aspect-ratio: 16 / 9; margin-inline: auto; overflow: hidden; padding: 0; background: transparent; place-items: center; }
 .previewStage > div { width: 100%; height: 100%; }
-.previewFooter { display: flex; min-height: 64px; align-items: center; justify-content: space-between; gap: 16px; padding: 10px 18px; }
-.previewFooter > div { display: grid; gap: 3px; }
+.previewStage .stageBox { border-radius: 10px 10px 0 0; box-shadow: none; }
+.previewFooter { box-sizing: border-box; display: flex; width: 100%; min-width: 0; min-height: 64px; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; }
+.previewFooter > div { display: grid; min-width: 0; flex: 1 1 auto; gap: 3px; }
+.previewFooter strong, .previewFooter span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .previewFooter strong { color: var(--ink); font-size: 14px; }
 .previewFooter span { color: var(--ink3); font-size: 12px; }
-.openLessonButton { display: inline-flex; min-height: 42px; flex: none; align-items: center; gap: 12px; padding: 8px 16px; color: var(--white); border: 0; border-radius: var(--r-sm); background: var(--accent); cursor: pointer; font: inherit; font-size: 13px; font-weight: 600; }
+.openLessonButton { display: inline-flex; min-height: 42px; flex: none; align-items: center; gap: 12px; padding: 8px 12px; color: var(--white); border: 0; border-radius: var(--r-sm); background: var(--accent); cursor: pointer; font: inherit; font-size: 13px; font-weight: 600; white-space: nowrap; }
 .openLessonButton:hover { background: var(--accent-dark); }
 .openLessonButton:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 .closeLessonButton { min-height: 32px; padding: 5px 10px; color: var(--ink2); border: 1px solid var(--line); border-radius: var(--r-sm); background: transparent; cursor: pointer; font: inherit; font-size: 12px; }
@@ -63,6 +65,8 @@
 .presentButton { color: var(--white); background: var(--accent); }
 .stageWrap { display: flex; min-height: 0; flex: 1; padding: 10px; background: var(--slide-stage); }
 .stage { display: grid; min-width: 0; min-height: 0; flex: 1; place-items: center; }
+.player .stage { padding-inline-end: 88px; }
+.preview .stage { padding-inline-end: 0; }
 .stageBox { position: relative; overflow: hidden; flex: none; border-radius: var(--r-sm); background: var(--surface); box-shadow: var(--shadow-panel); }
 .slideCanvas { position: absolute; inset-block-start: 0; inset-inline-start: auto; inset-inline-end: 0; width: 1600px; height: 900px; direction: ltr; transform-origin: top right; }
 .formulaEnglish { display: inline; margin: 0; color: var(--ink3); font-family: var(--mono); font-size: 10.5px; font-weight: 400; }
@@ -220,7 +224,8 @@
 .presentButton:hover { background: #92e4e9; }
 .closeLessonButton { min-height: 38px; color: #f1f5f9; border-color: rgb(255 255 255 / 18%); border-radius: 10px; background: rgb(255 255 255 / 7%); }
 .closeLessonButton:hover { color: #fff; background: rgb(255 255 255 / 14%); }
-.outline, .slideContext { width: clamp(300px, 19.2vw, 580px); flex-basis: clamp(300px, 19.2vw, 580px); background: #f3f7f9; }
+.outline { box-sizing: border-box; width: 280px; min-width: 280px; flex: 0 0 280px; background: #f3f7f9; }
+.slideContext { box-sizing: border-box; width: 290px; min-width: 290px; flex: 0 0 290px; background: #f3f7f9; }
 .outline { border-inline-end: 1px solid #dce5eb; }
 .slideContext { border-inline-start: 1px solid #dce5eb; }
 .outlineHeader { gap: clamp(16px, .8vw, 25px); padding: clamp(20px, 1.1vw, 34px) clamp(18px, 1.4vw, 42px) clamp(20px, 1vw, 30px); background: #fff; }
@@ -235,16 +240,16 @@
 .outlineSectionHeading { padding: clamp(18px, 1vw, 30px) clamp(18px, 1.4vw, 42px) clamp(8px, .45vw, 14px); color: #8a96a6; font-size: clamp(10px, .6vw, 18px); font-weight: 700; }
 .outlineScroll { padding: 0 clamp(10px, .7vw, 22px) 16px; }
 .chapter { margin-block-end: clamp(5px, .3vw, 10px); }
-.chapterButton { min-height: clamp(44px, 1.95vw, 60px); padding-inline: clamp(8px, .6vw, 18px); }
-.chapterActive { color: #12243b; }
-.chapterTitle { font-size: clamp(11px, .7vw, 21px); }
-.chapterNumber { width: clamp(22px, 1.1vw, 32px); font-size: clamp(10px, .55vw, 16px); }
-.progressRing { width: clamp(16px, .9vw, 27px); height: clamp(16px, .9vw, 27px); }
+.chapterButton { height: 34px; min-height: 34px; padding-inline: 8px; font: 600 var(--fs-nav)/1.3 var(--font); color: var(--ink); }
+.chapterActive { color: var(--accent); }
+.chapterTitle { min-width: 0; flex: 1; overflow: hidden; font-size: inherit; text-overflow: ellipsis; white-space: nowrap; }
+.chapterNumber { width: 18px; font: 400 11px var(--mono); }
+.progressRing { width: 14px; height: 14px; flex: none; border-radius: 50%; background: conic-gradient(var(--accent) calc(var(--progress, 0) * 360deg), #d6dde4 0); }
 .progressRing { mask: radial-gradient(circle, transparent calc(50% - 4px), #000 calc(50% - 3px)); }
 .chapterSlides { margin-inline-start: clamp(14px, .8vw, 24px); padding-inline-start: clamp(6px, .4vw, 12px); border-color: #cfdee4; }
-.slideLink { min-height: clamp(36px, 1.5vw, 46px); padding-inline: clamp(7px, .45vw, 14px); font-size: clamp(10px, .63vw, 19px); }
-.slideNumber { width: clamp(22px, 1.1vw, 32px); font-size: clamp(10px, .55vw, 16px); }
-.flagCount { padding-inline: clamp(5px, .3vw, 9px); font-size: clamp(10px, .55vw, 16px); }
+.slideLink { height: 28px; min-height: 28px; padding: 0 8px; font: 400 var(--fs-sm)/1.35 var(--font); color: var(--ink2); }
+.slideNumber { width: 18px; font: 400 11px var(--mono); }
+.flagCount { padding: 0 6px; color: var(--feedback-count, #b4521b); background: var(--feedback-count-soft, #fdf3ea); border-radius: 8px; font: 10.5px var(--mono); }
 .slideContext { background: #eff5f8; }
 .contextHeader { min-height: 56px; padding-inline: 18px; color: #117e8a; border-color: #d7e2e8; background: #fff; font-size: 11px; font-weight: 700; }
 .contextHeader b { color: #8492a0; font-size: 11px; }
@@ -259,22 +264,48 @@
 .playerFooter { background: #e6edf2; }
 .playerFooter .chapterSegment { background: #cad8df; }
 .playerFooter .slideNav { min-height: 40px; }
-.progressRing { background: conic-gradient(var(--accent) calc(var(--progress, 0) * 360deg), #14838d 0); }
+.chapterButton > *, .slideLink > * { font-size: inherit; }
+.chapterNumber, .slideNumber { font: 400 11px var(--mono); }
+.chapterButton { line-height: 1.3; }
+.slideLink { line-height: 1.35; }
+.slideActive { color: var(--accent); background: #fff; box-shadow: 0 0 0 1px #c9dde2; font-weight: 600; }
+.loopProgress { z-index: 2; height: 3px; flex: 0 0 3px; background: linear-gradient(to left, #6fd0da 0 33.33%, #ffffff1f 33.33%); }
+.drawerScrim { position: fixed; z-index: 39; inset: 0; width: 100vw; height: 100dvh; padding: 0; border: 0; background: #13233a33; cursor: pointer; }
+.lessonOverview { display: grid; gap: 7px; padding: 10px 0; }
+.lessonOverview h3 { margin: 0; color: var(--ink3); font-size: 11px; }
+.lessonOverviewRow { display: flex; min-width: 0; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 7px; background: #fff; color: var(--ink2); font-size: 11px; }
+.lessonOverviewRow b { color: var(--accent); font: 11px var(--mono); }
+.lessonOverviewRow span { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lessonOverviewRow small { color: var(--ink3); font: 10px var(--mono); white-space: nowrap; }
+.lessonOverview p { display: grid; gap: 3px; margin: 5px 0 0; color: var(--ink2); font-size: 11px; line-height: 1.5; }
+.lessonOverview p b { color: var(--accent); }
+.slideCount { direction: ltr; font-size: 12.5px; }
+.chapterLabel { flex: 0 1 auto; max-width: 30%; font-size: 13px; white-space: nowrap; }
+.timeLeft { flex: none; margin-inline-start: 0; color: var(--ink3); font-size: 12px; white-space: nowrap; }
+.feedback { inset-block-end: 16px; inset-inline-end: 24px; }
+.toolbarButton, .toolbarButton[aria-pressed="true"] { width: 34px; min-height: 34px; color: #9fb0c4; border-color: transparent; border-radius: 8px; background: transparent; }
+.toolbarButton[aria-pressed="true"] { color: #fff; background: #ffffff1f; }
+.toolbarButton:hover { color: #fff; background: #ffffff1f; }
+.progressRing { background: conic-gradient(var(--accent) calc(var(--progress, 0) * 360deg), #d6dde4 0); }
 .slideLink { border: 1px solid transparent; }
 .slideActive { border-color: #c9dce2; background: #fff; box-shadow: 0 1px 4px rgb(23 54 74 / 7%); }
+.slideTitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.flagCount { font-size: 10.5px; }
+.interactiveMark { flex: none; color: #6247c9; font-size: 9px; }
 
-@container lesson-player (max-width: 1100px) {
-  .outline, .slideContext { position: absolute; z-index: 20; inset-block: 0; width: min(280px, 84%); box-shadow: var(--shadow-panel); }
-  .outline { inset-inline-start: 0; }
-  .slideContext { inset-inline-end: 0; }
-  .player.withOutline.withContext .slideContext { display: none; }
-  .closePanel { display: inline-flex; align-items: center; justify-content: center; }
+@container lesson-player (max-width: 1191px) {
+  .slideContext { position: fixed; z-index: 40; inset-block: 0; inset-inline-end: 0; width: 290px; min-width: 290px; box-shadow: -8px 0 24px #13233a26; }
+  .slideContext .closePanel { display: inline-flex; align-items: center; justify-content: center; }
   .loopPhases a { padding-inline: 8px; font-size: 11px; }
   .stageWrap { padding: 8px; }
   .playerToolbar { min-height: 104px; flex: 0 0 auto; flex-wrap: wrap; gap: 5px 10px; }
   .lessonIdentity { order: 0; flex-basis: 100%; }
   .loopPhases { order: 1; }
   .toolbarActions { order: 2; margin-inline-start: auto; }
+}
+@container lesson-player (max-width: 899px) {
+  .outline { position: fixed; z-index: 40; inset-block: 0; inset-inline-start: 0; width: 280px; min-width: 280px; box-shadow: -8px 0 24px #13233a26; }
+  .outline .closePanel { display: inline-flex; align-items: center; justify-content: center; }
 }
 @container lesson-player (max-width: 760px) {
   .playerToolbar { min-height: 0; gap: 3px; padding-inline: 6px; }
@@ -297,6 +328,5 @@
 }
 
 @media (max-width: 620px) {
-  .previewFooter { align-items: stretch; flex-direction: column; }
   .openLessonButton { justify-content: center; }
 }

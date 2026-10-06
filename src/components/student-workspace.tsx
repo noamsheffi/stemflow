@@ -159,6 +159,10 @@ export default function StudentWorkspace({ children }: { children: ReactNode }) 
   const showContext = contextOpen && contextAvailable;
 
   useEffect(() => {
+    if (window.matchMedia("(max-width: 1192px)").matches) {
+      setContextOpen(false);
+      return;
+    }
     try {
       const stored = window.localStorage.getItem(contextKey);
       if (stored !== null) setContextOpen(stored === "true");
