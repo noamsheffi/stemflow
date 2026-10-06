@@ -1,6 +1,20 @@
 import "server-only";
 import { getSql } from "./db";
 
+export type MidtermPracticeQuestionSummary = {
+  question_id: string;
+  starts: number;
+  steps_revealed: number;
+  completions: number;
+  average_helpfulness: number | null;
+  feedback_count: number;
+  assessments: number;
+  average_confidence: number | null;
+  needs_support: number;
+};
+
+export type MidtermPracticeComment = { question_id: string; feedback: string; occurred_at: string };
+
 export async function ensureMidtermPracticeSchema() {
   await getSql().query(`CREATE TABLE IF NOT EXISTS midterm_practice_events (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(), session_id UUID NOT NULL, client_id UUID NOT NULL,
@@ -15,7 +29,8 @@ export async function ensureMidtermPracticeSchema() {
 
 export async function getMidtermPracticeResults() {
   await ensureMidtermPracticeSchema();
-  const questions = await getSql()`WITH event_totals AS (
+  const sql = getSql();
+  const questions = await sql`WITH event_totals AS (
     SELECT question_id,
       COUNT(DISTINCT session_id) FILTER (WHERE event_type IN ('started','question_opened')) AS starts,
       COUNT(*) FILTER (WHERE event_type = 'step_revealed') AS steps_revealed,
@@ -33,9 +48,9 @@ export async function getMidtermPracticeResults() {
     COUNT(assessment.session_id) FILTER (WHERE assessment.understood = false) AS needs_support
   FROM event_totals totals LEFT JOIN latest_assessment assessment USING (question_id)
   GROUP BY totals.question_id, totals.starts, totals.steps_revealed, totals.completions, totals.average_helpfulness, totals.feedback_count
-  ORDER BY totals.question_id`;
-  const comments = await getSql()`SELECT question_id, feedback, occurred_at
+  ORDER BY totals.question_id` as unknown as MidtermPracticeQuestionSummary[];
+  const comments = await sql`SELECT question_id, feedback, occurred_at
     FROM midterm_practice_events WHERE event_type = 'feedback' AND feedback IS NOT NULL AND char_length(trim(feedback)) > 0
-    ORDER BY occurred_at DESC LIMIT 200`;
+    ORDER BY occurred_at DESC LIMIT 200` as unknown as MidtermPracticeComment[];
   return { questions, comments };
 }
