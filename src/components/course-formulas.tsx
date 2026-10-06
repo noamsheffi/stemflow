@@ -4,7 +4,9 @@ import Link from "next/link";
 import { useState } from "react";
 import data from "../lib/formula-sheet-data.json";
 import { course, lessons } from "../lib/course-data";
+import { splitFormulaName } from "../lib/formula-name";
 import FormulaMath from "./formula-math";
+import FormulaScroll from "./formula-scroll";
 import styles from "./student-workspace.module.css";
 
 const lessonNumbers = [...new Set(data.map((formula) => formula.lesson))].sort((a, b) => Number(a) - Number(b));
@@ -31,16 +33,19 @@ export default function CourseFormulas() {
         const lessonData = lessons.find((item) => item.number === Number(number));
         const groupFormulas = filtered.filter((formula) => formula.lesson === number);
         const heading = lessonData ? `שיעור ${String(number).padStart(2, "0")} · ${lessonData.title}` : data.find((formula) => formula.lesson === number)?.lesson_title ?? `שיעור ${number}`;
-        const rows = <>{groupFormulas.map((formula) => <article className={styles.formulaDetail} id={formula.id} key={formula.id}>
-          <div className={styles.resourceRow}>
-            <div className={styles.resourceName}>{formula.name}<small className={styles.topicLabel}>{formula.topic}</small></div>
-            <div className={styles.resourceEquation} dir="ltr"><FormulaMath tex={formula.formula_latex} display /></div>
-            <div className={styles.variables}>
-              {formula.params.map((param) => <span className={styles.variable} key={`${formula.id}-${param.symbol}`}><b className={styles.variableSymbol} dir="ltr">{param.symbol}</b><span>{param.name}</span><span className={styles.variableUnit}>{param.unit}</span></span>)}
+        const rows = <>{groupFormulas.map((formula) => {
+          const name = splitFormulaName(formula.name);
+          return <article className={styles.formulaDetail} id={formula.id} key={formula.id}>
+            <div className={styles.resourceRow}>
+              <div className={styles.resourceName}><span>{name.hebrew}</span>{name.english && <span className={styles.formulaEnglish} dir="ltr">{name.english}</span>}<small className={styles.topicLabel}>{formula.topic}</small></div>
+              <FormulaScroll className={styles.resourceEquation} fadeClassName={styles.formulaOverflow}><span dir="ltr"><FormulaMath tex={formula.formula_latex} /></span></FormulaScroll>
+              <div className={styles.variables}>
+                {formula.params.map((param) => <span className={styles.variable} key={`${formula.id}-${param.symbol}`}><b className={styles.variableSymbol} dir="ltr">{param.symbol}</b><span>{param.name}</span><span className={styles.variableUnit}>{param.unit}</span></span>)}
+              </div>
             </div>
-          </div>
-          <details className={styles.formulaUsage}><summary>השימוש והקשר בשיעור</summary><p>{formula.usage}</p><p><strong>שימו לב:</strong> {formula.trap}</p></details>
-        </article>)}</>;
+            <details className={styles.formulaUsage}><summary>השימוש והקשר בשיעור</summary><p>{formula.usage}</p><p><strong>שימו לב:</strong> {formula.trap}</p></details>
+          </article>;
+        })}</>;
         return <section className={`${styles.card} ${styles.formulaGroup}`} key={number}>
           {lessonData ? <Link className={styles.formulaGroupHeader} href={`/course/${course.courseId}/lessons/${lessonData.lessonId}/slides`}><span>{heading}</span><span>{groupFormulas.length} נוסחאות · למערך השיעור ←</span></Link> : <h2 className={styles.formulaGroupHeader}><span>{heading}</span><span>{groupFormulas.length} נוסחאות · אין מערך רשום</span></h2>}
           {rows}

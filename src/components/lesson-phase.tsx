@@ -151,10 +151,10 @@ export default function LessonPhase({ lesson, phase }: { lesson: CourseLesson; p
 
     <footer className={styles.lessonFooter}>
       {phaseIndex < phases.length - 1
-        ? <Link className={styles.secondaryButton} href={phaseHref(lesson.lessonId, phases[phaseIndex + 1].id)}>הבא: {phases[phaseIndex + 1].phase} · {phases[phaseIndex + 1].label} ←</Link>
+        ? <Link className={`${styles.secondaryButton} ${styles.nextPhaseButton}`} href={phaseHref(lesson.lessonId, phases[phaseIndex + 1].id)}>הבא: {phases[phaseIndex + 1].phase} · {phases[phaseIndex + 1].label} ←</Link>
         : nextLesson
-          ? <Link className={styles.secondaryButton} href={phaseHref(nextLesson.lessonId, "slides")}>לשיעור {String(nextLesson.number).padStart(2, "0")} ←</Link>
-          : <Link className={styles.secondaryButton} href="/course/communication-systems/lessons">חזרה למערכי השיעור ←</Link>}
+          ? <Link className={`${styles.secondaryButton} ${styles.nextPhaseButton}`} href={phaseHref(nextLesson.lessonId, "slides")}>לשיעור {String(nextLesson.number).padStart(2, "0")} ←</Link>
+          : <Link className={`${styles.secondaryButton} ${styles.nextPhaseButton}`} href="/course/communication-systems/lessons">חזרה למערכי השיעור ←</Link>}
     </footer>
   </>;
 }

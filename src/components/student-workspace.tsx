@@ -6,8 +6,10 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { conceptMap } from "../lib/concept-map";
 import { concepts, course, formulas, getLesson, workspace } from "../lib/course-data";
+import { splitFormulaName } from "../lib/formula-name";
 import { lesson04Slides } from "./lesson-04-data";
 import FormulaMath from "./formula-math";
+import FormulaScroll from "./formula-scroll";
 import CourseTree from "./course-tree";
 import styles from "./student-workspace.module.css";
 
@@ -118,7 +120,10 @@ function ContextPanel({ pathname }: { pathname: string }) {
     </div>
     <div className={styles.contextBody} id="context-content" role="tabpanel" aria-labelledby={`context-tab-${tab}`}>
       {tab === "formulas" && <>
-        {selectedLesson ? lessonFormulas.map((item) => <article className={styles.contextFormula} key={item.formulaId}><h3>{item.name}</h3><div dir="ltr"><FormulaMath tex={item.expression} /></div></article>) : <p className={styles.contextEmpty}>בחרו שיעור כדי לראות את הנוסחאות שלו בהקשר.</p>}
+        {selectedLesson ? lessonFormulas.map((item) => {
+          const name = splitFormulaName(item.name);
+          return <article className={styles.contextFormula} key={item.formulaId}><h3><span>{name.hebrew}</span>{name.english && <span className={styles.formulaEnglish} dir="ltr">{name.english}</span>}</h3><FormulaScroll className={styles.contextFormulaMath} fadeClassName={styles.formulaOverflow}><FormulaMath tex={item.expression} /></FormulaScroll></article>;
+        }) : <p className={styles.contextEmpty}>בחרו שיעור כדי לראות את הנוסחאות שלו בהקשר.</p>}
         <Link className={styles.contextMore} href={appCourseHref(route.courseId, "formulas")}>לנוסחאון המלא <span aria-hidden="true">←</span></Link>
       </>}
       {tab === "concepts" && <>

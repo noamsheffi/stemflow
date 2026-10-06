@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { concepts, formulas } from "../lib/course-data";
+import { splitFormulaName } from "../lib/formula-name";
+import FormulaScroll from "./formula-scroll";
 import { L4_CHAPTERS, L4_LINKS, L4_SLIDES, Slide, Tex } from "./lesson-04-deck";
 import styles from "./lesson-04-player.module.css";
 
@@ -160,7 +162,10 @@ function SlideContext({ slide, feedback, openFeedback, notes, setNotes, onClose 
       </button>
       {slide.tk && <div className={styles.takeaway}><small>העיקר</small>{slide.tk}</div>}
       {slideFormulas.length > 0 && <section className={styles.contextSection}><h3>נוסחאות <span dir="ltr">{slideFormulas.length}</span></h3>
-        {slideFormulas.map((item) => <article className={styles.formulaCard} key={item.formulaId}><b>{item.name}</b><div dir="ltr"><Tex tex={item.expression} /></div></article>)}
+        {slideFormulas.map((item) => {
+          const name = splitFormulaName(item.name);
+          return <article className={styles.formulaCard} key={item.formulaId}><b><span>{name.hebrew}</span>{name.english && <span className={styles.formulaEnglish} dir="ltr">{name.english}</span>}</b><FormulaScroll className={styles.formulaScroll} fadeClassName={styles.formulaOverflow}><Tex tex={item.expression} /></FormulaScroll></article>;
+        })}
         <Link href={"/course/" + courseId + "/formulas"} className={styles.contextMore}>לנוסחאון המלא ←</Link>
       </section>}
       {slideConcepts.length > 0 && <section className={styles.contextSection}><h3>מושגים <span dir="ltr">{slideConcepts.length}</span></h3>

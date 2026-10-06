@@ -65,6 +65,10 @@
 .stage { display: grid; min-width: 0; min-height: 0; flex: 1; place-items: center; }
 .stageBox { position: relative; overflow: hidden; flex: none; border-radius: var(--r-sm); background: var(--surface); box-shadow: var(--shadow-panel); }
 .slideCanvas { position: absolute; inset-block-start: 0; inset-inline-start: auto; inset-inline-end: 0; width: 1600px; height: 900px; direction: ltr; transform-origin: top right; }
+.formulaEnglish { display: block; margin-block-start: 2px; color: var(--ink3); font-family: var(--mono); font-size: 10.5px; font-weight: 400; }
+.formulaScroll { max-width: 100%; overflow-x: auto; color: var(--ink); font-size: var(--u-15); white-space: nowrap; direction: ltr; }
+.formulaScroll .katex { color: var(--ink); }
+.formulaOverflow { mask-image: linear-gradient(to right, transparent, #000 12px, #000 calc(100% - 12px), transparent); }
 .playerFooter { flex: none; padding: 0 12px 10px; }
 .chapterBar { display: flex; height: 14px; align-items: center; gap: 4px; }
 .chapterSegment { position: relative; height: 6px; min-width: 0; padding: 0; overflow: visible; border: 0; border-radius: 3px; background: var(--line); cursor: pointer; }

@@ -29,6 +29,8 @@ export default function CourseTree({ courses, collapsed = false }: { courses: Co
   const currentCourse = courses.find((item) => pathname === courseHref(item.courseId) || pathname.startsWith(`${courseHref(item.courseId)}/`))
     ?? courses.find((item) => item.status === "active")
     ?? courses[0];
+  const profileName = currentCourse?.lecturer || "צוות Syllo";
+  const profileInitials = profileName.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => Array.from(part)[0]).join("");
   const currentLesson = lessons.find((lesson) => pathname.includes(`/lessons/${lesson.lessonId}`));
 
   useEffect(() => {
@@ -114,7 +116,7 @@ export default function CourseTree({ courses, collapsed = false }: { courses: Co
                 <span className={styles.lessonNumber} dir="ltr">{String(lesson.number).padStart(2, "0")}</span>
                 <Link href={lesson.lessonId === "lesson-04" ? lessonPath : `${lessonPath}/slides`} className={styles.compactLessonLink} aria-label={`שיעור ${lesson.number}: ${lesson.title}`} title={lesson.title}>{String(lesson.number).padStart(2, "0")}</Link>
                 <button type="button" className={styles.lessonName} aria-label={`${expanded ? "סגירת" : "פתיחת"} שלבי שיעור ${lesson.number}: ${lesson.title}`} aria-expanded={expanded} aria-controls={childId} onClick={() => setExpandedLessons((value) => ({ ...value, [lesson.lessonId]: !expanded }))}>
-                  <span>{lesson.title}</span><svg viewBox="0 0 12 12" aria-hidden="true"><path d="m4 2 4 4-4 4" /></svg>
+                  <span>{lesson.title}</span><svg viewBox="0 0 12 12" aria-hidden="true"><path d="m2 4 4 4 4-4" /></svg>
                 </button>
               </div>
               <ul className={styles.phaseList} id={childId} hidden={!expanded}>
@@ -144,9 +146,9 @@ export default function CourseTree({ courses, collapsed = false }: { courses: Co
       </nav>
 
       <footer className={styles.treeFooter}>
-        <Link href="/workspace" className={styles.profileLink} aria-label="סביבת הלמידה">
-          <span className={styles.profileAvatar} aria-hidden="true">?</span>
-          <span className={styles.profileIdentity}><strong>שם המשתמש לא זמין</strong><small>סטודנט/ית</small></span>
+        <Link href="/workspace" className={styles.profileLink} aria-label={`פרופיל ${profileName}`}>
+          <span className={styles.profileAvatar} aria-hidden="true">{profileInitials}</span>
+          <span className={styles.profileIdentity}><strong>{profileName}</strong><small>מרצה</small></span>
         </Link>
         <LogoutButton variant="sidebar" compact />
       </footer>
