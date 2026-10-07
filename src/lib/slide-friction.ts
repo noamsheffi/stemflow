@@ -1,6 +1,6 @@
 export const SLIDE_FRICTION_EXPERIMENT_ID = "002-slide-friction";
 
-export const lessonSlides = Array.from({ length: 16 }, (_, index) => ({
+export const lessonSlides = Array.from({ length: 44 }, (_, index) => ({
   id: `slide-${index + 1}`,
   number: index + 1,
 }));
