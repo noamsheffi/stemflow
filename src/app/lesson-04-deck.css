@@ -310,6 +310,9 @@
 .l4-player .am-equation-derivation .sl-card p{margin:0;font-size:22px;line-height:1.35}
 .l4-player .am-equation-derivation .stack{gap:8px}
 .l4-player .am-equation-derivation .sl-fx{font-size:clamp(23px,1.8vw,30px);padding:10px 14px}
+.l4-player .antenna-calc-card{padding:14px 18px;gap:8px}
+.l4-player .antenna-calc-card .stack{gap:8px}
+.l4-player .antenna-calc-card .sl-fx{font-size:clamp(19px,1.55vw,26px);padding:8px 10px}
 .l4-player .carrier-power-slide .sl-fx{font-size:28px;padding:10px 12px}
 .l4-player .carrier-power-slide .sl-fx.big{font-size:42px;padding:12px}
 .l4-player .carrier-power-slide p{font-size:22px;line-height:1.35;margin:0}
