@@ -47,7 +47,8 @@ async function main() {
   const sha = git("rev-parse", "HEAD");
   if (!verifyOnly) {
     console.log(`דוחף ${sha.slice(0, 7)} ל־origin/main; Vercel יפרוס דרך חיבור GitHub.`);
-    console.log(run("git", ["push", "origin", "main"]).trim() || "GitHub כבר מעודכן.");
+    run("git", ["push", "origin", "main"]);
+    console.log("ה־push ל־origin/main הסתיים בהצלחה.");
   }
 
   const deadline = Date.now() + timeoutMs;
