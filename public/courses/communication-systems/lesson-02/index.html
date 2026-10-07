@@ -115,7 +115,10 @@
       pointer-events: none;
       transform: translateY(20px);
       transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      justify-content: safe center;
     }
     .slide.active {
       opacity: 1;
@@ -879,6 +882,7 @@
       border: 0;
     }
     .formula.small { font-size: clamp(18px, 2vw, 29px); }
+    .stack-frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.05;margin:0 .12em;font-size:.9em}.stack-frac>span:first-child{border-bottom:2px solid currentColor;padding:0 .2em .08em}.stack-frac>span:last-child{padding:.08em .2em 0}
     .emphasis {
       background: var(--black);
       color: var(--bg);
@@ -1785,7 +1789,7 @@
       <div class="lesson-body">
         <div class="carrier-stage" id="carrierStage">
           <canvas id="carrierChannelCanvas" width="1200" height="390" role="img" aria-label="מחט גל נושא, ספקטרום אות מאופנן וגבולות ערוץ"></canvas>
-          <div class="carrier-steps"><div class="carrier-step active" data-carrier-step="1"><b>1</b><span>גל נושא טהור: מחט אחת בספקטרום החיובי, במודל אידיאלי</span></div><div class="carrier-step" data-carrier-step="2"><b>2</b><span>אפנון מוסיף רכיבי תדר סביב התדר המרכזי</span></div><div class="carrier-step" data-carrier-step="3"><b>3</b><span>לשידור מוקצה ערוץ רחב מספיק לאות</span></div></div>
+          <div class="carrier-steps"><div class="carrier-step active" data-carrier-step="1"><b>1</b><span>גל נושא טהור: מחט אחת בספקטרום החיובי, במודל אידיאלי</span></div><div class="carrier-step" data-carrier-step="2"><b>2</b><span>הצצה בלבד: באפנון יופיעו רכיבים נוספים סביב התדר המרכזי</span></div><div class="carrier-step" data-carrier-step="3"><b>3</b><span>לשידור מוקצה ערוץ רחב מספיק לאות</span></div></div>
           <button class="domain-btn" id="carrierNextBtn" type="button" data-stage="1">השלב הבא</button>
           <div class="wifi-width-reveal" id="wifiWidthReveal" hidden><span>רק עכשיו בוחרים רוחב ערוץ:</span><bdi class="latin">20 MHz</bdi><bdi class="latin">40 MHz</bdi><bdi class="latin">80 MHz</bdi></div>
         </div>
@@ -1794,9 +1798,10 @@
       </div>
       <div class="lesson-footer"><span class="hour-tag">HOUR B · 01:21–01:26</span><span>נושא · אות מאופנן · ערוץ</span></div>
       <template class="speaker-note">זמן: 5 דקות.
+הערת הוראה: זהו רמז חזותי בלבד. אל תסביר עדיין מדוע נוצרים רכיבי צד, ואל תניח שהמונח כבר נלמד. חזור להסבר המלא אחרי לימוד האפנון והזהות הטריגונומטרית.
 מטרת למידה: להבחין בין תדר מרכזי, רוחב פס של אות ורוחב ערוץ מוקצה.
-שאלה לכיתה: מדוע לאחר האפנון רואים תחום תדרים ולא רק מחט אחת?
-תשובה מנחה: השינויים שמייצגים את המידע יוצרים רכיבי תדר נוספים סביב התדר המרכזי. לכן האות המאופנן תופס רוחב פס, והמערכת מקצה לו ערוץ מתאים.
+שאלה לכיתה: מה השתנה בתמונה — מחט יחידה או תחום סביב התדר המרכזי?
+תשובה מנחה: התלמידים אמורים לזהות שמופיע תחום. בשלב הזה לא להסביר את מקורו; חוזרים לשאלה אחרי פיתוח משוואת AM וזהות המכפלה לסכום.
 טעות נפוצה: להסיק שרוחב ערוץ לבדו קובע קצב נתונים, או לערבב בין <bdi class="latin">5 GHz</bdi> לבין <bdi class="latin">5G</bdi>.</template>
     </section>
 
@@ -1869,11 +1874,11 @@
             <h3>הגדרה</h3>
             <div class="formula big"><bdi class="latin">f₀ = GCD(f₁,f₂,…)</bdi></div>
             <p class="lesson-text">בתרגילים שבהם כל התדרים הם כפולות שלמות, מחפשים את התדר הגדול ביותר שמחלק את כולם למספרים שלמים.</p>
-            <div class="formula big"><bdi class="latin">T₀ = 1/f₀</bdi></div>
+            <div class="formula big"><bdi class="latin">T₀ = <span class="stack-frac"><span>1</span><span>f₀</span></span></bdi></div>
           </div>
           <div class="gcd-example">
             <span class="card-label">שיטת עבודה</span>
-            <ol class="lesson-text"><li>אם נתון ω, ממירים בעזרת <bdi class="latin">f=ω/2π</bdi>.</li><li>כותבים את כל התדרים בהרץ.</li><li>מוצאים מחלק משותף מרבי.</li><li>בודקים שכל מנה <bdi class="latin">fᵢ/f₀</bdi> היא מספר שלם.</li></ol>
+            <ol class="lesson-text"><li>אם נתון ω, ממירים בעזרת <bdi class="latin">f = <span class="stack-frac"><span>ω</span><span>2π</span></span></bdi>.</li><li>כותבים את כל התדרים בהרץ.</li><li>מוצאים מחלק משותף מרבי.</li><li>בודקים שכל מנה <bdi class="latin">fᵢ/f₀</bdi> היא מספר שלם.</li></ol>
             <div class="gcd-row"><div>300 Hz</div><div class="equals">+</div><div>450 Hz</div></div>
             <p class="lesson-text" style="margin-top:14px;text-align:center;"><bdi class="latin">GCD(300,450)=150 Hz</bdi>, ולכן <bdi class="latin">T₀≈6.67 ms</bdi>.</p>
           </div>
@@ -1951,8 +1956,8 @@
         <button class="solution-toggle" type="button" aria-expanded="false">חשפו פתרון חלק א׳</button>
         <div class="solution-panel solution-a" hidden>
           <div class="two-col">
-            <div class="card"><span class="card-label">רכיב 1</span><div class="formula small">x₁(t)=3sin(1000πt)</div><p class="lesson-text"><b>A₁=<bdi class="latin">3 V</bdi></b><br>ω₁=<bdi class="latin">1000π rad/s</bdi></p><div class="formula small">f₁=1000π/2π=<bdi class="latin">500 Hz</bdi></div></div>
-            <div class="card khaki"><span class="card-label">רכיב 2</span><div class="formula small">x₂(t)=2sin(3000πt+π/6)</div><p class="lesson-text"><b>A₂=<bdi class="latin">2 V</bdi></b><br>ω₂=<bdi class="latin">3000π rad/s</bdi><br><bdi class="latin">π/6 rad = 30°</bdi></p><div class="formula small">f₂=3000π/2π=<bdi class="latin">1500 Hz</bdi></div></div>
+            <div class="card"><span class="card-label">רכיב 1</span><div class="formula small">x₁(t)=3sin(1000πt)</div><p class="lesson-text"><b>A₁=<bdi class="latin">3 V</bdi></b><br>ω₁=<bdi class="latin">1000π rad/s</bdi></p><div class="formula small"><bdi class="latin">f₁ = <span class="stack-frac"><span>1000π</span><span>2π</span></span> = 500 Hz</bdi></div></div>
+            <div class="card khaki"><span class="card-label">רכיב 2</span><div class="formula small">x₂(t)=2sin(3000πt+π/6)</div><p class="lesson-text"><b>A₂=<bdi class="latin">2 V</bdi></b><br>ω₂=<bdi class="latin">3000π rad/s</bdi><br><bdi class="latin">π/6 rad = 30°</bdi></p><div class="formula small"><bdi class="latin">f₂ = <span class="stack-frac"><span>3000π</span><span>2π</span></span> = 1500 Hz</bdi></div></div>
           </div>
           <div class="phase-proof"><span class="graph-tag">אותה תנופה · אותו ספקטרום</span><canvas id="phaseCompareCanvas" width="1200" height="205" role="img" aria-label="השוואה בין סינוס במופע אפס לסינוס במופע שלושים מעלות, עם ספקטרום תנופה זהה"></canvas></div>
         </div>
