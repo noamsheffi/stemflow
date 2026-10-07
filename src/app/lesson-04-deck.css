@@ -297,6 +297,14 @@
 .l4-player .carrier-power-slide .defs div{font-size:22px;padding:10px 14px}
 .l4-player .carrier-power-slide .defs b{width:90px}
 .l4-player .carrier-power-slide .stack{gap:10px}
+.l4-player .oscillator-review .sl-body{gap:16px}
+.l4-player .oscillator-review .sl-body>.lead{margin:0;font-size:28px}
+.l4-player .oscillator-review .sl-card{justify-content:center;min-height:210px}
+.l4-player .oscillator-review .sl-card p{margin:0}
+.l4-player .sideband-power .sl-card{padding:20px 24px;justify-content:center}
+.l4-player .sideband-power .sl-card p{margin:0;font-size:22px;line-height:1.35}
+.l4-player .sideband-power .stack{gap:10px}
+.l4-player .sideband-power .sl-fx{font-size:clamp(24px,2vw,34px);padding:14px 16px}
 .l4-player .carrier-power-slide .sl-fx{font-size:28px;padding:10px 12px}
 .l4-player .carrier-power-slide .sl-fx.big{font-size:42px;padding:12px}
 .l4-player .carrier-power-slide p{font-size:22px;line-height:1.35;margin:0}
