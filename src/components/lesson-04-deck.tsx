@@ -41,8 +41,12 @@ function SinePlot({ w = 360, h = 90, cycles = 2, color = PLOT.carrier, amp = 0.3
 }
 
 // Spectrum: carrier + two sidebands
-function SpectrumPlot({ w = 560, h = 260, ac = 1, side = 0.35, labels = true, fc = 'f_c', bw = false, fcN, fmN }) {
-  const base = h - 40, cx = w / 2, dx = w * 0.22, H = base - 30;
+function SpectrumPlot({ w = 560, h = 260, ac = 1, side = 0.35, labels = true, fc = 'f_c', bw = false, fcN, fmN, frequencyHalfSpan }) {
+  const base = h - 48, cx = w / 2, H = base - 30;
+  const numericFrequencies = Number.isFinite(fcN) && Number.isFinite(fmN) && fmN > 0;
+  const halfSpan = frequencyHalfSpan ?? Math.max(10, numericFrequencies ? fmN * 1.25 : 10);
+  const sideDx = numericFrequencies ? Math.min(w * 0.44, (fmN / halfSpan) * w * 0.44) : w * 0.22;
+  const leftX = cx - sideDx, rightX = cx + sideDx;
   const stick = (x, a, c, lab, sub) => (
     <g key={lab}>
       <line x1={x} x2={x} y1={base} y2={base - H * a} stroke={c} strokeWidth="5" strokeLinecap="round" />
@@ -54,11 +58,12 @@ function SpectrumPlot({ w = 560, h = 260, ac = 1, side = 0.35, labels = true, fc
     <svg viewBox={`0 0 ${w} ${h}`} className="plot" dir="ltr">
       <line x1="20" x2={w - 20} y1={base} y2={base} stroke={PLOT.axis} strokeWidth="1.4" />
       <text x={w - 18} y={base - 8} textAnchor="end" className="pl-ax">f</text>
-      {stick(cx - dx, side, PLOT.side, 'l', fcN ? `${fcN - fmN} kHz` : 'fc − fm')}
+      {stick(leftX, side, PLOT.side, 'l', numericFrequencies ? `${fcN - fmN} kHz` : 'fc − fm')}
       {stick(cx, ac, PLOT.carrier, 'c', fcN ? `${fcN} kHz` : 'fc')}
-      {stick(cx + dx, side, PLOT.side, 'u', fcN ? `${fcN + fmN} kHz` : 'fc + fm')}
-      {bw && <g><line x1={cx - dx} x2={cx + dx} y1={base - H * side - 26} y2={base - H * side - 26} stroke={PLOT.env} strokeWidth="1.4" markerStart="url(#ar)" markerEnd="url(#ar)" />
-        <text x={cx - dx / 2} y={base - H * side - 34} textAnchor="middle" className="pl-lab b">BW = 2fm</text></g>}
+      {stick(rightX, side, PLOT.side, 'u', numericFrequencies ? `${fcN + fmN} kHz` : 'fc + fm')}
+      {numericFrequencies && <g className="pl-scale"><line x1={cx - w * 0.44} x2={cx - w * 0.44} y1={base - 4} y2={base + 2} stroke={PLOT.axis} /><line x1={cx} x2={cx} y1={base - 4} y2={base + 2} stroke={PLOT.axis} /><line x1={cx + w * 0.44} x2={cx + w * 0.44} y1={base - 4} y2={base + 2} stroke={PLOT.axis} /></g>}
+      {bw && <g><line x1={leftX} x2={rightX} y1={base - H * side - 26} y2={base - H * side - 26} stroke={PLOT.env} strokeWidth="1.4" markerStart="url(#ar)" markerEnd="url(#ar)" />
+        <text x={cx} y={base - H * side - 34} textAnchor="middle" className="pl-lab b">BW = 2fm</text></g>}
       <defs><marker id="ar" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1 L9 5 L0 9z" fill={PLOT.env} /></marker></defs>
     </svg>
   );
@@ -123,7 +128,7 @@ function AMSim() {
       </div>
       <div className="sim-plots">
         <div className="plot-card"><span className="pc-lab">תחום הזמן · חלון קבוע ⅓ ms</span><AMPlot w={1040} h={170} m={ma} periods={p.fm / 3} cycles={p.fc / (p.fm * 8)} amp={0.44 * (p.ac + p.am) / 160 + 0.08} /></div>
-        <div className="plot-card"><span className="pc-lab">תחום התדר</span><SpectrumPlot w={1040} h={150} ac={p.ac / 100} side={p.am / 200} fcN={p.fc} fmN={p.fm} /></div>
+        <div className="plot-card"><span className="pc-lab">תחום התדר · ציר ±10 kHz · המרחק מהנושא לפי fm</span><SpectrumPlot w={1040} h={180} ac={p.ac / 100} side={p.am / 200} fcN={p.fc} fmN={p.fm} frequencyHalfSpan={10} /></div>
       </div>
     </div>
   );
