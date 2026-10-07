@@ -279,9 +279,10 @@
 
 /* Break the AM-to-sideband derivation into lines that fit each card. */
 .l4-player .sideband-derivation .sl-body{gap:12px}
+.l4-player .sideband-derivation .two-a{grid-template-columns:1.2fr .8fr}
 .l4-player .sideband-derivation .sl-card{padding:16px 18px;gap:9px}
 .l4-player .sideband-derivation .stack{gap:8px}
-.l4-player .sideband-derivation .sl-fx{font-size:clamp(22px,1.8vw,30px);padding:10px 12px}
+.l4-player .sideband-derivation .sl-fx{font-size:clamp(18px,1.35vw,23px);padding:9px 10px;white-space:nowrap}
 .l4-player .sideband-derivation p{font-size:21px;line-height:1.3;margin:0}
 .l4-player .sideband-derivation .lead{font-size:24px;line-height:1.35}
 
@@ -313,6 +314,10 @@
 .l4-player .antenna-calc-card{padding:14px 18px;gap:8px}
 .l4-player .antenna-calc-card .stack{gap:8px}
 .l4-player .antenna-calc-card .sl-fx{font-size:clamp(19px,1.55vw,26px);padding:8px 10px}
+.l4-player .efficiency-slide .sl-card{justify-content:center;gap:12px}
+.l4-player .efficiency-slide .sl-card p{font-size:23px;line-height:1.35;margin:0}
+.l4-player .efficiency-slide .sl-fx.big{font-size:clamp(28px,2.4vw,40px);padding:14px;white-space:nowrap}
+.l4-player .efficiency-slide .sl-fx{font-size:clamp(24px,1.8vw,30px);padding:12px}
 .l4-player .carrier-power-slide .sl-fx{font-size:28px;padding:10px 12px}
 .l4-player .carrier-power-slide .sl-fx.big{font-size:42px;padding:12px}
 .l4-player .carrier-power-slide p{font-size:22px;line-height:1.35;margin:0}
