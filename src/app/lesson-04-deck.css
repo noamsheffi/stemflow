@@ -207,6 +207,17 @@
 .l4-player .stp-eq{color:var(--s-ink2);text-align:center}
 .l4-player .stp b{color:var(--accent)}
 .l4-player .stp .tex{direction:ltr;text-align:left}
+.l4-player .stp>b .tex{color:var(--accent)}
+.l4-player .formula-reference .sl-card{padding:18px 22px;gap:10px}
+.l4-player .formula-reference .stack{gap:7px}
+.l4-player .formula-reference .sl-fx{font-size:25px;padding:5px 10px}
+.l4-player .pair-practice .sl-body{justify-content:flex-start;gap:12px}
+.l4-player .pair-practice .sl-h h2{font-size:50px}
+.l4-player .pair-practice .three{gap:16px}
+.l4-player .pair-practice .sl-card{padding:16px 20px;gap:8px}
+.l4-player .pair-practice .sl-card p{font-size:22px;line-height:1.35}
+.l4-player .pair-practice .givens span{font-size:22px;padding:8px 12px}
+.l4-player .pair-practice .sl-tk{font-size:23px;padding:12px 18px}
 .l4-player .givens{display:flex;flex-wrap:wrap;gap:12px}
 .l4-player .givens span{font-family:var(--mono);font-size:28px;background:color-mix(in oklch,var(--accent) 8%,var(--s-card));padding:10px 18px;border-radius:10px}
 .l4-player .traps{display:grid;grid-template-columns:1fr 1fr;gap:22px}
