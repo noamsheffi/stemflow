@@ -298,6 +298,9 @@ export default function Lesson04Player() {
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement;
+      const eventPath = event.composedPath();
+      const originatedInEditor = eventPath.some((node) => node instanceof HTMLElement && (node.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(node.tagName)));
+      if (originatedInEditor) return;
       if (target.isContentEditable || /INPUT|TEXTAREA|SELECT/.test(target.tagName)) return;
       if (event.key === " " && target.closest("button")) return;
       if (["ArrowLeft", "PageDown", " "].includes(event.key)) { event.preventDefault(); go(index + 1); }

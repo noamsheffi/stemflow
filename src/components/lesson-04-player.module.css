@@ -114,7 +114,7 @@
 .presentStage { display: grid; min-width: 0; min-height: 0; flex: 1; overflow: hidden; place-items: center; }
 .presentCanvas { position: relative; width: min(100%, calc((100vh - 100px) * 1.7778)); aspect-ratio: 16 / 9; overflow: hidden; border-radius: var(--r-xs); }
 .presentCanvas > div { position: absolute; inset: 0; transform: scale(var(--present-scale, 1)); transform-origin: top left; }
-.speakerNotes { position: absolute; inset-block-end: 86px; inset-inline-end: 24px; max-width: 460px; padding: 14px 16px; color: var(--ink); background: var(--paper-note); border-radius: var(--r); box-shadow: var(--shadow-panel); font-size: 14px; line-height: 1.55; }
+.speakerNotes { position: absolute; inset-block-end: 86px; inset-inline-end: 24px; width: min(460px, calc(100vw - 32px)); max-height: min(42vh, 320px); overflow: auto; padding: 16px 18px; color: var(--ink); background: var(--paper-note); border-radius: var(--r); box-shadow: var(--shadow-panel); font-size: 16px; line-height: 1.65; }
 .speakerNotes p { margin-block: 6px 0; }
 .presentControls { display: flex; justify-content: center; align-items: center; gap: 4px; padding: 5px; color: var(--white); border-radius: var(--r); background: color-mix(in srgb,var(--navy) 92%,transparent); }
 .presentControls span { padding-inline: 10px; color: var(--ink2); font: 12px var(--mono); }

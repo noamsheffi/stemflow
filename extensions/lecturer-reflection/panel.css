@@ -67,6 +67,10 @@ button,textarea{font:inherit;color:inherit}button{cursor:pointer}button:focus-vi
 .lp-panel.minimized .lp-grip{width:36px;height:36px;min-height:36px;border-radius:50%;}
 .lp-panel.minimized .lp-logo svg{width:13px;height:13px;}
 .lp-panel.minimized .lp-dot{top:5px;inset-inline-start:7px;width:5px;height:5px;}
+.lp-mark-badge{display:none}
+.lp-panel.minimized .lp-grip>.lp-mark-badge{position:absolute;display:grid!important;place-items:center;inset-inline-end:-1px;bottom:-1px;width:16px;height:16px;border:2px solid var(--navy);border-radius:50%;background:var(--mark-color);color:#fff;font-size:12px;font-weight:700;line-height:1;}
+.lp-panel.minimized .lp-grip>.lp-mark-badge svg{width:9px;height:9px;stroke-width:3;}
 .lp-panel.dock-bottom.minimized,.lp-panel.dock-bottom.exp.minimized{width:36px;height:36px;min-height:36px;max-height:36px;}
 .lp-panel.dock-bottom.exp.minimized .lp-grip{width:36px;height:36px;min-height:36px;}
 .rv-back{pointer-events:auto;}
+.rv.fullscreen{width:100vw;height:100vh;max-height:none;border-radius:0}.rv-back.fullscreen{padding:0}

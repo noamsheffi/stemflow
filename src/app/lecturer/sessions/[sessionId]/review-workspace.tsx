@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
+import { useEffect, useMemo, useState, type CSSProperties, type KeyboardEvent, type ReactNode } from "react";
 import type { LecturerSessionInsight } from "../../../../lib/lecturer-session-insights";
 import styles from "./review-workspace.module.css";
 
@@ -92,6 +92,7 @@ export default function LecturerReviewWorkspace({
 }) {
   const router = useRouter();
   const [slides, setSlides] = useState(initialSlides);
+  const [fullScreen, setFullScreen] = useState(false);
   const [navOpen, setNavOpen] = useState(true);
   const [detailOpen, setDetailOpen] = useState(true);
   const [selected, setSelected] = useState<number | null>(initialSlides.find((slide) => !slide.section)?.slideNumber ?? null);
@@ -114,6 +115,12 @@ export default function LecturerReviewWorkspace({
   const returnedSlides = instructionalSlides.filter((slide) => slide.anonymousReturned > 0).length;
   const selectedSlide = instructionalSlides.find((slide) => slide.slideNumber === selected) ?? instructionalSlides[0] ?? null;
   const chapters = [...new Map(instructionalSlides.map((slide) => [String(slide.chapterId ?? slide.chapter), { id: String(slide.chapterId ?? slide.chapter), title: slide.chapter || "שקפים" }])).values()];
+
+  useEffect(() => {
+    const update = () => setFullScreen(Boolean(document.fullscreenElement));
+    document.addEventListener("fullscreenchange", update);
+    return () => document.removeEventListener("fullscreenchange", update);
+  }, []);
 
   const scored = useMemo(() => instructionalSlides.map((slide) => ({ slide, score: priority(slide) })), [instructionalSlides]);
   const topSlides = scored.filter((item) => item.score >= 2.5).sort((a, b) => b.score - a.score).slice(0, 3);
@@ -229,7 +236,7 @@ export default function LecturerReviewWorkspace({
     {navOpen && <aside className={styles.nav}><Link className={styles.logo} href="/lecturer/sessions"><span>∞</span><b>Syllo</b><small>מרצה</small></Link><div className={styles.courseCard}><span className={styles.courseBadge}>מת</span><div><b>מערכות תקשורת</b><small>{session.courseId}</small></div></div><nav className={styles.navLinks} aria-label="ניווט מרצה"><Link className={styles.navActive} href="/lecturer/sessions">מפגשי הוראה</Link><Link href="/lecturer/sessions#lessons">מערכי שיעור</Link><Link href={`/course/${session.courseId}/formulas`}>נוסחאון</Link><Link href={`/course/${session.courseId}/concepts`}>מפת מושגים</Link><Link href={`/course/${session.courseId}/lessons/${session.lessonId}/slides`}>מערך השיעור</Link></nav><div className={styles.navFooter}><span className={styles.avatar}>מ</span><span><b>סביבת מרצה</b><small>נתוני הוראה אישיים</small></span><Link href="/api/auth/logout" aria-label="יציאה מהמערכת">↪</Link></div></aside>}
     <main className={styles.main}>
       <header className={styles.topbar}><button type="button" onClick={() => setNavOpen(!navOpen)} aria-label="הצגת או הסתרת ניווט" aria-pressed={navOpen}>☰</button><div className={styles.breadcrumbs}><Link href="/lecturer/sessions">מפגשי הוראה</Link><span>›</span><b>שיעור {session.lessonId.replace("lesson-", "")} · {session.lessonId === "lesson-04" ? "אפנון תנופה AM" : session.lessonId}</b></div><button type="button" onClick={() => setDetailOpen(!detailOpen)} aria-label="הצגת או הסתרת פרטי שקף" aria-pressed={detailOpen}>▣</button></header>
-      <div className={styles.page}><header className={styles.pageHeader}><div><p className={styles.eyebrow}>שיעור {session.lessonId.replace("lesson-", "")} · מפגש הוראה</p><h1>{session.lessonId === "lesson-04" ? "אפנון תנופה AM ומשדר" : session.lessonId}</h1><div className={styles.sessionMeta}><span>{date(session.startedAt)}</span><span className={styles.statusPill}>{session.endedAt ? "השיעור הסתיים" : "המפגש עדיין פתוח"}</span><span>סונכרן · {date(syncedAt)}</span></div></div><button type="button" className={styles.secondaryButton} onClick={exportJson}>ייצוא סיכום</button></header>
+      <div className={styles.page}><header className={styles.pageHeader}><div><p className={styles.eyebrow}>שיעור {session.lessonId.replace("lesson-", "")} · מפגש הוראה</p><h1>{session.lessonId === "lesson-04" ? "אפנון תנופה AM ומשדר" : session.lessonId}</h1><div className={styles.sessionMeta}><span>{date(session.startedAt)}</span><span className={styles.statusPill}>{session.endedAt ? "השיעור הסתיים" : "המפגש עדיין פתוח"}</span><span>סונכרן · {date(syncedAt)}</span></div></div><div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}><button type="button" className={styles.secondaryButton} onClick={() => { if (document.fullscreenElement) void document.exitFullscreen(); else void document.documentElement.requestFullscreen?.(); }}>{fullScreen ? "יציאה ממסך מלא" : "מסך מלא"}</button><button type="button" className={styles.secondaryButton} onClick={exportJson}>ייצוא סיכום</button></div></header>
         <div className={styles.tabs} role="tablist" aria-label="תוכן סיכום המפגש"><button type="button" role="tab" aria-selected={tab === "slides"} className={tab === "slides" ? styles.tabActive : ""} onClick={() => setTab("slides")}>לפי שקף</button><button type="button" role="tab" aria-selected={tab === "reflection"} className={tab === "reflection" ? styles.tabActive : ""} onClick={() => setTab("reflection")}>רפלקציה שלי</button></div>
         {mainBody}
       </div>
