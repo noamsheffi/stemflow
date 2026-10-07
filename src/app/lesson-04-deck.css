@@ -267,3 +267,20 @@
 @keyframes rv{from{opacity:0;transform:translateY(6px)}}
 
 .l4-player .playerMain{container-type:inline-size;container-name:main}
+
+/* Keep the measurement worked example and its reveal inside the slide frame. */
+.l4-player .measurement-slide .sl-body{gap:12px}
+.l4-player .measurement-slide .sl-card{padding:16px 20px;gap:9px}
+.l4-player .measurement-slide .stack{gap:9px}
+.l4-player .measurement-slide .sl-fx{font-size:30px;padding:10px 14px}
+.l4-player .measurement-slide .sl-fx.big{font-size:40px;padding:12px}
+.l4-player .measurement-slide p{font-size:22px;line-height:1.3;margin:0}
+.l4-player .measurement-slide .reveal-btn{font-size:22px;padding:12px 18px}
+
+/* Break the AM-to-sideband derivation into lines that fit each card. */
+.l4-player .sideband-derivation .sl-body{gap:12px}
+.l4-player .sideband-derivation .sl-card{padding:16px 18px;gap:9px}
+.l4-player .sideband-derivation .stack{gap:8px}
+.l4-player .sideband-derivation .sl-fx{font-size:clamp(22px,1.8vw,30px);padding:10px 12px}
+.l4-player .sideband-derivation p{font-size:21px;line-height:1.3;margin:0}
+.l4-player .sideband-derivation .lead{font-size:24px;line-height:1.35}
