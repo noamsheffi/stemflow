@@ -11,6 +11,6 @@ export async function OPTIONS(request: Request) {
 export async function POST(request: Request) {
   const cors = extensionCorsHeaders(request);
   if (!isLecturerBasicAuth(request.headers.get("authorization"))) return NextResponse.json({ error: "unauthorized" }, { status: 401, headers: { ...cors, "WWW-Authenticate": 'Basic realm="Syllo Lecturer", charset="UTF-8"' } });
-  try { return NextResponse.json({ token: createLecturerSyncToken(), expiresInSeconds: 28_800 }, { headers: cors }); }
+  try { return NextResponse.json({ token: createLecturerSyncToken(), expiresInSeconds: 2_592_000 }, { headers: cors }); }
   catch { return NextResponse.json({ error: "sync_unavailable" }, { status: 503, headers: cors }); }
 }

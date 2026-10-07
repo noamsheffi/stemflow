@@ -22,7 +22,7 @@ export function isLecturerBasicAuth(authorization: string | null) {
 export function createLecturerSyncToken() {
   const secret = process.env.LECTURER_SYNC_TOKEN_SECRET;
   if (!secret) throw new Error("LECTURER_SYNC_TOKEN_SECRET is not configured.");
-  const payload = base64url(JSON.stringify({ role: "lecturer-sync", exp: Math.floor(Date.now() / 1000) + 60 * 60 * 8 }));
+  const payload = base64url(JSON.stringify({ role: "lecturer-sync", exp: Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30 }));
   return `${payload}.${sign(payload, secret)}`;
 }
 
