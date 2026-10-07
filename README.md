@@ -50,6 +50,18 @@ npm run dev
 
 לא נדרשת הגדרת Google Classroom, Google SSO, חשבון סטודנט או שירות AI.
 
+## פריסה ל־production
+
+הפריסה האוטומטית מחוברת ל־GitHub: push לענף `main` מפעיל פריסת Production ב־Vercel. השתמשו בפקודה היחידה הבאה אחרי commit:
+
+```bash
+npm run deploy:prod
+```
+
+הפקודה דורשת ענף `main` ועץ עבודה נקי, דוחפת ל־`origin/main`, ואז ממתינה לפריסת ה־commit המדויק ומחזירה `READY` או כישלון. לא משתמשים ב־`vercel --prod` בפרויקט הזה; מסלול הפריסה הישיר של ה־CLI נדחה בהרשאה, בעוד שפריסות GitHub ל־Vercel פועלות. לאימות הפריסה האחרונה של ה־commit הנוכחי בלי לדחוף שוב, הריצו `npm run deploy:prod -- --verify`.
+
+תוסף Chrome נפרס בנפרד מהאתר; אחרי שינוי בקובצי `extensions/lecturer-reflection`, יש לטעון מחדש את התוסף מתוך `chrome://extensions`.
+
 ## גבולות השלב הנוכחי
 
 - הסקר אינו כולל אימות משתמשים לסטודנטים, Google Classroom, Google SSO או יכולות AI.

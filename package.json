@@ -6,6 +6,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "deploy:prod": "node scripts/deploy-production.mjs",
     "typecheck": "tsc --noEmit",
     "prebuild": "node scripts/lesson-metadata.mjs",
     "predev": "node scripts/lesson-metadata.mjs"
