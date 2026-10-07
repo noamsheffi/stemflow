@@ -178,7 +178,7 @@ function Flow({ items, dark }) {
 
 function Quiz() {
   const [pick, setPick] = slUseState(null);
-  const opts = [['995 & 1005 kHz', true], ['5 & 10 kHz'], ['1 & 6 MHz'], ['500 & 1500 kHz']];
+  const opts = [['995 kHz & 1005 kHz', true], ['5 kHz & 10 kHz'], ['1 MHz & 6 MHz'], ['500 kHz & 1500 kHz']];
   return (
     <div className="quiz">
       <div className="quiz-opts">
@@ -189,7 +189,7 @@ function Quiz() {
         ))}
       </div>
       <div className={'quiz-fb' + (pick == null ? '' : opts[pick][1] ? ' ok' : ' bad')}>
-        {pick == null ? 'בחרו תשובה והסבירו את המרת היחידות.' : opts[pick][1] ? 'נכון. 1000 − 5 = 995 ו־1000 + 5 = 1005 kHz.' : 'בדקו שוב: המירו תחילה MHz ל־kHz.'}
+        {pick == null ? 'בחרו תשובה והסבירו את המרת היחידות.' : opts[pick][1] ? 'נכון. fc=1 MHz=1000 kHz; fLSB=1000 kHz−5 kHz=995 kHz; fUSB=1000 kHz+5 kHz=1005 kHz.' : 'בדקו שוב: המירו fc=1 MHz ל־1000 kHz וכתבו יחידות ליד כל תדר.'}
       </div>
     </div>
   );
