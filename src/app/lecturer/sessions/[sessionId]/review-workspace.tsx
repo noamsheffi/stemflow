@@ -30,7 +30,15 @@ const MARKS: Array<{ key: MarkType; label: string; short: string; glyph: string;
   { key: "REVISIT", label: "לשנות בפעם הבאה", short: "לשנות", glyph: "↻", color: "#3B5BA9", soft: "#ECF0FA" },
 ];
 const MARK = Object.fromEntries(MARKS.map((item) => [item.key, item])) as Record<MarkType, (typeof MARKS)[number]>;
-const fmt = (ms: number | null) => ms === null || !Number.isFinite(ms) || ms < 0 ? "לא נמדד" : `${Math.floor(ms / 60_000)}:${String(Math.floor(ms / 1000) % 60).padStart(2, "0")}`;
+const numericMs = (value: number | string | null) => {
+  if (value === null || (typeof value === "string" && value.trim() === "")) return null;
+  const parsed = typeof value === "number" ? value : Number(value);
+  return Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
+};
+const fmt = (value: number | string | null) => {
+  const ms = numericMs(value);
+  return ms === null ? "לא נמדד" : `${Math.floor(ms / 60_000)}:${String(Math.floor(ms / 1000) % 60).padStart(2, "0")}`;
+};
 const date = (value: string) => new Intl.DateTimeFormat("he-IL", { dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Jerusalem" }).format(new Date(value));
 
 function priority(slide: ReviewSlide) {
@@ -46,14 +54,15 @@ function MarkPicker({ value, onChange, busy, size = "small" }: { value: MarkType
   </div>;
 }
 
-function TimeBars({ actual, planned }: { actual: number | null; planned: number | null }) {
+function TimeBars({ actual, planned }: { actual: number | string | null; planned: number | null }) {
   if (planned === null || planned <= 0) return <span className={styles.notMeasured}>שקף מעבר</span>;
-  if (actual === null) return <span className={styles.notMeasured}>לא נמדד</span>;
-  const max = Math.max(actual, planned, 1);
-  const delta = actual - planned;
+  const actualMs = numericMs(actual);
+  if (actualMs === null) return <span className={styles.notMeasured}>לא נמדד</span>;
+  const max = Math.max(actualMs, planned, 1);
+  const delta = actualMs - planned;
   return <div className={styles.timeCell}>
-    <div className={styles.timeBars}><i className={styles.planBar} style={{ width: `${planned / max * 100}%` }} /><i className={`${styles.actualBar} ${actual > planned * 1.25 ? styles.actualOver : ""}`} style={{ width: `${actual / max * 100}%` }} /></div>
-    <div className={styles.timeText}><bdi dir="ltr">{fmt(actual)} / {fmt(planned)}</bdi><span className={delta > planned * 0.25 ? styles.deltaOver : delta < -planned * 0.2 ? styles.deltaUnder : ""}>{delta > 0 ? "+" : delta < 0 ? "−" : "±"}{fmt(Math.abs(delta))}</span></div>
+    <div className={styles.timeBars}><i className={styles.planBar} style={{ width: `${planned / max * 100}%` }} /><i className={`${styles.actualBar} ${actualMs > planned * 1.25 ? styles.actualOver : ""}`} style={{ width: `${actualMs / max * 100}%` }} /></div>
+    <div className={styles.timeText}><bdi dir="ltr">{fmt(actualMs)} / {fmt(planned)}</bdi><span className={delta > planned * 0.25 ? styles.deltaOver : delta < -planned * 0.2 ? styles.deltaUnder : ""}>{delta > 0 ? "+" : delta < 0 ? "−" : "±"}{fmt(Math.abs(delta))}</span></div>
   </div>;
 }
 
