@@ -28,9 +28,16 @@ export default async function LecturerLearningPage() {
         <h2 id="student-feedback-title">משוב סטודנטים על שקפים</h2>
         {feedbackUnavailable ? <p>נתוני המשוב אינם זמינים. יש לוודא שמסד הנתונים מוגדר ושמיגרציה 007 הורצה.</p> : feedbackResults && <>
           <p className="results-total">סה״כ תגובות: <strong>{feedbackResults.totalResponses}</strong></p>
-          {feedbackResults.bySlide.length === 0 ? <p className="empty-results">עדיין לא התקבל משוב על שקפים.</p> : <table><thead><tr><th>שקף</th><th>סוג המשוב</th><th>תגובות</th></tr></thead><tbody>{feedbackResults.bySlide.map(item => <tr key={`${item.slideId}-${item.feedbackType}`}><td>{item.slideNumber}</td><td>{feedbackTypeLabel(item.feedbackType)}</td><td>{item.responses}</td></tr>)}</tbody></table>}
+          {feedbackResults.bySlide.length === 0 ? <p className="empty-results">עדיין לא התקבל משוב על שקפים.</p> : Array.from(new Set(feedbackResults.bySlide.map(item => item.lessonId))).map(lessonId => {
+            const lessonRows = feedbackResults.bySlide.filter(item => item.lessonId === lessonId);
+            const lessonResponses = lessonRows.reduce((total, item) => total + item.responses, 0);
+            return <section className="results-section" key={lessonId} aria-label={`משוב ${lessonTitle(lessonId)}`}>
+              <h3>{lessonTitle(lessonId)} · {lessonResponses} תגובות</h3>
+              <table><thead><tr><th>שקף</th><th>סוג המשוב</th><th>תגובות</th></tr></thead><tbody>{lessonRows.map(item => <tr key={`${item.slideId}-${item.feedbackType}`}><td>{item.slideNumber}</td><td>{feedbackTypeLabel(item.feedbackType)}</td><td>{item.responses}</td></tr>)}</tbody></table>
+            </section>;
+          })}
           <h3>תגובות פתוחות</h3>
-          {feedbackResults.comments.length === 0 ? <p className="empty-results">לא נכתבו תגובות פתוחות.</p> : <div className="response-list">{feedbackResults.comments.map((item, index) => <article className="response-card" key={`${item.submittedAt}-${index}`}><p className="response-time">שקף {item.slideNumber} · {feedbackTypeLabel(item.feedbackType)} · {new Intl.DateTimeFormat("he-IL", { dateStyle: "short", timeStyle: "short", timeZone: "Asia/Jerusalem" }).format(new Date(item.submittedAt))}</p><p>{item.comment}</p></article>)}</div>}
+          {feedbackResults.comments.length === 0 ? <p className="empty-results">לא נכתבו תגובות פתוחות.</p> : <div className="response-list">{feedbackResults.comments.map((item, index) => <article className="response-card" key={`${item.submittedAt}-${index}`}><p className="response-time">{lessonTitle(item.lessonId)} · שקף {item.slideNumber} · {feedbackTypeLabel(item.feedbackType)} · {new Intl.DateTimeFormat("he-IL", { dateStyle: "short", timeStyle: "short", timeZone: "Asia/Jerusalem" }).format(new Date(item.submittedAt))}</p><p>{item.comment}</p></article>)}</div>}
         </>}
       </section>
       <section className="results-section" aria-labelledby="midterm-practice-title">
@@ -46,4 +53,11 @@ export default async function LecturerLearningPage() {
 
 function feedbackTypeLabel(value: string) {
   return ({ NOT_UNDERSTOOD: "לא הבנתי", NEED_EXAMPLE: "צריך עוד דוגמה", QUESTION: "יש לי שאלה", POSSIBLE_ERROR: "נראה שיש טעות" } as Record<string, string>)[value] ?? value;
+}
+
+function lessonTitle(lessonId: string) {
+  return ({
+    "lesson-04": "שיעור 04 · אפנון תנופה AM ומשדר",
+    "lesson-05": "שיעור 05 · מקלט AM — סופר־הטרודיין וגלאי מעטפת",
+  } as Record<string, string>)[lessonId] ?? lessonId;
 }
