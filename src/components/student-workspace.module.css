@@ -356,21 +356,22 @@
 .conceptGraph { position: relative; min-width: 100%; }
 .conceptEdges { position: absolute; inset-block-start: 0; inset-inline-end: 0; z-index: 0; overflow: visible; pointer-events: none; }
 .conceptEdge { fill: none; stroke: var(--line); stroke-width: 1.5; }
-.conceptEdgeActive { fill: none; stroke: var(--accent); stroke-width: 2; }
-.conceptColumns { position: relative; z-index: 1; display: grid; grid-auto-columns: var(--u-160); grid-auto-flow: column; gap: var(--u-12); padding: var(--u-12) 0; direction: ltr; }
+.conceptEdgeActive { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+.conceptColumns { position: relative; z-index: 1; display: grid; grid-auto-columns: 230px; grid-auto-flow: column; gap: 24px; padding: 16px 18px; direction: ltr; }
 .conceptColumn { display: grid; align-content: start; gap: var(--u-8); min-width: 0; }
 .conceptColumn h2 { min-height: var(--u-22); margin: 0; color: var(--ink3); font-family: var(--mono); font-size: var(--u-10); font-weight: 400; text-align: center; }
 .conceptNodeDim { opacity: .45; }
 .conceptTag { display: inline-flex; width: fit-content; padding: var(--u-3) var(--u-7); color: var(--topic-fg); background: var(--topic-bg); border-radius: var(--r-xs); font-size: var(--fs-meta); }
 .conceptDetail p { margin: var(--u-12) 0; color: var(--ink2); font-size: var(--fs-sm); }
 .listConceptDetail { margin-block-start: var(--u-12); }
-.conceptColumns { display: grid; grid-auto-columns: var(--u-160); grid-auto-flow: column; gap: var(--u-12); min-width: max-content; padding: var(--u-16); }
+.conceptColumns { display: grid; grid-auto-columns: 230px; grid-auto-flow: column; gap: 24px; min-width: max-content; padding: 16px 18px; }
 .conceptMapScroll { min-width: 0; overflow: auto; background: var(--surface); border: var(--u-1) solid var(--line); border-radius: var(--r); }
-.conceptColumn { display: grid; align-content: start; gap: var(--u-8); }
+.conceptColumn { display: grid; align-content: start; gap: 10px; }
+.conceptColumn h2 { min-height: 22px; margin: 0; color: var(--ink3); font-family: var(--mono); font-size: var(--u-10); font-weight: 400; text-align: center; }
 .conceptColumn h3 { margin: 0; color: var(--ink3); font-family: var(--mono); font-size: var(--u-10); font-weight: 400; text-align: center; }
-.conceptNode { display: grid; height: var(--u-48); align-content: center; gap: var(--u-2); padding: var(--u-4) var(--u-6); color: var(--ink); background: var(--surface); border: var(--u-1) solid var(--line); border-radius: var(--r); text-align: center; cursor: pointer; }
-.conceptNode strong { display: -webkit-box; overflow: hidden; font-size: var(--u-11); line-height: 1.2; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
-.conceptNode span { color: var(--ink3); font-family: var(--mono); font-size: var(--u-9); }
+.conceptNode { display: grid; box-sizing: border-box; height: 86px; min-width: 0; align-content: center; gap: 5px; padding: 8px 10px; color: var(--ink); background: var(--surface); border: var(--u-1) solid var(--line); border-radius: var(--r); text-align: center; cursor: pointer; }
+.conceptNode strong { display: -webkit-box; overflow: hidden; font-size: var(--u-11); line-height: 1.25; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
+.conceptNode span { display: -webkit-box; overflow: hidden; color: var(--ink3); font-family: var(--mono); font-size: var(--u-9); line-height: 1.25; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
 .conceptNode:hover { border-color: var(--accent); }
 .conceptNodeSelected { color: var(--surface); background: var(--accent); border-color: var(--accent); }
 .conceptNodeSelected span { color: var(--white-muted); }

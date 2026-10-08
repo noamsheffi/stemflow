@@ -1371,6 +1371,15 @@
     button,.domain-btn,.wifi-btn,.solution-toggle{border-radius:10px;transform:none}
     @media(max-width:900px){.lesson-slide{padding:24px 18px 55px}}
 
+    /* Keep teaching panels readable on the refreshed light slide theme. */
+    .lesson-slide .agenda{position:relative;z-index:1;overflow:hidden;background:#fff!important;color:#13233a!important;border:1px solid #e6e8ee}
+    .lesson-slide .agenda::before,.lesson-slide .checkpoint::before{display:none!important;content:none!important}
+    .lesson-slide .agenda-item{color:#13233a;border-color:#e6e8ee}
+    .lesson-slide .agenda-item h3,.lesson-slide .agenda-item p{color:#13233a}
+    .lesson-slide .agenda-hour{color:#137a86}
+    .lesson-slide .checkpoint{position:relative;z-index:1;background:#e8f3f3!important;color:#13233a!important;border:1px solid #cfe4e5;border-inline-start:5px solid #137a86;border-radius:10px;transform:none}
+    .lesson-slide .card.black h3,.lesson-slide .card.black p,.lesson-slide .card.black li,.lesson-slide .card.green h3,.lesson-slide .card.green p,.lesson-slide .card.green li{color:#fff}
+
   </style>
   <script defer src="/lesson-metadata.js"></script>
   <script defer src="/slide-feedback.js"></script>

@@ -20,25 +20,30 @@ export default function CourseConcepts() {
   const selected = filtered.find((item) => item.id === selectedId) ?? filtered[0];
   const lessonNumbers = [...new Set(filtered.map((item) => lessonNumber(item.lesson)))].sort((a, b) => b - a);
   const byLesson = lessonNumbers.map((number) => ({ number, items: filtered.filter((item) => lessonNumber(item.lesson) === number) }));
-  const graphWidth = Math.max(160, byLesson.length * 172 - 12);
-  const graphHeight = Math.max(96, Math.max(...byLesson.map((group) => group.items.length), 1) * 56 + 55);
+  // Keep a consistent grid: lesson columns read right-to-left, while every
+  // concept gets enough vertical room for its Hebrew and English labels.
+  const columnWidth = 230;
+  const columnStep = 254;
+  const rowStep = 96;
+  const graphWidth = Math.max(270, byLesson.length * columnStep + 32);
+  const graphHeight = Math.max(150, Math.max(...byLesson.map((group) => group.items.length), 1) * rowStep + 76);
   const positionById = new Map<string, { x: number; y: number }>();
-  byLesson.forEach((group, column) => group.items.forEach((item, row) => positionById.set(item.id, { x: 80 + column * 172, y: 66 + row * 56 })));
+  byLesson.forEach((group, column) => group.items.forEach((item, row) => positionById.set(item.id, { x: 18 + columnWidth / 2 + column * columnStep, y: 91 + row * rowStep })));
   const incomingIds = selected ? conceptMap.filter((item) => item.connections.includes(selected.id)).map((item) => item.id) : [];
   const relatedIds = new Set(selected ? [selected.id, ...selected.connections, ...incomingIds] : []);
   const selectedData = selected ? concepts.find((item) => item.conceptId === selected.id) : undefined;
   const selectedLesson = selected ? lessons.find((item) => item.number === lessonNumber(selected.lesson)) : undefined;
   const formulaNames = (selected?.formulas ?? []).map((tex) => formulaSheet.find((item) => item.formula_latex === tex)).filter((item): item is (typeof formulaSheet)[number] => Boolean(item));
 
-  const edgePaths = filtered.flatMap((item) => item.connections.flatMap((relatedId) => {
-    if (!visibleIds.has(relatedId) || item.id.localeCompare(relatedId) > 0) return [];
-    const from = positionById.get(item.id), to = positionById.get(relatedId);
+  // Show only the selected concept's immediate incoming and outgoing links.
+  // Connections are not guaranteed to be symmetric in the source data.
+  const edgePaths = [...relatedIds].filter((id) => id !== selected?.id && visibleIds.has(id)).flatMap((relatedId) => {
+    const from = positionById.get(selected?.id ?? ""), to = positionById.get(relatedId);
     if (!from || !to) return [];
     const dx = (to.x - from.x) * 0.48;
     const path = `M ${from.x} ${from.y} C ${from.x + dx} ${from.y}, ${to.x - dx} ${to.y}, ${to.x} ${to.y}`;
-    const active = item.id === selected?.id || relatedId === selected?.id;
-    return [{ id: `${item.id}-${relatedId}`, path, active }];
-  }));
+    return [{ id: `${selected?.id}-${relatedId}`, path }];
+  });
 
   const conceptButton = (item: Concept) => <button type="button" className={`${styles.conceptNode} ${selected?.id === item.id ? styles.conceptNodeSelected : ""} ${selected && !relatedIds.has(item.id) ? styles.conceptNodeDim : ""}`} key={item.id} onClick={() => setSelectedId(item.id)} aria-pressed={selected?.id === item.id}>
     <strong>{item.title}</strong><span dir="ltr">{item.english}</span>
@@ -55,7 +60,7 @@ export default function CourseConcepts() {
       <div className={styles.conceptMapViewport} role="region" aria-label="מושגים לפי שיעור; אפשר לגלול לרוחב">
         <div className={styles.conceptGraph} style={{ width: graphWidth, minHeight: graphHeight }}>
           <svg className={styles.conceptEdges} width={graphWidth} height={graphHeight} viewBox={`0 0 ${graphWidth} ${graphHeight}`} aria-hidden="true">
-            {edgePaths.map((edge) => <path key={edge.id} d={edge.path} className={edge.active ? styles.conceptEdgeActive : styles.conceptEdge} />)}
+            {edgePaths.map((edge) => <path key={edge.id} d={edge.path} className={styles.conceptEdgeActive} />)}
           </svg>
           <div className={styles.conceptColumns}>
             {byLesson.map((group) => <section className={styles.conceptColumn} key={group.number} aria-label={`שיעור ${group.number}`}>
