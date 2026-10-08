@@ -28,7 +28,7 @@ export default async function LecturerLessonPreviewPage({ params }: { params: Pr
     </header>
     <nav className={styles.phaseNav} aria-label="שלבי השיעור">{phases.map((item) => <Link key={item.id} className={`${styles.phase} ${phase === item.id ? styles.phaseActive : ""}`} href={`/lecturer/lessons/${lesson.lessonId}/${item.id}`} aria-current={phase === item.id ? "step" : undefined}><span className={styles.phaseNumber} dir="ltr">{item.number}</span><span className={styles.phaseText}><small>{item.id === "slides" ? "בכיתה" : item.id === "practice" ? "אחרי השיעור" : "לקראת השיעור הבא"}</small><b>{item.label}</b></span></Link>)}</nav>
     {phase === "slides" && lesson.lessonId === "lesson-04" ? <Lesson04Player lecturerMode />
-      : phase === "slides" && lesson.lessonId === "lesson-05" ? <Lesson05Player />
+      : phase === "slides" && lesson.lessonId === "lesson-05" ? <Lesson05Player lecturerMode />
         : phase === "practice" && lesson.lessonId === "lesson-05" ? <Lesson05Practice />
           : resource ? <section className={styles.viewer}><iframe src={resource.href} title={`${resource.title}: ${lesson.title}`} allowFullScreen /><div className={styles.viewerFooter}><span>{resource.title}</span><Link className={styles.openNew} href={resource.href} target="_blank" rel="noreferrer">פתיחה בחלון חדש ↗</Link></div></section>
             : <p className={styles.empty}>{phase === "summary" ? "רפלקציה זו זמינה בסביבת הסטודנטים בלבד." : "אין לשיעור הזה תוכן בשלב שנבחר."} <Link className={styles.openNew} href="/lecturer/sessions#lessons">חזרה למערכי השיעור</Link></p>}

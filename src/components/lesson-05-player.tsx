@@ -67,7 +67,7 @@ function ScaledSlide({ slide, index, hostClass }: { slide: DeckSlide; index: num
   </div>;
 }
 
-export default function Lesson05Player() {
+export default function Lesson05Player({ lecturerMode = false }: { lecturerMode?: boolean }) {
   const [index, setIndex] = useState(0);
   const [notesOpen, setNotesOpen] = useState(true);
   const [outlineOpen, setOutlineOpen] = useState(true);
@@ -110,8 +110,8 @@ export default function Lesson05Player() {
 
   return createPortal(<div ref={playerRef} dir="rtl" className={`l4-player syllo-student-app ${playerStyles.player} ${outlineOpen ? playerStyles.withOutline : ""} ${notesOpen ? playerStyles.withContext : ""}`} aria-label="מערך שיעור 05">
     <header className={playerStyles.playerToolbar}>
-      <div className={playerStyles.lessonIdentity}><a className={playerStyles.courseBreadcrumb} href="/lecturer/sessions#lessons"><span className={playerStyles.breadcrumbArrow} aria-hidden="true">›</span><span><small>חזרה לפנל המרצים</small><b>מערכות תקשורת</b></span></a><span className={playerStyles.toolbarDivider}/><span className={playerStyles.lessonBadge} dir="ltr">05</span><span className={playerStyles.lessonTitle}>מקלט AM — סופר־הטרודיין וגלאי מעטפת</span></div>
-      <nav className={playerStyles.loopPhases} aria-label="שלבי השיעור"><a className={playerStyles.phaseActive} href="/lecturer/lessons/lesson-05/slides"><span dir="ltr">01</span>מערך השיעור</a><a href="/lecturer/lessons/lesson-05/practice"><span dir="ltr">02</span>תרגול</a></nav>
+      <div className={playerStyles.lessonIdentity}><a className={playerStyles.courseBreadcrumb} href={lecturerMode ? "/lecturer/sessions#lessons" : "/course/communication-systems/lessons"}><span className={playerStyles.breadcrumbArrow} aria-hidden="true">›</span><span><small>{lecturerMode ? "חזרה לפנל המרצים" : "חזרה למערכי השיעור"}</small><b>מערכות תקשורת</b></span></a><span className={playerStyles.toolbarDivider}/><span className={playerStyles.lessonBadge} dir="ltr">05</span><span className={playerStyles.lessonTitle}>מקלט AM — סופר־הטרודיין וגלאי מעטפת</span></div>
+      <nav className={playerStyles.loopPhases} aria-label="שלבי השיעור"><a className={playerStyles.phaseActive} href={lecturerMode ? "/lecturer/lessons/lesson-05/slides" : "/course/communication-systems/lessons/lesson-05/slides"}><span dir="ltr">01</span>מערך השיעור</a><a href={lecturerMode ? "/lecturer/lessons/lesson-05/practice" : "/course/communication-systems/lessons/lesson-05/practice"}><span dir="ltr">02</span>תרגול</a></nav>
       <div className={playerStyles.toolbarActions}><button type="button" className={playerStyles.toolbarButton} aria-label="מבנה השיעור" aria-pressed={outlineOpen} onClick={() => setOutlineOpen((value) => !value)}>☷</button><button type="button" className={playerStyles.toolbarButton} aria-label="הערות מרצה" aria-pressed={notesOpen} onClick={() => setNotesOpen((value) => !value)}>הערות</button><button type="button" className={playerStyles.presentButton} onClick={() => setPresent(true)}>הצגה</button></div>
     </header>
     <div className={playerStyles.loopProgress}/>

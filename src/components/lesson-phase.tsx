@@ -7,6 +7,8 @@ import { concepts, course, publishedLessons } from "../lib/course-data";
 import { lesson04Slides } from "./lesson-04-data";
 import LessonOpenLink from "./lesson-open-link";
 import Lesson04Player from "./lesson-04-player";
+import Lesson05Player from "./lesson-05-player";
+import Lesson05Practice from "./lesson-05-practice";
 import styles from "./student-workspace.module.css";
 
 const phases = [
@@ -136,14 +138,14 @@ export default function LessonPhase({ lesson, phase }: { lesson: CourseLesson; p
     <section aria-labelledby="phase-heading">
       {phase !== "slides" && <div className={styles.phaseIntro}><h2 id="phase-heading">{phaseContent.title}</h2><p>{phaseContent.description}</p></div>}
       {phase === "slides" && lesson.lessonId === "lesson-04" && <Lesson04Player />}
-      {phase === "slides" && lesson.lessonId !== "lesson-04" && resource && <div className={styles.viewer}>
+      {phase === "slides" && lesson.lessonId === "lesson-05" && <Lesson05Player />}
+      {phase === "slides" && lesson.lessonId !== "lesson-04" && lesson.lessonId !== "lesson-05" && resource && <div className={styles.viewer}>
         <iframe className={styles.viewerFrame} src={resource.href} title={`מערך שיעור ${lesson.number}: ${lesson.title}`} allowFullScreen />
         <div className={styles.viewerFooter}><span>{resource.title}</span><LessonOpenLink className={styles.materialLink} href={resource.href} lessonId={lesson.lessonId} resourceId={resource.resourceId} resourceKind={resource.kind} target="_blank" rel="noreferrer">פתיחה בחלון חדש</LessonOpenLink></div>
       </div>}
-      {phase === "slides" && lesson.lessonId !== "lesson-04" && !resource && <p className={styles.emptyState}>מערך השיעור עדיין לא זמין.</p>}
+      {phase === "slides" && lesson.lessonId !== "lesson-04" && lesson.lessonId !== "lesson-05" && !resource && <p className={styles.emptyState}>מערך השיעור עדיין לא זמין.</p>}
       {phase === "practice" && resource && <>
-        <iframe className={styles.practiceFrame} src={resource.href} title={`תרגול שיעור ${lesson.number}: ${lesson.title}`} />
-        <div className={styles.viewerFooter}><LessonOpenLink className={styles.materialLink} href={resource.href} lessonId={lesson.lessonId} resourceId={resource.resourceId} resourceKind={resource.kind} target="_blank" rel="noreferrer">פתיחה בחלון חדש</LessonOpenLink></div>
+        {lesson.lessonId === "lesson-05" ? <Lesson05Practice /> : <><iframe className={styles.practiceFrame} src={resource.href} title={`תרגול שיעור ${lesson.number}: ${lesson.title}`} /><div className={styles.viewerFooter}><LessonOpenLink className={styles.materialLink} href={resource.href} lessonId={lesson.lessonId} resourceId={resource.resourceId} resourceKind={resource.kind} target="_blank" rel="noreferrer">פתיחה בחלון חדש</LessonOpenLink></div></>}
       </>}
       {phase === "practice" && !resource && <p className={styles.emptyState}>אין תרגול רשום לשיעור הזה.</p>}
       {phase === "summary" && <ReflectionDraft lesson={lesson} />}

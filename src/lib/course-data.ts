@@ -222,7 +222,7 @@ export const lessons: CourseLesson[] = [
     lessonId: "lesson-05",
     number: 5,
     title: "מקלט AM — סופר-הטרודיין וגלאי מעטפת",
-    hidden: true,
+    hidden: false,
     url: "/course/communication-systems/lessons/lesson-05",
     topics: ["מקלט AM", "סופר-הטרודיין", "תדר בבואה", "גלאי מעטפת", "AGC"],
     formulaIds: [],
