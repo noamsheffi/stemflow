@@ -287,6 +287,10 @@
 .l4-player .measurement-slide .sl-fx.big{font-size:40px;padding:12px}
 .l4-player .measurement-slide p{font-size:22px;line-height:1.3;margin:0}
 .l4-player .measurement-slide .reveal-btn{font-size:22px;padding:12px 18px}
+.l4-player .measurement-slide .reveal{padding:12px 16px;font-size:20px}
+.l4-player .measurement-slide .reveal button{min-height:40px;padding:8px 14px;font-size:20px}
+.l4-player .measurement-slide .reveal ol{margin:8px 0 0;padding-inline-start:26px;font-size:20px;line-height:1.25}
+.l4-player .measurement-slide .reveal li{padding:3px 0}
 
 /* Break the AM-to-sideband derivation into lines that fit each card. */
 .l4-player .sideband-derivation .sl-body{gap:12px}

@@ -43,7 +43,8 @@ const css = cssPaths.map((file) => fs.readFileSync(path.join(root, file), "utf8"
 const slides = lesson05Slides.map((slide, index) => {
   const content = renderToStaticMarkup(slide.content);
   const id = `lesson-05-slide-${String(index + 1).padStart(2, "0")}`;
-  return `<section class="slide-page${index === 0 ? " is-active" : ""}" id="${id}" aria-label="שקף ${index + 1}: ${escapeHtml(slide.title)}" aria-hidden="${index === 0 ? "false" : "true"}"><div class="slide-canvas"><div class="sl l5-slide"><header class="sl-h"><div class="sl-eb">${escapeHtml(slide.chapter)}</div><h2>${escapeHtml(slide.title)}</h2></header><div class="sl-body">${content}</div><div class="sl-tk"><span>העיקר</span>${escapeHtml(slide.takeaway)}</div><footer class="sl-f"><span>${escapeHtml(slide.chapter)}</span><span dir="ltr">${String(index + 1).padStart(2, "0")}</span></footer></div></div></section>`;
+  const slideClass = slide.className ? ` ${escapeHtml(slide.className)}` : "";
+  return `<section class="slide-page${index === 0 ? " is-active" : ""}" id="${id}" aria-label="שקף ${index + 1}: ${escapeHtml(slide.title)}" aria-hidden="${index === 0 ? "false" : "true"}"><div class="slide-canvas"><div class="sl l5-slide${slideClass}"><header class="sl-h"><div class="sl-eb">${escapeHtml(slide.chapter)}</div><h2>${escapeHtml(slide.title)}</h2></header><div class="sl-body">${content}</div><div class="sl-tk"><span>העיקר</span>${escapeHtml(slide.takeaway)}</div><footer class="sl-f"><span>${escapeHtml(slide.chapter)}</span><span dir="ltr">${String(index + 1).padStart(2, "0")}</span></footer></div></div></section>`;
 }).join("\n");
 
 const html = `<!doctype html>
