@@ -2,19 +2,19 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { course, lessons } from "../lib/course-data";
+import { course, publishedLessons } from "../lib/course-data";
 import styles from "./student-workspace.module.css";
 
 export default function CourseLessons() {
   const [query, setQuery] = useState("");
   const terms = query.trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
-  const filtered = lessons.filter((lesson) => terms.every((term) => `${lesson.number} ${lesson.title} ${lesson.topics.join(" ")}`.toLocaleLowerCase().includes(term)));
+  const filtered = publishedLessons.filter((lesson) => terms.every((term) => `${lesson.number} ${lesson.title} ${lesson.topics.join(" ")}`.toLocaleLowerCase().includes(term)));
 
   return <>
     <header className={styles.pageHeading}><p className={styles.pageKicker}>{course.title} · <span dir="ltr">{course.courseNumber}</span></p><h1>מערכי שיעור</h1><p>כל שיעור מחבר בין מערך השיעור, תרגול וחומרי העזר הקשורים אליו.</p></header>
     <div className={styles.searchControls}>
       <label className={styles.searchField}><span aria-hidden="true">⌕</span><span className={styles.srOnly}>חיפוש במערכי שיעור</span><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="חיפוש לפי שיעור או נושא" /></label>
-      <span className={styles.resultCount} role="status" aria-live="polite">{filtered.length} מתוך {lessons.length} שיעורים</span>
+      <span className={styles.resultCount} role="status" aria-live="polite">{filtered.length} מתוך {publishedLessons.length} שיעורים</span>
     </div>
     {filtered.length ? <section className={styles.syllabus} aria-label="רשימת מערכי שיעור"><div className={styles.syllabusRows}>
       {filtered.map((lesson) => <article className={styles.syllabusRow} key={lesson.lessonId}>

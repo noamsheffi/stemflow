@@ -77,8 +77,9 @@ export default async function LecturerHomePage() {
                 <span><b>{analyticsAvailable ? stats?.sessions ?? 0 : "—"}</b><small>מפגשי למידה</small></span>
                 <span><b>{analyticsAvailable ? stats?.slideViews ?? 0 : "—"}</b><small>צפיות בשקפים</small></span>
               </div>
+              {lesson.hidden && <span className={styles.lessonTag}>מוסתר מסטודנטים</span>}
               {recent ? <div className={styles.recent}><span>מפגש הוראה אחרון</span><b>{date(recent.startedAt)}</b><small>{duration(recent.totalDurationMs)} זמן פעיל · {recent.slidesShown} שקפים · {recent.annotationsCount} סימונים</small></div> : <div className={styles.recent}><span>מפגש הוראה</span><b>עדיין אין מפגש מסונכרן</b><small>פתח מערך שיעור והפעל את תוסף המרצה במהלך ההוראה.</small></div>}
-              <div className={styles.cardActions}><Link className={styles.primaryAction} href={lesson.url}>פתיחת מערך השיעור <span>←</span></Link>{recent && <Link className={styles.secondaryAction} href={`/lecturer/sessions/${recent.sessionId}`}>סיכום וסטטיסטיקות</Link>}</div>
+              <div className={styles.cardActions}><Link className={styles.primaryAction} href={lesson.hidden ? `/lecturer/lessons/${lesson.lessonId}/slides` : lesson.url}>{lesson.hidden ? "תצוגת מרצה" : "פתיחת מערך השיעור"} <span>←</span></Link>{recent && <Link className={styles.secondaryAction} href={`/lecturer/sessions/${recent.sessionId}`}>סיכום וסטטיסטיקות</Link>}</div>
             </article>;
           })}
         </div>

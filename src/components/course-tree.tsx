@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import type { Course } from "../lib/course-data";
-import { lessons } from "../lib/course-data";
+import { publishedLessons } from "../lib/course-data";
 import LogoutButton from "./logout-button";
 import styles from "./student-workspace.module.css";
 
@@ -31,7 +31,7 @@ export default function CourseTree({ courses, collapsed = false }: { courses: Co
     ?? courses[0];
   const profileName = currentCourse?.lecturer || "צוות Syllo";
   const profileInitials = profileName.split(/\s+/).filter(Boolean).slice(0, 2).map((part) => Array.from(part)[0]).join("");
-  const currentLesson = lessons.find((lesson) => pathname.includes(`/lessons/${lesson.lessonId}`));
+  const currentLesson = publishedLessons.find((lesson) => pathname.includes(`/lessons/${lesson.lessonId}`));
 
   useEffect(() => {
     setExpandedLessons(currentLesson ? { [currentLesson.lessonId]: true } : {});
@@ -49,7 +49,7 @@ export default function CourseTree({ courses, collapsed = false }: { courses: Co
   }, []);
 
   const courseLessons = currentCourse?.courseId === "communication-systems"
-    ? lessons.filter((lesson) => currentCourse.lessonIds.includes(lesson.lessonId))
+    ? publishedLessons.filter((lesson) => currentCourse.lessonIds.includes(lesson.lessonId))
     : [];
   const filteredLessons = courseLessons.filter((lesson) => `${lesson.number} ${lesson.title} ${lesson.topics.join(" ")}`.toLocaleLowerCase().includes(query.trim().toLocaleLowerCase()));
   const activeSection = (section: string) => pathname === courseHref(currentCourse?.courseId ?? "communication-systems", section)

@@ -8,7 +8,7 @@ const validPhases = new Set(["slides", "practice", "summary"]);
 export default async function LessonPhasePage({ params }: { params: Promise<{ lessonId: string; phase: string }> }) {
   const { lessonId, phase } = await params;
   const lesson = getLesson(lessonId);
-  if (!lesson || !validPhases.has(phase)) notFound();
+  if (!lesson || lesson.hidden || !validPhases.has(phase)) notFound();
 
   const content = <LessonPhase lesson={lesson} phase={phase as "slides" | "practice" | "summary"} />;
   return <CourseLayout>{content}</CourseLayout>;

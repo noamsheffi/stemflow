@@ -1,16 +1,16 @@
 import Link from "next/link";
 import AnalyticsEventTracker from "../../../components/analytics-event-tracker";
 import CourseLayout from "../../../components/course-layout";
-import { concepts, course, formulas, lessons, supportingMaterials, workspace } from "../../../lib/course-data";
+import { concepts, course, formulas, isLessonHidden, publishedLessons, supportingMaterials, workspace } from "../../../lib/course-data";
 import styles from "../../../components/student-workspace.module.css";
 
 const href = (section = "") => `/course/${course.courseId}${section ? `/${section}` : ""}`;
 const pad2 = (value: number) => String(value).padStart(2, "0");
 
 export default function CourseHomePage() {
-  const firstLesson = lessons.find((lesson) => lesson.resources.some((resource) => resource.kind === "lesson-html"));
+  const firstLesson = publishedLessons.find((lesson) => lesson.resources.some((resource) => resource.kind === "lesson-html"));
   const availableFormulaCount = formulas.length;
-  const availableConceptCount = concepts.length;
+  const availableConceptCount = concepts.filter((concept) => !concept.lessonIds.some(isLessonHidden)).length;
 
   return <CourseLayout>
     <AnalyticsEventTracker eventName="course_open" properties={{ workspace_id: workspace.workspaceId, course_id: course.courseId }} />
@@ -39,7 +39,7 @@ export default function CourseHomePage() {
           <span><b dir="ltr">01</b> מערך שיעור</span><span><b dir="ltr">02</b> תרגול</span><span><b dir="ltr">03</b> רפלקציה</span>
         </div>
         <div className={styles.syllabusRows}>
-          {lessons.map((lesson) => {
+          {publishedLessons.map((lesson) => {
             const hasSlides = lesson.resources.some((resource) => resource.kind === "lesson-html");
             const hasPractice = lesson.resources.some((resource) => resource.kind === "exercise");
             return <Link className={styles.syllabusRow} key={lesson.lessonId} href={`${href(`lessons/${lesson.lessonId}`)}/slides`}>
@@ -67,8 +67,8 @@ export default function CourseHomePage() {
         </section>
         <section className={`${styles.card} ${styles.courseStatus}`} aria-labelledby="course-status-title">
           <h2 id="course-status-title">תוכן הקורס</h2>
-          <div className={styles.statusCount}><strong dir="ltr">{lessons.length}</strong><span>מערכי שיעור זמינים</span></div>
-          <div className={styles.statusBar} aria-hidden="true">{lessons.map((lesson) => <i key={lesson.lessonId} className={lesson.resources.some((resource) => resource.kind === "lesson-html") ? styles.available : ""}/>)}</div>
+          <div className={styles.statusCount}><strong dir="ltr">{publishedLessons.length}</strong><span>מערכי שיעור זמינים</span></div>
+          <div className={styles.statusBar} aria-hidden="true">{publishedLessons.map((lesson) => <i key={lesson.lessonId} className={lesson.resources.some((resource) => resource.kind === "lesson-html") ? styles.available : ""}/>)}</div>
           <p>נתוני השלמת שלבי הלמידה אינם זמינים עדיין.</p>
         </section>
       </aside>

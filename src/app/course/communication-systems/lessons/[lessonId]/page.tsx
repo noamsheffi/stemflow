@@ -4,6 +4,6 @@ import { getLesson } from "../../../../../lib/course-data";
 export default async function LessonIndexPage({ params }: { params: Promise<{ lessonId: string }> }) {
   const { lessonId } = await params;
   const lesson = getLesson(lessonId);
-  if (!lesson) notFound();
+  if (!lesson || lesson.hidden) notFound();
   redirect(`/course/communication-systems/lessons/${lesson.lessonId}/slides`);
 }

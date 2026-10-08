@@ -3,19 +3,20 @@
 import Link from "next/link";
 import { useState } from "react";
 import data from "../lib/formula-sheet-data.json";
-import { course, lessons } from "../lib/course-data";
+import { course, hiddenLessonNumbers, lessons } from "../lib/course-data";
 import { splitFormulaName } from "../lib/formula-name";
 import FormulaMath from "./formula-math";
 import FormulaScroll from "./formula-scroll";
 import styles from "./student-workspace.module.css";
 
-const lessonNumbers = [...new Set(data.map((formula) => formula.lesson))].sort((a, b) => Number(a) - Number(b));
+const publishedFormulaData = data.filter((formula) => !hiddenLessonNumbers.has(Number(formula.lesson)));
+const lessonNumbers = [...new Set(publishedFormulaData.map((formula) => formula.lesson))].sort((a, b) => Number(a) - Number(b));
 
 export default function CourseFormulas() {
   const [query, setQuery] = useState("");
   const [lesson, setLesson] = useState("all");
   const normalizedQuery = query.trim().toLocaleLowerCase();
-  const filtered = data.filter((formula) => (lesson === "all" || formula.lesson === lesson) && (!normalizedQuery || JSON.stringify(formula).toLocaleLowerCase().includes(normalizedQuery)));
+  const filtered = publishedFormulaData.filter((formula) => (lesson === "all" || formula.lesson === lesson) && (!normalizedQuery || JSON.stringify(formula).toLocaleLowerCase().includes(normalizedQuery)));
   const groups = lessonNumbers.filter((number) => filtered.some((formula) => formula.lesson === number));
 
   return <>
@@ -27,7 +28,7 @@ export default function CourseFormulas() {
         {lessonNumbers.map((number) => <button type="button" className={styles.filterChip} dir="ltr" aria-pressed={lesson === number} key={number} onClick={() => setLesson(number)}>{String(number).padStart(2, "0")}</button>)}
       </div>
     </div>
-    <p className={styles.resultCount} role="status" aria-live="polite">מוצגות {filtered.length} מתוך {data.length} נוסחאות</p>
+    <p className={styles.resultCount} role="status" aria-live="polite">מוצגות {filtered.length} מתוך {publishedFormulaData.length} נוסחאות</p>
     {filtered.length ? <div className={styles.formulaList}>
       {groups.map((number) => {
         const lessonData = lessons.find((item) => item.number === Number(number));

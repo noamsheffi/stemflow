@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { CourseLesson } from "../lib/course-data";
-import { concepts, course, lessons } from "../lib/course-data";
+import { concepts, course, publishedLessons } from "../lib/course-data";
 import { lesson04Slides } from "./lesson-04-data";
 import LessonOpenLink from "./lesson-open-link";
 import Lesson04Player from "./lesson-04-player";
@@ -103,8 +103,8 @@ function ReflectionDraft({ lesson }: { lesson: CourseLesson }) {
 export default function LessonPhase({ lesson, phase }: { lesson: CourseLesson; phase: PhaseId }) {
   const resource = lesson.resources.find((item) => phase === "slides" ? item.kind === "lesson-html" : item.kind === "exercise");
   const phaseIndex = phases.findIndex((item) => item.id === phase);
-  const lessonIndex = lessons.findIndex((item) => item.lessonId === lesson.lessonId);
-  const nextLesson = lessons[lessonIndex + 1];
+  const lessonIndex = publishedLessons.findIndex((item) => item.lessonId === lesson.lessonId);
+  const nextLesson = lessonIndex >= 0 ? publishedLessons[lessonIndex + 1] : undefined;
   const phaseContent = phase === "slides" ? {
     title: "בכיתה",
     description: "מערך השיעור נפתח כאן בתוך סביבת הלמידה.",

@@ -35,6 +35,8 @@ export type CourseLesson = {
   lessonId: string;
   number: number;
   title: string;
+  /** Keep this lesson out of student-facing listings and routes until it is ready. */
+  hidden?: boolean;
   url: string;
   topics: string[];
   formulaIds: string[];
@@ -216,7 +218,30 @@ export const lessons: CourseLesson[] = [
       },
     ],
   },
+  {
+    lessonId: "lesson-05",
+    number: 5,
+    title: "מקלט AM — סופר-הטרודיין וגלאי מעטפת",
+    hidden: true,
+    url: "/course/communication-systems/lessons/lesson-05",
+    topics: ["מקלט AM", "סופר-הטרודיין", "תדר בבואה", "גלאי מעטפת", "AGC"],
+    formulaIds: [],
+    conceptIds: [],
+    slides: [],
+    resources: [
+      { resourceId: "lesson-05-main-html", kind: "lesson-html", title: "מערך שיעור — מקלט AM", href: "/course/communication-systems/lessons/lesson-05/slides" },
+      { resourceId: "lesson-05-self-practice", kind: "exercise", title: "תרגול אינטראקטיבי — מקלט AM", href: "/course/communication-systems/lessons/lesson-05/practice" },
+    ],
+  },
 ];
+
+/** Lessons visible in the student workspace. Hidden lessons remain available to lecturer preview routes. */
+export const publishedLessons = lessons.filter((lesson) => !lesson.hidden);
+export const hiddenLessonNumbers = new Set(lessons.filter((lesson) => lesson.hidden).map((lesson) => lesson.number));
+
+export function isLessonHidden(lessonId: string) {
+  return Boolean(lessons.find((lesson) => lesson.lessonId === lessonId)?.hidden);
+}
 export const formulas: CourseFormula[] = formulaSheet.map((item) => ({
   formulaId: item.id,
   name: item.name,
@@ -263,6 +288,10 @@ export function getFormula(formulaId: string) {
 
 export function getConcept(conceptId: string) {
   return concepts.find((concept) => concept.conceptId === conceptId);
+}
+
+export function isConceptHidden(conceptId: string) {
+  return Boolean(getConcept(conceptId)?.lessonIds.some(isLessonHidden));
 }
 
 export function lessonHref(lesson: CourseLesson) {

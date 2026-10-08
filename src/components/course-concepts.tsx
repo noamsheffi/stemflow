@@ -5,26 +5,27 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { conceptMap } from "../lib/concept-map";
 import { courseMindMap, type CourseMindMapNode } from "../lib/course-mind-map";
 import formulaSheet from "../lib/formula-sheet-data.json";
-import { concepts, course, lessons } from "../lib/course-data";
+import { concepts, course, hiddenLessonNumbers, lessons } from "../lib/course-data";
 import styles from "./student-workspace.module.css";
 
 type Concept = (typeof conceptMap)[number];
 type MindPosition = { node: CourseMindMapNode; x: number; y: number; lessonNumber: number; width: number };
 type MindEdge = { id: string; path: string; lessonNumber: number };
 const lessonNumber = (value: string) => Number(value.match(/\d+/)?.[0] ?? 0);
+const publishedConceptMap = conceptMap.filter((item) => !hiddenLessonNumbers.has(lessonNumber(item.lesson)));
 const leaves = (node: CourseMindMapNode): number => node.children.length ? node.children.reduce((sum, child) => sum + leaves(child), 0) : 1;
 const nodeWidth = (node: CourseMindMapNode) => node.kind === "root" ? 216 : node.kind === "lesson" ? 198 : node.kind === "topic" ? 176 : 198;
 
 export default function CourseConcepts() {
-  const [selectedId, setSelectedId] = useState(conceptMap.find((item) => item.id === "carrier-wave")?.id ?? conceptMap[0]?.id ?? "");
+  const [selectedId, setSelectedId] = useState(publishedConceptMap.find((item) => item.id === "carrier-wave")?.id ?? publishedConceptMap[0]?.id ?? "");
   const [view, setView] = useState<"map" | "list">("map");
   const [query, setQuery] = useState("");
   const viewportRef = useRef<HTMLDivElement>(null);
   const term = query.trim().toLocaleLowerCase();
-  const filtered = useMemo(() => conceptMap.filter((item) => !term || [item.title, item.english, item.lesson, item.category, item.summary, item.details, ...item.formulas].join(" ").toLocaleLowerCase().includes(term)), [term]);
+  const filtered = useMemo(() => publishedConceptMap.filter((item) => !term || [item.title, item.english, item.lesson, item.category, item.summary, item.details, ...item.formulas].join(" ").toLocaleLowerCase().includes(term)), [term]);
   const visibleIds = new Set(filtered.map((item) => item.id));
   const selected = filtered.find((item) => item.id === selectedId) ?? filtered[0];
-  const incomingIds = selected ? conceptMap.filter((item) => item.connections.includes(selected.id)).map((item) => item.id) : [];
+  const incomingIds = selected ? publishedConceptMap.filter((item) => item.connections.includes(selected.id)).map((item) => item.id) : [];
   const relatedIds = new Set(selected ? [selected.id, ...selected.connections, ...incomingIds] : []);
   const selectedData = selected ? concepts.find((item) => item.conceptId === selected.id) : undefined;
   const selectedLesson = selected ? lessons.find((item) => item.number === lessonNumber(selected.lesson)) : undefined;
@@ -100,7 +101,7 @@ export default function CourseConcepts() {
       <label className={styles.searchField}><span aria-hidden="true">⌕</span><span className={styles.srOnly}>חיפוש מושג</span><input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="חיפוש בעברית או באנגלית" /></label>
       <div className={styles.segmented} role="group" aria-label="אופן תצוגת המושגים"><button type="button" aria-pressed={view === "map"} onClick={() => setView("map")}>מפת חשיבה</button><button type="button" aria-pressed={view === "list"} onClick={() => setView("list")}>רשימה</button></div>
     </div>
-    <p className={styles.resultCount} role="status" aria-live="polite">{filtered.length} מתוך {conceptMap.length} מושגים</p>
+    <p className={styles.resultCount} role="status" aria-live="polite">{filtered.length} מתוך {publishedConceptMap.length} מושגים</p>
     {!selected ? <p className={styles.emptyState}>לא נמצאו מושגים מתאימים לחיפוש.</p> : view === "map" ? <div className={styles.conceptMapLayout}>
       <div className={styles.conceptMapViewport} ref={viewportRef} role="region" aria-label="מפת חשיבה של מושגי הקורס; אפשר לגלול לכל הכיוונים">
         <div className={styles.mindMapCanvas} style={{ width: mapWidth, height: mapHeight }}>
@@ -111,7 +112,7 @@ export default function CourseConcepts() {
           {positions.map((position) => {
             const { node, x, y, lessonNumber: number } = position;
             if (node.conceptId) {
-              const item = conceptMap.find((conceptItem) => conceptItem.id === node.conceptId);
+              const item = publishedConceptMap.find((conceptItem) => conceptItem.id === node.conceptId);
               return item ? conceptButton(item, position) : null;
             }
             const kindClass = node.kind === "root" ? styles.mindMapRoot : node.kind === "lesson" ? styles.mindMapLesson : styles.mindMapTopic;
@@ -126,7 +127,7 @@ export default function CourseConcepts() {
         <h2>{selected.title}</h2><span dir="ltr">{selected.english}</span><p>{selected.summary}</p>
         <h3>קשרים בין נושאים</h3>
         {relatedIds.size > 1 ? [...relatedIds].filter((id) => id !== selected.id).map((id) => {
-          const related = conceptMap.find((item) => item.id === id);
+          const related = publishedConceptMap.find((item) => item.id === id);
           return related ? <button className={styles.conceptRelation} key={id} type="button" onClick={() => setSelectedId(id)}>{related.title}</button> : null;
         }) : <p className={styles.reflectionNote}>אין קשרים רשומים למושג הזה.</p>}
         {formulaNames.length > 0 && <><h3>נוסחאות בנושא</h3>{formulaNames.map((item) => <Link className={styles.conceptRelation} key={item.id} href={`/course/${course.courseId}/formulas#${item.id}`}>{item.name}</Link>)}</>}
@@ -135,7 +136,7 @@ export default function CourseConcepts() {
       </aside>
     </div> : <>
       <div className={styles.conceptCards} aria-label="רשימת מושגים">{filtered.map((item) => <button className={styles.conceptCard} key={item.id} type="button" onClick={() => setSelectedId(item.id)} aria-pressed={selected.id === item.id}><strong>{item.title}</strong><small dir="ltr">{item.english}</small><span>{item.lesson} · {item.category}</span></button>)}</div>
-      <aside className={`${styles.card} ${styles.conceptDetail} ${styles.listConceptDetail}`} aria-label="פרטי מושג נבחר"><span className={styles.conceptTag}>{selected.lesson} · {selected.category}</span><h2>{selected.title}</h2><span dir="ltr">{selected.english}</span><p>{selected.summary}</p>{selectedData?.relatedConceptIds.map((id) => { const related = concepts.find((item) => item.conceptId === id); return related ? <button className={styles.conceptRelation} key={id} type="button" onClick={() => setSelectedId(id)}>{related.name}</button> : null; })}</aside>
+      <aside className={`${styles.card} ${styles.conceptDetail} ${styles.listConceptDetail}`} aria-label="פרטי מושג נבחר"><span className={styles.conceptTag}>{selected.lesson} · {selected.category}</span><h2>{selected.title}</h2><span dir="ltr">{selected.english}</span><p>{selected.summary}</p>{selectedData?.relatedConceptIds.filter((id) => publishedConceptMap.some((item) => item.id === id)).map((id) => { const related = concepts.find((item) => item.conceptId === id); return related ? <button className={styles.conceptRelation} key={id} type="button" onClick={() => setSelectedId(id)}>{related.name}</button> : null; })}</aside>
     </>}
   </>;
 }
