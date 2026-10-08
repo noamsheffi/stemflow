@@ -352,7 +352,33 @@
 .segmented button { min-height: var(--u-30); padding: var(--u-5) var(--u-11); color: var(--ink2); background: transparent; border: 0; border-radius: var(--u-6); cursor: pointer; font-size: var(--fs-sm); }
 .segmented button[aria-pressed="true"] { color: var(--ink); background: var(--surface); box-shadow: var(--shadow-low); }
 .conceptMapLayout { display: grid; grid-template-columns: minmax(0, 1fr) var(--u-240); gap: var(--u-12); align-items: start; }
-.conceptMapViewport { min-width: 0; overflow: auto; background: var(--surface); border: var(--u-1) solid var(--line); border-radius: var(--r); }
+.conceptMapViewport { height: min(78vh, 920px); min-height: 520px; min-width: 0; overflow: auto; background: var(--surface); border: var(--u-1) solid var(--line); border-radius: var(--r); direction: ltr; scrollbar-width: thin; }
+.mindMapCanvas { position: relative; flex: 0 0 auto; margin: 0 auto; background-image: radial-gradient(#d9dfe8 .75px, transparent .75px); background-position: 18px 18px; background-size: 24px 24px; }
+.mindMapEdges { position: absolute; inset: 0; z-index: 0; overflow: visible; pointer-events: none; }
+.mindMapTreeEdge,.mindMapCrossEdge { fill: none; stroke-linecap: round; stroke-linejoin: round; }
+.mindMapTreeEdge { stroke-width: 3; opacity: .72; }
+.mindMapTreeEdge[data-lesson="1"] { stroke: #e9b929; }
+.mindMapTreeEdge[data-lesson="2"] { stroke: #f27843; }
+.mindMapTreeEdge[data-lesson="3"] { stroke: #49bdaa; }
+.mindMapTreeEdge[data-lesson="4"] { stroke: #8268dd; }
+.mindMapTreeEdge[data-lesson="5"] { stroke: #4b8bd8; }
+.mindMapCrossEdge { stroke: #26384d; stroke-width: 2; stroke-dasharray: 2 8; opacity: .8; }
+.mindMapNode { position: absolute; z-index: 1; display: grid; box-sizing: border-box; translate: -50% -50%; place-content: center; text-align: center; }
+.mindMapRoot { width: 216px; min-height: 76px; padding: 12px 18px; color: #fff; background: #26384d; border: 2px solid #26384d; border-radius: 999px; font-size: 19px; font-weight: 700; box-shadow: 0 5px 14px #26384d24; }
+.mindMapLesson { width: 198px; min-height: 66px; gap: 2px; padding: 9px 14px; color: #17283c; border: 2px solid var(--branch-color); border-radius: 18px; background: color-mix(in srgb, var(--branch-color) 22%, white); font-size: 15px; font-weight: 700; }
+.mindMapLesson small { color: #536075; font-size: 11px; font-weight: 500; }
+.mindMapTopic { width: 176px; min-height: 50px; padding: 8px 11px; color: #26384d; border: 1px solid color-mix(in srgb, var(--branch-color) 48%, white); border-radius: 15px; background: color-mix(in srgb, var(--branch-color) 13%, white); font-size: 13px; font-weight: 600; }
+.mindMapConcept { width: 198px; min-height: 62px; padding: 9px 12px; color: #25364b; border: 1px solid color-mix(in srgb, var(--branch-color) 40%, white); border-radius: 16px; background: color-mix(in srgb, var(--branch-color) 10%, white); cursor: pointer; font-family: var(--font); font-size: 13px; line-height: 1.35; transition: box-shadow 120ms, background-color 120ms, opacity 120ms; }
+.mindMapNode[data-lesson="1"] { --branch-color: #e9b929; }
+.mindMapNode[data-lesson="2"] { --branch-color: #f27843; }
+.mindMapNode[data-lesson="3"] { --branch-color: #49bdaa; }
+.mindMapNode[data-lesson="4"] { --branch-color: #8268dd; }
+.mindMapNode[data-lesson="5"] { --branch-color: #4b8bd8; }
+.mindMapConcept:hover { border-color: var(--branch-color); box-shadow: 0 4px 14px #15243a18; }
+.mindMapSelected { color: #fff; background: var(--branch-color); border-color: var(--branch-color); box-shadow: 0 5px 14px #15243a28; }
+.mindMapLegend { display: flex; flex-wrap: wrap; align-items: center; gap: 7px; padding-block-start: var(--u-10); border-block-start: 1px solid var(--line); color: var(--ink3); font-size: var(--fs-meta); }
+.legendBranch,.legendConnection { display: inline-block; width: 23px; height: 0; border-block-start: 3px solid #49bdaa; }
+.legendConnection { margin-inline-start: 8px; border-block-start: 2px dotted #26384d; }
 .conceptGraph { position: relative; min-width: 100%; }
 .conceptEdges { position: absolute; inset-block-start: 0; inset-inline-end: 0; z-index: 0; overflow: visible; pointer-events: none; }
 .conceptEdge { fill: none; stroke: var(--line); stroke-width: 1.5; }
