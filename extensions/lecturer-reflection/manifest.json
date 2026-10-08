@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Lesson lecturer reflection",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Floating Syllo lecturer panel for slide timing, reflection and session review.",
   "icons": {
     "16": "icons/icon16.png",
@@ -18,7 +18,8 @@
     "http://localhost:3000/*",
     "http://127.0.0.1/*",
     "https://syllo.live/*",
-    "https://stemflow-noamsheffi-gmailcoms-projects.vercel.app/*"
+    "https://stemflow-noamsheffi-gmailcoms-projects.vercel.app/*",
+    "https://stemflow-3n3u9mz31-noamsheffi-gmailcoms-projects.vercel.app/*"
   ],
   "content_scripts": [
     {
@@ -26,11 +27,18 @@
         "http://localhost:3000/courses/communication-systems/lesson-*",
         "http://127.0.0.1/courses/communication-systems/lesson-*",
         "http://127.0.0.1/course/communication-systems/*",
+        "http://127.0.0.1/lecturer/lessons/*",
         "http://localhost:3000/course/communication-systems/*",
+        "http://localhost:3000/lecturer/lessons/*",
         "https://syllo.live/courses/communication-systems/lesson-*",
         "https://syllo.live/course/communication-systems/*",
+        "https://syllo.live/lecturer/lessons/*",
         "https://stemflow-noamsheffi-gmailcoms-projects.vercel.app/courses/communication-systems/lesson-*",
-        "https://stemflow-noamsheffi-gmailcoms-projects.vercel.app/course/communication-systems/*"
+        "https://stemflow-noamsheffi-gmailcoms-projects.vercel.app/course/communication-systems/*",
+        "https://stemflow-noamsheffi-gmailcoms-projects.vercel.app/lecturer/lessons/*",
+        "https://stemflow-3n3u9mz31-noamsheffi-gmailcoms-projects.vercel.app/courses/communication-systems/lesson-*",
+        "https://stemflow-3n3u9mz31-noamsheffi-gmailcoms-projects.vercel.app/course/communication-systems/*",
+        "https://stemflow-3n3u9mz31-noamsheffi-gmailcoms-projects.vercel.app/lecturer/lessons/*"
       ],
       "all_frames": false,
       "js": ["config.js", "auto-start.js", "tracker.js"],
@@ -44,7 +52,8 @@
         "http://localhost/*",
         "http://127.0.0.1/*",
         "https://syllo.live/*",
-        "https://stemflow-noamsheffi-gmailcoms-projects.vercel.app/*"
+        "https://stemflow-noamsheffi-gmailcoms-projects.vercel.app/*",
+        "https://stemflow-3n3u9mz31-noamsheffi-gmailcoms-projects.vercel.app/*"
       ]
     }
   ],

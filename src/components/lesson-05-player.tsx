@@ -12,6 +12,45 @@ type DeckSlide = { chapter: string; title: string; minutes: number; takeaway: st
 const chapters = ["פתיחה וחזרה", "ארכיטקטורת מקלט", "המרת תדר ובבואה", "הפסקה ופשרת IF", "גלאי מעטפת ו־AGC", "תרגול וסיכום"];
 const formula = (tex: string) => <div dir="ltr" className="sl-fx" dangerouslySetInnerHTML={{ __html: katex.renderToString(tex, { displayMode: true, throwOnError: false, trust: false, output: "htmlAndMathml" }) }} />;
 const card = (title: string, children: React.ReactNode) => <article className="sl-card"><div className="sl-lab">{title}</div>{children}</article>;
+const quantityPattern = /(\d+(?:[.,]\d+)?\s?(?:MHz|kHz|Hz|μs|ms|nF|pF|kΩ|Ω|mV|V|dB))/g;
+function bidiQuantities(text: string) {
+  return text.split(quantityPattern).map((part, index) => /^\d+(?:[.,]\d+)?\s?(?:MHz|kHz|Hz|μs|ms|nF|pF|kΩ|Ω|mV|V|dB)$/.test(part)
+    ? <bdi key={index} dir="ltr">{part}</bdi>
+    : part);
+}
+const feedbackTypes = [
+  { key: "unclear", label: "לא הבנתי", hint: "משהו בשקף לא ברור", color: "#D9731F", soft: "#FDF3EA" },
+  { key: "example", label: "צריך עוד דוגמה", hint: "הבנתי חלקית, עוד דוגמה תעזור", color: "#137A86", soft: "#E8F4F5" },
+  { key: "question", label: "יש לי שאלה", hint: "אכתוב אותה למטה", color: "#3B5BA9", soft: "#ECF0FA" },
+  { key: "mistake", label: "נראה שיש טעות", hint: "בנוסחה, במספר או בטקסט", color: "#C0392B", soft: "#FCEDEB" },
+] as const;
+function useLessonState<T>(key: string, initial: T) {
+  const [value, setValue] = useState(initial);
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem(key);
+      if (saved !== null) setValue(JSON.parse(saved) as T);
+    } catch { /* Continue when browser storage is unavailable. */ }
+    setReady(true);
+  }, [key]);
+  useEffect(() => {
+    if (!ready) return;
+    try { window.localStorage.setItem(key, JSON.stringify(value)); }
+    catch { /* Keep the lesson interactive when browser storage is unavailable. */ }
+  }, [key, ready, value]);
+  return [value, setValue] as const;
+}
+function FeedbackIcon({ type, size = 20 }: { type: (typeof feedbackTypes)[number]["key"] | "syllo"; size?: number }) {
+  const paths: Record<string, React.ReactNode> = {
+    unclear: <><circle cx="12" cy="12" r="9"/><path d="M9.3 9.3a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.3-2.7 4"/><circle cx="12" cy="17.3" r=".6" fill="currentColor"/></>,
+    example: <><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2V16h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/></>,
+    question: <><path d="m4 20 1.2-4.2L15.6 5.4a2 2 0 0 1 2.9 0l.1.1a2 2 0 0 1 0 2.9L8.2 18.8z"/><path d="m13.8 7.2 3 3"/></>,
+    mistake: <><path d="m12 3.5 9 16H3z"/><path d="M12 10v4"/><circle cx="12" cy="16.8" r=".6" fill="currentColor"/></>,
+    syllo: <path d="M7 8a4 4 0 1 0 0 8c3.2 0 6.8-8 10-8a4 4 0 1 1 0 8c-3.2 0-6.8-8-10-8z"/>,
+  };
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths[type]}</svg>;
+}
 function AMSpectrum() {
   return <figure className={styles.spectrum} aria-labelledby="am-spectrum-caption">
     <svg viewBox="0 0 1500 440" role="img" aria-labelledby="am-spectrum-title am-spectrum-desc" style={{ direction: "ltr" }}>
@@ -44,10 +83,10 @@ const data: DeckSlide[] = [
   { chapter: chapters[0], title: "מה יש בתוך אות AM? נושא ושני פסי צד", minutes: 4, takeaway: "הנושא נמצא בתדר המרכזי; פסי הצד מופיעים במרחק תדר השמע משני צדדיו.", notes: ["קראו את הגרף משמאל לימין: התדר גדל, ובמרכז נמצא הנושא.", "הצביעו בנפרד על הנושא, פס הצד התחתון ופס הצד העליון.", "הסבירו שהמרחק של כל פס צד מהנושא הוא תדר השמע fm; פסי הצד נושאים את המידע."], content: <div className={styles.spectrumSlide}><AMSpectrum /></div> },
   { chapter: chapters[1], title: "מקלט ישיר TRF: מסנן שעוקב אחרי התחנה", minutes: 2, takeaway: "במקלט TRF המסנן ומגבר תדר הרדיו מכוונים סביב התחנה הרצויה.", notes: ["הגדירו RF: תדר הרדיו של התחנה לפני הגילוי.", "הגדירו TRF: מקלט ישיר (Tuned Radio Frequency) שמסנן ומגביר סביב תדר התחנה.", "הדגישו שהכוונון משתנה עם התחנה; את רוחב הפס נחשב בשקף הבא."], content: <><div className={styles.two}>{card("RF · תדר רדיו", <p>תדר התחנה שנבחרה, לפני הגילוי.</p>)}{card("TRF · מקלט ישיר", <p>Tuned Radio Frequency: מסנן ומגבר מכוונים סביב תדר התחנה.</p>)}</div><div className={styles.flow}><b>אנטנה</b><i>←</i><b>מסנן ומגבר RF מתכווננים</b><i>←</i><b>גלאי AM</b><i>←</i><b>שמע</b></div><p className={styles.note}>כשבוחרים תחנה אחרת, גם דרגת הסינון צריכה להתכוונן לתדר החדש.</p></> },
   { chapter: chapters[1], title: "רוחב פס המסנן: מה אומר Q?", minutes: 2, takeaway: "כאשר Q קבוע, מסנן בתדר תהודה גבוה יותר מעביר רוחב פס גדול יותר.", notes: ["הגדירו f₀ כתדר התהודה, BW כרוחב הפס ו־Q כמקדם האיכות.", "הסבירו ש־Q גדול פירושו מסנן חד יותר ביחס לתדר המרכזי.", "השאירו את החישוב המספרי לשקף הבא כדי לא לערבב הגדרה, נוסחה ותרגיל."], content: <>{formula(String.raw`BW=\frac{f_0}{Q}`)}<div className={styles.two}>{card("תדר מרכזי", <p><bdi dir="ltr">f₀</bdi> הוא תדר התהודה שסביבו המסנן מעביר אותות.</p>)}{card("מקדם איכות · Q", <p>מתאר את חדות המסנן ביחס לתדר המרכזי.</p>)}</div><p className={styles.note}><bdi dir="ltr">BW</bdi> הוא רוחב תחום התדרים שעובר במסנן. כש־<bdi dir="ltr">Q</bdi> קבוע, <bdi dir="ltr">f₀</bdi> גבוה יותר גורר רוחב פס גדול יותר.</p></> },
-  { chapter: chapters[1], title: "דוגמת TRF: מחשבים רוחב פס", minutes: 4, takeaway: "בדוגמה, רוחב הפס הוא 30 kHz.", notes: ["הזכירו Q חסר יחידות.", "המירו MHz ל־kHz או ל־Hz לפני החלוקה.", "בדקו ש־30 kHz קטן מ־1.5 MHz ומתאים לרוחב פס."], className: "measurement-slide", content: <>{card("נתונים מקובצים", <p dir="ltr">f₀ = 1.5 MHz = 1500 kHz · Q = 50</p>)}{formula(String.raw`BW=\frac{f_0}{Q}`)}<p>חשבו את רוחב הפס של המסנן.</p><Reveal label="פתרון מדורג" steps={[<p><bdi dir="ltr">BW = 1500 kHz / 50</bdi></p>, <p><bdi dir="ltr">BW = 30 kHz</bdi>. בדיקה: רוחב הפס קטן מתדר התהודה.</p>]}/></> },
-  { chapter: chapters[1], title: "סופר־הטרודיין: מסנן קבוע, תחנה משתנה", minutes: 5, takeaway: "ממירים כל תחנה לתדר ביניים קבוע ואז מסננים ומגבירים אותה.", notes: ["הציגו את הרעיון: מזיזים את התחנה אל מסנן קבוע במקום להזיז מסנן חד.", "במקלט AM טיפוסי בדוגמה נשתמש ב־IF של 455 kHz.", "ציינו שזה ערך מקובל בדוגמה, לא כלל לכל מקלט או תקן לכל תחום."], content: <>{card("הרעיון", <p className={styles.lead}>התחנה משתנה, אבל דרגת הסינון המרכזית נשארת מכוונת לאותו תדר ביניים.</p>)}{formula(String.raw`f_{IF}=455\;\mathrm{kHz}`)}<div className={styles.flow}><b>תחנה נבחרת</b><i>← המרה</i><b>455 kHz</b><i>← סינון חד</i></div></> },
-  { chapter: chapters[1], title: "מפת המקלט: מה עושה כל דרגה?", minutes: 4, takeaway: "כל בלוק מכין את האות לשלב הבא עד שמחלצים שמע.", notes: ["עברו לאורך התרשים מימין לשמאל.", "הגדירו RF, Mixer, LO ו־IF לפני שימוש בראשי התיבות.", "הציגו את AGC כחוג בקרה שנחזור אליו אחרי הגלאי."], content: <>{card("מסלול אות", <div className={styles.blockFlow}><b>אנטנה</b><b>מגבר RF</b><b>ערבל</b><b>מגבר IF</b><b>גלאי מעטפת</b><b>מגבר שמע</b><b>רמקול</b></div>)}<div className={styles.three}>{card("RF", <p>סינון גס והגברה בכניסה</p>)}{card("ערבל + LO", <p>יוצרים רכיבי סכום והפרש</p>)}{card("IF", <p>סינון והגברה סביב תדר קבוע</p>)}</div><p className={styles.note}>AGC מחזיר משוב לדרגות ההגברה כדי לייצב את עוצמת השמע.</p></> },
-  { chapter: chapters[1], title: "למה משתמשים בתדר ביניים קבוע?", minutes: 3, takeaway: "המרת התחנה לתדר קבוע מאפשרת להשתמש בדרגת סינון והגבר קבועה.", notes: ["הבדילו בין RF של התחנה לבין IF אחרי ההמרה.", "הדגישו שהתחנה הנבחרת משתנה אך ה־IF נשאר קבוע בתכנון.", "אל תציגו עדיין את אופן פעולת הערבל."], content: <>{card("הרעיון לפני הנוסחה", <p className={styles.lead}>במקום לכוון מסנן חד לכל תחנה, ממירים כל תחנה נבחרת לאותו תדר ביניים.</p>)}<div className={styles.flow}><b>RF משתנה</b><i>← המרה</i><b>IF קבוע</b><i>←</i><b>מסנן קבוע</b></div><p className={styles.note}>IF ‏455 kHz הוא ערך הדוגמה של מערך זה, לא ערך אוניברסלי לכל מקלט.</p></> },
+  { chapter: chapters[1], title: "דוגמת TRF: מחשבים רוחב פס", minutes: 4, takeaway: "עבור תדר תהודה 1.5 MHz ו־Q של 50, רוחב הפס הוא 30 kHz.", notes: ["הזכירו ש־Q חסר יחידות.", "המירו MHz ל־kHz או ל־Hz לפני החלוקה.", "בדקו ש־30 kHz קטן מ־1.5 MHz ומתאים לרוחב פס."], className: "measurement-slide", content: <>{card("נתונים מקובצים", <p dir="ltr">f₀ = 1.5 MHz = 1500 kHz · Q = 50</p>)}{formula(String.raw`BW=\frac{f_0}{Q}`)}<p>חשבו את רוחב הפס של המסנן.</p><Reveal label="פתרון מדורג" steps={[<p><bdi dir="ltr">BW = 1500 kHz / 50</bdi></p>, <p><bdi dir="ltr">BW = 30 kHz</bdi>. בדיקה: רוחב הפס קטן מתדר התהודה.</p>]}/></> },
+  { chapter: chapters[1], title: "TRF או סופר־הטרודיין? שתי ארכיטקטורות קליטה", minutes: 5, takeaway: "ב־TRF המסנן עוקב אחרי התחנה; בסופר־הטרודיין ממירים אותה לתדר ביניים קבוע. עכשיו נפרק את מסלול ההמרה לבלוקים.", notes: ["הבהירו במפורש: TRF וסופר־הטרודיין הם שתי ארכיטקטורות של מקלט, לא שני שלבים באותו מקלט.", "ב־TRF מסנן ומגבר RF מכוונים מחדש יחד לתדר התחנה; אין המרת תדר.", "בסופר־הטרודיין בוחרים תחנה בכניסה, ואז מערבל ומתנד מקומי ממירים אותה ל־IF קבוע; מסנני RF בכניסה עדיין יכולים להיות קיימים.", "הסבירו את המניע: קל יותר לבנות מסנן IF חד וקבוע מאשר לגרום לכל דרגות הסינון לעקוב במדויק אחרי כל תחנה.", "המספר 455 kHz יופיע רק כדוגמה; בשקף הבא נראה את כל דרגות המקלט."], className: "architecture-comparison", content: <><div className={styles.architectureCompare}><article><h3>מקלט ישיר · TRF</h3><p>מסנן ומגבר RF מתכווננים עוקבים יחד אחרי תדר התחנה.</p><div className={styles.architectureFlow}><b>אנטנה</b><i>←</i><b>מסנן RF מתכוונן</b><i>←</i><b>גילוי</b><i>←</i><b>שמע</b></div><small>אין המרת תדר; הכוונון משתנה עם התחנה.</small></article><article><h3>מקלט סופר־הטרודיין</h3><p>בוחרים תחנה, ממירים אותה בעזרת מתנד מקומי וערבל, ומסננים ב־IF קבוע.</p><div className={styles.architectureFlow}><b>אנטנה</b><i>←</i><b>בחירת RF</b><i>←</i><b>ערבל + מתנד מקומי</b><i>←</i><b>מסנן IF קבוע<br/><bdi dir="ltr">455 kHz</bdi></b><i>←</i><b>גילוי</b><i>←</i><b>שמע</b></div><small>המספר הוא דוגמה ל־IF; עקרון הארכיטקטורה הוא ההמרה לתדר ביניים קבוע.</small></article></div><p className={styles.note}>הקשר ביניהם: שניהם מקלטים שבוחרים תחנה ומחלצים ממנה מידע. ההבדל הוא אופן הסינון: מעקב אחר תדר התחנה ב־TRF לעומת המרה וסינון בתדר קבוע בסופר־הטרודיין.</p></> },
+  { chapter: chapters[1], title: "מפת מקלט הסופר־הטרודיין: מה עושה כל דרגה?", minutes: 4, takeaway: "מכאן נעקוב אחרי תחנה שנבחרת, מומרת, מסוננת ומתגלה — ונראה למה נוח להשאיר את מסנן ה־IF קבוע.", notes: ["התרשים מתאר את ארכיטקטורת הסופר־הטרודיין שהושוותה ל־TRF בשקף הקודם.", "עברו לאורך התרשים מימין לשמאל.", "הגדירו RF (תדר התחנה בכניסה), ערבל, מתנד מקומי (LO), IF (תדר ביניים) וגלאי מעטפת.", "הציגו AGC כחוג בקרה שנחזור אליו אחרי הגלאי."], content: <>{card("מסלול האות בסופר־הטרודיין", <div className={styles.blockFlow}><b>אנטנה</b><b>בחירת RF</b><b>ערבל<br/>+ LO</b><b>מסנן ומגבר IF</b><b>גלאי מעטפת</b><b>מגבר שמע</b><b>רמקול</b></div>)}<div className={styles.three}>{card("RF · כניסה", <p>בוחרים את תחום התחנה ומצמצמים אותות לא רצויים.</p>)}{card("ערבל + LO", <p>ממירים את התחנה הנבחרת לתדר אחר.</p>)}{card("IF · תדר ביניים", <p>מסננים ומגבירים סביב תדר קבוע.</p>)}</div><p className={styles.note}>AGC מחזיר משוב לדרגות ההגברה כדי לייצב את עוצמת השמע.</p></> },
+  { chapter: chapters[1], title: "למה משתמשים בתדר ביניים קבוע?", minutes: 3, takeaway: "היתרון של הסופר־הטרודיין הוא סינון מרכזי קבוע; כדי להבין איך התחנה מגיעה אליו, נבחן את דרגות הכניסה והערבל.", notes: ["הבדילו בין RF של התחנה לבין IF אחרי ההמרה.", "הדגישו שהתחנה הנבחרת משתנה אך ה־IF נשאר קבוע בתכנון.", "ציינו שהמספר 455 kHz בדוגמה אינו ערך אוניברסלי.", "הכינו לשקף הבא: הערבל מקבל RF מן התחנה ואות מן המתנד המקומי."], content: <>{card("הרעיון לפני הנוסחה", <p className={styles.lead}>במקום לכוון מסנן חד לכל תחנה, ממירים כל תחנה נבחרת לאותו תדר ביניים.</p>)}<div className={styles.flow}><b>RF משתנה</b><i>← המרה</i><b>IF קבוע</b><i>←</i><b>מסנן קבוע</b></div><p className={styles.note}>IF <bdi dir="ltr">455 kHz</bdi> הוא ערך הדוגמה של מערך זה, לא ערך אוניברסלי לכל מקלט.</p></> },
   { chapter: chapters[1], title: "מגבר RF, ערבל ומגבר IF", minutes: 3, takeaway: "המסנן בכניסה מצמצם הפרעות; ה־IF מספק סינון והגבר סביב תדר קבוע.", notes: ["עברו בבלוקים לפי כיוון זרימת האות.", "הגדירו RF ו־IF בעברית לפני הקיצור.", "ציינו שה־LO מזין את הערבל אך אינו אות התחנה."], content: <>{card("שלוש דרגות", <div className={styles.blockFlow}><b>מגבר RF<br/>כניסה</b><b>ערבל<br/>RF + LO</b><b>מגבר IF<br/>תדר קבוע</b></div>)}<div className={styles.three}>{card("RF", <p>תדר הרדיו שנבחר מן האנטנה.</p>)}{card("LO", <p>המתנד המקומי שמספק לערבל אות בתדר מכוון.</p>)}{card("IF", <p>תדר הביניים שנבחר לסינון ולהגבר.</p>)}</div></> },
   { chapter: chapters[2], title: "איך הערבל ממיר תדר?", minutes: 2, takeaway: "כפל של שני סינוסים יוצר תדר סכום ותדר הפרש.", notes: ["תארו את הערבל כמכפיל אותות, לא כמסנן.", "הראו את זהות המכפלה במלואה.", "מסנן IF בוחר את רכיב ההפרש הרצוי."], content: <>{formula(String.raw`\cos(\alpha)\cos(\beta)=\frac{1}{2}[\cos(\alpha-\beta)+\cos(\alpha+\beta)]`)}<p>לערבל נכנסים אות התחנה <bdi dir="ltr">f<sub>RF</sub></bdi> והמתנד המקומי <bdi dir="ltr">f<sub>LO</sub></bdi>. ביציאה מופיעים סכום והפרש; מסנן ה־IF מעביר את ההפרש.</p>{formula(String.raw`f_{IF}=f_{LO}-f_{RF},\quad f_{LO}>f_{RF}`)}<p className={styles.note}>הנחת המערך: הזרקת LO מעל RF. קיימת גם הזרקה מתחת ל־RF, אך לא ננתח אותה כאן.</p></> },
   { chapter: chapters[2], title: "מה יוצא מהערבל? סכום והפרש", minutes: 3, takeaway: "מכפלת תדר RF ו־LO יוצרת רכיב סכום ורכיב הפרש.", notes: ["השתמשו בזהות כדי להראות את המעבר ולא רק את התוצאה.", "סמנו את רכיב ההפרש כבחירת מסנן ה־IF בדוגמת ההזרקה הגבוהה.", "הבחינו בין תדרי הכניסה לבין הרכיבים ביציאה."], content: <>{card("שני אותות הכניסה", <p dir="ltr">RF: cos(2πf<sub>RF</sub>t) · LO: cos(2πf<sub>LO</sub>t)</p>)}{formula(String.raw`\cos(\alpha)\cos(\beta)=\frac{1}{2}[\cos(\alpha-\beta)+\cos(\alpha+\beta)]`)}<div className={styles.two}>{card("הפרש", <p><bdi dir="ltr">f<sub>LO</sub> − f<sub>RF</sub></bdi></p>)}{card("סכום", <p><bdi dir="ltr">f<sub>LO</sub> + f<sub>RF</sub></bdi></p>)}</div><p className={styles.note}>מסנן ה־IF בוחר את רכיב ההפרש הרצוי.</p></> },
@@ -75,6 +114,7 @@ const data: DeckSlide[] = [
   { chapter: chapters[5], title: "כרטיס יציאה: בדקו את ההבנה", minutes: 5, takeaway: "מתדר תחנה של 1000 kHz ותדר ביניים של 455 kHz מתקבלים מתנד מקומי של 1455 kHz ותדר בבואה של 1910 kHz.", notes: ["אספו תשובות לפני חשיפת הפתרון.", "דרשו יחידות בכל שורה.", "סיימו בחיבור השרשרת: בחירת תחנה, המרה, סינון, גילוי ובקרה."], content: <>{card("פתרו לבד", <p className={styles.lead}>מקלט AM בהזרקה גבוהה מכוון ל־<bdi dir="ltr">f<sub>RF</sub>=1000 kHz</bdi> עם <bdi dir="ltr">f<sub>IF</sub>=455 kHz</bdi>. חשבו את <bdi dir="ltr">f<sub>LO</sub></bdi> ואת תדר הבבואה <bdi dir="ltr">f<sub>IM</sub></bdi>.</p>)}<Reveal label="בדיקת תשובה" steps={[<p><bdi dir="ltr">f<sub>LO</sub> = f<sub>RF</sub> + f<sub>IF</sub> = 1000 + 455 = 1455 kHz</bdi></p>, <p><bdi dir="ltr">f<sub>IM</sub> = f<sub>RF</sub> + 2f<sub>IF</sub> = 1000 + 910 = 1910 kHz</bdi></p>]}/><p className={styles.note}>סיכום: התחנה נבחרת, מומרת ל־IF קבוע, מסוננת, וגלאי המעטפת מחלץ את המידע.</p></> },
 ];
 
+const extensionSlideCatalog = JSON.stringify(data.map((slide, index) => ({ slideId: `lesson-05-am-${String(index + 1).padStart(2, "0")}`, slideNumber: index + 1, minutes: slide.minutes, title: slide.title, chapter: slide.chapter, section: false })));
 export { data as lesson05Slides };
 
 function Reveal({ label, steps }: { label: string; steps: React.ReactNode[] }) {
@@ -107,27 +147,64 @@ function ScaledSlide({ slide, index, hostClass }: { slide: DeckSlide; index: num
   }, []);
   return <div ref={host} className={hostClass}>
     <div className={playerStyles.stageBox} style={{ width: 1600 * scale, height: 900 * scale }}>
-      <div className={playerStyles.slideCanvas} style={{ transform: `scale(${scale})` }} data-current-slide="true" data-slide-id={`lesson-05-am-${String(index + 1).padStart(2, "0")}`} data-slide-number={index + 1} data-minutes={slide.minutes}>
-        <div className={`sl l5-slide ${slide.className ?? ""}`}><header className="sl-h"><div className="sl-eb">{slide.chapter}</div><h2>{slide.title}</h2></header><div className="sl-body">{slide.content}</div><div className="sl-tk"><span>העיקר</span>{slide.takeaway}</div><footer className="sl-f"><span>{slide.chapter}</span><span dir="ltr">{String(index + 1).padStart(2, "0")}</span></footer></div>
+      <div className={playerStyles.slideCanvas} style={{ transform: `scale(${scale})` }} data-current-slide="true" data-slide-id={`lesson-05-am-${String(index + 1).padStart(2, "0")}`} data-slide-id-source="authored" data-slide-number={index + 1} data-minutes={slide.minutes}>
+      <div className={`sl l5-slide ${slide.className ?? ""}`}><header className="sl-h"><div className="sl-eb">{slide.chapter}</div><h2>{bidiQuantities(slide.title)}</h2></header><div className="sl-body">{slide.content}</div><div className="sl-tk"><span>העיקר</span>{bidiQuantities(slide.takeaway)}</div><footer className="sl-f"><span>{slide.chapter}</span><span dir="ltr">{String(index + 1).padStart(2, "0")}</span></footer></div>
       </div>
     </div>
   </div>;
 }
 
 export default function Lesson05Player({ lecturerMode = false }: { lecturerMode?: boolean }) {
-  const [index, setIndex] = useState(0);
+  const stateKey = "syllo:student:lesson:lesson-05";
+  const [index, setIndex] = useLessonState(stateKey + ":index", 0);
+  const [seen, setSeen] = useLessonState<number[]>(stateKey + ":seen", []);
+  const [outlineOpen, setOutlineOpen] = useLessonState(stateKey + ":outline", true);
+  const [notesOpen, setNotesOpen] = useLessonState(stateKey + ":context", false);
   const [opened, setOpened] = useState(false);
-  const [notesOpen, setNotesOpen] = useState(false);
-  const [outlineOpen, setOutlineOpen] = useState(true);
   const [present, setPresent] = useState(false);
   const [feedbackOpen, setFeedbackOpen] = useState(false);
   const [feedbackChoice, setFeedbackChoice] = useState<"unclear" | "example" | "question" | "mistake" | null>(null);
   const [feedbackComment, setFeedbackComment] = useState("");
-  const [feedbackSent, setFeedbackSent] = useState(false);
+  const [feedbackEditing, setFeedbackEditing] = useState(false);
   const [feedbackBusy, setFeedbackBusy] = useState(false);
   const [feedbackError, setFeedbackError] = useState("");
+  const [feedbackBySlide, setFeedbackBySlide] = useState<Record<number, { t: "unclear" | "example" | "question" | "mistake"; text: string; ts: number }>>({});
+  const [feedbackReady, setFeedbackReady] = useState(false);
+  const [openChapters, setOpenChapters] = useState<Record<string, boolean>>({ [chapters[0]]: true });
   const playerRef = useRef<HTMLDivElement>(null);
   const slide = data[index];
+  const currentFeedback = feedbackBySlide[index + 1];
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem("syllo:student:lesson:lesson-05:feedback");
+      if (saved) setFeedbackBySlide(JSON.parse(saved) as typeof feedbackBySlide);
+    } catch { /* Feedback remains usable when browser storage is unavailable. */ }
+    setFeedbackReady(true);
+  }, []);
+  useEffect(() => {
+    if (!feedbackReady) return;
+    try { window.localStorage.setItem("syllo:student:lesson:lesson-05:feedback", JSON.stringify(feedbackBySlide)); }
+    catch { /* The panel still updates for this visit if storage is disabled. */ }
+  }, [feedbackBySlide, feedbackReady]);
+  const notifyLecturer = (eventName: "open" | "exit") => window.dispatchEvent(new CustomEvent(eventName === "open" ? "syllo:lesson-player-open" : "syllo:lesson-player-exit"));
+  const enterPresentation = () => {
+    setPresent(true);
+    if (document.fullscreenEnabled && !document.fullscreenElement) void document.documentElement.requestFullscreen().catch(() => {});
+  };
+  const exitPresentation = () => {
+    setPresent(false);
+    if (document.fullscreenElement) void document.exitFullscreen().catch(() => {});
+  };
+  useEffect(() => {
+    setSeen((value) => value.includes(index + 1) ? value : [...value, index + 1]);
+    setOpenChapters((value) => ({ ...value, [slide.chapter]: true }));
+  }, [index, setSeen, slide.chapter]);
+  useEffect(() => {
+    setFeedbackError("");
+    setFeedbackEditing(false);
+    setFeedbackChoice(currentFeedback?.t ?? null);
+    setFeedbackComment(currentFeedback?.text ?? "");
+  }, [index, feedbackReady, currentFeedback?.t, currentFeedback?.text]);
   const visibleConceptIds = index < 4
     ? ["carrier-wave", "modulation-am", "spectrum-am", "receiver", "radio-frequency"]
     : index < 10
@@ -158,7 +235,7 @@ export default function Lesson05Player({ lecturerMode = false }: { lecturerMode?
           lessonId: "lesson-05",
           slideId: `lesson-05-am-${suffix}`,
           slideNumber: index + 1,
-          deckVersion: "lesson-05-am-v2",
+          deckVersion: "lesson-05-am-v3",
           feedbackType: { unclear: "NOT_UNDERSTOOD", example: "NEED_EXAMPLE", question: "QUESTION", mistake: "POSSIBLE_ERROR" }[feedbackChoice],
           optionalComment: feedbackComment.trim(),
           submittedAt: new Date().toISOString(),
@@ -167,33 +244,67 @@ export default function Lesson05Player({ lecturerMode = false }: { lecturerMode?
         }),
       });
       if (!response.ok) throw new Error("שליחת המשוב נכשלה. נסו שוב.");
-      setFeedbackSent(true);
+      const savedFeedback = { t: feedbackChoice, text: feedbackComment.trim(), ts: Date.now() };
+      const nextFeedback = { ...feedbackBySlide, [index + 1]: savedFeedback };
+      setFeedbackBySlide(nextFeedback);
+      window.dispatchEvent(new CustomEvent("syllo:lesson-feedback-update", { detail: { lessonId: "lesson-05", feedback: nextFeedback } }));
+      setFeedbackEditing(false);
     } catch (error) {
       setFeedbackError(error instanceof Error ? error.message : "שליחת המשוב נכשלה. נסו שוב.");
     } finally {
       setFeedbackBusy(false);
     }
   };
+  const deleteFeedback = async () => {
+    setFeedbackBusy(true);
+    setFeedbackError("");
+    try {
+      const anonymousClientId = window.localStorage.getItem("syllo:anonymous-client-id");
+      if (anonymousClientId) {
+        const suffix = String(index + 1).padStart(2, "0");
+        const response = await fetch("/api/student/slide-feedback", {
+          method: "DELETE",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ anonymousClientId, courseId: "communication-systems", lessonId: "lesson-05", slideId: `lesson-05-am-${suffix}` }),
+        });
+        if (!response.ok) throw new Error("ביטול המשוב נכשל. נסו שוב.");
+      }
+      const nextFeedback = { ...feedbackBySlide };
+      delete nextFeedback[index + 1];
+      setFeedbackBySlide(nextFeedback);
+      window.dispatchEvent(new CustomEvent("syllo:lesson-feedback-update", { detail: { lessonId: "lesson-05", feedback: nextFeedback } }));
+      setFeedbackEditing(false);
+      setFeedbackChoice(null);
+      setFeedbackComment("");
+    } catch (error) {
+      setFeedbackError(error instanceof Error ? error.message : "ביטול המשוב נכשל. נסו שוב.");
+    } finally {
+      setFeedbackBusy(false);
+    }
+  };
+  const selectedFeedbackType = feedbackTypes.find((item) => item.key === (currentFeedback?.t ?? feedbackChoice));
   const studentFeedback = <div className={`${playerStyles.feedback} ${present ? playerStyles.feedbackDark : ""}`}>
-    {feedbackOpen && <section className={playerStyles.feedbackPopover} role="dialog" aria-label="משוב על השקף">
-      <header className={playerStyles.feedbackHeader}><div><b>משוב על השקף</b><span>{String(index + 1).padStart(2, "0")} · {slide.title}</span></div><button type="button" aria-label="סגירת משוב" onClick={() => setFeedbackOpen(false)}>×</button></header>
-      {feedbackSent ? <div className={playerStyles.feedbackSent}><div className={playerStyles.feedbackSentCard}><span>✓</span><div><b>תודה, המשוב נשמר</b><p>המשוב נשלח למרצה באופן אנונימי.</p></div></div><div className={playerStyles.feedbackActions}><button type="button" onClick={() => setFeedbackOpen(false)}>סגירה</button></div></div> : <div className={playerStyles.feedbackBody}><b>מה תרצו לשתף?</b><div className={playerStyles.feedbackOptions}>{([["unclear", "לא הבנתי"], ["example", "צריך עוד דוגמה"], ["question", "יש לי שאלה"], ["mistake", "נראה שיש טעות"]] as const).map(([key, label]) => <button type="button" key={key} aria-pressed={feedbackChoice === key} className={feedbackChoice === key ? playerStyles.feedbackOptionSelected : ""} onClick={() => setFeedbackChoice(key)}><span aria-hidden="true">{key === "mistake" ? "!" : key === "example" ? "?" : key === "question" ? "✎" : "…"}</span><span><b>{label}</b></span></button>)}</div><textarea rows={3} maxLength={800} value={feedbackComment} onChange={(event) => setFeedbackComment(event.target.value)} placeholder="אפשר להוסיף כמה מילים (אופציונלי)" />{feedbackError && <p className={playerStyles.feedbackError} role="alert">{feedbackError}</p>}<footer><button type="button" disabled={!feedbackChoice || feedbackBusy} onClick={() => void sendFeedback()}>{feedbackBusy ? "שולח…" : "שליחה"}</button><small>נשמר לשקף הזה · אנונימי למרצה</small></footer></div>}
+    {feedbackOpen && <section className={playerStyles.feedbackPopover} role="dialog" aria-label="משוב על השקף" aria-modal="false">
+      <header className={playerStyles.feedbackHeader}><div><b>משוב על השקף</b><span><i dir="ltr">{String(index + 1).padStart(2, "0")}</i> · {slide.title}</span></div><button type="button" aria-label="סגירת משוב" onClick={() => setFeedbackOpen(false)}>×</button></header>
+      {currentFeedback && !feedbackEditing ? <div className={playerStyles.feedbackSent}><div className={playerStyles.feedbackSentCard} style={{ "--feedback-color": selectedFeedbackType?.color, "--feedback-soft": selectedFeedbackType?.soft } as React.CSSProperties}><span><FeedbackIcon type={currentFeedback.t} size={18}/></span><div><b>{selectedFeedbackType?.label}</b>{currentFeedback.text && <p>“{currentFeedback.text}”</p>}<small>נשלח · אנונימי למרצה</small></div></div>{feedbackError && <p className={playerStyles.feedbackError} role="alert">{feedbackError}</p>}<div className={playerStyles.feedbackActions}><button type="button" onClick={() => setFeedbackOpen(false)}>סגירה</button><button type="button" onClick={() => { setFeedbackChoice(currentFeedback.t); setFeedbackComment(currentFeedback.text); setFeedbackEditing(true); }}>עריכה</button><button type="button" disabled={feedbackBusy} onClick={() => void deleteFeedback()}>{feedbackBusy ? "מבטל…" : "ביטול המשוב"}</button></div></div> : <div className={playerStyles.feedbackBody}><b>מה תרצו לשתף?</b><div className={playerStyles.feedbackOptions}>{feedbackTypes.map((item) => <button type="button" key={item.key} aria-pressed={feedbackChoice === item.key} className={feedbackChoice === item.key ? playerStyles.feedbackOptionSelected : ""} style={{ "--feedback-color": item.color, "--feedback-soft": item.soft } as React.CSSProperties} onClick={() => setFeedbackChoice(item.key)}><span><FeedbackIcon type={item.key} size={18}/></span><span><b>{item.label}</b><small>{item.hint}</small></span></button>)}</div><textarea rows={3} maxLength={800} value={feedbackComment} onChange={(event) => setFeedbackComment(event.target.value)} placeholder={feedbackChoice === "question" ? "מה השאלה?" : feedbackChoice === "mistake" ? "איפה הטעות?" : "אפשר להוסיף כמה מילים (אופציונלי)"} />{feedbackError && <p className={playerStyles.feedbackError} role="alert">{feedbackError}</p>}<footer><button type="button" disabled={!feedbackChoice || feedbackBusy || (feedbackChoice === "question" && !feedbackComment.trim())} onClick={() => void sendFeedback()}>{feedbackBusy ? "שולח…" : currentFeedback ? "עדכון" : "שליחה"}</button><small>נשמר לשקף הזה · אנונימי למרצה</small></footer></div>}
     </section>}
-    <button type="button" className={playerStyles.feedbackFab} aria-label="משוב על השקף" aria-expanded={feedbackOpen} onClick={() => setFeedbackOpen((value) => !value)}>{feedbackOpen ? "×" : "✎"}</button>
+    <button type="button" className={`${playerStyles.feedbackFab} ${currentFeedback ? playerStyles.feedbackFabSet : ""} ${feedbackOpen ? playerStyles.feedbackFabOpen : ""}`} style={currentFeedback ? { background: selectedFeedbackType?.color } : undefined} aria-label={feedbackOpen ? "סגירת חלונית המשוב" : currentFeedback ? "עריכת המשוב על השקף" : "משוב על השקף (F)"} aria-expanded={feedbackOpen} onClick={() => setFeedbackOpen((value) => !value)}>{feedbackOpen ? "×" : <FeedbackIcon type={currentFeedback?.t ?? "syllo"} size={currentFeedback ? 24 : 27}/>}</button>
   </div>;
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
       const target = event.target;
-      if (target instanceof HTMLElement && target.closest("input, textarea, select, button, [contenteditable='true']")) return;
+      if (target instanceof HTMLElement && target.closest("input, textarea, select, [contenteditable='true']")) return;
+      if (event.key === " " && target instanceof HTMLElement && target.closest("button")) return;
       if (["ArrowLeft", "PageDown", " "].includes(event.key)) { event.preventDefault(); go(index + 1); }
       if (["ArrowRight", "PageUp"].includes(event.key)) { event.preventDefault(); go(index - 1); }
-      if (event.key === "Escape") setPresent(false);
+      if (event.key === "Escape") { if (feedbackOpen) setFeedbackOpen(false); else if (present) exitPresentation(); else if (notesOpen) setNotesOpen(false); else if (outlineOpen) setOutlineOpen(false); else { notifyLecturer("exit"); setOpened(false); } }
       if (event.key.toLowerCase() === "n") setNotesOpen((value) => !value);
-      if (event.key.toLowerCase() === "p") setPresent((value) => !value);
+      if (event.key.toLowerCase() === "p") present ? exitPresentation() : enterPresentation();
+      if (!lecturerMode && event.key.toLowerCase() === "f") setFeedbackOpen((value) => !value);
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [index]);
+  }, [feedbackOpen, index, lecturerMode, notesOpen, outlineOpen, present]);
 
   useEffect(() => {
     const player = playerRef.current;
@@ -205,30 +316,30 @@ export default function Lesson05Player({ lecturerMode = false }: { lecturerMode?
     return () => observer.disconnect();
   }, []);
 
-  if (!opened) return <section className={`l4-player ${playerStyles.preview}`} aria-label="תצוגה מקדימה של מערך השיעור" data-lesson-player="true" data-course-id="communication-systems" data-lesson-id="lesson-05" data-deck-version="lesson-05-am-v2">
+  if (!opened) return <section className={`l4-player ${playerStyles.preview}`} aria-label="תצוגה מקדימה של מערך השיעור" data-lesson-player="true" data-course-id="communication-systems" data-lesson-id="lesson-05" data-deck-version="lesson-05-am-v3" data-slides={extensionSlideCatalog}>
     <div className={playerStyles.previewStage}><ScaledSlide slide={previewSlide} index={0} hostClass={playerStyles.stage}/></div>
-    <footer className={playerStyles.previewFooter}><div><strong>מערך שיעור 05 · מקלט AM — סופר־הטרודיין וגלאי מעטפת</strong><span>{data.length} שקפים</span></div><button type="button" className={playerStyles.openLessonButton} onClick={() => { setIndex(0); setOutlineOpen(true); setNotesOpen(false); setOpened(true); }}>פתיחת מערך השיעור <span aria-hidden="true">←</span></button></footer>
+    <footer className={playerStyles.previewFooter}><div><strong>מערך שיעור 05 · מקלט AM — סופר־הטרודיין וגלאי מעטפת</strong><span>{data.length} שקפים</span></div><button type="button" className={playerStyles.openLessonButton} onClick={() => { notifyLecturer("open"); setIndex(0); setOutlineOpen(true); setNotesOpen(false); setOpened(true); }}>פתיחת מערך השיעור <span aria-hidden="true">←</span></button></footer>
   </section>;
 
   if (typeof document === "undefined") return null;
-  if (present) return createPortal(<div dir="rtl" data-lesson-id="lesson-05" className={`l4-player syllo-student-app ${playerStyles.present}`} role="dialog" aria-label="הצגת שקף שיעור 05">
+  if (present) return createPortal(<div dir="rtl" data-lesson-player="true" data-course-id="communication-systems" data-lesson-id="lesson-05" data-deck-version="lesson-05-am-v3" data-slides={extensionSlideCatalog} className={`l4-player syllo-student-app ${playerStyles.present}`} role="dialog" aria-label="הצגת שקף שיעור 05">
     <ScaledSlide slide={slide} index={index} hostClass={playerStyles.presentStage} />
-    <div className={playerStyles.presentControls}><button type="button" onClick={() => go(index - 1)}>הקודם</button><span dir="ltr">{String(index + 1).padStart(2, "0")} / {data.length}</span><button type="button" onClick={() => go(index + 1)}>הבא</button><button type="button" aria-pressed={notesOpen} onClick={() => setNotesOpen((value) => !value)}>הערות מרצה · N</button><button type="button" onClick={() => setPresent(false)}>יציאה · Esc</button></div>
+    <div className={playerStyles.presentControls}><button type="button" onClick={() => go(index - 1)}>הקודם</button><span dir="ltr">{String(index + 1).padStart(2, "0")} / {data.length}</span><button type="button" onClick={() => go(index + 1)}>הבא</button><button type="button" aria-pressed={notesOpen} onClick={() => setNotesOpen((value) => !value)}>הערות מרצה · N</button><button type="button" onClick={exitPresentation}>יציאה · Esc</button></div>
     {!lecturerMode && studentFeedback}
     {notesOpen && <aside className={playerStyles.speakerNotes}><b>הערות מרצה</b><p>{slide.notes.join(" · ")}</p></aside>}
   </div>, document.body);
 
-  return createPortal(<div ref={playerRef} dir="rtl" data-lesson-id="lesson-05" className={`l4-player syllo-student-app ${playerStyles.player} ${outlineOpen ? playerStyles.withOutline : ""} ${notesOpen ? playerStyles.withContext : ""}`} aria-label="מערך שיעור 05">
+  return createPortal(<div ref={playerRef} dir="rtl" data-lesson-player="true" data-course-id="communication-systems" data-lesson-id="lesson-05" data-deck-version="lesson-05-am-v3" data-slides={extensionSlideCatalog} className={`l4-player syllo-student-app ${playerStyles.player} ${outlineOpen ? playerStyles.withOutline : ""} ${notesOpen ? playerStyles.withContext : ""}`} aria-label="מערך שיעור 05">
     <header className={playerStyles.playerToolbar}>
-      <div className={playerStyles.lessonIdentity}><a className={playerStyles.courseBreadcrumb} href={lecturerMode ? "/lecturer/sessions#lessons" : "/course/communication-systems/lessons"}><span className={playerStyles.breadcrumbArrow} aria-hidden="true">›</span><span><small>{lecturerMode ? "חזרה לפנל המרצים" : "חזרה למערכי השיעור"}</small><b>מערכות תקשורת</b></span></a><span className={playerStyles.toolbarDivider}/><span className={playerStyles.lessonBadge} dir="ltr">05</span><span className={playerStyles.lessonTitle}>מקלט AM — סופר־הטרודיין וגלאי מעטפת</span></div>
+      <div className={playerStyles.lessonIdentity}><a className={playerStyles.courseBreadcrumb} href={lecturerMode ? "/lecturer/sessions#lessons" : "/course/communication-systems/lessons"} onClick={() => notifyLecturer("exit")}><span className={playerStyles.breadcrumbArrow} aria-hidden="true">›</span><span><small>{lecturerMode ? "חזרה לפנל המרצים" : "חזרה למערכי השיעור"}</small><b>מערכות תקשורת</b></span></a><span className={playerStyles.toolbarDivider}/><span className={playerStyles.lessonBadge} dir="ltr">05</span><span className={playerStyles.lessonTitle}>מקלט AM — סופר־הטרודיין וגלאי מעטפת</span></div>
       <nav className={playerStyles.loopPhases} aria-label="שלבי השיעור"><a className={playerStyles.phaseActive} href={lecturerMode ? "/lecturer/lessons/lesson-05/slides" : "/course/communication-systems/lessons/lesson-05/slides"}><span dir="ltr">01</span>מערך השיעור</a><a href={lecturerMode ? "/lecturer/lessons/lesson-05/practice" : "/course/communication-systems/lessons/lesson-05/practice"}><span dir="ltr">02</span>תרגול</a></nav>
-      <div className={playerStyles.toolbarActions}><button type="button" className={playerStyles.toolbarButton} aria-label="מבנה השיעור" aria-pressed={outlineOpen} onClick={() => setOutlineOpen((value) => !value)}>☷</button><button type="button" className={`${playerStyles.toolbarButton} ${playerStyles.toolbarTextButton}`} aria-label="הערות מרצה" aria-pressed={notesOpen} onClick={() => setNotesOpen((value) => !value)}>הערות</button><button type="button" className={playerStyles.presentButton} onClick={() => setPresent(true)}>הצגה</button></div>
+      <div className={playerStyles.toolbarActions}><button type="button" className={playerStyles.toolbarButton} aria-label="מבנה השיעור" aria-pressed={outlineOpen} onClick={() => setOutlineOpen((value) => !value)}>☷</button><button type="button" className={`${playerStyles.toolbarButton} ${playerStyles.toolbarTextButton}`} aria-label="הערות מרצה" aria-pressed={notesOpen} onClick={() => setNotesOpen((value) => !value)}>הערות</button><button type="button" className={playerStyles.presentButton} onClick={enterPresentation}>הצגה</button></div>
     </header>
     <div className={playerStyles.loopProgress}/>
     <div className={playerStyles.playerWorkspace}>
-      {outlineOpen && <aside className={playerStyles.outline} aria-label="מבנה השיעור"><header className={playerStyles.outlineHeader}><div className={playerStyles.outlineTitleRow}><span className={playerStyles.lessonBadge} dir="ltr">05</span><div><span className={playerStyles.eyebrow}>מערך השיעור · מקלט AM</span><h2>סופר־הטרודיין וגלאי מעטפת</h2></div></div><div className={playerStyles.lessonProgress}><span>{index + 1}/{data.length} שקפים</span><i><b style={{ width: `${(index + 1) / data.length * 100}%` }}/></i></div></header><div className={playerStyles.outlineSectionHeading}>מבנה השיעור</div><nav className={playerStyles.outlineScroll}>{chapters.map((chapter, chapterIndex) => <section className={playerStyles.chapter} key={chapter}><button type="button" className={`${playerStyles.chapterButton} ${slide.chapter === chapter ? playerStyles.chapterActive : ""}`}><span className={playerStyles.chapterNumber} dir="ltr">{String(chapterIndex + 1).padStart(2, "0")}</span><span className={playerStyles.chapterTitle}>{chapter}</span></button><div className={playerStyles.chapterSlides}>{data.map((item, slideIndex) => item.chapter === chapter && <button type="button" key={slideIndex} className={`${playerStyles.slideLink} ${index === slideIndex ? playerStyles.slideActive : ""}`} onClick={() => go(slideIndex)}><span className={playerStyles.slideNumber} dir="ltr">{String(slideIndex + 1).padStart(2, "0")}</span><span className={playerStyles.slideTitle}>{item.title}</span></button>)}</div></section>)}</nav></aside>}
+      {outlineOpen && <aside className={playerStyles.outline} aria-label="מבנה השיעור"><header className={playerStyles.outlineHeader}><div className={playerStyles.outlineTitleRow}><span className={playerStyles.lessonBadge} dir="ltr">05</span><div><span className={playerStyles.eyebrow}>מערך השיעור · מקלט AM</span><h2>סופר־הטרודיין וגלאי מעטפת</h2></div></div><div className={playerStyles.lessonProgress}><span>{seen.length}/{data.length} שקפים נצפו</span><i><b style={{ width: `${seen.length / data.length * 100}%` }}/></i></div></header><div className={playerStyles.outlineSectionHeading}>מבנה השיעור</div><nav className={playerStyles.outlineScroll}>{chapters.map((chapter, chapterIndex) => { const chapterSlides = data.map((item, slideIndex) => ({ item, slideIndex })).filter(({ item }) => item.chapter === chapter); const chapterSeen = chapterSlides.filter(({ slideIndex }) => seen.includes(slideIndex + 1)).length; const chapterFeedback = chapterSlides.filter(({ slideIndex }) => Boolean(feedbackBySlide[slideIndex + 1])).length; return <section className={playerStyles.chapter} key={chapter}><button type="button" aria-expanded={Boolean(openChapters[chapter])} className={`${playerStyles.chapterButton} ${slide.chapter === chapter ? playerStyles.chapterActive : ""}`} onClick={() => setOpenChapters((value) => ({ ...value, [chapter]: !value[chapter] }))}><span className={playerStyles.chapterNumber} dir="ltr">{String(chapterIndex + 1).padStart(2, "0")}</span><span className={playerStyles.chapterTitle}>{chapter}</span>{chapterFeedback > 0 && <span className={playerStyles.flagCount} aria-label={`${chapterFeedback} תגובות בפרק`}>{chapterFeedback}</span>}<span className={playerStyles.progressRing} style={{ "--progress": chapterSlides.length ? chapterSeen / chapterSlides.length : 0 } as React.CSSProperties} aria-label={`${chapterSeen} מתוך ${chapterSlides.length} שקפים נצפו`}/></button>{openChapters[chapter] && <div className={playerStyles.chapterSlides}>{chapterSlides.map(({ item, slideIndex }) => <button type="button" key={slideIndex} className={`${playerStyles.slideLink} ${index === slideIndex ? playerStyles.slideActive : ""} ${seen.includes(slideIndex + 1) ? playerStyles.slideSeen : ""}`} aria-current={index === slideIndex ? "step" : undefined} onClick={() => go(slideIndex)}><span className={playerStyles.slideNumber} dir="ltr">{String(slideIndex + 1).padStart(2, "0")}</span><span className={playerStyles.slideTitle}>{item.title}</span>{feedbackBySlide[slideIndex + 1] && <span className={playerStyles.feedbackMarker} title={feedbackTypes.find((type) => type.key === feedbackBySlide[slideIndex + 1].t)?.label}><FeedbackIcon type={feedbackBySlide[slideIndex + 1].t} size={13}/></span>}</button>)}</div>}</section>; })}</nav></aside>}
       <main className={playerStyles.playerMain} aria-label="נגן שיעור 05"><div className={playerStyles.stageWrap}><ScaledSlide slide={slide} index={index} hostClass={playerStyles.stage}/></div><footer className={playerStyles.playerFooter}><div className={playerStyles.chapterBar}>{chapters.map((chapter) => { const chapterSlides = data.filter((item) => item.chapter === chapter); const start = data.findIndex((item) => item.chapter === chapter); const progress = Math.max(0, Math.min(100, (index - start + 1) / chapterSlides.length * 100)); return <button type="button" key={chapter} className={`${playerStyles.chapterSegment} ${slide.chapter === chapter ? playerStyles.segmentActive : ""}`} style={{ flex: chapterSlides.length }} onClick={() => go(start)} aria-label={`מעבר לפרק ${chapter}`}><i style={{ width: `${progress}%` }}/></button>; })}</div><div className={playerStyles.slideNav}><button type="button" className={playerStyles.navButton} onClick={() => go(index - 1)} aria-label="לשקף הקודם">‹</button><span className={playerStyles.slideCount} dir="ltr">{String(index + 1).padStart(2, "0")} / {data.length}</span><button type="button" className={playerStyles.navButton} onClick={() => go(index + 1)} aria-label="לשקף הבא">›</button><span className={playerStyles.chapterLabel}>{slide.chapter}</span></div></footer></main>
-      {notesOpen && <aside className={playerStyles.slideContext} aria-label="הערות מרצה לשקף"><header className={playerStyles.contextHeader}><span>הערות מרצה</span><b dir="ltr">{String(index + 1).padStart(2, "0")}</b></header><div className={playerStyles.contextBody}><div className={playerStyles.takeaway}><small>העיקר</small>{slide.takeaway}</div><section className={playerStyles.contextSection}><h3>מפת מושגים</h3><p>הקשרים בין אות AM משיעור 4 לבין קליטת התחנה בשיעור 5.</p>{concepts.filter((concept) => visibleConceptIds.includes(concept.conceptId)).map((concept) => <Link className={playerStyles.conceptCard} key={concept.conceptId} href={`/course/communication-systems/concepts/${concept.conceptId}`}><b>{concept.name}</b><small>{concept.description}</small></Link>)}<Link href="/course/communication-systems/concepts" className={playerStyles.contextMore}>למפת המושגים המלאה ←</Link></section><h3>הערות לשקף</h3><ul>{slide.notes.map((note) => <li key={note}>{note}</li>)}</ul></div></aside>}
+      {notesOpen && <aside className={playerStyles.slideContext} aria-label="הערות מרצה לשקף"><header className={playerStyles.contextHeader}><span>הערות מרצה</span><b dir="ltr">{String(index + 1).padStart(2, "0")}</b></header><div className={playerStyles.contextBody}><div className={playerStyles.takeaway}><small>העיקר</small>{bidiQuantities(slide.takeaway)}</div><section className={playerStyles.contextSection}><h3>מפת מושגים</h3><p>הקשרים בין אות AM משיעור 4 לבין קליטת התחנה בשיעור 5.</p>{concepts.filter((concept) => visibleConceptIds.includes(concept.conceptId)).map((concept) => <Link className={playerStyles.conceptCard} key={concept.conceptId} href={`/course/communication-systems/concepts/${concept.conceptId}`}><b>{concept.name}</b><small>{concept.description}</small></Link>)}<Link href="/course/communication-systems/concepts" className={playerStyles.contextMore}>למפת המושגים המלאה ←</Link></section><h3>הערות לשקף</h3><ul>{slide.notes.map((note) => <li key={note}>{note}</li>)}</ul></div></aside>}
       {!lecturerMode && studentFeedback}
     </div>
   </div>, document.body);

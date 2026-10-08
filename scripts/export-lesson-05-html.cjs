@@ -7,7 +7,7 @@ const { renderToStaticMarkup } = require("react-dom/server");
 
 const root = path.resolve(__dirname, "..");
 const componentPath = path.join(root, "src/components/lesson-05-player.tsx");
-const cssIdentity = new Proxy({}, { get: (_target, key) => String(key) });
+const cssIdentity = new Proxy({}, { get: (_target, key) => key === "__esModule" ? false : String(key) });
 const originalLoad = Module._load;
 Module._load = function (request, parent, isMain) {
   if (request.endsWith(".module.css")) return cssIdentity;
@@ -44,7 +44,7 @@ const slides = lesson05Slides.map((slide, index) => {
   const content = renderToStaticMarkup(slide.content);
   const id = `lesson-05-slide-${String(index + 1).padStart(2, "0")}`;
   const slideClass = slide.className ? ` ${escapeHtml(slide.className)}` : "";
-  return `<section class="slide-page${index === 0 ? " is-active" : ""}" id="${id}" aria-label="שקף ${index + 1}: ${escapeHtml(slide.title)}" aria-hidden="${index === 0 ? "false" : "true"}"><div class="slide-canvas"><div class="sl l5-slide${slideClass}"><header class="sl-h"><div class="sl-eb">${escapeHtml(slide.chapter)}</div><h2>${escapeHtml(slide.title)}</h2></header><div class="sl-body">${content}</div><div class="sl-tk"><span>העיקר</span>${escapeHtml(slide.takeaway)}</div><footer class="sl-f"><span>${escapeHtml(slide.chapter)}</span><span dir="ltr">${String(index + 1).padStart(2, "0")}</span></footer></div></div></section>`;
+  return `<section class="slide-page${index === 0 ? " is-active" : ""}" id="${id}" aria-label="שקף ${index + 1}: ${escapeHtml(slide.title)}" aria-hidden="${index === 0 ? "false" : "true"}"><div class="slide-canvas"><div class="sl l5-slide${slideClass}"><header class="sl-h"><div class="sl-eb">${escapeHtml(slide.chapter)}</div><h2>${renderBidiQuantities(slide.title)}</h2></header><div class="sl-body">${content}</div><div class="sl-tk"><span>העיקר</span>${renderBidiQuantities(slide.takeaway)}</div><footer class="sl-f"><span>${escapeHtml(slide.chapter)}</span><span dir="ltr">${String(index + 1).padStart(2, "0")}</span></footer></div></div></section>`;
 }).join("\n");
 
 const html = `<!doctype html>
@@ -108,6 +108,11 @@ const html = `<!doctype html>
 
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
+}
+
+function renderBidiQuantities(value) {
+  const pattern = /(\d+(?:[.,]\d+)?\s?(?:MHz|kHz|Hz|μs|µs|ms|nF|pF|kΩ|Ω|mV|V|dB))/g;
+  return escapeHtml(value).replace(pattern, (quantity) => `<bdi dir="ltr">${quantity}</bdi>`);
 }
 
 const outputPath = path.join(root, "public/courses/communication-systems/lesson-05/lesson.html");

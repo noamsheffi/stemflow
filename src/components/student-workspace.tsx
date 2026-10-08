@@ -8,6 +8,7 @@ import { conceptMap } from "../lib/concept-map";
 import { concepts, course, formulas, getLesson, workspace } from "../lib/course-data";
 import { splitFormulaName } from "../lib/formula-name";
 import { lesson04Slides } from "./lesson-04-data";
+import { lesson05Slides } from "./lesson-05-player";
 import FormulaMath from "./formula-math";
 import FormulaScroll from "./formula-scroll";
 import CourseTree from "./course-tree";
@@ -68,7 +69,8 @@ function ContextPanel({ pathname }: { pathname: string }) {
   const lessonConcepts = selectedLesson ? concepts.filter((item) => selectedLesson.conceptIds.includes(item.conceptId)) : [];
   const [tab, setTab] = useState<"formulas" | "concepts" | "notes" | "feedback">("formulas");
   const [feedback, setFeedback] = useState<Record<number, { t: string; text: string }>>({});
-  const hasFeedbackTab = selectedLesson?.lessonId === "lesson-04";
+  const hasFeedbackTab = selectedLesson?.lessonId === "lesson-04" || selectedLesson?.lessonId === "lesson-05";
+  const lessonFeedbackKey = `syllo:student:lesson:${selectedLesson?.lessonId ?? "lesson-04"}:feedback`;
   const tabOrder: Array<"formulas" | "concepts" | "notes" | "feedback"> = hasFeedbackTab ? ["formulas", "concepts", "feedback", "notes"] : ["formulas", "concepts", "notes"];
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const noteStorageKey = `syllo:lesson-note:${route.courseId}:${selectedLesson?.lessonId ?? "course"}`;
@@ -85,14 +87,14 @@ function ContextPanel({ pathname }: { pathname: string }) {
       const next = event instanceof CustomEvent ? event.detail?.feedback : undefined;
       if (next && typeof next === "object") { setFeedback(next as Record<number, { t: string; text: string }>); return; }
       try {
-        const saved: unknown = JSON.parse(window.localStorage.getItem("syllo:student:lesson:lesson-04:feedback") ?? "{}");
+        const saved: unknown = JSON.parse(window.localStorage.getItem(lessonFeedbackKey) ?? "{}");
         setFeedback(saved && typeof saved === "object" ? saved as Record<number, { t: string; text: string }> : {});
       } catch { setFeedback({}); }
     };
     refresh();
     window.addEventListener("syllo:lesson-feedback-update", refresh);
     return () => window.removeEventListener("syllo:lesson-feedback-update", refresh);
-  }, [hasFeedbackTab]);
+  }, [hasFeedbackTab, lessonFeedbackKey]);
 
   const saveNote = (value: string) => {
     setNote(value);
@@ -137,11 +139,13 @@ function ContextPanel({ pathname }: { pathname: string }) {
       {tab === "feedback" && <>
         {Object.entries(feedback).length ? Object.entries(feedback).sort(([a], [b]) => Number(a) - Number(b)).map(([number, item]) => {
           const slideNumber = Number(number);
-          const slide = lesson04Slides.find((entry) => entry.n === slideNumber);
-          if (!slide) return null;
-          return <Link key={number} className={styles.contextFeedback} href={appCourseHref(route.courseId, "lessons/lesson-04/slides")} onClick={() => {
-            try { window.localStorage.setItem("syllo:student:lesson:lesson-04:index", JSON.stringify(slideNumber - 1)); } catch { /* Slide remains reachable from the outline. */ }
-          }}><b>שקף <span dir="ltr">{String(slideNumber).padStart(2, "0")}</span> · {slide.h}</b><small>{item.t === "unclear" ? "לא הבנתי" : item.t === "example" ? "צריך עוד דוגמה" : item.t === "question" ? "יש לי שאלה" : "נראה שיש טעות"}{item.text ? ` · ${item.text}` : ""}</small></Link>;
+          const slideTitle = selectedLesson?.lessonId === "lesson-05"
+            ? lesson05Slides[slideNumber - 1]?.title
+            : lesson04Slides.find((entry) => entry.n === slideNumber)?.h;
+          if (!slideTitle || !selectedLesson) return null;
+          return <Link key={number} className={styles.contextFeedback} href={appCourseHref(route.courseId, `lessons/${selectedLesson.lessonId}/slides`)} onClick={() => {
+            try { window.localStorage.setItem(`syllo:student:lesson:${selectedLesson.lessonId}:index`, JSON.stringify(slideNumber - 1)); } catch { /* Slide remains reachable from the outline. */ }
+          }}><b>שקף <span dir="ltr">{String(slideNumber).padStart(2, "0")}</span> · {slideTitle}</b><small>{item.t === "unclear" ? "לא הבנתי" : item.t === "example" ? "צריך עוד דוגמה" : item.t === "question" ? "יש לי שאלה" : "נראה שיש טעות"}{item.text ? ` · ${item.text}` : ""}</small></Link>;
         }) : <p className={styles.contextEmpty}>עדיין לא שמרת משוב לשקפי השיעור.</p>}
       </>}
       {tab === "notes" && <label className={styles.noteLabel}><span>{selectedLesson ? `הערות אישיות לשיעור ${String(selectedLesson.number).padStart(2, "0")}` : "הערות אישיות לקורס"}</span><textarea value={note} onChange={(event) => saveNote(event.target.value)} placeholder="כתבו לעצמכם הערה…" /></label>}
