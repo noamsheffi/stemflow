@@ -22,7 +22,7 @@ export default async function LecturerLessonPreviewPage({ params }: { params: Pr
   const phase = requestedPhase as Phase;
   const resource = lesson.resources.find((item) => phase === "slides" ? item.kind === "lesson-html" : phase === "practice" ? item.kind === "exercise" : false);
 
-  return <LecturerWorkspace breadcrumb={`שיעור ${String(lesson.number).padStart(2, "0")} · ${lesson.title}`}>
+  return <LecturerWorkspace activeLessonId={lesson.lessonId} breadcrumb={`שיעור ${String(lesson.number).padStart(2, "0")} · ${lesson.title}`}>
     <header className={styles.heading}>
       <div><p className={styles.eyebrow}>שיעור <span dir="ltr">{String(lesson.number).padStart(2, "0")}</span> · סביבת מרצה</p><h1>{lesson.title}</h1><p>תצוגת מערך ותרגול בתוך פנל המרצים.</p><div className={styles.topics}>{lesson.topics.map((topic) => <span key={topic}>{topic}</span>)}</div></div>
     </header>

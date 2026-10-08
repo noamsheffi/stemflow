@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { workspace } from "../lib/course-data";
+import { lessons, workspace } from "../lib/course-data";
 import styles from "../app/lecturer/sessions/lecturer-home.module.css";
 
 /** Lecturer-only application frame, sharing the lecturer dashboard's visual system. */
-export default function LecturerWorkspace({ children, current = "lessons", breadcrumb = "מערכי שיעור" }: { children: React.ReactNode; current?: "lessons" | "sessions"; breadcrumb?: string }) {
+export default function LecturerWorkspace({ children, current = "lessons", breadcrumb = "מערכי שיעור", activeLessonId }: { children: React.ReactNode; current?: "lessons" | "sessions"; breadcrumb?: string; activeLessonId?: string }) {
   const activeCourses = workspace.courses.filter((course) => course.status === "active");
   const activeCourse = activeCourses[0];
   return <main className={styles.app} dir="rtl">
@@ -16,6 +16,16 @@ export default function LecturerWorkspace({ children, current = "lessons", bread
         <Link className={current === "sessions" ? styles.navActive : ""} href="/lecturer/sessions#sessions"><span>◷</span>מפגשי הוראה</Link>
         <Link href={`/course/${activeCourse?.courseId ?? "communication-systems"}/formulas`}><span>ƒ</span>נוסחאון</Link>
         <Link href={`/course/${activeCourse?.courseId ?? "communication-systems"}/concepts`}><span>⌘</span>מפת מושגים</Link>
+      </nav>
+      <p className={styles.navLabel}>שיעורי הקורס</p>
+      <nav className={styles.lessonNav} aria-label="מערכי שיעור בקורס">
+        {lessons.filter((lesson) => activeCourse?.lessonIds.includes(lesson.lessonId)).map((lesson) => {
+          const href = `/lecturer/lessons/${lesson.lessonId}/slides`;
+          const active = activeLessonId === lesson.lessonId;
+          return <Link key={lesson.lessonId} className={active ? styles.lessonNavActive : ""} href={href} aria-current={active ? "page" : undefined}>
+            <span className={styles.lessonNavNumber} dir="ltr">{String(lesson.number).padStart(2, "0")}</span><span className={styles.lessonNavTitle}>{lesson.title}</span>
+          </Link>;
+        })}
       </nav>
       <div className={styles.sidebarNote}><span className={styles.statusDot} />הנתונים נשמרים ומתעדכנים מסנכרון המרצה</div>
       <div className={styles.profile}><span className={styles.avatar}>{Array.from(activeCourse?.lecturer ?? "מ")[0]}</span><span><b>{activeCourse?.lecturer ?? "סביבת מרצה"}</b><small>נתוני הוראה אישיים</small></span><Link href="/api/auth/logout" aria-label="יציאה">↪</Link></div>
