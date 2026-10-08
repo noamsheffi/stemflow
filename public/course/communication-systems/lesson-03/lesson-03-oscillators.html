@@ -6,6 +6,7 @@
   <meta name="color-scheme" content="light">
   <title>מערכות תקשורת — שיעור 3: מתנדים</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Hebrew:wght@400;500;600;700&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
     :root{
       --paper:#f1f5f9;--paper-dark:#e2e8f0;--ink:#0f172a;--green:#06b6d4;
@@ -131,6 +132,43 @@
     .scope,.spectrum{border:1px solid #1e293b;border-radius:14px;background:#0f172a;box-shadow:0 12px 28px rgba(15,23,42,.12)}
     .formula-highlight,.criterion-hero,.solution{border:1px solid #a5f3fc;border-radius:12px;background:linear-gradient(135deg,#ecfeff,#f0f9ff);color:#0e7490}
     .offset::before{background:linear-gradient(135deg,var(--green),var(--violet))}
+
+    /* Syllo 2026 visual refresh: shared light, quiet slide language */
+    :root{--paper:#f6f7f9;--paper-dark:#eef1f5;--ink:#13233a;--green:#137a86;--green2:#19a7ad;--cream:#fff;--danger:#b54750;--amber:#b77818;--violet:#137a86}
+    html,body{background:#f6f7f9;color:#13233a;font-family:'IBM Plex Sans Hebrew',Arial,sans-serif}
+    .grain{display:none}
+    .slide{background:#f6f7f9;padding:clamp(24px,4vw,46px) clamp(20px,5vw,58px) 62px;overflow-x:hidden;overflow-y:auto;overscroll-behavior:contain}
+    .slide::after{color:#137a86}
+    .eyebrow{color:#137a86;font-family:'IBM Plex Mono',monospace;letter-spacing:.04em}
+    h1,h2,h3,.display{font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;letter-spacing:-.025em}
+    h2{line-height:1.05}
+    .box,.offset,.card,.recipe-card,.flow .block,.condition,.timeline,.loop-box,.phasor,.bigformula,.quiz-q,.mini,.formula-highlight{border:1px solid #e6e8ee;border-radius:14px;box-shadow:0 1px 3px rgba(19,35,58,.06);transform:none}
+    .box,.offset,.card,.recipe-card,.flow .block,.condition,.timeline,.loop-box,.phasor,.quiz-q,.mini{background:#fff;color:#13233a}
+    .offset::before{display:none}
+    .card .num,.green,.concept h3,.timeline .mins,.recipe-card b,.flow .arrow{color:#137a86}
+    .black-card,.green-card,.question{background:#13233a;color:#fff;border:0;border-radius:14px}
+    .ribbon,.cover-ribbon{background:#137a86;color:#fff;border:0;border-radius:999px;transform:none}
+    .stamp{border:1px solid #cfe4e5;border-radius:999px;background:#e8f3f3;color:#137a86;transform:none}
+    .cover-title{font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;font-size:clamp(52px,7vw,106px);line-height:.96;letter-spacing:-.04em;color:#13233a;margin:2vh 0}
+    .cover-ribbon{font-size:clamp(14px,1.35vw,20px)}
+    .cover-sub{font-weight:500}
+    .cover-lecturer{color:#137a86}
+    .cover-art{height:68vh}
+    .cover-sheet{display:none}
+    .cover-frame{inset:3vh 1vw 1vh 3vw;border:1px solid #cfe4e5;border-radius:18px;background:#eef3f5;transform:none;padding:3vh 2vw;box-shadow:none}
+    .cover-panel{border:1px solid #e6e8ee;border-radius:12px;background:#fff}
+    .cover-stamp{top:0;left:0}
+    .formula,.bigformula,.formula-highlight{background:#eef3f5;color:#13233a;border-color:#e6e8ee}
+    .footer,.footer-source{color:#5d687b;border-color:#e6e8ee}
+    .scope{border:1px solid #253650;border-radius:14px}
+    .status{border-radius:10px}
+    button{border-radius:10px}
+    .flow .block{border-width:1px}
+    .timeline{border-width:1px}
+    .timeline>div{border-color:#e6e8ee}
+    .question .scribble{transform:none}
+    @media(max-width:850px){.slide{padding:24px 18px 55px}.cover-art{min-height:400px}.cover-frame{padding:3vh 4vw}}
+
   </style>
   <script defer src="/lesson-metadata.js"></script>
   <script defer src="/slide-feedback.js"></script>

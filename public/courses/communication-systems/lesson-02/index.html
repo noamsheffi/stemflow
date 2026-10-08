@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>שיעור 2: אפיון אותות, אפנון ורוחב פס</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+Hebrew:wght@400;500;600;700&display=swap');
 
     :root {
       --bg: #F1F5F9;
@@ -1340,6 +1341,36 @@
       .concept-definitions b { min-width:120px; }
       .harmonic-card { min-height:150px; }
     }
+
+    /* Syllo 2026 visual refresh: shared light, quiet slide language */
+    :root{--bg:#f6f7f9;--bg-dark:#eef1f5;--green:#137a86;--green-light:#19a7ad;--black:#13233a;--line:#e6e8ee;--white:#fff;--font-display:'IBM Plex Sans Hebrew',Arial,sans-serif;--font-hebrew-display:'IBM Plex Sans Hebrew',Arial,sans-serif;--font-body:'IBM Plex Sans Hebrew',Arial,sans-serif}
+    html,body{background:#f6f7f9;color:#13233a;font-family:'IBM Plex Sans Hebrew',Arial,sans-serif}
+    .grain-overlay{display:none}
+    .lesson-slide{background:#f6f7f9;padding:clamp(24px,4vw,46px) clamp(20px,5vw,58px) 62px;isolation:isolate}
+    .lesson-slide:not(.lesson-cover)::before,.lesson-header::after,.lesson-cover::before,.lesson-cover::after{display:none}
+    .lesson-header{border-bottom:1px solid #e6e8ee}
+    .lesson-kicker,.lesson-footer .hour-tag,.graph-tag{color:#137a86}
+    .lesson-title{color:#13233a;font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;line-height:1.05;letter-spacing:-.025em}
+    .time-chip{background:#e8f3f3;color:#137a86;border:1px solid #cfe4e5;border-radius:999px;transform:none}
+    .card,.signal-box,.agenda,.step-list,.term-strip,.formula-cards>div,.symbol-strip,.derivation,.calculation-main,.value-guide,.equal-steps,.equal-explain,.exam-given,.exam-solution,.exam-step,.exam-link{border:1px solid #e6e8ee;border-radius:14px;box-shadow:0 1px 3px rgba(19,35,58,.06);transform:none}
+    .card{background:#fff;color:#13233a}
+    .card:nth-child(even){transform:none}
+    .card.black,.card.green,.exam-link{background:#13233a;color:#fff}
+    .card.khaki,.value-guide,.equal-explain,.exam-given{background:#eef3f5}
+    .card h3,.exam-given h3,.exam-solution h3{color:#13233a}
+    .formula,.formula.big,.given-eq,.calc-line,.exam-answer{border:1px solid #e6e8ee;border-radius:10px;background:#eef3f5;color:#13233a}
+    .formula.big{background:#eef3f5}
+    .checkpoint,.unit-rule,.exam-answer{border:1px solid #e6e8ee;border-inline-start:5px solid #137a86;border-radius:10px;background:#fff;color:#13233a;transform:none}
+    .ribbon,.card-label,.label,.hour-tag,.notes-toggle{background:#137a86;color:#fff;border:0;border-radius:999px;transform:none}
+    .footer-source{color:#5d687b}
+    .cover-board{border:1px solid #cfe4e5;border-radius:18px;background:#eef3f5;transform:none;box-shadow:none}
+    .cover-sheet{display:none}
+    .cover-sketch{border:1px solid #e6e8ee;border-radius:12px;background:#fff}
+    .cover-title{color:#13233a}
+    .cover-ribbon{border-radius:999px;background:#137a86;color:#fff}
+    button,.domain-btn,.wifi-btn,.solution-toggle{border-radius:10px;transform:none}
+    @media(max-width:900px){.lesson-slide{padding:24px 18px 55px}}
+
   </style>
   <script defer src="/lesson-metadata.js"></script>
   <script defer src="/slide-feedback.js"></script>
