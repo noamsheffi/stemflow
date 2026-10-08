@@ -1,13 +1,15 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import katex from "katex";
 import styles from "./lesson-05-player.module.css";
+import playerStyles from "./lesson-04-player.module.css";
 
 type DeckSlide = { chapter: string; title: string; minutes: number; takeaway: string; notes: string[]; content: React.ReactNode };
 const chapters = ["פתיחה וחזרה", "ארכיטקטורת מקלט", "המרת תדר ובבואה", "גלאי מעטפת ו־AGC", "תרגול וסיכום"];
-const formula = (tex: string) => <div dir="ltr" className={styles.formula} dangerouslySetInnerHTML={{ __html: katex.renderToString(tex, { displayMode: true, throwOnError: false, trust: false, output: "htmlAndMathml" }) }} />;
-const card = (title: string, children: React.ReactNode) => <article className={styles.card}><h3>{title}</h3>{children}</article>;
+const formula = (tex: string) => <div dir="ltr" className="sl-fx" dangerouslySetInnerHTML={{ __html: katex.renderToString(tex, { displayMode: true, throwOnError: false, trust: false, output: "htmlAndMathml" }) }} />;
+const card = (title: string, children: React.ReactNode) => <article className="sl-card"><div className="sl-lab">{title}</div>{children}</article>;
 const data: DeckSlide[] = [
   { chapter: chapters[0], title: "איך הרדיו בוחר תחנה אחת?", minutes: 3, takeaway: "המקלט צריך לבחור תחנה, לדחות שכנות ולשחזר את השמע.", notes: ["שאלו איך מכשיר רדיו בוחר תחנה מתוך אותות רבים.", "אספו שתיים או שלוש השערות לפני הצגת הפתרון.", "הבטיחו שנעקוב אחרי האות מהאנטנה ועד לרמקול."], content: <>{card("שאלת הפתיחה", <p className={styles.lead}>כשמסובבים את כפתור התחנות, מה משתנה בתוך המקלט כדי לבחור תחנה אחת?</p>)}<div className={styles.flow}><b>אנטנה</b><i>אותות רבים</i><b>מקלט</b><i>בחירה ושחזור</i><b>רמקול</b></div></> },
   { chapter: chapters[0], title: "מה מגיע לאנטנה?", minutes: 7, takeaway: "אות AM כולל נושא ופסי צד; פסי הצד נושאים את המידע.", notes: ["רעננו את מבנה אות AM משיעור 4.", "הצביעו על הנושא ועל שני פסי הצד.", "שאלו מה המקלט צריך לעשות לפני גילוי המעטפת."], content: <>{formula(String.raw`s(t)=A_c[1+m_a\cos(2\pi f_m t)]\cos(2\pi f_c t)`)}<div className={styles.three}>{card("נושא", <p>בתדר <bdi dir="ltr">f<sub>c</sub></bdi></p>)}{card("פס תחתון", <p><bdi dir="ltr">f<sub>c</sub> − f<sub>m</sub></bdi></p>)}{card("פס עליון", <p><bdi dir="ltr">f<sub>c</sub> + f<sub>m</sub></bdi></p>)}</div><p className={styles.note}>האנטנה קולטת תחנות רבות בו־זמנית, לא רק את התחנה הרצויה.</p></> },
@@ -40,13 +42,83 @@ function Tuner() {
   return <div className={styles.tuner}><label>תדר התחנה RF <output dir="ltr">{rf} kHz</output><input type="range" min={min} max={max} step="1" value={rf} onChange={(e) => setRF(Number(e.target.value))}/></label><div className={styles.tunerValues}><span>IF <bdi dir="ltr">455 kHz</bdi></span><span>LO <bdi dir="ltr">{lo} kHz</bdi></span><span>תדר בבואה <bdi dir="ltr">{image} kHz</bdi></span></div><div className={styles.tunerAxis}><i style={{ left: `${x(rf)}%` }}><b>RF</b></i><i style={{ left: `${x(lo)}%` }}><b>LO</b></i><i style={{ left: `${x(image)}%` }}><b>IM</b></i></div><p>המרחק RF–LO והמרחק LO–IM נשארים <bdi dir="ltr">455 kHz</bdi>.</p></div>;
 }
 
+function ScaledSlide({ slide, index, hostClass }: { slide: DeckSlide; index: number; hostClass: string }) {
+  const host = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(0.5);
+  useEffect(() => {
+    const element = host.current;
+    if (!element) return;
+    const update = () => {
+      const rect = element.getBoundingClientRect();
+      const next = Math.min(rect.width / 1600, rect.height / 900);
+      if (Number.isFinite(next) && next > 0) setScale(next);
+    };
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+  return <div ref={host} className={hostClass}>
+    <div className={playerStyles.stageBox} style={{ width: 1600 * scale, height: 900 * scale }}>
+      <div className={playerStyles.slideCanvas} style={{ transform: `scale(${scale})` }} data-current-slide="true" data-slide-id={`lesson-05-am-${String(index + 1).padStart(2, "0")}`} data-slide-number={index + 1} data-minutes={slide.minutes}>
+        <div className="sl l5-slide"><header className="sl-h"><div className="sl-eb">{slide.chapter} · {slide.minutes} דקות</div><h2>{slide.title}</h2></header><div className="sl-body">{slide.content}</div><div className="sl-tk"><span>העיקר</span>{slide.takeaway}</div><footer className="sl-f"><span>{slide.chapter}</span><span dir="ltr">{String(index + 1).padStart(2, "0")}</span></footer></div>
+      </div>
+    </div>
+  </div>;
+}
+
 export default function Lesson05Player() {
-  const [index, setIndex] = useState(0); const [notesOpen, setNotesOpen] = useState(false); const [present, setPresent] = useState(false);
-  const slide = data[index]; const elapsed = data.slice(0, index + 1).reduce((n, item) => n + item.minutes, 0); const total = data.reduce((n, item) => n + item.minutes, 0);
-  useEffect(() => { const onKey = (event: KeyboardEvent) => { const target = event.target; if (target instanceof HTMLElement && target.closest("input, textarea, select, button, [contenteditable='true']")) return; if (event.key === "ArrowRight") setIndex((i) => Math.min(data.length - 1, i + 1)); if (event.key === "ArrowLeft") setIndex((i) => Math.max(0, i - 1)); if (event.key === "Escape") setPresent(false); }; window.addEventListener("keydown", onKey); return () => window.removeEventListener("keydown", onKey); }, []);
-  return <section className={`${styles.player} ${present ? styles.present : ""}`} dir="rtl" aria-label="מערך שיעור 05">
-    <header className={styles.toolbar}><div className={styles.identity}><span className={styles.badge}>05</span><div><small>מערכות תקשורת · מערך אינטראקטיבי</small><b>מקלט AM — סופר־הטרודיין וגלאי מעטפת</b></div></div><button onClick={() => setNotesOpen((v) => !v)} aria-pressed={notesOpen}>הערות מרצה</button><button onClick={() => setPresent((v) => !v)}>{present ? "יציאה מהצגה" : "הצגה"}</button></header>
-    <div className={styles.workspace}><nav className={styles.outline} aria-label="תוכן השיעור">{chapters.map((chapter, c) => <div key={chapter}><b>{String(c + 1).padStart(2, "0")} · {chapter}</b>{data.map((item, i) => item.chapter === chapter && <button key={i} className={i === index ? styles.active : ""} onClick={() => setIndex(i)}>{item.title}<small>{item.minutes} דק׳</small></button>)}</div>)}</nav><main className={styles.main}><article className={styles.slide}><div className={styles.kicker}>{slide.chapter} · {slide.minutes} דקות</div><h2>{slide.title}</h2><div className={styles.content}>{slide.content}</div><footer><span>{slide.takeaway}</span><b>{String(index + 1).padStart(2, "0")}</b></footer></article><div className={styles.controls}><button onClick={() => setIndex((i) => Math.max(0, i - 1))} disabled={index === 0}>הקודם</button><span>{index + 1} / {data.length} · כ־{total - elapsed} דק׳ נותרו</span><button onClick={() => setIndex((i) => Math.min(data.length - 1, i + 1))} disabled={index === data.length - 1}>הבא</button></div></main>{notesOpen && <aside className={styles.notes}><h3>הערות לשקף {String(index + 1).padStart(2, "0")}</h3><ul>{slide.notes.map((note) => <li key={note}>{note}</li>)}</ul></aside>}</div>
-    <div className={styles.progress}><i style={{ width: `${(index + 1) / data.length * 100}%` }}/></div>
-  </section>;
+  const [index, setIndex] = useState(0);
+  const [notesOpen, setNotesOpen] = useState(true);
+  const [outlineOpen, setOutlineOpen] = useState(true);
+  const [present, setPresent] = useState(false);
+  const playerRef = useRef<HTMLDivElement>(null);
+  const slide = data[index];
+  const total = data.reduce((n, item) => n + item.minutes, 0);
+  const remaining = data.slice(index).reduce((n, item) => n + item.minutes, 0);
+  const go = (next: number) => setIndex(Math.max(0, Math.min(data.length - 1, next)));
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      const target = event.target;
+      if (target instanceof HTMLElement && target.closest("input, textarea, select, button, [contenteditable='true']")) return;
+      if (["ArrowLeft", "PageDown", " "].includes(event.key)) { event.preventDefault(); go(index + 1); }
+      if (["ArrowRight", "PageUp"].includes(event.key)) { event.preventDefault(); go(index - 1); }
+      if (event.key === "Escape") setPresent(false);
+      if (event.key.toLowerCase() === "n") setNotesOpen((value) => !value);
+      if (event.key.toLowerCase() === "p") setPresent((value) => !value);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [index]);
+
+  useEffect(() => {
+    const player = playerRef.current;
+    if (!player) return;
+    const observer = new ResizeObserver(([entry]) => {
+      if (entry.contentRect.width < 1192) setNotesOpen(false);
+    });
+    observer.observe(player);
+    return () => observer.disconnect();
+  }, []);
+
+  if (typeof document === "undefined") return null;
+  if (present) return createPortal(<div dir="rtl" className={`l4-player syllo-student-app ${playerStyles.present}`} role="dialog" aria-label="הצגת שקף שיעור 05">
+    <ScaledSlide slide={slide} index={index} hostClass={playerStyles.presentStage} />
+    <div className={playerStyles.presentControls}><button type="button" onClick={() => go(index - 1)}>הקודם</button><span dir="ltr">{String(index + 1).padStart(2, "0")} / {data.length}</span><button type="button" onClick={() => go(index + 1)}>הבא</button><button type="button" aria-pressed={notesOpen} onClick={() => setNotesOpen((value) => !value)}>הערות מרצה · N</button><button type="button" onClick={() => setPresent(false)}>יציאה · Esc</button></div>
+    {notesOpen && <aside className={playerStyles.speakerNotes}><b>הערות מרצה</b><p>{slide.notes.join(" · ")}</p></aside>}
+  </div>, document.body);
+
+  return createPortal(<div ref={playerRef} dir="rtl" className={`l4-player syllo-student-app ${playerStyles.player} ${outlineOpen ? playerStyles.withOutline : ""} ${notesOpen ? playerStyles.withContext : ""}`} aria-label="מערך שיעור 05">
+    <header className={playerStyles.playerToolbar}>
+      <div className={playerStyles.lessonIdentity}><a className={playerStyles.courseBreadcrumb} href="/lecturer/sessions#lessons"><span className={playerStyles.breadcrumbArrow} aria-hidden="true">›</span><span><small>חזרה לפנל המרצים</small><b>מערכות תקשורת</b></span></a><span className={playerStyles.toolbarDivider}/><span className={playerStyles.lessonBadge} dir="ltr">05</span><span className={playerStyles.lessonTitle}>מקלט AM — סופר־הטרודיין וגלאי מעטפת</span></div>
+      <nav className={playerStyles.loopPhases} aria-label="שלבי השיעור"><a className={playerStyles.phaseActive} href="/lecturer/lessons/lesson-05/slides"><span dir="ltr">01</span>מערך השיעור</a><a href="/lecturer/lessons/lesson-05/practice"><span dir="ltr">02</span>תרגול</a></nav>
+      <div className={playerStyles.toolbarActions}><button type="button" className={playerStyles.toolbarButton} aria-label="מבנה השיעור" aria-pressed={outlineOpen} onClick={() => setOutlineOpen((value) => !value)}>☷</button><button type="button" className={playerStyles.toolbarButton} aria-label="הערות מרצה" aria-pressed={notesOpen} onClick={() => setNotesOpen((value) => !value)}>הערות</button><button type="button" className={playerStyles.presentButton} onClick={() => setPresent(true)}>הצגה</button></div>
+    </header>
+    <div className={playerStyles.loopProgress}/>
+    <div className={playerStyles.playerWorkspace}>
+      {outlineOpen && <aside className={playerStyles.outline} aria-label="מבנה השיעור"><header className={playerStyles.outlineHeader}><div className={playerStyles.outlineTitleRow}><span className={playerStyles.lessonBadge} dir="ltr">05</span><div><span className={playerStyles.eyebrow}>מערך השיעור · מקלט AM</span><h2>סופר־הטרודיין וגלאי מעטפת</h2></div></div><div className={playerStyles.lessonProgress}><span>{index + 1}/{data.length} שקפים</span><i><b style={{ width: `${(index + 1) / data.length * 100}%` }}/></i></div></header><div className={playerStyles.outlineSectionHeading}>מבנה השיעור</div><nav className={playerStyles.outlineScroll}>{chapters.map((chapter, chapterIndex) => <section className={playerStyles.chapter} key={chapter}><button type="button" className={`${playerStyles.chapterButton} ${slide.chapter === chapter ? playerStyles.chapterActive : ""}`}><span className={playerStyles.chapterNumber} dir="ltr">{String(chapterIndex + 1).padStart(2, "0")}</span><span className={playerStyles.chapterTitle}>{chapter}</span></button><div className={playerStyles.chapterSlides}>{data.map((item, slideIndex) => item.chapter === chapter && <button type="button" key={slideIndex} className={`${playerStyles.slideLink} ${index === slideIndex ? playerStyles.slideActive : ""}`} onClick={() => go(slideIndex)}><span className={playerStyles.slideNumber} dir="ltr">{String(slideIndex + 1).padStart(2, "0")}</span><span className={playerStyles.slideTitle}>{item.title}</span></button>)}</div></section>)}</nav></aside>}
+      <main className={playerStyles.playerMain} aria-label="נגן שיעור 05"><div className={playerStyles.stageWrap}><ScaledSlide slide={slide} index={index} hostClass={playerStyles.stage}/></div><footer className={playerStyles.playerFooter}><div className={playerStyles.chapterBar}>{chapters.map((chapter) => { const chapterSlides = data.filter((item) => item.chapter === chapter); const start = data.findIndex((item) => item.chapter === chapter); const progress = Math.max(0, Math.min(100, (index - start + 1) / chapterSlides.length * 100)); return <button type="button" key={chapter} className={`${playerStyles.chapterSegment} ${slide.chapter === chapter ? playerStyles.segmentActive : ""}`} style={{ flex: chapterSlides.length }} onClick={() => go(start)} aria-label={`מעבר לפרק ${chapter}`}><i style={{ width: `${progress}%` }}/></button>; })}</div><div className={playerStyles.slideNav}><button type="button" className={playerStyles.navButton} onClick={() => go(index - 1)} aria-label="לשקף הקודם">‹</button><span className={playerStyles.slideCount} dir="ltr">{String(index + 1).padStart(2, "0")} / {data.length}</span><button type="button" className={playerStyles.navButton} onClick={() => go(index + 1)} aria-label="לשקף הבא">›</button><span className={playerStyles.chapterLabel}>{slide.chapter}</span><span className={playerStyles.timeLeft}>כ־{remaining} דק׳ לסיום · {total} דקות בסך הכול</span></div></footer></main>
+      {notesOpen && <aside className={playerStyles.slideContext} aria-label="הערות מרצה לשקף"><header className={playerStyles.contextHeader}><span>הערות מרצה</span><b dir="ltr">{String(index + 1).padStart(2, "0")}</b></header><div className={playerStyles.contextBody}><div className={playerStyles.takeaway}><small>העיקר</small>{slide.takeaway}</div><h3>הערות לשקף</h3><ul>{slide.notes.map((note) => <li key={note}>{note}</li>)}</ul></div></aside>}
+    </div>
+  </div>, document.body);
 }

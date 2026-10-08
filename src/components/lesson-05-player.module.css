@@ -8,3 +8,36 @@
 @media(max-width:700px){.player{min-height:720px;border-radius:12px}.toolbar{flex-wrap:wrap}.identity{flex-basis:100%}.workspace{position:relative}.outline{width:145px;padding:7px 5px}.outline button{font-size:10px}.notes{position:absolute;z-index:3;inset:0 0 0 auto;width:min(290px,85%);box-shadow:-10px 0 28px #13263e22}.main{padding:7px}.slide{min-height:580px;padding:17px}.slide h2{margin:9px 0 14px;font-size:23px}.content{font-size:14px}.two{grid-template-columns:1fr}.blockFlow{gap:5px}.blockFlow b{min-width:74px;padding:7px;font-size:11px}.controls{gap:8px}.controls span{text-align:center;font-size:10px}.slide footer{font-size:11px}}
 @media(prefers-reduced-motion:reduce){.progress i{transition:none}}
 .formula :global(.katex-display){margin:0}.formula :global(.katex){color:#13263e}
+
+/* Keep dense slides readable in the lecturer preview and presentation modes. */
+.main{align-items:center}
+.slide{width:min(100%,calc((100dvh - 190px)*16/9));max-height:calc(100dvh - 190px);min-height:0;flex:0 1 auto;aspect-ratio:16/9;box-sizing:border-box}
+.kicker,.slide h2,.slide footer{flex:none}
+.content{justify-content:flex-start;overflow:auto;overscroll-behavior:contain;padding:2px 4px 8px 0;scrollbar-gutter:stable}
+.content>*{flex:0 0 auto}
+.slide footer{margin-top:14px}
+.formula{display:grid;min-height:64px;box-sizing:border-box;place-items:center}
+.present .slide{width:100%;max-height:none;aspect-ratio:auto}
+@media(max-width:700px){.main{align-items:stretch}.slide{width:100%;max-height:none;min-height:580px;aspect-ratio:auto}}
+
+/* Lesson 05 content is authored on the same 1600×900 canvas as Lesson 04. */
+.lead{font-size:38px;line-height:1.4}
+.three,.two{gap:28px}
+.note{padding:18px 22px;border-inline-start:6px solid #138893;background:#eaf5f5;color:#344c62;font-size:24px;line-height:1.45}
+.flow,.blockFlow{gap:16px}
+.flow b,.blockFlow b{padding:24px 26px;border:1.5px solid #c9dce2;border-radius:16px;background:#fff;color:#183b4d;font-size:28px}
+.flow i{color:#70849a;font-size:32px}
+.blockFlow b{min-width:150px}
+.axis{gap:20px;font-size:26px}
+.axis i{width:180px;height:4px}
+.reveal{padding:20px 24px;border-radius:14px;background:#f2f5f7;font-size:24px}
+.reveal button{min-height:52px;padding:10px 18px;border-radius:10px;font-family:inherit;font-size:22px;font-weight:600}
+.reveal ol{margin:16px 0 0;padding-inline-start:34px}
+.reveal li{padding:8px 0}
+.tuner{gap:22px;padding:24px;border-radius:18px;font-size:24px}
+.tuner label{gap:12px;font-size:24px}
+.tuner input{height:24px}
+.tunerValues span{padding:14px 18px;font-size:22px}
+.tunerAxis{height:90px}
+.tunerAxis b{font-size:20px}
+.tuner p{font-size:22px}

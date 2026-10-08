@@ -200,7 +200,7 @@ function ChapterBar({ index, go, feedback }: { index: number; go: (index: number
   })}</nav>;
 }
 
-export default function Lesson04Player() {
+export default function Lesson04Player({ lecturerMode = false }: { lecturerMode?: boolean } = {}) {
   const stateKey = "syllo:student:lesson:" + lessonId;
   const [index, setIndex] = useLessonState(stateKey + ":index", 0);
   const [flags, setFlags] = useLessonState<number[]>(stateKey + ":flags", []);
@@ -227,6 +227,7 @@ export default function Lesson04Player() {
   const slide = L4_SLIDES[index];
   const previewSlide = L4_SLIDES[0];
   const chapter = L4_CHAPTERS.find((item) => item.id === slide.ch)!;
+  const lessonBaseHref = lecturerMode ? `/lecturer/lessons/${lessonId}` : `/course/${courseId}/lessons/${lessonId}`;
   const minutesRemaining = useMemo(() => L4_SLIDES.slice(index).reduce((sum, item) => sum + item.min, 0), [index]);
   const go = useCallback((next: number) => setIndex(Math.max(0, Math.min(L4_SLIDES.length - 1, next))), [setIndex]);
   const notifyLecturer = useCallback((type: "open" | "exit") => {
@@ -380,16 +381,16 @@ export default function Lesson04Player() {
   return createPortal(<div dir="rtl" ref={playerRef} className={["l4-player", "syllo-student-app", styles.player, outlineOpen ? styles.withOutline : "", contextOpen ? styles.withContext : ""].join(" ")} data-lesson-player="true" data-course-id={courseId} data-lesson-id={lessonId} data-deck-version="lesson-04-am-v1" data-slides={extensionSlideCatalog}>
     <header className={styles.playerToolbar}>
         <div className={styles.lessonIdentity}>
-          <Link ref={exitLessonLinkRef} href={`/course/${courseId}`} onClick={exitLesson} className={styles.courseBreadcrumb} aria-label="חזרה לקורס מערכות תקשורת"><span className={styles.breadcrumbArrow} aria-hidden="true">›</span><span><small>חזרה לקורס</small><b>מערכות תקשורת</b></span></Link>
+          <Link ref={exitLessonLinkRef} href={lecturerMode ? "/lecturer/sessions#lessons" : `/course/${courseId}`} onClick={exitLesson} className={styles.courseBreadcrumb} aria-label={lecturerMode ? "חזרה לפנל המרצים" : "חזרה לקורס מערכות תקשורת"}><span className={styles.breadcrumbArrow} aria-hidden="true">›</span><span><small>{lecturerMode ? "חזרה לפנל המרצים" : "חזרה לקורס"}</small><b>מערכות תקשורת</b></span></Link>
           <span className={styles.toolbarDivider} aria-hidden="true" />
           <span className={styles.lessonMode}><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3" y="3" width="14" height="11" rx="1.5"/><path d="M7 17h6M10 14v3"/></svg><b>מערך שיעור</b></span>
           <span className={styles.lessonBadge} dir="ltr">04</span>
           <span className={styles.lessonTitle}>אפנון תנופה AM ומשדר</span>
         </div>
         <nav className={styles.loopPhases} aria-label="שלבי הלמידה">
-          <Link aria-current="page" className={styles.phaseActive} href={`/course/${courseId}/lessons/${lessonId}/slides`}><span dir="ltr">01</span>בכיתה</Link>
-          <Link href={`/course/${courseId}/lessons/${lessonId}/practice`} onClick={exitLesson}><span dir="ltr">02</span>אחרי השיעור</Link>
-          <Link href={`/course/${courseId}/lessons/${lessonId}/summary`} onClick={exitLesson}><span dir="ltr">03</span>לקראת השיעור הבא</Link>
+          <Link aria-current="page" className={styles.phaseActive} href={`${lessonBaseHref}/slides`}><span dir="ltr">01</span>בכיתה</Link>
+          <Link href={`${lessonBaseHref}/practice`} onClick={exitLesson}><span dir="ltr">02</span>אחרי השיעור</Link>
+          <Link href={`${lessonBaseHref}/summary`} onClick={exitLesson}><span dir="ltr">03</span>לקראת השיעור הבא</Link>
         </nav>
         <div className={styles.toolbarActions}>
           <button type="button" className={styles.toolbarButton} aria-pressed={outlineOpen} aria-label="מבנה השיעור" title="מבנה השיעור" onClick={() => { const next = !outlineOpen; setOutlineOpen(next); if (compact && next) setContextOpen(false); }}><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14"/></svg></button>
@@ -410,7 +411,7 @@ export default function Lesson04Player() {
           <span className={styles.slideCount} dir="ltr">{pad2(slide.n)} / {L4_SLIDES.length}</span>
           <button type="button" className={styles.navButton} aria-label="לשקף הבא" onClick={() => go(index + 1)}><Chevron /></button>
           <span className={styles.chapterLabel}>{chapter.title}</span><span className={styles.timeLeft}>כ־{minutesRemaining} דק׳ לסיום</span>
-          {index === L4_SLIDES.length - 1 && <Link className={styles.practiceLink} href={"/course/" + courseId + "/lessons/" + lessonId + "/practice"}>לתרגול האינטראקטיבי ←</Link>}
+          {index === L4_SLIDES.length - 1 && <Link className={styles.practiceLink} href={`${lessonBaseHref}/practice`}>לתרגול האינטראקטיבי ←</Link>}
         </div>
       </footer>
       </main>
