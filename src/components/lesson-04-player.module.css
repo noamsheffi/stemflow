@@ -294,6 +294,12 @@
 .flagCount { font-size: 10.5px; }
 .interactiveMark { flex: none; color: #6247c9; font-size: 9px; }
 
+/* Lesson 05 feedback is viewport-anchored so side panels cannot crop it. */
+[data-lesson-id="lesson-05"] .feedback { position: fixed; z-index: 100; right: 24px; left: auto; bottom: 16px; }
+[data-lesson-id="lesson-05"] .feedbackPopover { right: 0; left: auto; max-width: calc(100vw - 48px); max-height: calc(100dvh - 112px); overflow-y: auto; }
+[data-lesson-id="lesson-05"].present .feedbackDark { right: 24px; left: auto; bottom: 44px; }
+[data-lesson-id="lesson-05"].present .feedbackDark .feedbackPopover { right: 0; left: auto; }
+
 @container lesson-player (max-width: 1191px) {
   .slideContext { position: fixed; z-index: 40; inset-block: 0; inset-inline-end: 0; width: 290px; min-width: 290px; box-shadow: -8px 0 24px #13233a26; }
   .slideContext .closePanel { display: inline-flex; align-items: center; justify-content: center; }
@@ -326,8 +332,15 @@
   .feedback { inset-inline-end: 15px; }
   .feedbackFab { width: 50px; height: 50px; }
   .feedbackPopover { width: min(340px, calc(100vw - 66px)); }
+  [data-lesson-id="lesson-05"] .feedback { right: 12px; }
+  [data-lesson-id="lesson-05"] .feedbackPopover { width: min(340px, calc(100vw - 24px)); max-width: calc(100vw - 24px); max-height: calc(100dvh - 96px); }
+  [data-lesson-id="lesson-05"].present .feedbackDark { right: 12px; bottom: 56px; }
 }
 
 @media (max-width: 620px) {
   .openLessonButton { justify-content: center; }
 }
+
+/* Lesson 05 uses this shared toolbar button for its text label. */
+.toolbarActions .toolbarTextButton,
+.toolbarActions .toolbarTextButton[aria-pressed="true"] { width: auto; min-width: 64px; padding-inline: 12px; white-space: nowrap; }

@@ -63,7 +63,13 @@
       "block-diagram",
       "local-oscillator",
       "filters",
-      "envelope-detector"
+      "envelope-detector",
+      "radio-frequency",
+      "mixer",
+      "intermediate-frequency",
+      "image-frequency",
+      "agc",
+      "trf-receiver"
     ],
     "lesson_file": "lesson-1-guide.md"
   },
@@ -173,7 +179,11 @@
     "connections": [
       "receiver",
       "bandwidth",
-      "harmonics-fourier"
+      "harmonics-fourier",
+      "radio-frequency",
+      "intermediate-frequency",
+      "trf-receiver",
+      "image-frequency"
     ],
     "lesson_file": "lesson-1-guide.md"
   },
@@ -484,7 +494,9 @@
     "connections": [
       "oscillator",
       "receiver",
-      "colpitts-hartley"
+      "colpitts-hartley",
+      "mixer",
+      "intermediate-frequency"
     ],
     "lesson_file": "lesson-3-guide.md"
   },
@@ -640,7 +652,9 @@
     "connections": [
       "receiver",
       "modulation-am",
-      "envelope-ma"
+      "envelope-ma",
+      "intermediate-frequency",
+      "agc"
     ],
     "lesson_file": "lesson-4-guide.md"
   },
@@ -769,5 +783,131 @@
       "shannon-capacity",
       "bandwidth"
     ]
+  },
+  {
+    "id": "radio-frequency",
+    "title": "תדר רדיו (RF)",
+    "english": "Radio Frequency",
+    "chapter": "פרק 5: קליטת AM",
+    "lesson": "שיעור 5",
+    "category": "יסודות המקלט",
+    "summary": "תדר האות של התחנה הנקלטת, לפני ההמרה לתדר ביניים.",
+    "details": "RF הוא תחום התדר שבו משודרת התחנה שהאנטנה קולטת. במקלט סופר־הטרודיין המסנן בכניסה בוחר את התחנה הרצויה ומחליש אותות רחוקים לפני הערבל.",
+    "formulas": [],
+    "exam_trap": "לא לבלבל בין RF, שמשתנה עם התחנה, לבין IF, שנשאר קבוע במקלט.",
+    "real_world": "תחנת רדיו בתדר 1000 kHz היא אות RF של 1000 kHz לפני ההמרה.",
+    "connections": [
+      "receiver",
+      "filters",
+      "mixer",
+      "intermediate-frequency"
+    ],
+    "lesson_file": "lesson-05-implementation-spec-he.md"
+  },
+  {
+    "id": "trf-receiver",
+    "title": "מקלט TRF",
+    "english": "Tuned Radio Frequency Receiver",
+    "chapter": "פרק 5: קליטת AM",
+    "lesson": "שיעור 5",
+    "category": "ארכיטקטורת מקלט",
+    "summary": "מקלט שמסנן ומגביר ישירות בתדר התחנה הנבחרת.",
+    "details": "במקלט TRF כל דרגות הכוונון פועלות סביב תדר RF של התחנה. מעבר בין תחנות דורש לכוון אותן יחד; שינוי תדר התחנה מקשה לשמור על סינון חד ורוחב פס מתאים.",
+    "formulas": [
+      "BW = f_0 / Q"
+    ],
+    "exam_trap": "TRF אינו ממיר את התחנה ל־IF קבוע; זה ההבדל המרכזי בינו לבין סופר־הטרודיין.",
+    "real_world": "מקלטים מוקדמים השתמשו בכמה מעגלי RF מכוונים לפני הגלאי.",
+    "connections": [
+      "receiver",
+      "radio-frequency",
+      "filters"
+    ],
+    "lesson_file": "lesson-05-implementation-spec-he.md"
+  },
+  {
+    "id": "mixer",
+    "title": "ערבל (Mixer)",
+    "english": "Mixer",
+    "chapter": "פרק 5: קליטת AM",
+    "lesson": "שיעור 5",
+    "category": "רכיבים ומעגלים",
+    "summary": "רכיב המשלב את אות התחנה עם אות המתנד המקומי ויוצר תדר סכום ותדר הפרש.",
+    "details": "בקירוב אידאלי, כפל אותות בתדרים f_RF ו־f_LO יוצר רכיבים ב־f_LO+f_RF וב־|f_LO−f_RF|. מסנן ה־IF בוחר את רכיב ההפרש.",
+    "formulas": [
+      "f_{IF}=|f_{LO}-f_{RF}|"
+    ],
+    "exam_trap": "הערבל עצמו אינו בוחר את תדר ההפרש; מסנן IF בוחר את הרכיב הרצוי ביציאה.",
+    "real_world": "במקלט AM, הערבל מזיז את התחנה שנבחרה לתדר ביניים קבוע.",
+    "connections": [
+      "receiver",
+      "local-oscillator",
+      "radio-frequency",
+      "intermediate-frequency"
+    ],
+    "lesson_file": "lesson-05-implementation-spec-he.md"
+  },
+  {
+    "id": "intermediate-frequency",
+    "title": "תדר ביניים (IF)",
+    "english": "Intermediate Frequency",
+    "chapter": "פרק 5: קליטת AM",
+    "lesson": "שיעור 5",
+    "category": "יסודות המקלט",
+    "summary": "תדר קבוע שאליו ממירים את התחנה שנבחרה כדי לסנן ולהגביר אותה.",
+    "details": "המתנד המקומי מכוון ביחס לתדר RF כך שההפרש ביניהם הוא IF. הדוגמה במערך משתמשת ב־455 kHz; זהו ערך לדוגמה ולא ערך אוניברסלי.",
+    "formulas": [
+      "f_{IF}=|f_{LO}-f_{RF}|"
+    ],
+    "exam_trap": "IF נשאר קבוע כאשר מחליפים תחנה, אך RF ו־LO משתנים בהתאם לתכנון.",
+    "real_world": "במקלט AM טיפוסי אפשר לבחור IF של 455 kHz כדי להשתמש במסננים ובמגברים קבועים.",
+    "connections": [
+      "receiver",
+      "mixer",
+      "local-oscillator",
+      "filters"
+    ],
+    "lesson_file": "lesson-05-implementation-spec-he.md"
+  },
+  {
+    "id": "image-frequency",
+    "title": "תדר בבואה (Image Frequency)",
+    "english": "Image Frequency",
+    "chapter": "פרק 5: קליטת AM",
+    "lesson": "שיעור 5",
+    "category": "תופעות והפרעות",
+    "summary": "תחנה לא רצויה שגם היא יוצרת את אותו הפרש IF מהמתנד המקומי.",
+    "details": "בהזרקת LO מעל RF, תדר הבבואה נמצא בצד השני של LO: f_IM=f_RF+2f_IF. לאחר הערבל הוא עלול להגיע לאותו IF כמו התחנה הרצויה, ולכן מסנן RF בכניסה מחליש אותו.",
+    "formulas": [
+      "f_{IM}=f_{RF}+2f_{IF}"
+    ],
+    "exam_trap": "מסנן IF לבדו אינו מפריד בין התחנה הרצויה לתדר הבבואה לאחר ששניהם הומרו לאותו IF.",
+    "real_world": "כאשר IF הוא 455 kHz, תדר הבבואה בהזרקה גבוהה רחוק 910 kHz מהתחנה הרצויה.",
+    "connections": [
+      "receiver",
+      "radio-frequency",
+      "intermediate-frequency",
+      "filters"
+    ],
+    "lesson_file": "lesson-05-implementation-spec-he.md"
+  },
+  {
+    "id": "agc",
+    "title": "בקרת הגבר אוטומטית (AGC)",
+    "english": "Automatic Gain Control",
+    "chapter": "פרק 5: קליטת AM",
+    "lesson": "שיעור 5",
+    "category": "בקרה במקלט",
+    "summary": "לולאת משוב שמכוונת את הגבר המקלט לפי עוצמת האות שנקלט.",
+    "details": "המקלט מודד את רמת האות לאחר הגילוי ומחזיר מתח בקרה לדרגות RF או IF. אות חזק גורם בדרך כלל להפחתת הגבר; אות חלש מאפשר הגבר גדול יותר.",
+    "formulas": [],
+    "exam_trap": "AGC מצמצם את שינויי העוצמה, אך אינו מבטל רעש ואינו מבטיח עוצמת שמע זהה לחלוטין.",
+    "real_world": "בעת מעבר בין תחנת AM חלשה לתחנה חזקה, AGC מסייע למנוע שינוי חד בעוצמת הקליטה.",
+    "connections": [
+      "receiver",
+      "envelope-detector",
+      "radio-frequency"
+    ],
+    "lesson_file": "lesson-05-implementation-spec-he.md"
   }
 ]

@@ -9,7 +9,7 @@ import styles from "./concept-map.module.css";
 
 type Entry = { id: string; title: string; english: string; lesson: string; category: string; summary: string; search: string; connections: string[] };
 const lessons = ["שיעור 1", "שיעור 2", "שיעור 3", "שיעור 4", "שיעור 5"];
-const lessonTitles = ["תווך, גלים ואנטנות", "אותות וספקטרום", "מתנדים ומשוב", "אפנון AM", "אפנון FM ותקשורת ספרתית"];
+const lessonTitles = ["תווך, גלים ואנטנות", "אותות וספקטרום", "מתנדים ומשוב", "אפנון AM", "מקלט AM — סופר־הטרודיין וגלאי מעטפת"];
 
 export default function ConceptMap({ entries }: { entries: Entry[] }) {
   const [query, setQuery] = useState("");

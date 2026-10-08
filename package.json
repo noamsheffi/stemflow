@@ -8,8 +8,10 @@
     "start": "next start",
     "deploy:prod": "node scripts/deploy-production.mjs",
     "typecheck": "tsc --noEmit",
-    "prebuild": "node scripts/lesson-metadata.mjs",
-    "predev": "node scripts/lesson-metadata.mjs"
+    "validate:lessons": "node scripts/validate-lesson-content.mjs",
+    "export:lesson-05-html": "node scripts/export-lesson-05-html.cjs",
+    "prebuild": "node scripts/lesson-metadata.mjs && node scripts/validate-lesson-content.mjs",
+    "predev": "node scripts/lesson-metadata.mjs && node scripts/validate-lesson-content.mjs"
   },
   "dependencies": {
     "@dagrejs/dagre": "^3.1.1",

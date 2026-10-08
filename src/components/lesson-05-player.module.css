@@ -52,4 +52,20 @@
 .coverArt .flow b{padding:18px 20px;font-size:23px}
 .coverArt .flow i{font-size:24px}
 .coverArt>span{color:#53697a;font-size:23px}
+.bridge{display:grid;gap:42px;align-content:center;min-height:100%;padding:44px 54px;border:1px solid #dce5eb;border-radius:20px;background:#fff}
+.bridgeLabel{color:#16808c;font-size:24px;font-weight:700}
+.bridge .flow{flex-wrap:nowrap;gap:14px}
+.bridge .flow b{min-width:0;padding:20px 18px;text-align:center;white-space:nowrap}
+.bridge .flow small{color:#62768a;font-size:18px;font-weight:500}
+.bridge .flow i{flex:none;font-size:28px}
+.bridgeHandoff{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:20px 24px;border-inline-start:6px solid #16808c;background:#eaf5f5;color:#344c62;font-size:24px}
+.bridgeHandoff b{color:#13263e}
+.openingQuestion{display:grid;gap:28px;align-content:center;min-height:100%}
+.openingQuestion .sl-card{padding:30px 36px}
+.openingQuestion .sl-card p{margin:0}
+.spectrumSlide{display:grid;min-height:0;place-items:center}
+.spectrum{display:grid;width:100%;gap:14px;margin:0;padding:20px 24px 14px;border:1px solid #dce5eb;border-radius:18px;background:#fff}
+.spectrum svg{display:block;width:100%;max-height:480px}
+.spectrum figcaption{padding:13px 18px;border-inline-start:5px solid #16808c;background:#eaf5f5;color:#344c62;font-size:23px;line-height:1.5;text-align:center}
+.spectrum figcaption b{color:#13263e}
 @media(max-width:700px){.cover{grid-template-columns:1fr;gap:24px;padding:30px}.cover h3{font-size:64px}.cover p{font-size:30px}.coverArt{min-height:220px}.coverArt .flow b{padding:10px;font-size:15px}.coverArt>span{font-size:16px}}
