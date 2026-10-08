@@ -1,5 +1,7 @@
 # הנחיות ביצוע ל־NotebookLM: מערך שיעור 5
 
+מפרט המוצר וההשוואה למערך 4 נמצאים ב־[`interactive-lesson-design-spec-he.md`](interactive-lesson-design-spec-he.md). מצב הפיתוח והפערים הפתוחים של מערך 5 מתועדים ב־[`lesson-05-implementation-spec-he.md`](lesson-05-implementation-spec-he.md).
+
 ## מקורות עבודה
 
 - השתמשו בסילבוס ובחומרי הקורס כדי לקבוע את נושא שיעור 5, מטרותיו, היקפו, התוכן המקצועי ורצף הנושאים.
