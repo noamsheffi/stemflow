@@ -39,12 +39,17 @@ const cssPaths = [
 const css = cssPaths.map((file) => fs.readFileSync(path.join(root, file), "utf8"))
   .join("\n")
   .replace(/:global\(([^)]+)\)/g, "$1");
+// KaTeX emits both a visual HTML tree and a MathML tree. Include its layout
+// rules in the standalone export so MathML stays accessible but is not painted
+// as duplicate plain text when this file is opened outside the React app.
+const katexCss = fs.readFileSync(path.join(root, "node_modules/katex/dist/katex.min.css"), "utf8")
+  .replace(/@font-face\{[^}]+\}/g, "");
 
 const slides = lesson05Slides.map((slide, index) => {
   const content = renderToStaticMarkup(slide.content);
   const id = `lesson-05-slide-${String(index + 1).padStart(2, "0")}`;
   const slideClass = slide.className ? ` ${escapeHtml(slide.className)}` : "";
-  return `<section class="slide-page${index === 0 ? " is-active" : ""}" id="${id}" aria-label="שקף ${index + 1}: ${escapeHtml(slide.title)}" aria-hidden="${index === 0 ? "false" : "true"}"><div class="slide-canvas"><div class="sl l5-slide${slideClass}"><header class="sl-h"><div class="sl-eb">${escapeHtml(slide.chapter)}</div><h2>${renderBidiQuantities(slide.title)}</h2></header><div class="sl-body">${content}</div><div class="sl-tk"><span>העיקר</span>${renderBidiQuantities(slide.takeaway)}</div><footer class="sl-f"><span>${escapeHtml(slide.chapter)}</span><span dir="ltr">${String(index + 1).padStart(2, "0")}</span></footer></div></div></section>`;
+  return `<section class="slide-page${index === 0 ? " is-active" : ""}" id="${id}" aria-label="שקף ${index + 1}: ${escapeHtml(slide.title)}" aria-hidden="${index === 0 ? "false" : "true"}"><div class="slide-canvas"><div class="sl l5-slide${slide.title.length > 34 ? " compact-title" : ""}${slideClass}"><header class="sl-h"><div class="sl-eb">${escapeHtml(slide.chapter)}</div><h2>${renderBidiQuantities(slide.title)}</h2></header><div class="sl-body">${content}</div><div class="sl-tk"><span>העיקר</span>${renderBidiQuantities(slide.takeaway)}</div><footer class="sl-f"><span>${escapeHtml(slide.chapter)}</span><span dir="ltr">${String(index + 1).padStart(2, "0")}</span></footer></div></div></section>`;
 }).join("\n");
 
 const html = `<!doctype html>
@@ -54,7 +59,7 @@ const html = `<!doctype html>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="תצוגה מקומית של מערך שיעור 5 במערכות תקשורת">
   <title>מערך שיעור 5 · מקלט AM</title>
-  <style>${css}
+  <style>${css}\n${katexCss}
     body{min-height:100vh;display:flex;flex-direction:column;background:#e6edf1}
     .local-viewer{display:flex;min-height:100vh;flex-direction:column}
     .local-toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 20px;background:#13263e;color:#fff;font-family:Arial,"Noto Sans Hebrew",sans-serif}
@@ -69,7 +74,7 @@ const html = `<!doctype html>
 </head>
 <body>
 <main class="local-viewer l4-player" aria-label="מערך שיעור 5">
-  <header class="local-toolbar"><strong>מערכות תקשורת · שיעור 05 · מקלט AM — סופר־הטרודיין וגלאי מעטפת</strong><span class="count" id="count">01 / ${lesson05Slides.length}</span></header>
+  <header class="local-toolbar"><strong>מערכות תקשורת · שיעור 05 · מקלט AM — סופר־הטרודיין וגלאי מעטפת</strong><span class="count" id="count" dir="ltr">01 / ${lesson05Slides.length}</span></header>
   <div class="local-stage" id="stage">${slides}</div>
   <nav class="local-controls" aria-label="ניווט בין שקפים"><button id="previous" type="button">הקודם</button><span id="position" dir="ltr">01 / ${lesson05Slides.length}</span><button id="next" type="button">הבא</button></nav>
 </main>
@@ -111,8 +116,8 @@ function escapeHtml(value) {
 }
 
 function renderBidiQuantities(value) {
-  const pattern = /(\d+(?:[.,]\d+)?\s?(?:MHz|kHz|Hz|μs|µs|ms|nF|pF|kΩ|Ω|mV|V|dB))/g;
-  return escapeHtml(value).replace(pattern, (quantity) => `<bdi dir="ltr">${quantity}</bdi>`);
+  const pattern = /(\d+(?:[.,]\d+)?\s?(?:MHz|kHz|Hz|μs|µs|ms|nF|pF|kΩ|Ω|mV|V|dB)|\b(?:TRF|RF|LO|IF|AM|AGC|SNR|RC|LPF)\b)/g;
+  return escapeHtml(value).replace(pattern, (token) => `<bdi dir="ltr">${token}</bdi>`);
 }
 
 const outputPath = path.join(root, "public/courses/communication-systems/lesson-05/lesson.html");

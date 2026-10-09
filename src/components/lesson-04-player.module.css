@@ -294,11 +294,11 @@
 .flagCount { font-size: 10.5px; }
 .interactiveMark { flex: none; color: #6247c9; font-size: 9px; }
 
-/* Lesson 05 feedback is viewport-anchored so side panels cannot crop it. */
-[data-lesson-id="lesson-05"] .feedback { position: fixed; z-index: 100; right: 24px; left: auto; bottom: 16px; }
-[data-lesson-id="lesson-05"] .feedbackPopover { right: 0; left: auto; max-width: calc(100vw - 48px); max-height: calc(100dvh - 112px); overflow-y: auto; }
-[data-lesson-id="lesson-05"].present .feedbackDark { right: 24px; left: auto; bottom: 44px; }
-[data-lesson-id="lesson-05"].present .feedbackDark .feedbackPopover { right: 0; left: auto; }
+/* Keep Lesson 05 feedback at the viewport's physical left, clear of the RTL outline. */
+[data-lesson-id="lesson-05"] .feedback { position: fixed; z-index: 100; inset-inline-end: 24px; inset-inline-start: auto; inset-block-end: 16px; }
+[data-lesson-id="lesson-05"] .feedbackPopover { inset-inline-end: 0; inset-inline-start: auto; max-width: calc(100vw - 48px); max-height: calc(100dvh - 112px); overflow-y: auto; }
+[data-lesson-id="lesson-05"].present .feedbackDark { inset-inline-end: 24px; inset-inline-start: auto; inset-block-end: 44px; }
+[data-lesson-id="lesson-05"].present .feedbackDark .feedbackPopover { inset-inline-end: 0; inset-inline-start: auto; }
 
 @container lesson-player (max-width: 1191px) {
   .slideContext { position: fixed; z-index: 40; inset-block: 0; inset-inline-end: 0; width: 290px; min-width: 290px; box-shadow: -8px 0 24px #13233a26; }
@@ -332,9 +332,9 @@
   .feedback { inset-inline-end: 15px; }
   .feedbackFab { width: 50px; height: 50px; }
   .feedbackPopover { width: min(340px, calc(100vw - 66px)); }
-  [data-lesson-id="lesson-05"] .feedback { right: 12px; }
+  [data-lesson-id="lesson-05"] .feedback { inset-inline-end: 12px; inset-inline-start: auto; }
   [data-lesson-id="lesson-05"] .feedbackPopover { width: min(340px, calc(100vw - 24px)); max-width: calc(100vw - 24px); max-height: calc(100dvh - 96px); }
-  [data-lesson-id="lesson-05"].present .feedbackDark { right: 12px; bottom: 56px; }
+  [data-lesson-id="lesson-05"].present .feedbackDark { inset-inline-end: 12px; inset-inline-start: auto; inset-block-end: 56px; }
 }
 
 @media (max-width: 620px) {
