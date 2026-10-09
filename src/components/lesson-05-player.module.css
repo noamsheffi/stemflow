@@ -69,15 +69,19 @@
 .receiverStages :global(.sl-card) p{font-size:24px;line-height:1.4}
 .receiverStages .three :global(.sl-card){min-height:190px}
 .receiverStages .blockFlow b{min-height:122px;display:flex;flex:1 1 0;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center}
-.mixerOutput :global(.sl-body){justify-content:flex-start;gap:12px}
-.mixerOutput .mixerInputs{display:grid;gap:8px}
-.mixerOutput .mixerInputs p{display:grid;grid-template-columns:120px 1fr;align-items:center;gap:14px;margin:0;font-size:30px;font-weight:700;direction:ltr}
-.mixerOutput .mixerInputs p>b{color:#13263e}
-.mixerOutput .mixerInputs p>span{font-size:30px;font-weight:500}
-.mixerOutput :global(.sl-fx){box-sizing:border-box;display:grid;min-height:92px;place-items:center;margin:0;padding:12px;font-size:42px}
-.mixerOutput .two :global(.sl-card){box-sizing:border-box;min-height:172px;align-items:stretch;justify-content:center}
-.mixerOutput .two :global(.sl-lab){font-size:24px}
-.mixerOutput .two p{margin:0;text-align:center;font-size:42px;font-weight:700;line-height:1.25}
+.mixerDerivation :global(.sl-body){justify-content:center;gap:24px;padding-top:8px}
+.mixerDerivation :global(.sl-card){box-sizing:border-box;width:min(100%,1050px);margin-inline:auto;padding:22px 26px}
+.mixerDerivation :global(.sl-lab){font-size:26px}
+.mixerDerivation .parameterList{width:min(100%,820px)}
+.mixerDerivation .parameterList p{min-height:52px;font-size:26px}
+.mixerDerivation .parameterList p span{font-size:26px}
+.mixerDerivation :global(.sl-fx){box-sizing:border-box;width:min(100%,1320px);min-height:104px;margin-inline:auto;padding:14px 18px;font-size:38px}
+.mixerOutput :global(.sl-body){justify-content:center;gap:24px;padding-top:8px}
+.mixerOutput .two{width:100%;grid-auto-rows:minmax(220px,auto);gap:24px}
+.mixerOutput .two :global(.sl-card){box-sizing:border-box;min-height:220px;justify-content:flex-start;gap:20px;padding:26px 30px}
+.mixerOutput .two :global(.sl-lab){font-size:30px}
+.mixerOutput .two p{margin:0;font-size:27px;font-weight:600;line-height:1.45}
+.mixerOutput .two p:first-of-type{text-align:center;font-size:34px;font-weight:750}
 .coverArt .flow b{padding:18px 20px;font-size:23px}
 .coverArt .flow i{font-size:24px}
 .coverArt>span{color:#53697a;font-size:23px}
@@ -147,7 +151,7 @@
 .responseGraph figcaption b{color:#13263e}
 @media(max-width:700px){.cover{grid-template-columns:1fr;gap:24px;padding:30px}.cover h3{font-size:64px}.cover p{font-size:30px}.coverArt{min-height:220px}.coverArt .flow b{padding:10px;font-size:15px}.coverArt>span{font-size:16px}}
 @media(max-width:700px){.architectureCompare{grid-template-columns:1fr}.architectureCompare article{padding:12px}.architectureCompare h3{font-size:17px}.architectureCompare p{font-size:14px}.architectureCompare small{font-size:12px}.architectureSingle :global(.sl-body){gap:10px;padding-top:0}.architectureSingle article{width:100%;min-height:0;gap:14px;padding:12px}.architectureSingle h3{min-height:0;font-size:22px}.architectureSingle p{min-height:0;font-size:18px}.architectureSingle small{margin-block-start:0;font-size:16px}.architectureFlow{gap:5px}.architectureFlow b{min-width:112px;min-height:66px;flex-basis:112px;font-size:15px;padding:8px}.architectureFlow i{font-size:15px}}
-@media(max-width:700px){.receiverStages :global(.sl-body){gap:8px}.receiverStages :global(.sl-card){min-height:0;padding:12px;gap:7px}.receiverStages :global(.sl-lab){font-size:14px}.receiverStages :global(.sl-card) p{font-size:13px}.receiverStages .blockFlow{gap:5px}.receiverStages .blockFlow b{min-width:0;min-height:70px;padding:7px;font-size:12px}.mixerOutput :global(.sl-body){gap:7px}.mixerOutput .mixerInputs p{grid-template-columns:65px 1fr;gap:6px;font-size:16px}.mixerOutput .mixerInputs p>span{font-size:16px}.mixerOutput :global(.sl-fx){min-height:56px;padding:6px;font-size:20px}.mixerOutput .two :global(.sl-card){min-height:92px;padding:10px}.mixerOutput .two :global(.sl-lab){font-size:14px}.mixerOutput .two p{font-size:22px}.tuner label{grid-template-columns:1fr auto}.tunerValues span{gap:5px;padding:8px;font-size:13px}}
+@media(max-width:700px){.receiverStages :global(.sl-body){gap:8px}.receiverStages :global(.sl-card){min-height:0;padding:12px;gap:7px}.receiverStages :global(.sl-lab){font-size:14px}.receiverStages :global(.sl-card) p{font-size:13px}.receiverStages .blockFlow{gap:5px}.receiverStages .blockFlow b{min-width:0;min-height:70px;padding:7px;font-size:12px}.mixerDerivation :global(.sl-body),.mixerOutput :global(.sl-body){justify-content:flex-start;gap:12px;padding-top:0}.mixerDerivation :global(.sl-card){padding:12px}.mixerDerivation :global(.sl-lab){font-size:16px}.mixerDerivation .parameterList p,.mixerDerivation .parameterList p span{min-height:38px;font-size:15px}.mixerDerivation :global(.sl-fx){min-height:68px;padding:8px;font-size:18px}.mixerOutput .two{grid-template-columns:1fr;grid-auto-rows:minmax(130px,auto);gap:10px}.mixerOutput .two :global(.sl-card){min-height:130px;gap:10px;padding:12px}.mixerOutput .two :global(.sl-lab){font-size:17px}.mixerOutput .two p,.mixerOutput .two p:first-of-type{font-size:17px}.tuner label{grid-template-columns:1fr auto}.tunerValues span{gap:5px;padding:8px;font-size:13px}}
 @media(max-width:700px){.amReview{padding:16px;gap:12px}.amReviewFlow{gap:5px}.amReviewFlow>b{min-height:122px;padding:8px;font-size:14px}.amReviewFlow small{font-size:11px}.amReviewFlow>i{font-size:14px}.amReviewCards{gap:6px}.amReviewCards article{min-height:110px;padding:8px}.amReviewCards h3{font-size:15px}.amReviewCards p{font-size:14px}.amReviewCards p[dir="ltr"]{font-size:15px}.spectrumTeachingSlide{gap:6px}.spectrumTeachingSlide .spectrum svg{max-height:360px}.spectrumTeachingSlide .spectrum figcaption{font-size:16px}.spectrumInsights{grid-template-columns:1fr;gap:10px}.spectrumInsights article{min-height:220px;gap:12px;padding:16px}.spectrumInsights h3{min-height:30px;font-size:20px}.spectrumInsights p{font-size:17px}.spectrumInsights p[dir="ltr"]{font-size:18px}.powerEquations :global(.sl-fx){font-size:24px}.qDefinitionCards{grid-template-columns:1fr;gap:10px}.qDefinitionCards article{min-height:180px;gap:10px;padding:16px}.qDefinitionCards h3{min-height:30px;font-size:21px}.qDefinitionCards p{font-size:18px}.qDefinitionCards p[dir="ltr"]{font-size:22px}.responseGraph svg{max-height:420px}.responseGraph figcaption{font-size:16px}}
 @media(max-width:700px){.qDefinition{padding:6px;gap:5px}.qDefinition>b{font-size:14px}.qDefinition>span{font-size:11px}.parameterList{gap:6px}.parameterList p{grid-template-columns:70px 1fr;gap:6px;padding:7px 9px;font-size:14px}.trfExampleData{gap:8px}.trfExampleData h3{font-size:18px}.parameterTiles{grid-template-columns:1fr;gap:8px}.parameterTiles p{grid-template-columns:70px 1fr;min-height:56px;gap:8px;padding:8px 10px;font-size:17px}}
 
