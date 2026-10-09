@@ -311,4 +311,4 @@
 
 עדכון מניעת חזרה: נוספו הוראות לשני הסקילים ולחוזה הקבוע, כך שכל ביקורת עתידית תעבור על יישור קווי הכותרת ועל כל המנות המתמטיות בכל השקפים, גם ברוחב צר וגם בייצוא. הוולידטור דורש כעת שבר KaTeX לנוסחת Q ולהספקי AM, ומוודא שה־HTML כולל מבנה מונה/מכנה נגיש.
 
-בדיקות סבב: `npm run export:lesson-05-html` — עבר, 38 שקפים; `npm run validate:lessons` — עבר, כולל בדיקות השבר האנכי ויישור כותרות; `npm run typecheck` — עבר; `npm run build` — עבר, 35 נתיבים; `git diff --check` — עבר. בדיקת screenshot בדפדפן — לא נבדקה בסבב זה. הפריסה תתבצע לאחר שמירת התיקון ב־Git.
+בדיקות סבב: `npm run export:lesson-05-html` — עבר, 38 שקפים; `npm run validate:lessons` — עבר, כולל בדיקות השבר האנכי ויישור כותרות; `npm run typecheck` — עבר; `npm run build` — עבר, 35 נתיבים; `git diff --check` — עבר. בדיקת screenshot בדפדפן — לא נבדקה בסבב זה. commit `e60b0a7` נפרס ל־production במצב READY בכתובת [מערך שיעור 5](https://stemflow-m07zfh02h-noamsheffi-gmailcoms-projects.vercel.app).
