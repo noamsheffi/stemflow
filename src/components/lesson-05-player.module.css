@@ -207,6 +207,40 @@
 @media(max-width:700px){.injectionToggle{gap:6px}.injectionToggle button{padding:8px;font-size:13px}.frequencyAxis{height:108px;margin-inline:3%}.frequencyAxis i b{font-size:14px}.frequencyAxis i small{font-size:11px}.injectionCompare{grid-template-columns:1fr;gap:8px}.injectionCompare article{gap:7px;padding:12px}.injectionCompare h3{font-size:19px}.rangeDerivation{padding:6px;font-size:14px}.warning{padding:10px;font-size:15px}.ifTradeoff{overflow-x:auto;align-content:start}.ifTradeoff table{min-width:680px;font-size:14px}.ifTradeoff th,.ifTradeoff td{padding:8px}.agcForward,.agcFeedback{gap:4px}.agcForward b,.agcFeedback b{min-width:90px;min-height:48px;padding:6px;font-size:12px}.agcForward i,.agcFeedback i{font-size:12px}.receiverMetrics{grid-template-columns:1fr;gap:8px}.receiverMetrics article{min-height:120px;padding:12px}.receiverMetrics h3{font-size:19px}.receiverMetrics p{font-size:15px}}
 @media(max-width:700px){.injectionAnalysis :global(.sl-body){gap:7px;padding-top:0}.injectionAnalysis .injectionCompare article{gap:6px;padding:9px}.injectionAnalysis .injectionCompare h3{font-size:18px}.injectionAnalysis .injectionCompare .parameterList p{grid-template-columns:100px 1fr;min-height:38px;padding:5px 7px;font-size:15px}.injectionAnalysis .rangeDerivation{padding:5px;font-size:13px}.injectionAnalysis .note,.injectionAnalysis .warning{padding:7px 9px;font-size:14px}.imageFrequency :global(.sl-body){gap:7px;padding-top:0}.imageFrequency .formula{padding:7px 10px;font-size:19px}.imageFrequency .two{grid-auto-rows:minmax(105px,auto);gap:8px}.imageFrequency .two :global(.sl-card){min-height:105px;gap:7px;padding:9px}.imageFrequency .two :global(.sl-lab){font-size:16px}.imageFrequency .two p{font-size:19px}.imageFrequency .warning{padding:8px;font-size:14px}.agcSlide :global(.sl-body){gap:7px;padding-top:0}.agcSlide :global(.sl-card){padding:9px}.agcSlide .agcSchematic{gap:6px}.agcSlide .agcForward b,.agcSlide .agcFeedback b{min-width:90px;min-height:42px;padding:6px;font-size:13px}.agcSlide .agcForward i,.agcSlide .agcFeedback i{font-size:12px}.agcSlide .two{grid-auto-rows:minmax(92px,auto);gap:8px}.agcSlide .two :global(.sl-card){min-height:92px;padding:9px;gap:5px}.agcSlide .two :global(.sl-lab){font-size:16px}.agcSlide .two p{font-size:15px}.agcSlide .note{padding:6px 8px;font-size:13px}}
 
+/* Give dense slides a deliberate vertical budget so content cannot collide with the title or takeaway. */
+.doubleConversion :global(.sl-body),.doubleConversionTradeoff :global(.sl-body),.timeConstantBounds :global(.sl-body),.timeConstantLimits :global(.sl-body),.exitTicket :global(.sl-body){justify-content:flex-start;gap:14px;padding-top:6px}
+.doubleConversion :global(.sl-card){gap:10px;padding:16px 20px}
+.doubleConversion .architectureFlow{gap:8px}
+.doubleConversion .architectureFlow b{min-width:130px;min-height:78px;padding:10px;font-size:21px}
+.doubleConversion .parameterList{width:min(100%,820px);gap:7px}
+.doubleConversion .parameterList p{min-height:48px;padding:7px 12px;font-size:22px}
+.doubleConversionTradeoff .two{grid-auto-rows:minmax(170px,auto);gap:18px}
+.doubleConversionTradeoff .two :global(.sl-card){min-height:170px;justify-content:center;padding:20px 24px}
+.doubleConversionTradeoff .two :global(.sl-lab){font-size:24px}
+.doubleConversionTradeoff .two p{font-size:24px;line-height:1.4}
+.doubleConversionTradeoff .note{margin:0;padding:12px 18px;font-size:21px;line-height:1.35}
+.timeConstantBounds :global(.sl-fx){box-sizing:border-box;min-height:0;margin:0;padding:10px 14px;font-size:30px}
+.timeConstantBounds .three{grid-auto-rows:minmax(136px,auto);gap:18px}
+.timeConstantBounds .three :global(.sl-card){min-height:136px;justify-content:flex-start;gap:10px;padding:16px 18px}
+.timeConstantBounds .three :global(.sl-lab){font-size:22px}
+.timeConstantBounds .three p{font-size:23px;line-height:1.38}
+.timeConstantLimits :global(.sl-fx){box-sizing:border-box;min-height:0;margin:0;padding:10px 14px;font-size:30px}
+.timeConstantLimits .two{grid-auto-rows:minmax(136px,auto);gap:18px}
+.timeConstantLimits .two :global(.sl-card){min-height:136px;justify-content:flex-start;gap:10px;padding:16px 18px}
+.timeConstantLimits .two :global(.sl-lab){font-size:22px}
+.timeConstantLimits .two p{font-size:23px;line-height:1.38}
+.timeConstantLimits .note{margin:0;padding:10px 14px;font-size:19px;line-height:1.3}
+.exitTicket :global(.sl-card){gap:10px;padding:16px 20px}
+.exitTicket .lead{font-size:28px;line-height:1.3}
+.exitTicket .parameterList{gap:7px}
+.exitTicket .parameterList p{min-height:46px;padding:6px 12px;font-size:22px}
+.exitTicket .reveal{padding:10px 14px;font-size:20px}
+.exitTicket .reveal button{min-height:44px;padding:8px 14px;font-size:20px}
+.exitTicket .reveal ol{margin:6px 0 0;padding-inline-start:28px;line-height:1.2}
+.exitTicket .reveal li{padding:2px 0}
+.exitTicket .reveal li p{margin:0;font-size:21px;line-height:1.2}
+@media(max-width:700px){.doubleConversion :global(.sl-body),.doubleConversionTradeoff :global(.sl-body),.timeConstantBounds :global(.sl-body),.timeConstantLimits :global(.sl-body),.exitTicket :global(.sl-body){gap:8px;padding-top:0}.doubleConversion .architectureFlow{gap:5px}.doubleConversion .architectureFlow b{min-width:90px;min-height:58px;padding:7px;font-size:15px}.doubleConversion .parameterList p{min-height:38px;font-size:16px}.doubleConversionTradeoff .two{grid-auto-rows:minmax(105px,auto);gap:8px}.doubleConversionTradeoff .two :global(.sl-card){min-height:105px;padding:10px}.doubleConversionTradeoff .two :global(.sl-lab){font-size:16px}.doubleConversionTradeoff .two p{font-size:15px}.doubleConversionTradeoff .note{padding:7px 9px;font-size:14px}.timeConstantBounds :global(.sl-fx),.timeConstantLimits :global(.sl-fx){padding:6px 8px;font-size:19px}.timeConstantBounds .three,.timeConstantLimits .two{grid-auto-rows:minmax(100px,auto);gap:7px}.timeConstantBounds .three :global(.sl-card),.timeConstantLimits .two :global(.sl-card){min-height:100px;padding:9px;gap:5px}.timeConstantBounds .three :global(.sl-lab),.timeConstantLimits .two :global(.sl-lab){font-size:14px}.timeConstantBounds .three p,.timeConstantLimits .two p{font-size:13px}.timeConstantLimits .note{padding:6px 8px;font-size:13px}.exitTicket :global(.sl-card){padding:10px;gap:6px}.exitTicket .lead{font-size:17px}.exitTicket .parameterList p{min-height:36px;padding:5px 8px;font-size:15px}.exitTicket .reveal{padding:8px;font-size:14px}.exitTicket .reveal button{min-height:36px;padding:6px 10px;font-size:14px}.exitTicket .reveal li p{font-size:15px}}
+
 /* Keep repeated card frames and long headings consistent throughout the deck. */
 :global(.l5-slide) .three,:global(.l5-slide) .two{grid-auto-rows:minmax(160px,1fr);align-items:stretch}
 :global(.l5-slide).compact-title :global(.sl-h) h2{font-size:48px;line-height:1.12;overflow-wrap:anywhere}
