@@ -42,6 +42,8 @@ check(dataBlock.includes("מקדם האיכות") && dataBlock.includes("רוח�
 const trfIntro = slides.find((line) => line.includes('title: "מקלט ישיר: מסנן')) ?? "";
 const bandwidthDefinition = slides.find((line) => line.includes('title: "רוחב פס המסנן')) ?? "";
 check(Boolean(trfIntro && !trfIntro.includes("BW=")), "The TRF overview slide should not combine the receiver definition with the bandwidth formula.");
+const amReviewSlide = deck.match(/title: "מפת חזרה משיעור 4:[\s\S]*?content: <div className=\{styles\.amReview\}[\s\S]*?\},/)?.[0] ?? "";
+check(amReviewSlide.includes("תדר המידע:") && amReviewSlide.includes("עומק האפנון:") && amReviewSlide.includes("מידת השינוי במשרעת הנושא") && amReviewSlide.includes("חסר יחידות") && !amReviewSlide.includes("f<sub>m</sub> · m<sub>a</sub>"), "The AM concept map must distinguish the information frequency from the dimensionless modulation depth, define its meaning, and avoid ambiguous dot notation.");
 check(Boolean(bandwidthDefinition && bandwidthDefinition.includes("qDefinitionCards") && bandwidthDefinition.includes("Q = f<sub>0</sub> / BW") && !bandwidthDefinition.includes("<TRFResponseGraph />")), "The Q concept slide must define Q and bandwidth in large cards before the graph.");
 const responseGraph = deck.match(/function TRFResponseGraph\(\) \{([\s\S]*?)\n\}/)?.[1] ?? "";
 const responseGraphSlide = slides.find((line) => line.includes('title: "גרף תגובת המסנן: Q גבוה מול Q נמוך"')) ?? "";
