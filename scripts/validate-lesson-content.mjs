@@ -38,6 +38,12 @@ const trfIntro = slides.find((line) => line.includes('title: "מקלט ישיר 
 const bandwidthDefinition = slides.find((line) => line.includes('title: "רוחב פס המסנן')) ?? "";
 check(Boolean(trfIntro && !trfIntro.includes("BW=")), "The TRF overview slide should not combine the receiver definition with the bandwidth formula.");
 check(Boolean(bandwidthDefinition && bandwidthDefinition.includes("BW=") && bandwidthDefinition.includes("f_0")), "Bandwidth formula and its terms need a dedicated explanation slide before the calculation example.");
+const responseGraph = deck.match(/function TRFResponseGraph\(\) \{([\s\S]*?)\n\}/)?.[1] ?? "";
+check(Boolean(bandwidthDefinition && bandwidthDefinition.includes("<TRFResponseGraph />")), "The TRF bandwidth definition slide must include a response-versus-frequency graph.");
+check(responseGraph.includes("תדר תהודה") && responseGraph.includes("f<tspan baselineShift=\"sub\" fontSize=\"17\">0</tspan>") && responseGraph.includes("f<tspan baselineShift=\"sub\" fontSize=\"13\">L</tspan>") && responseGraph.includes("f<tspan baselineShift=\"sub\" fontSize=\"13\">H</tspan>"), "The TRF graph must label the resonance peak and both passband edges f₀, fL, and fH.");
+check(responseGraph.includes("C300 292 380 280 445 215") && responseGraph.includes("C760 280 840 292 970 298") && responseGraph.includes("C460 290 500 280 530 215") && responseGraph.includes("C640 280 680 290 760 298"), "The low- and high-Q curves must intersect the −3 dB threshold at their labeled passband boundaries.");
+check(responseGraph.includes("Q נמוך · פס רחב") && responseGraph.includes("Q גבוה · פס צר") && responseGraph.includes("−3 dB") && responseGraph.includes("העקומות איכותיות"), "The TRF graph must compare high and low Q at a half-power threshold and identify its curves as qualitative.");
+check(responseGraph.includes("Q=f<sub>0</sub>/BW") && responseGraph.includes("חסר יחידות") && responseGraph.includes("BW=f<sub>H</sub>−f<sub>L</sub>") && responseGraph.includes("חצי־הספק"), "The TRF graph caption must define bandwidth at the half-power threshold and the dimensionless quality factor.");
 
 const flows = [...dataBlock.matchAll(/<div className=\{styles\.flow\}>([\s\S]*?)<\/div>/g)].map((match) => match[1]);
 check(flows.length > 0, "The deck should include its authored signal-flow diagrams.");
@@ -54,6 +60,7 @@ check(feedbackApi.includes("lesson-(04|05)"), "The student slide-feedback API mu
 check(extensionManifest.content_scripts[0].matches.some((url) => url.includes("/lecturer/lessons/*")), "The lecturer extension must match lecturer lesson routes.");
 check(deck.includes("function bidiQuantities") && deck.includes("{bidiQuantities(slide.takeaway)}") && architectureComparison.includes("<bdi dir=\"ltr\">455 kHz</bdi>"), "Visible values with units must stay in value-then-unit order in RTL slides and diagrams.");
 check(exportedHtml.includes('class="cover"') && exportedHtml.includes('class="architectureCompare"') && exportedHtml.includes('<bdi dir="ltr">455 kHz</bdi>'), "The standalone lesson HTML must retain its slide-specific CSS classes and isolated value-unit direction.");
+check(exportedHtml.includes('class="responseGraph"') && exportedHtml.includes('id="trf-response-title"') && exportedHtml.includes("Q גבוה · פס צר") && exportedHtml.includes("Q נמוך · פס רחב"), "The standalone lesson HTML must include the resonance response graph and both Q comparison labels.");
 check(deck.includes('useLessonState(stateKey + ":index", 0)') && deck.includes('useLessonState<number[]>(stateKey + ":seen", [])') && deck.includes('useLessonState(stateKey + ":outline", true)') && deck.includes('useLessonState(stateKey + ":context", false)'), "Lesson 5 must persist its slide position, viewed-slide statistics, outline visibility, and context visibility like lesson 4.");
 check(deck.includes("{seen.length}/{data.length} שקפים נצפו") && deck.includes("chapterSeen / chapterSlides.length") && deck.includes("chapterFeedback > 0") && deck.includes("feedbackMarker"), "Lesson 5 must show overall and chapter viewing progress plus per-chapter/per-slide feedback markers.");
 check(deck.includes("aria-expanded={Boolean(openChapters[chapter])}") && deck.includes("setOpenChapters") && deck.includes("onClick={() => go(slideIndex)}"), "Lesson 5 outline controls must expand/collapse chapters and navigate to slides.");
@@ -75,5 +82,5 @@ if (errors.length) {
   for (const error of errors) console.error(`- ${error}`);
   process.exitCode = 1;
 } else {
-  console.log(`Lesson content validation passed: ${slides.length} slide records / ${plannedMinutes} planned minutes, ${lesson5Concepts.length} lesson 5 glossary entries, and checked learning sequence, bridge, spectrum, notation, unit direction, feedback panels, persistence, progress statistics, controls, lecturer extension catalog, and flow direction.`);
+  console.log(`Lesson content validation passed: ${slides.length} slide records / ${plannedMinutes} planned minutes, ${lesson5Concepts.length} lesson 5 glossary entries, and checked learning sequence, bridge, AM spectrum, TRF resonance/Q response graph, notation, unit direction, feedback panels, persistence, progress statistics, controls, lecturer extension catalog, and flow direction.`);
 }

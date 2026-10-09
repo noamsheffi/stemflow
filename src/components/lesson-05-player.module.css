@@ -76,5 +76,9 @@
 .spectrum svg{display:block;width:100%;max-height:480px}
 .spectrum figcaption{padding:13px 18px;border-inline-start:5px solid #16808c;background:#eaf5f5;color:#344c62;font-size:23px;line-height:1.5;text-align:center}
 .spectrum figcaption b{color:#13263e}
+.responseGraph{display:grid;width:100%;gap:8px;margin:0;padding:8px 16px;border:1px solid #dce5eb;border-radius:16px;background:#fff}
+.responseGraph svg{display:block;width:100%;height:auto;max-height:310px;object-fit:contain}
+.responseGraph figcaption{padding:8px 14px;border-inline-start:4px solid #16808c;background:#eaf5f5;color:#344c62;font-size:18px;line-height:1.4;text-align:center}
+.responseGraph figcaption b{color:#13263e}
 @media(max-width:700px){.cover{grid-template-columns:1fr;gap:24px;padding:30px}.cover h3{font-size:64px}.cover p{font-size:30px}.coverArt{min-height:220px}.coverArt .flow b{padding:10px;font-size:15px}.coverArt>span{font-size:16px}}
 @media(max-width:700px){.architectureCompare{grid-template-columns:1fr}.architectureCompare article{padding:12px}.architectureCompare h3{font-size:17px}.architectureCompare p{font-size:14px}.architectureCompare small{font-size:12px}.architectureFlow b{font-size:11px;padding:6px}.architectureFlow i{font-size:12px}}
