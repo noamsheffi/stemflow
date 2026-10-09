@@ -201,10 +201,12 @@ function ScaledSlide({ slide, index, hostClass }: { slide: DeckSlide; index: num
     observer.observe(element);
     return () => observer.disconnect();
   }, []);
+  const slideSkin = slide.className ? styles[slide.className] : "";
+  const compactTitle = slide.title.length > 34 ? styles["compact-title"] : "";
   return <div ref={host} className={hostClass}>
     <div className={playerStyles.stageBox} style={{ width: 1600 * scale, height: 900 * scale }}>
       <div className={playerStyles.slideCanvas} style={{ transform: `scale(${scale})` }} data-current-slide="true" data-slide-id={`lesson-05-am-${String(index + 1).padStart(2, "0")}`} data-slide-id-source="authored" data-slide-number={index + 1} data-minutes={slide.minutes}>
-      <div className={`sl l5-slide ${slide.title.length > 34 ? "compact-title" : ""} ${slide.className ?? ""}`}><header className="sl-h"><div className="sl-eb">{slide.chapter}</div><h2>{bidiQuantities(slide.title)}</h2></header><div className="sl-body">{slide.content}</div><div className="sl-tk"><span>העיקר</span>{bidiQuantities(slide.takeaway)}</div><footer className="sl-f"><span>{slide.chapter}</span><span dir="ltr">{String(index + 1).padStart(2, "0")}</span></footer></div>
+      <div className={`sl l5-slide ${compactTitle} ${slideSkin ?? ""}`}><header className="sl-h"><div className="sl-eb">{slide.chapter}</div><h2>{bidiQuantities(slide.title)}</h2></header><div className="sl-body">{slide.content}</div><div className="sl-tk"><span>העיקר</span>{bidiQuantities(slide.takeaway)}</div><footer className="sl-f"><span>{slide.chapter}</span><span dir="ltr">{String(index + 1).padStart(2, "0")}</span></footer></div>
       </div>
     </div>
   </div>;
