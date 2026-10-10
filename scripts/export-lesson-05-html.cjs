@@ -12,7 +12,7 @@ const embedStyles = `
     .local-viewer{display:block;width:100%;height:100%;min-height:0}
     .local-toolbar,.local-controls{display:none!important}
     .local-stage{width:100%;height:100%;min-height:0;aspect-ratio:auto;margin:0;overflow:hidden;border-radius:0;box-shadow:none}
-    .local-stage .slide-canvas{inset-inline-end:auto;inset-inline-start:0;transform-origin:top left}
+    .local-stage .slide-canvas{top:0;right:0;left:auto;inset-inline-start:auto;inset-inline-end:auto;transform-origin:top right}
 `;
 if (!html.includes(".local-stage") || !html.includes("function show(index)")) {
   throw new Error("Genspark source is missing the expected slide stage or navigation function.");
@@ -30,6 +30,8 @@ const parentBridge = `
     const index = Number(event.data.index);
     if (Number.isInteger(index)) show(index);
   });
+  new ResizeObserver(sizeSlides).observe(stage);
+  requestAnimationFrame(() => requestAnimationFrame(sizeSlides));
   window.parent.postMessage({channel:'syllo-lesson-05',type:'ready'},'*');
   sizeSlides(); show(0);`;
 if (!html.includes(initialNavigation)) throw new Error("Could not find Genspark initial navigation hook.");
