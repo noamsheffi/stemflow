@@ -722,7 +722,7 @@ th {
 
 .course-mark-logo {
   background-color: #fff;
-
+  
   background-position: -20px -18px;
   background-repeat: no-repeat;
   background-size: 145px auto;
@@ -3333,7 +3333,7 @@ body{background:var(--b-canvas)}
 #lesson-05-slide-23 .sl-eb{color:#67e8f9}
 #lesson-05-slide-23 .sl-f{color:#94a3b8}
 
-
+  
 /* ===== v4 fix layer: fonts, wrapping, sizes, bidi ===== */
 .l4-player .sl{--font:"Inter","Heebo","Segoe UI","Noto Sans Hebrew",system-ui,sans-serif}
 .local-toolbar,.local-controls{font-family:"Heebo","Inter",Arial,sans-serif}
@@ -3365,14 +3365,6 @@ body{background:var(--b-canvas)}
 #lesson-05-slide-26 .flow b,#lesson-05-slide-27 .flow b,#lesson-05-slide-28 .flow b{white-space:nowrap;padding-inline:18px}
 /* given-value rows */
 .l4-player .ex-grid .parameterList p.given{white-space:nowrap}
-
-    html,body{width:100%;height:100%;min-height:0;margin:0;overflow:hidden}
-    body{display:block}
-    .local-viewer{display:block;width:100%;height:100%;min-height:0}
-    .local-toolbar,.local-controls{display:none!important}
-    .local-stage{width:100%;height:100%;min-height:0;aspect-ratio:auto;margin:0;overflow:hidden;border-radius:0;box-shadow:none}
-    .local-stage .slide-canvas{inset-inline-end:auto;inset-inline-start:0;transform-origin:top left}
-
 </style>
 </head>
 <body>
@@ -3448,7 +3440,6 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">â€
     const label = String(current + 1).padStart(2, '0') + ' / ' + pages.length;
     position.textContent = label; count.textContent = label;
     previous.disabled = current === 0; next.disabled = current === pages.length - 1;
-    window.parent.postMessage({channel:'syllo-lesson-05',type:'slide-change',index:current,slideId:pages[current].id},'*');
   }
   previous.addEventListener('click', () => show(current - 1));
   next.addEventListener('click', () => show(current + 1));
@@ -3457,13 +3448,6 @@ M834 80h400000v40h-400000z"/></svg></span></span></span><span class="vlist-s">â€
     if (['ArrowLeft','PageDown',' '].includes(event.key)) { event.preventDefault(); show(current + 1); }
     if (['ArrowRight','PageUp'].includes(event.key)) { event.preventDefault(); show(current - 1); }
   });
-
-  window.addEventListener('message', (event) => {
-    if (event.source !== window.parent || event.data?.channel !== 'syllo-lesson-05' || event.data?.type !== 'navigate') return;
-    const index = Number(event.data.index);
-    if (Number.isInteger(index)) show(index);
-  });
-  window.parent.postMessage({channel:'syllo-lesson-05',type:'ready'},'*');
   sizeSlides(); show(0);
 })();
 </script>

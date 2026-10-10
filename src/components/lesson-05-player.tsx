@@ -157,8 +157,12 @@ const data: DeckSlide[] = [
   { chapter: chapters[5], title: "כרטיס יציאה: בדקו את ההבנה", interactive: true, minutes: 5, className: "exitTicket", takeaway: "בדקו את ההמרה ואת תדר הבבואה לפני שממשיכים.", notes: ["אספו תשובות לפני חשיפת הפתרון.", "דרשו יחידות בכל שורה.", "סיימו בחיבור השרשרת: בחירת תחנה, המרה, סינון, גילוי ובקרה."], content: <>{card("פתרו לבד", <><p className={styles.lead}>מקלט AM בהזרקה גבוהה מכוון לתחנה. חשבו את המתנד המקומי ואת תדר הבבואה.</p><div className={styles.parameterList} dir="ltr"><p><b>f<sub>RF</sub></b><span>1000 kHz</span></p><p><b>f<sub>IF</sub></b><span>455 kHz</span></p></div></>)}<Reveal label="בדיקת תשובה" steps={[<p><bdi dir="ltr">f<sub>LO</sub> = f<sub>RF</sub> + f<sub>IF</sub> = 1000 + 455 = 1455 kHz</bdi></p>, <p><bdi dir="ltr">f<sub>IM</sub> = f<sub>RF</sub> + 2f<sub>IF</sub> = 1000 + 910 = 1910 kHz</bdi></p>]}/></> },
 ];
 
-const extensionSlideCatalog = JSON.stringify(data.map((slide, index) => ({ slideId: `lesson-05-am-${String(index + 1).padStart(2, "0")}`, slideNumber: index + 1, minutes: slide.minutes, title: slide.title, chapter: slide.chapter, section: false, interactive: Boolean(slide.interactive) })));
-export { data as lesson05Slides };
+// Genspark is the authored presentation source. The previous platform deck added
+// one extra slide at position 26; keep its notes in source history but omit it
+// from the product deck so authored slide IDs stay aligned with Genspark.
+const deckSlides = data.filter((_, index) => index !== 25);
+const extensionSlideCatalog = JSON.stringify(deckSlides.map((slide, index) => ({ slideId: `lesson-05-am-${String(index + 1).padStart(2, "0")}`, slideNumber: index + 1, minutes: slide.minutes, title: slide.title, chapter: slide.chapter, section: false, interactive: Boolean(slide.interactive) })));
+export { deckSlides as lesson05Slides };
 
 function Reveal({ label, steps }: { label: string; steps: React.ReactNode[] }) {
   const [shown, setShown] = useState(0);
@@ -188,34 +192,28 @@ function Tuner() {
 }
 
 function ScaledSlide({ slide, index, hostClass }: { slide: DeckSlide; index: number; hostClass: string }) {
-  const host = useRef<HTMLDivElement>(null);
-  const [scale, setScale] = useState(0.5);
+  const frame = useRef<HTMLIFrameElement>(null);
   useEffect(() => {
-    const element = host.current;
-    if (!element) return;
-    const update = () => {
-      const rect = element.getBoundingClientRect();
-      const next = Math.min(rect.width / 1600, rect.height / 900);
-      if (Number.isFinite(next) && next > 0) setScale(next);
+    const onMessage = (event: MessageEvent) => {
+      if (event.source !== frame.current?.contentWindow || event.data?.channel !== "syllo-lesson-05" || event.data?.type !== "slide-change") return;
+      const nextIndex = Number(event.data.index);
+      if (Number.isInteger(nextIndex) && nextIndex >= 0 && nextIndex < deckSlides.length) {
+        window.dispatchEvent(new CustomEvent("syllo:lesson-05-slide-change", { detail: { index: nextIndex } }));
+      }
     };
-    update();
-    const observer = new ResizeObserver(update);
-    observer.observe(element);
-    return () => observer.disconnect();
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
   }, []);
-  const slideSkin = slide.className ? styles[slide.className] : "";
-  const compactTitle = slide.title.length > 34 ? styles["compact-title"] : "";
-  return <div ref={host} className={hostClass}>
-    <div className={playerStyles.stageBox} style={{ width: 1600 * scale, height: 900 * scale }}>
-      <div className={playerStyles.slideCanvas} style={{ transform: `scale(${scale})` }} data-current-slide="true" data-slide-id={`lesson-05-am-${String(index + 1).padStart(2, "0")}`} data-slide-id-source="authored" data-slide-number={index + 1} data-minutes={slide.minutes}>
-      <div className={`sl l5-slide ${compactTitle} ${slideSkin ?? ""}`}><header className="sl-h"><div className="sl-eb">{slide.chapter}</div><h2>{bidiQuantities(slide.title)}</h2></header><div className="sl-body">{slide.content}</div><div className="sl-tk"><span>העיקר</span>{bidiQuantities(slide.takeaway)}</div><footer className="sl-f"><span>{slide.chapter}</span><span dir="ltr">{String(index + 1).padStart(2, "0")}</span></footer></div>
-      </div>
-    </div>
+  useEffect(() => {
+    frame.current?.contentWindow?.postMessage({ channel: "syllo-lesson-05", type: "navigate", index }, "*");
+  }, [index]);
+  return <div className={hostClass} data-current-slide="true" data-slide-id={`lesson-05-am-${String(index + 1).padStart(2, "0")}`} data-slide-id-source="authored" data-slide-number={index + 1} data-minutes={slide.minutes}>
+    <iframe ref={frame} title={`שקף ${index + 1}: ${slide.title}`} src="/courses/communication-systems/lesson-05/lesson.html" sandbox="allow-scripts" className={styles.gensparkFrame} onLoad={() => frame.current?.contentWindow?.postMessage({ channel: "syllo-lesson-05", type: "navigate", index }, "*")} />
   </div>;
 }
 
 export default function Lesson05Player({ lecturerMode = false }: { lecturerMode?: boolean }) {
-  const stateKey = "syllo:student:lesson:lesson-05";
+  const stateKey = "syllo:student:lesson:lesson-05:genspark-v1";
   const [index, setIndex] = useLessonState(stateKey + ":index", 0);
   const [seen, setSeen] = useLessonState<number[]>(stateKey + ":seen", []);
   const [outlineOpen, setOutlineOpen] = useLessonState(stateKey + ":outline", true);
@@ -232,18 +230,18 @@ export default function Lesson05Player({ lecturerMode = false }: { lecturerMode?
   const [feedbackReady, setFeedbackReady] = useState(false);
   const [openChapters, setOpenChapters] = useState<Record<string, boolean>>({ [chapters[0]]: true });
   const playerRef = useRef<HTMLDivElement>(null);
-  const slide = data[index];
+  const slide = deckSlides[index];
   const currentFeedback = feedbackBySlide[index + 1];
   useEffect(() => {
     try {
-      const saved = window.localStorage.getItem("syllo:student:lesson:lesson-05:feedback");
+      const saved = window.localStorage.getItem("syllo:student:lesson:lesson-05:genspark-v1:feedback");
       if (saved) setFeedbackBySlide(JSON.parse(saved) as typeof feedbackBySlide);
     } catch { /* Feedback remains usable when browser storage is unavailable. */ }
     setFeedbackReady(true);
   }, []);
   useEffect(() => {
     if (!feedbackReady) return;
-    try { window.localStorage.setItem("syllo:student:lesson:lesson-05:feedback", JSON.stringify(feedbackBySlide)); }
+    try { window.localStorage.setItem("syllo:student:lesson:lesson-05:genspark-v1:feedback", JSON.stringify(feedbackBySlide)); }
     catch { /* The panel still updates for this visit if storage is disabled. */ }
   }, [feedbackBySlide, feedbackReady]);
   const notifyLecturer = (eventName: "open" | "exit") => window.dispatchEvent(new CustomEvent(eventName === "open" ? "syllo:lesson-player-open" : "syllo:lesson-player-exit"));
@@ -272,8 +270,13 @@ export default function Lesson05Player({ lecturerMode = false }: { lecturerMode?
       : index < 34
         ? ["receiver", "radio-frequency", "mixer", "local-oscillator", "intermediate-frequency", "image-frequency", "filters"]
         : ["receiver", "intermediate-frequency", "envelope-detector", "agc"];
-  const previewSlide = data[0];
-  const go = (next: number) => setIndex(Math.max(0, Math.min(data.length - 1, next)));
+  const previewSlide = deckSlides[0];
+  const go = (next: number) => setIndex(Math.max(0, Math.min(deckSlides.length - 1, next)));
+  useEffect(() => {
+    const onDeckSlide = (event: Event) => go((event as CustomEvent<{ index: number }>).detail.index);
+    window.addEventListener("syllo:lesson-05-slide-change", onDeckSlide);
+    return () => window.removeEventListener("syllo:lesson-05-slide-change", onDeckSlide);
+  }, []);
   const sendFeedback = async () => {
     if (!feedbackChoice || feedbackBusy) return;
     setFeedbackBusy(true);
@@ -295,12 +298,12 @@ export default function Lesson05Player({ lecturerMode = false }: { lecturerMode?
           lessonId: "lesson-05",
           slideId: `lesson-05-am-${suffix}`,
           slideNumber: index + 1,
-          deckVersion: "lesson-05-am-v4",
+          deckVersion: "lesson-05-genspark-v1",
           feedbackType: { unclear: "NOT_UNDERSTOOD", example: "NEED_EXAMPLE", question: "QUESTION", mistake: "POSSIBLE_ERROR" }[feedbackChoice],
           optionalComment: feedbackComment.trim(),
           submittedAt: new Date().toISOString(),
           pageUrl: window.location.href,
-          idempotencyKey: `communication-systems:lesson-05:slide-${suffix}`,
+          idempotencyKey: `communication-systems:lesson-05:genspark-v1:slide-${suffix}`,
         }),
       });
       if (!response.ok) throw new Error("שליחת המשוב נכשלה. נסו שוב.");
@@ -377,20 +380,20 @@ export default function Lesson05Player({ lecturerMode = false }: { lecturerMode?
     return () => observer.disconnect();
   }, []);
 
-  if (!opened) return <section className={`l4-player ${playerStyles.preview}`} aria-label="תצוגה מקדימה של מערך השיעור" data-lesson-player="true" data-course-id="communication-systems" data-lesson-id="lesson-05" data-deck-version="lesson-05-am-v4" data-slides={extensionSlideCatalog}>
+  if (!opened) return <section className={`l4-player ${playerStyles.preview}`} aria-label="תצוגה מקדימה של מערך השיעור" data-lesson-player="true" data-course-id="communication-systems" data-lesson-id="lesson-05" data-deck-version="lesson-05-genspark-v1" data-slides={extensionSlideCatalog}>
     <div className={playerStyles.previewStage}><ScaledSlide slide={previewSlide} index={0} hostClass={playerStyles.stage}/></div>
-    <footer className={playerStyles.previewFooter}><div><strong>מערך שיעור 05 · מקלט AM — סופר־הטרודיין וגלאי מעטפת</strong><span>{data.length} שקפים</span></div><button type="button" className={playerStyles.openLessonButton} onClick={() => { notifyLecturer("open"); setIndex(0); setOutlineOpen(true); setNotesOpen(false); setOpened(true); }}>פתיחת מערך השיעור <span aria-hidden="true">←</span></button></footer>
+    <footer className={playerStyles.previewFooter}><div><strong>מערך שיעור 05 · מקלט AM — סופר־הטרודיין וגלאי מעטפת</strong><span>{deckSlides.length} שקפים</span></div><button type="button" className={playerStyles.openLessonButton} onClick={() => { notifyLecturer("open"); setIndex(0); setOutlineOpen(true); setNotesOpen(false); setOpened(true); }}>פתיחת מערך השיעור <span aria-hidden="true">←</span></button></footer>
   </section>;
 
   if (typeof document === "undefined") return null;
-  if (present) return createPortal(<div dir="rtl" data-lesson-player="true" data-course-id="communication-systems" data-lesson-id="lesson-05" data-deck-version="lesson-05-am-v4" data-slides={extensionSlideCatalog} className={`l4-player syllo-student-app ${playerStyles.present}`} role="dialog" aria-label="הצגת שקף שיעור 05">
+  if (present) return createPortal(<div dir="rtl" data-lesson-player="true" data-course-id="communication-systems" data-lesson-id="lesson-05" data-deck-version="lesson-05-genspark-v1" data-slides={extensionSlideCatalog} className={`l4-player syllo-student-app ${playerStyles.present}`} role="dialog" aria-label="הצגת שקף שיעור 05">
     <ScaledSlide slide={slide} index={index} hostClass={playerStyles.presentStage} />
-    <div className={playerStyles.presentControls}><button type="button" onClick={() => go(index - 1)}>הקודם</button><span dir="ltr">{String(index + 1).padStart(2, "0")} / {data.length}</span><button type="button" onClick={() => go(index + 1)}>הבא</button><button type="button" aria-pressed={notesOpen} onClick={() => setNotesOpen((value) => !value)}>הערות מרצה · N</button><button type="button" onClick={exitPresentation}>יציאה · Esc</button></div>
+    <div className={playerStyles.presentControls}><button type="button" onClick={() => go(index - 1)}>הקודם</button><span dir="ltr">{String(index + 1).padStart(2, "0")} / {deckSlides.length}</span><button type="button" onClick={() => go(index + 1)}>הבא</button><button type="button" aria-pressed={notesOpen} onClick={() => setNotesOpen((value) => !value)}>הערות מרצה · N</button><button type="button" onClick={exitPresentation}>יציאה · Esc</button></div>
     {!lecturerMode && studentFeedback}
     {notesOpen && <aside className={playerStyles.speakerNotes}><b>הערות מרצה</b><p>{slide.notes.join(" · ")}</p></aside>}
   </div>, document.body);
 
-  return createPortal(<div ref={playerRef} dir="rtl" data-lesson-player="true" data-course-id="communication-systems" data-lesson-id="lesson-05" data-deck-version="lesson-05-am-v4" data-slides={extensionSlideCatalog} className={`l4-player syllo-student-app ${playerStyles.player} ${outlineOpen ? playerStyles.withOutline : ""} ${notesOpen ? playerStyles.withContext : ""}`} aria-label="מערך שיעור 05">
+  return createPortal(<div ref={playerRef} dir="rtl" data-lesson-player="true" data-course-id="communication-systems" data-lesson-id="lesson-05" data-deck-version="lesson-05-genspark-v1" data-slides={extensionSlideCatalog} className={`l4-player syllo-student-app ${playerStyles.player} ${outlineOpen ? playerStyles.withOutline : ""} ${notesOpen ? playerStyles.withContext : ""}`} aria-label="מערך שיעור 05">
     <header className={playerStyles.playerToolbar}>
       <div className={playerStyles.lessonIdentity}><a className={playerStyles.courseBreadcrumb} href={lecturerMode ? "/lecturer/sessions#lessons" : "/course/communication-systems/lessons"} onClick={() => notifyLecturer("exit")}><span className={playerStyles.breadcrumbArrow} aria-hidden="true">›</span><span><small>{lecturerMode ? "חזרה לפנל המרצים" : "חזרה למערכי השיעור"}</small><b>מערכות תקשורת</b></span></a><span className={playerStyles.toolbarDivider}/><span className={playerStyles.lessonBadge} dir="ltr">05</span><span className={playerStyles.lessonTitle}>מקלט AM — סופר־הטרודיין וגלאי מעטפת</span></div>
       <nav className={playerStyles.loopPhases} aria-label="שלבי השיעור"><a className={playerStyles.phaseActive} href={lecturerMode ? "/lecturer/lessons/lesson-05/slides" : "/course/communication-systems/lessons/lesson-05/slides"}><span dir="ltr">01</span>מערך השיעור</a><a href={lecturerMode ? "/lecturer/lessons/lesson-05/practice" : "/course/communication-systems/lessons/lesson-05/practice"}><span dir="ltr">02</span>תרגול</a></nav>
@@ -398,8 +401,8 @@ export default function Lesson05Player({ lecturerMode = false }: { lecturerMode?
     </header>
     <div className={playerStyles.loopProgress}/>
     <div className={playerStyles.playerWorkspace}>
-      {outlineOpen && <aside className={playerStyles.outline} aria-label="מבנה השיעור"><header className={playerStyles.outlineHeader}><div className={playerStyles.outlineTitleRow}><span className={playerStyles.lessonBadge} dir="ltr">05</span><div><span className={playerStyles.eyebrow}>מערך השיעור · מקלט AM</span><h2>סופר־הטרודיין וגלאי מעטפת</h2></div></div><div className={playerStyles.lessonProgress}><span>{seen.length}/{data.length} שקפים נצפו</span><i><b style={{ width: `${seen.length / data.length * 100}%` }}/></i></div><button type="button" className={playerStyles.closePanel} onClick={() => setOutlineOpen(false)}>סגירה</button></header><div className={playerStyles.outlineSectionHeading}>מבנה השיעור</div><nav className={playerStyles.outlineScroll} aria-label="פרקי השיעור">{chapters.map((chapter, chapterIndex) => { const chapterSlides = data.map((item, slideIndex) => ({ item, slideIndex })).filter(({ item }) => item.chapter === chapter); const chapterSeen = chapterSlides.filter(({ slideIndex }) => seen.includes(slideIndex + 1)).length; const chapterFeedback = chapterSlides.filter(({ slideIndex }) => Boolean(feedbackBySlide[slideIndex + 1])).length; return <section className={playerStyles.chapter} key={chapter}><button type="button" title={chapter} aria-expanded={Boolean(openChapters[chapter])} className={`${playerStyles.chapterButton} ${slide.chapter === chapter ? playerStyles.chapterActive : ""}`} onClick={() => setOpenChapters((value) => ({ ...value, [chapter]: !value[chapter] }))}><span className={playerStyles.chapterNumber} dir="ltr">{chapterIndex === 0 || chapterIndex === chapters.length - 1 ? "·" : String(chapterIndex).padStart(2, "0")}</span><span className={playerStyles.chapterTitle}>{chapter}</span>{chapterFeedback > 0 && <span className={playerStyles.flagCount} aria-label={`${chapterFeedback} תגובות בפרק`}>{chapterFeedback}</span>}<span className={playerStyles.progressRing} style={{ "--progress": chapterSlides.length ? chapterSeen / chapterSlides.length : 0 } as React.CSSProperties} aria-label={`${chapterSeen} מתוך ${chapterSlides.length} שקפים נצפו`}/></button>{openChapters[chapter] && <div className={playerStyles.chapterSlides}>{chapterSlides.map(({ item, slideIndex }) => { const slideNumber = slideIndex + 1; const feedbackTypeForSlide = feedbackBySlide[slideNumber] && feedbackTypes.find((type) => type.key === feedbackBySlide[slideNumber].t); return <button type="button" key={slideIndex} title={item.title} className={`${playerStyles.slideLink} ${index === slideIndex ? playerStyles.slideActive : ""} ${seen.includes(slideNumber) ? playerStyles.slideSeen : ""}`} aria-current={index === slideIndex ? "step" : undefined} onClick={() => go(slideIndex)}><span className={playerStyles.slideNumber} dir="ltr">{String(slideNumber).padStart(2, "0")}</span><span className={playerStyles.slideTitle}>{item.title}</span>{feedbackTypeForSlide && <span className={playerStyles.feedbackMarker} title={feedbackTypeForSlide.label} aria-label={`משוב: ${feedbackTypeForSlide.label}`}><FeedbackIcon type={feedbackTypeForSlide.key} size={13}/></span>}{Boolean(item.interactive) && <span className={playerStyles.interactiveMark} title="שקף אינטראקטיבי" aria-label="שקף אינטראקטיבי">◆</span>}</button>; })}</div>}</section>; })}</nav></aside>}
-      <main className={playerStyles.playerMain} aria-label="נגן שיעור 05"><div className={playerStyles.stageWrap}><ScaledSlide slide={slide} index={index} hostClass={playerStyles.stage}/></div><footer className={playerStyles.playerFooter}><nav className={playerStyles.chapterBar} aria-label="התקדמות בין פרקי השיעור">{chapters.map((chapter) => { const chapterSlides = data.map((item, slideIndex) => ({ item, slideIndex })).filter(({ item }) => item.chapter === chapter); const start = chapterSlides[0]?.slideIndex ?? 0; const progress = Math.max(0, Math.min(100, (index - start + 1) / chapterSlides.length * 100)); return <button type="button" key={chapter} className={`${playerStyles.chapterSegment} ${slide.chapter === chapter ? playerStyles.segmentActive : ""}`} style={{ flex: chapterSlides.length }} onClick={() => go(start)} title={chapter} aria-label={`מעבר לפרק ${chapter}`}><i style={{ width: `${progress}%` }}/>{chapterSlides.map(({ slideIndex }) => { const feedback = feedbackBySlide[slideIndex + 1]; if (!feedback) return null; const type = feedbackTypes.find((item) => item.key === feedback.t); const label = `משוב „${type?.label ?? "נשלח"}” · שקף ${String(slideIndex + 1).padStart(2, "0")}: ${data[slideIndex].title}`; return <em key={slideIndex} title={label} aria-label={label} style={{ insetInlineStart: `${((slideIndex - start + 0.5) / chapterSlides.length) * 100}%`, background: type?.color ?? "#008F4D" }}/>; })}</button>; })}</nav><div className={playerStyles.slideNav}><button type="button" className={playerStyles.navButton} onClick={() => go(index - 1)} aria-label="לשקף הקודם">‹</button><span className={playerStyles.slideCount} dir="ltr">{String(index + 1).padStart(2, "0")} / {data.length}</span><button type="button" className={playerStyles.navButton} onClick={() => go(index + 1)} aria-label="לשקף הבא">›</button><span className={playerStyles.chapterLabel}>{slide.chapter}</span></div></footer></main>
+      {outlineOpen && <aside className={playerStyles.outline} aria-label="מבנה השיעור"><header className={playerStyles.outlineHeader}><div className={playerStyles.outlineTitleRow}><span className={playerStyles.lessonBadge} dir="ltr">05</span><div><span className={playerStyles.eyebrow}>מערך השיעור · מקלט AM</span><h2>סופר־הטרודיין וגלאי מעטפת</h2></div></div><div className={playerStyles.lessonProgress}><span>{seen.length}/{deckSlides.length} שקפים נצפו</span><i><b style={{ width: `${seen.length / deckSlides.length * 100}%` }}/></i></div><button type="button" className={playerStyles.closePanel} onClick={() => setOutlineOpen(false)}>סגירה</button></header><div className={playerStyles.outlineSectionHeading}>מבנה השיעור</div><nav className={playerStyles.outlineScroll} aria-label="פרקי השיעור">{chapters.map((chapter, chapterIndex) => { const chapterSlides = deckSlides.map((item, slideIndex) => ({ item, slideIndex })).filter(({ item }) => item.chapter === chapter); const chapterSeen = chapterSlides.filter(({ slideIndex }) => seen.includes(slideIndex + 1)).length; const chapterFeedback = chapterSlides.filter(({ slideIndex }) => Boolean(feedbackBySlide[slideIndex + 1])).length; return <section className={playerStyles.chapter} key={chapter}><button type="button" title={chapter} aria-expanded={Boolean(openChapters[chapter])} className={`${playerStyles.chapterButton} ${slide.chapter === chapter ? playerStyles.chapterActive : ""}`} onClick={() => setOpenChapters((value) => ({ ...value, [chapter]: !value[chapter] }))}><span className={playerStyles.chapterNumber} dir="ltr">{chapterIndex === 0 || chapterIndex === chapters.length - 1 ? "·" : String(chapterIndex).padStart(2, "0")}</span><span className={playerStyles.chapterTitle}>{chapter}</span>{chapterFeedback > 0 && <span className={playerStyles.flagCount} aria-label={`${chapterFeedback} תגובות בפרק`}>{chapterFeedback}</span>}<span className={playerStyles.progressRing} style={{ "--progress": chapterSlides.length ? chapterSeen / chapterSlides.length : 0 } as React.CSSProperties} aria-label={`${chapterSeen} מתוך ${chapterSlides.length} שקפים נצפו`}/></button>{openChapters[chapter] && <div className={playerStyles.chapterSlides}>{chapterSlides.map(({ item, slideIndex }) => { const slideNumber = slideIndex + 1; const feedbackTypeForSlide = feedbackBySlide[slideNumber] && feedbackTypes.find((type) => type.key === feedbackBySlide[slideNumber].t); return <button type="button" key={slideIndex} title={item.title} className={`${playerStyles.slideLink} ${index === slideIndex ? playerStyles.slideActive : ""} ${seen.includes(slideNumber) ? playerStyles.slideSeen : ""}`} aria-current={index === slideIndex ? "step" : undefined} onClick={() => go(slideIndex)}><span className={playerStyles.slideNumber} dir="ltr">{String(slideNumber).padStart(2, "0")}</span><span className={playerStyles.slideTitle}>{item.title}</span>{feedbackTypeForSlide && <span className={playerStyles.feedbackMarker} title={feedbackTypeForSlide.label} aria-label={`משוב: ${feedbackTypeForSlide.label}`}><FeedbackIcon type={feedbackTypeForSlide.key} size={13}/></span>}{Boolean(item.interactive) && <span className={playerStyles.interactiveMark} title="שקף אינטראקטיבי" aria-label="שקף אינטראקטיבי">◆</span>}</button>; })}</div>}</section>; })}</nav></aside>}
+      <main className={playerStyles.playerMain} aria-label="נגן שיעור 05"><div className={playerStyles.stageWrap}><ScaledSlide slide={slide} index={index} hostClass={playerStyles.stage}/></div><footer className={playerStyles.playerFooter}><nav className={playerStyles.chapterBar} aria-label="התקדמות בין פרקי השיעור">{chapters.map((chapter) => { const chapterSlides = deckSlides.map((item, slideIndex) => ({ item, slideIndex })).filter(({ item }) => item.chapter === chapter); const start = chapterSlides[0]?.slideIndex ?? 0; const progress = Math.max(0, Math.min(100, (index - start + 1) / chapterSlides.length * 100)); return <button type="button" key={chapter} className={`${playerStyles.chapterSegment} ${slide.chapter === chapter ? playerStyles.segmentActive : ""}`} style={{ flex: chapterSlides.length }} onClick={() => go(start)} title={chapter} aria-label={`מעבר לפרק ${chapter}`}><i style={{ width: `${progress}%` }}/>{chapterSlides.map(({ slideIndex }) => { const feedback = feedbackBySlide[slideIndex + 1]; if (!feedback) return null; const type = feedbackTypes.find((item) => item.key === feedback.t); const label = `משוב „${type?.label ?? "נשלח"}” · שקף ${String(slideIndex + 1).padStart(2, "0")}: ${deckSlides[slideIndex].title}`; return <em key={slideIndex} title={label} aria-label={label} style={{ insetInlineStart: `${((slideIndex - start + 0.5) / chapterSlides.length) * 100}%`, background: type?.color ?? "#008F4D" }}/>; })}</button>; })}</nav><div className={playerStyles.slideNav}><button type="button" className={playerStyles.navButton} onClick={() => go(index - 1)} aria-label="לשקף הקודם">‹</button><span className={playerStyles.slideCount} dir="ltr">{String(index + 1).padStart(2, "0")} / {deckSlides.length}</span><button type="button" className={playerStyles.navButton} onClick={() => go(index + 1)} aria-label="לשקף הבא">›</button><span className={playerStyles.chapterLabel}>{slide.chapter}</span></div></footer></main>
       {notesOpen && <aside className={playerStyles.slideContext} aria-label="הערות מרצה לשקף"><header className={playerStyles.contextHeader}><span>הערות מרצה</span><b dir="ltr">{String(index + 1).padStart(2, "0")}</b></header><div className={playerStyles.contextBody}><div className={playerStyles.takeaway}><small>העיקר</small>{bidiQuantities(slide.takeaway)}</div><section className={playerStyles.contextSection}><h3>מפת מושגים</h3><p>הקשרים בין אות AM משיעור 4 לבין קליטת התחנה בשיעור 5.</p>{concepts.filter((concept) => visibleConceptIds.includes(concept.conceptId)).map((concept) => <Link className={playerStyles.conceptCard} key={concept.conceptId} href={`/course/communication-systems/concepts/${concept.conceptId}`}><b>{concept.name}</b><small>{concept.description}</small></Link>)}<Link href="/course/communication-systems/concepts" className={playerStyles.contextMore}>למפת המושגים המלאה ←</Link></section><h3>הערות לשקף</h3><ul>{slide.notes.map((note) => <li key={note}>{note}</li>)}</ul></div></aside>}
       {!lecturerMode && studentFeedback}
     </div>
