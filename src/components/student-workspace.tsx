@@ -9,6 +9,7 @@ import { concepts, course, formulas, getLesson, workspace } from "../lib/course-
 import { splitFormulaName } from "../lib/formula-name";
 import { lesson04Slides } from "./lesson-04-data";
 import { lesson05Slides } from "./lesson-05-player";
+import { lesson06Slides } from "./lesson-06-data";
 import FormulaMath from "./formula-math";
 import FormulaScroll from "./formula-scroll";
 import CourseTree from "./course-tree";
@@ -69,7 +70,7 @@ function ContextPanel({ pathname }: { pathname: string }) {
   const lessonConcepts = selectedLesson ? concepts.filter((item) => selectedLesson.conceptIds.includes(item.conceptId)) : [];
   const [tab, setTab] = useState<"formulas" | "concepts" | "notes" | "feedback">("formulas");
   const [feedback, setFeedback] = useState<Record<number, { t: string; text: string }>>({});
-  const hasFeedbackTab = selectedLesson?.lessonId === "lesson-04" || selectedLesson?.lessonId === "lesson-05";
+  const hasFeedbackTab = ["lesson-04", "lesson-05", "lesson-06"].includes(selectedLesson?.lessonId ?? "");
   const lessonFeedbackKey = `syllo:student:lesson:${selectedLesson?.lessonId ?? "lesson-04"}:feedback`;
   const tabOrder: Array<"formulas" | "concepts" | "notes" | "feedback"> = hasFeedbackTab ? ["formulas", "concepts", "feedback", "notes"] : ["formulas", "concepts", "notes"];
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
@@ -141,7 +142,9 @@ function ContextPanel({ pathname }: { pathname: string }) {
           const slideNumber = Number(number);
           const slideTitle = selectedLesson?.lessonId === "lesson-05"
             ? lesson05Slides[slideNumber - 1]?.title
-            : lesson04Slides.find((entry) => entry.n === slideNumber)?.h;
+            : selectedLesson?.lessonId === "lesson-06"
+              ? lesson06Slides[slideNumber - 1]?.h
+              : lesson04Slides.find((entry) => entry.n === slideNumber)?.h;
           if (!slideTitle || !selectedLesson) return null;
           return <Link key={number} className={styles.contextFeedback} href={appCourseHref(route.courseId, `lessons/${selectedLesson.lessonId}/slides`)} onClick={() => {
             try { window.localStorage.setItem(`syllo:student:lesson:${selectedLesson.lessonId}:index`, JSON.stringify(slideNumber - 1)); } catch { /* Slide remains reachable from the outline. */ }

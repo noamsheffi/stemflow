@@ -23,7 +23,7 @@ const notifySlide = `
 const positionUpdate = "previous.disabled = current === 0; next.disabled = current === pages.length - 1;";
 if (!html.includes(positionUpdate)) throw new Error("Could not find Genspark slide-change hook.");
 html = html.replace(positionUpdate, `${positionUpdate}${notifySlide}`);
-const initialNavigation = "sizeSlides(); show(0);";
+const initialNavigationPattern = /sizeSlides\(\);\s*show\((?:isFinite\(start\)\s*\?\s*start\s*:\s*0|0)\);/;
 const parentBridge = `
   window.addEventListener('message', (event) => {
     if (event.source !== window.parent || event.data?.channel !== 'syllo-lesson-05' || event.data?.type !== 'navigate') return;
@@ -34,8 +34,8 @@ const parentBridge = `
   requestAnimationFrame(() => requestAnimationFrame(sizeSlides));
   window.parent.postMessage({channel:'syllo-lesson-05',type:'ready'},'*');
   sizeSlides(); show(0);`;
-if (!html.includes(initialNavigation)) throw new Error("Could not find Genspark initial navigation hook.");
-html = html.replace(initialNavigation, parentBridge);
+if (!initialNavigationPattern.test(html)) throw new Error("Could not find Genspark initial navigation hook.");
+html = html.replace(initialNavigationPattern, parentBridge);
 html = html.replace(/[\t ]+$/gm, "");
 fs.mkdirSync(path.dirname(outputPath), { recursive: true });
 fs.writeFileSync(outputPath, html);

@@ -30,12 +30,22 @@
     "interactive": false
   },
   {
+    "id": "s33",
+    "title": "תזכורת: האות והנוסחאות משיעור 4",
+    "chapter": "פתיחה וחזרה",
+    "takeaway": "נשתמש בספקטרום, במעטפת וב־BW שכבר למדנו כדי להבין למה המקלט צריך סינון והמרת תדר.",
+    "number": 4,
+    "minutes": 3,
+    "slideId": "lesson-05-genspark-s33",
+    "interactive": false
+  },
+  {
     "id": "s04",
     "title": "מה יש בתוך אות AM? נושא ופסי צד",
     "chapter": "פתיחה וחזרה",
-    "takeaway": "טון יחיד ← שני קווי צד ב־fc±fmf_c\\pm f_mfc​±fm​. שמע אמיתי ← שני תחומי צד. רוחב הסרט נקבע לפי fm,max⁡f_{m,\\max}fm,max​.",
-    "number": 4,
-    "minutes": 3,
+    "takeaway": "טון יחיד יוצר שני פסי צד סביב הנושא; בדיבור הם הופכים לתחומי תדר. תדר המידע המרבי קובע את רוחב הסרט.",
+    "number": 5,
+    "minutes": 2,
     "slideId": "lesson-05-genspark-s04",
     "interactive": false
   },
@@ -44,8 +54,8 @@
     "title": "רוחב הסרט וההספק: איפה נמצא המידע?",
     "chapter": "פתיחה וחזרה",
     "takeaway": "שני פסי הצד נושאים את המידע; רוב ההספק נשאר בנושא. בדוגמה: BW = 10 kHz, תחום 995–1005 kHz.",
-    "number": 5,
-    "minutes": 4,
+    "number": 6,
+    "minutes": 3,
     "slideId": "lesson-05-genspark-s05",
     "interactive": false
   },
@@ -54,8 +64,8 @@
     "title": "שאלת פתיחה: איך בוחרים תחנה אחת?",
     "chapter": "פתיחה וחזרה",
     "takeaway": "תחנות שתחומיהן חופפים אי־אפשר להפריד בשום מסנן. בהפרש 10 kHz התחומים נוגעים בגבול בלבד — המסנן צריך להיות חד.",
-    "number": 6,
-    "minutes": 4,
+    "number": 7,
+    "minutes": 3,
     "slideId": "lesson-05-genspark-s06",
     "interactive": false
   },
@@ -64,7 +74,7 @@
     "title": "מקלט ישיר (TRF): המסנן עוקב אחרי התחנה",
     "chapter": "ארכיטקטורת מקלט",
     "takeaway": "ב־TRF כל דרגות ה־RF מתכווננות יחד לתדר התחנה; אין המרת תדר.",
-    "number": 7,
+    "number": 8,
     "minutes": 4,
     "slideId": "lesson-05-genspark-s07",
     "interactive": false
@@ -73,18 +83,18 @@
     "id": "s08",
     "title": "רוחב פס ו־Q: סימולטור מסנן מעבר־פס",
     "chapter": "ארכיטקטורת מקלט",
-    "takeaway": "BW=fH−fLBW=f_H-f_LBW=fH​−fL​ נמדד בנקודות −3 dB; Q=f0/BWQ=f_0/BWQ=f0​/BW. באותו f0f_0f0​, Q גבוה ← פס צר ← הנחתה רבה יותר לתחנה השכנה.",
-    "number": 8,
+    "takeaway": "BW=fH−fL בין נקודות ‎−3 dB; Q=f0/BW. באותו תדר תהודה, Q גדול יותר פירושו תחום מעבר צר יותר.",
+    "number": 9,
     "minutes": 5,
     "slideId": "lesson-05-genspark-s08",
     "interactive": true
   },
   {
     "id": "s09",
-    "title": "דוגמת TRF: מחשבים רוחב פס",
+    "title": "דוגמת מקלט ישיר: מחשבים רוחב פס",
     "chapter": "ארכיטקטורת מקלט",
-    "takeaway": "עבור f0=1.5f_0=1.5f0​=1.5 MHz ו־Q=50Q=50Q=50: BW=30BW=30BW=30 kHz — רחב פי 3 מערוץ AM של 10 kHz.",
-    "number": 9,
+    "takeaway": "עבור f0=1.5 MHz ו־Q=50 מתקבל BW=30 kHz — פי שלושה מרוחב ערוץ AM של 10 kHz.",
+    "number": 10,
     "minutes": 4,
     "slideId": "lesson-05-genspark-s09",
     "interactive": false
@@ -94,7 +104,7 @@
     "title": "בעיה: איך שומרים ברירות אחידה לאורך הסקאלה?",
     "chapter": "ארכיטקטורת מקלט",
     "takeaway": "במעגל מתכוונן עם Q קבוע, BW גדל עם התדר. הפתרון: להעביר כל תחנה לתדר ביניים קבוע ולסנן שם.",
-    "number": 10,
+    "number": 11,
     "minutes": 3,
     "slideId": "lesson-05-genspark-s10",
     "interactive": false
@@ -104,7 +114,7 @@
     "title": "TRF מול סופר־הטרודיין: אותו מסלול, צבעי דרגות אחידים",
     "chapter": "ארכיטקטורת מקלט",
     "takeaway": "בסופר־הטרודיין רק הקצה הקדמי וה־LO מתכווננים; הברירות העיקרית נעשית במסנן IF קבוע.",
-    "number": 11,
+    "number": 12,
     "minutes": 5,
     "slideId": "lesson-05-genspark-s11",
     "interactive": false
@@ -114,7 +124,7 @@
     "title": "מה עושה כל דרגה? לחצו על דרגה במסלול האות",
     "chapter": "ארכיטקטורת מקלט",
     "takeaway": "קדם־מסנן RF דוחה בבואה; מסנן IF קבוע נותן את עיקר הברירות בין ערוצים סמוכים — אבל אינו יכול להפריד בין שני אותות שכבר הומרו לאותו IF.",
-    "number": 12,
+    "number": 13,
     "minutes": 4,
     "slideId": "lesson-05-genspark-s12",
     "interactive": false
@@ -124,30 +134,20 @@
     "title": "תופעה: מכפילים שני תדרים — מה יוצא?",
     "chapter": "המרת תדר ובבואה",
     "takeaway": "מכפלת שני גלים מכילה שני רכיבים חדשים בלבד: הסכום וההפרש. ההפרש הוא ה־IF.",
-    "number": 13,
+    "number": 14,
     "minutes": 3,
     "slideId": "lesson-05-genspark-s13",
     "interactive": false
   },
   {
     "id": "s14",
-    "title": "הוכחה טריגונומטריתהרחבה",
+    "title": "איך מכפלת שני אותות יוצרת סכום והפרש?",
     "chapter": "המרת תדר ובבואה",
-    "takeaway": "הזהות מסבירה בדיוק את מה שראינו ב־DFT: מכפלה ← סכום + הפרש, כל אחד במשרעת AcALO/2A_cA_{LO}/2Ac​ALO​/2.",
-    "number": 14,
+    "takeaway": "מכפלת שני גלים סינוסואידליים יוצרת רכיב סכום ורכיב הפרש; משרעת כל רכיב היא Ac·ALO/2.",
+    "number": 15,
     "minutes": 2,
     "slideId": "lesson-05-genspark-s14",
     "interactive": false
-  },
-  {
-    "id": "s15",
-    "title": "סימולטור ערבל: LO, סכום, הפרש ובבואה",
-    "chapter": "המרת תדר ובבואה",
-    "takeaway": "הזרקה גבוהה: fLO=fRF+fIFf_{LO}=f_{RF}+f_{IF}fLO​=fRF​+fIF​, fIM=fRF+2fIFf_{IM}=f_{RF}+2f_{IF}fIM​=fRF​+2fIF​. הבבואה רחוקה 2fIF2f_{IF}2fIF​ מהתחנה — רק קדם־מסנן RF יכול לדחות אותה.",
-    "number": 15,
-    "minutes": 4,
-    "slideId": "lesson-05-genspark-s15",
-    "interactive": true
   },
   {
     "id": "s16",
@@ -161,30 +161,50 @@
   },
   {
     "id": "s17",
-    "title": "גוזרים את תדר הבבואה — ומגבלות התחום",
+    "title": "גוזרים את תדר הבבואה ומגבילים את התחום",
     "chapter": "המרת תדר ובבואה",
-    "takeaway": "מרחק הבבואה מן התחנה הוא 2fIF2f_{IF}2fIF​; הסימן תלוי בצד ההזרקה. בהזרקה נמוכה הנוסחה פיזיקלית רק בתחום מוגבל.",
+    "takeaway": "בהזרקה גבוהה fIM=fRF+2fIF; בנמוכה fIM=fRF−2fIF. נוסחת התדר חייבת לתת תדר פיזיקלי חיובי בתחום השימוש.",
     "number": 17,
     "minutes": 4,
     "slideId": "lesson-05-genspark-s17",
     "interactive": false
   },
   {
-    "id": "s18",
-    "title": "תרגיל מודרך: תחום LO, תחנה ובבואה",
-    "chapter": "המרת תדר ובבואה",
-    "takeaway": "תחום LO בהזרקה גבוהה: 995–2055 kHz. לתחנה 657 kHz: LO = 1112 kHz, בבואה = 1567 kHz — בתוך סקאלת AM.",
+    "id": "s15",
+    "title": "סימולטור ערבל: LO, סכום, הפרש ובבואה",
+    "chapter": "ערבל, מתנד ותדר בבואה",
+    "takeaway": "אחרי הגדרת תדר הביניים והבבואה, הסימולטור ממחיש את ההמרה ואת הצורך לדחות את הבבואה לפני הערבל.",
     "number": 18,
     "minutes": 4,
+    "slideId": "lesson-05-genspark-s15",
+    "interactive": true
+  },
+  {
+    "id": "s18",
+    "title": "דוגמה מונחית: תחום המתנד בהזרקה גבוהה",
+    "chapter": "ערבל, מתנד ותדר בבואה",
+    "takeaway": "בהזרקה גבוהה: fLO=fRF+fIF. עבור תחום AM הנתון, תחום המתנד הוא 995–2055 kHz.",
+    "number": 19,
+    "minutes": 2,
     "slideId": "lesson-05-genspark-s18",
     "interactive": true
   },
   {
+    "id": "s34",
+    "title": "דוגמה מונחית: מתחנה אל תדר הבבואה",
+    "chapter": "ערבל, מתנד ותדר בבואה",
+    "takeaway": "הבבואה רחוקה מהתחנה הרצויה ב־2fIF=910 kHz; ההפרש שלה מה־LO נשאר 455 kHz.",
+    "number": 20,
+    "minutes": 2,
+    "slideId": "lesson-05-genspark-s34",
+    "interactive": false
+  },
+  {
     "id": "s19",
-    "title": "למה בתחום AM מעדיפים הזרקה גבוהה? מתוקן",
+    "title": "למה בתחום AM מעדיפים הזרקה גבוהה?",
     "chapter": "המרת תדר ובבואה",
-    "takeaway": "הזרקה גבוהה: LO ב־995–2055 kHz, יחס קיבול ≈ 4.3:1, תקף לכל הסקאלה. הזרקה נמוכה אינה תקפה פיזיקלית בכל הסקאלה.",
-    "number": 19,
+    "takeaway": "הזרקה גבוהה מאפשרת כוונון בכל תחום AM שבדוגמה ודורשת יחס קיבול קטן יותר מהחלופה הנמוכה.",
+    "number": 21,
     "minutes": 4,
     "slideId": "lesson-05-genspark-s19",
     "interactive": false
@@ -194,47 +214,47 @@
     "title": "תרגיל עצמאי: בבואה בתוך הסקאלה",
     "chapter": "המרת תדר ובבואה",
     "takeaway": "לתחנה 600 kHz בהזרקה גבוהה הבבואה ב־1510 kHz — בתוך הסקאלה. קדם־מסנן עם Q=50 מחליש אותה בכ־40 dB.",
-    "number": 20,
+    "number": 22,
     "minutes": 4,
     "slideId": "lesson-05-genspark-s20",
     "interactive": true
   },
   {
-    "id": "s21",
-    "title": "פשרת הבחירה בתדר הבינייםהרחבה",
-    "chapter": "פשרת IF · הרחבה",
-    "takeaway": "IF גבוה מרחיק את הבבואה, אבל דורש Q גבוה מאוד לערוץ צר; IF נמוך מאפשר סינון חד יותר. זו הרחבה — לא מוקד השיעור.",
-    "number": 21,
-    "minutes": 0,
-    "slideId": "lesson-05-genspark-s21",
-    "interactive": false
-  },
-  {
-    "id": "s22",
-    "title": "איך המרה כפולה משלבת את היתרונות?הרחבה",
-    "chapter": "המרה כפולה · הרחבה",
-    "takeaway": "המרה כפולה היא פתרון אפשרי לפשרת ה־IF — לא שלב הכרחי במקלט AM הבסיסי, שבו המרה אחת ל־455 kHz מספיקה.",
-    "number": 22,
-    "minutes": 0,
-    "slideId": "lesson-05-genspark-s22",
-    "interactive": false
-  },
-  {
     "id": "s23",
     "title": "הפסקה",
     "chapter": "הפסקה",
-    "takeaway": "אחרי ההפסקה: נחלץ את אות השמע בגלאי מעטפת, נבחר RC ונבקר את העוצמה ב־AGC.",
+    "takeaway": "אחרי ההפסקה אפשר להשלים את הרחבות תדר הביניים, ואז להמשיך לגלאי מעטפת, RC ו־AGC.",
     "number": 23,
     "minutes": 10,
     "slideId": "lesson-05-genspark-s23",
     "interactive": false
   },
   {
+    "id": "s21",
+    "title": "פשרת הבחירה בתדר הביניים · הרחבה",
+    "chapter": "הרחבה: פשרת תדר הביניים",
+    "takeaway": "IF גבוה מרחיק את הבבואה אך מקשה לבנות מסנן צר; IF נמוך מקל על סינון ערוצים סמוכים אך מקרב את הבבואה.",
+    "number": 24,
+    "minutes": 0,
+    "slideId": "lesson-05-genspark-s21",
+    "interactive": false
+  },
+  {
+    "id": "s22",
+    "title": "איך המרה כפולה משלבת את היתרונות? · הרחבה",
+    "chapter": "הרחבה: המרה כפולה",
+    "takeaway": "המרה כפולה משתמשת ב־IF גבוה לדחיית בבואה ובהמשך ב־IF נמוך לסינון חד. היא מוסיפה שלבים, ואינה נדרשת למקלט AM בסיסי.",
+    "number": 25,
+    "minutes": 0,
+    "slideId": "lesson-05-genspark-s22",
+    "interactive": false
+  },
+  {
     "id": "s24",
     "title": "גלאי מעטפת: מה־IF אל אות השמע",
     "chapter": "גלאי מעטפת",
-    "takeaway": "דיודה טוענת את הקבל בשיאים; R פורק אותו בין השיאים. קבוע הזמן τ=RC\\tau=RCτ=RC קובע אם המוצא מחליק ועוקב.",
-    "number": 24,
+    "takeaway": "בשיאים הדיודה טוענת את הקבל; בין השיאים הקבל נפרק דרך R. קבוע הזמן τ=RC קובע אם המוצא מחליק ועוקב אחרי המעטפת.",
+    "number": 26,
     "minutes": 5,
     "slideId": "lesson-05-genspark-s24",
     "interactive": false
@@ -244,7 +264,7 @@
     "title": "סימולטור גלאי מעטפת: D, R ו־C",
     "chapter": "גלאי מעטפת",
     "takeaway": "τ קטן ← אדווה; τ גדול ← עיוות אלכסוני. R ו־C במקלט אמיתי הם רכיבי חומרה קבועים — המחוונים כאן הם כלי הוראה.",
-    "number": 25,
+    "number": 27,
     "minutes": 6,
     "slideId": "lesson-05-genspark-s25",
     "interactive": true
@@ -253,8 +273,8 @@
     "id": "s26",
     "title": "בוחרים RC: קודם אינטואיציה, אחר כך נוסחה",
     "chapter": "גלאי מעטפת",
-    "takeaway": "Tc≪RCT_c\\ll RCTc​≪RC כדי להחליק; RC קצר מספיק כדי לעקוב אחרי הירידה המהירה ביותר של המעטפת. הנוסחה היא קירוב — לא ערובה לאפס עיוות.",
-    "number": 26,
+    "takeaway": "RC חייב להיות ארוך ממחזור ה־IF כדי לצמצם אדווה, וקצר מספיק כדי לעקוב אחרי ירידת המעטפת. הגבול תלוי בהנחות נוסחת הקורס.",
+    "number": 28,
     "minutes": 8,
     "slideId": "lesson-05-genspark-s26",
     "interactive": false
@@ -264,7 +284,7 @@
     "title": "תרגול RC בשלושה שלבים",
     "chapter": "גלאי מעטפת",
     "takeaway": "לפי נוסחת הקורס: 2.20 µs ≪ RC ≪ 45.5 µs; בחירה τ = 15 µs עם R = 10 kΩ נותנת C = 1.5 nF.",
-    "number": 27,
+    "number": 29,
     "minutes": 11,
     "slideId": "lesson-05-genspark-s27",
     "interactive": true
@@ -274,7 +294,7 @@
     "title": "AGC: למה עוצמת הקול קופצת בין תחנות?",
     "chapter": "AGC ומדדי מקלט",
     "takeaway": "AGC = משוב שלילי איטי: רמת DC של מוצא הגלאי ← מסנן איטי ← מתח בקרה ← הגבר RF/IF. הוא מצמצם הבדלי עוצמה — לא מבטל רעש.",
-    "number": 28,
+    "number": 30,
     "minutes": 6,
     "slideId": "lesson-05-genspark-s28",
     "interactive": false
@@ -284,7 +304,7 @@
     "title": "ארבעה מדדים — ארבע סיטואציות",
     "chapter": "AGC ומדדי מקלט",
     "takeaway": "ברירות מפרידה שכנה; נאמנות שומרת את תחום השמע — והן מושכות לכיוונים הפוכים. רגישות תלויה ברעש, ברוחב פס, בהגבר ובקריטריון.",
-    "number": 29,
+    "number": 31,
     "minutes": 5,
     "slideId": "lesson-05-genspark-s29",
     "interactive": false
@@ -294,7 +314,7 @@
     "title": "התאמה: איזה מדד מתאר כל מצב?",
     "chapter": "AGC ומדדי מקלט",
     "takeaway": "ברירות = הפרדה; רגישות = אות מזערי לקריטריון; נאמנות = שחזור בלי עיוות/חיתוך; SNR = יחס הספקים באותה נקודה וברוחב פס.",
-    "number": 30,
+    "number": 32,
     "minutes": 4,
     "slideId": "lesson-05-genspark-s30",
     "interactive": true
@@ -304,7 +324,7 @@
     "title": "כרטיס יציאה: LO ובבואה",
     "chapter": "תרגיל מסכם",
     "takeaway": "מתחנה ב־1000 kHz ותדר ביניים 455 kHz בהזרקה גבוהה: LO = 1455 kHz, בבואה 1910 kHz.",
-    "number": 31,
+    "number": 33,
     "minutes": 5,
     "slideId": "lesson-05-genspark-s31",
     "interactive": true
@@ -314,7 +334,7 @@
     "title": "שאלות הבנה: IF וגלאי המעטפת",
     "chapter": "תרגיל מסכם",
     "takeaway": "התחנה נבחרת, מומרת ל־IF קבוע, מסוננת, וגלאי המעטפת מחלץ את המידע — בתנאי ש־RC מאוזן בין הנושא לשמע.",
-    "number": 32,
+    "number": 34,
     "minutes": 5,
     "slideId": "lesson-05-genspark-s32",
     "interactive": false

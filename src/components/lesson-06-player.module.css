@@ -1,0 +1,365 @@
+.player {
+  position: fixed;
+  z-index: 80;
+  inset: 0;
+  display: flex;
+  width: 100vw;
+  height: 100dvh;
+  min-height: 0;
+  container-name: lesson-player;
+  container-type: inline-size;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+.preview { box-sizing: border-box; width: min(var(--preview-width, 100%), 100%); max-width: 100%; overflow: hidden; margin-inline: auto; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); box-shadow: var(--shadow-low); container-type: inline-size; }
+.previewStage { --stage-max-height: max(0px, calc(100dvh - var(--above, 300px) - var(--card-row, 64px) - 24px)); position: relative; display: grid; width: 100%; height: min(var(--stage-max-height), calc(100cqi * 9 / 16)); aspect-ratio: 16 / 9; margin-inline: auto; overflow: hidden; padding: 0; background: transparent; place-items: center; }
+.previewStage > div { width: 100%; height: 100%; }
+.previewStage .stageBox { border-radius: 10px 10px 0 0; box-shadow: none; }
+.previewFooter { box-sizing: border-box; display: flex; width: 100%; min-width: 0; min-height: 64px; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; }
+.previewFooter > div { display: grid; min-width: 0; flex: 1 1 auto; gap: 3px; }
+.previewFooter strong, .previewFooter span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.previewFooter strong { color: var(--ink); font-size: 14px; }
+.previewFooter span { color: var(--ink3); font-size: 12px; }
+.openLessonButton { display: inline-flex; min-height: 42px; flex: none; align-items: center; gap: 12px; padding: 8px 12px; color: var(--white); border: 0; border-radius: var(--r-sm); background: var(--accent); cursor: pointer; font: inherit; font-size: 13px; font-weight: 600; white-space: nowrap; }
+.openLessonButton:hover { background: var(--accent-dark); }
+.openLessonButton:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.closeLessonButton { min-height: 32px; padding: 5px 10px; color: var(--ink2); border: 1px solid var(--line); border-radius: var(--r-sm); background: transparent; cursor: pointer; font: inherit; font-size: 12px; }
+.closeLessonButton:hover { color: var(--accent); background: var(--acc-soft); }
+
+.playerMain { display: flex; min-width: 0; min-height: 0; flex: 1 1 0; flex-direction: column; }
+.outline, .slideContext { display: flex; width: 280px; min-width: 0; min-height: 0; flex: 0 0 280px; flex-direction: column; background: var(--surface); }
+.outline { border-inline-end: 1px solid var(--line); }
+.slideContext { width: 290px; flex-basis: 290px; border-inline-start: 1px solid var(--line); }
+.outlineHeader, .contextHeader { display: grid; gap: 7px; padding: 14px 16px; border-block-end: 1px solid var(--line); }
+.outlineHeader h2 { margin: 0; font-size: 16px; }
+.closePanel { display: none; padding: 5px 8px; color: var(--ink2); border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--surface); cursor: pointer; font-size: 12px; }
+.backLink { display: flex; align-items: center; gap: 4px; color: var(--ink3); font-size: 12px; text-decoration: none; }
+.backLink:hover { color: var(--accent); }
+.backLink svg, .navButton svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.7; }
+.previousIcon { transform: scaleX(-1); }
+.eyebrow { color: var(--ink3); font-size: 11px; }
+.outlineScroll { min-height: 0; flex: 1; overflow: auto; padding: 8px; }
+.chapter { margin-block-end: 2px; }
+.chapterButton, .slideLink { display: flex; width: 100%; align-items: center; gap: 8px; padding: 8px; color: var(--ink2); border: 0; border-radius: var(--r-sm); background: transparent; text-align: start; cursor: pointer; }
+.chapterButton { font-size: 13px; font-weight: 600; }
+.chapterButton:hover, .slideLink:hover { background: var(--line2); }
+.chapterActive { color: var(--accent); }
+.chapterNumber, .slideNumber { width: 22px; flex: none; color: var(--ink3); font-family: var(--mono); font-size: 11px; }
+.chapterTitle, .slideTitle { min-width: 0; flex: 1; line-height: 1.35; }
+.progressRing { width: 14px; height: 14px; flex: none; border-radius: 50%; background: conic-gradient(var(--accent) calc(var(--progress, 0) * 360deg), var(--line) 0); mask: radial-gradient(circle, transparent 3.5px, #000 4px); }
+.flagCount { padding-inline: 5px; color: var(--feedback-count); background: var(--feedback-count-soft); border-radius: 8px; font: 11px var(--mono); }
+.chapterSlides { margin-inline-start: 18px; padding-inline-start: 6px; border-inline-start: 1px solid var(--line); }
+.slideLink { gap: 7px; padding: 6px 8px; font-size: 12px; }
+.slideSeen .slideNumber, .slideActive { color: var(--accent); }
+.slideActive { background: var(--acc-soft); font-weight: 600; }
+.flagDot { width: 6px; height: 6px; flex: none; border-radius: 50%; background: var(--accent); }
+.feedbackMarker { display: grid; width: 16px; height: 16px; flex: none; place-items: center; }
+.interactiveMark { color: var(--topic-fg); font-size: 9px; }
+.playerToolbar { display: flex; min-height: 58px; align-items: center; justify-content: space-between; gap: 8px; padding: 8px 12px; border-block-end: 1px solid var(--line); }
+.playerTitle { display: grid; min-width: 0; gap: 2px; }
+.playerTitle strong { overflow: hidden; font-size: 13px; text-overflow: ellipsis; white-space: nowrap; }
+.toolbarActions { display: flex; flex: none; align-items: center; gap: 4px; }
+.toolbarButton, .presentButton, .navButton, .presentControls button { min-height: 32px; padding: 5px 9px; color: var(--ink2); border: 1px solid transparent; border-radius: var(--r-sm); background: transparent; cursor: pointer; font-size: 12px; }
+.toolbarButton[aria-pressed="true"] { color: var(--accent); background: var(--acc-soft); }
+.presentButton { color: var(--white); background: var(--accent); }
+.stageWrap { display: flex; min-height: 0; flex: 1; padding: 10px; background: var(--slide-stage); }
+.stage { display: grid; min-width: 0; min-height: 0; flex: 1; place-items: center; }
+.player .stage { padding-inline-end: 88px; }
+.preview .stage { padding-inline-end: 0; }
+.stageBox { position: relative; overflow: hidden; flex: none; border-radius: var(--r-sm); background: var(--surface); box-shadow: var(--shadow-panel); }
+.slideCanvas { position: absolute; inset-block-start: 0; inset-inline-start: auto; inset-inline-end: 0; width: 1600px; height: 900px; direction: ltr; transform-origin: top right; }
+.formulaEnglish { display: inline; margin: 0; color: var(--ink3); font-family: var(--mono); font-size: 10.5px; font-weight: 400; }
+.formulaScroll { max-width: 100%; overflow-x: auto; color: var(--ink); font-size: var(--u-15); white-space: nowrap; direction: ltr; }
+.formulaScroll .katex { color: var(--ink); }
+.formulaOverflow { -webkit-mask-image: linear-gradient(to right, #000 82%, transparent); mask-image: linear-gradient(to right, #000 82%, transparent); }
+.formulaScroll.formulaOverflow.formulaAtEnd { -webkit-mask-image: none; mask-image: none; }
+.playerFooter { flex: none; padding: 0 12px 10px; }
+.chapterBar { display: flex; height: 14px; align-items: center; gap: 4px; }
+.chapterSegment { position: relative; height: 6px; min-width: 0; padding: 0; overflow: visible; border: 0; border-radius: 3px; background: var(--line); cursor: pointer; }
+.chapterSegment i { position: absolute; inset-block: 0; inset-inline-start: 0; display: block; border-radius: 3px; background: var(--acc-mid); }
+.segmentActive i { background: var(--accent); }
+.chapterSegment em { position: absolute; inset-block-start: -4px; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); }
+.slideNav { display: flex; min-height: 38px; align-items: center; gap: 5px; margin-block-start: 5px; }
+.navButton { display: grid; width: 32px; flex: none; padding: 4px; place-items: center; }
+.navButton:hover, .toolbarButton:hover { background: var(--line2); }
+.slideCount { min-width: 58px; color: var(--ink2); font: 12px var(--mono); text-align: center; }
+.chapterLabel { min-width: 0; overflow: hidden; margin-inline-start: 5px; font-size: 12px; font-weight: 600; text-overflow: ellipsis; white-space: nowrap; }
+.timeLeft { flex: none; margin-inline-start: auto; color: var(--ink3); font-size: 11px; white-space: nowrap; }
+.practiceLink { flex: none; color: var(--accent); font-size: 11px; text-decoration: none; }
+.contextHeader { display: flex; min-height: 50px; align-items: center; justify-content: space-between; color: var(--ink3); font-size: 11px; }
+.contextHeader b { font: 12px var(--mono); }
+.contextBody { min-height: 0; flex: 1; overflow: auto; padding: 12px; }
+.flagButton { display: flex; width: 100%; align-items: center; gap: 10px; padding: 10px; border: 1px dashed var(--line); border-radius: var(--r); background: transparent; text-align: start; cursor: pointer; }
+.flagButton b, .flagButton small { display: block; }
+.flagButton b { font-size: 12px; }
+.flagButton small { margin-block-start: 3px; color: var(--ink3); font-size: 10px; }
+.flagIcon { display: grid; width: 28px; height: 28px; flex: none; border-radius: 50%; color: var(--ink2); background: var(--line2); font-weight: 700; place-items: center; }
+.flagged { border-color: var(--accent); background: var(--acc-soft); }
+.flagged .flagIcon { color: var(--white); background: var(--accent); }
+.takeaway { margin-block-start: 12px; padding: 10px; color: var(--ink); background: var(--acc-soft); border-radius: var(--r-sm); font-size: 12px; line-height: 1.55; }
+.takeaway small { display: block; margin-block-end: 2px; color: var(--accent); font-size: 10px; font-weight: 600; }
+.contextSection { margin-block-start: 14px; }
+.contextSection h3 { display: flex; gap: 6px; margin: 0 0 5px; color: var(--ink3); font-size: 11px; }
+.contextSection h3 span { font-family: var(--mono); }
+.formulaCard, .conceptCard { display: grid; gap: 6px; padding: 10px 8px; border-block-end: 1px solid var(--line2); }
+.formulaCard b, .conceptCard b { color: var(--ink2); font-size: 11px; font-weight: 500; }
+.formulaCard b { display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px; }
+.formulaCard > div { overflow-x: auto; color: var(--accent); font-size: 12px; }
+.contextMore { display: block; padding-block: 8px; color: var(--accent); font-size: 11px; text-decoration: none; }
+.noteLabel { display: grid; gap: 5px; margin-block-start: 16px; color: var(--ink2); font-size: 11px; }
+.noteLabel textarea { width: 100%; min-height: 88px; resize: vertical; padding: 9px; border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--paper-note); line-height: 1.5; }
+.localNote { color: var(--ink3); font-size: 10px; line-height: 1.5; }
+.present { position: fixed; z-index: 100; inset: 0; display: flex; flex-direction: column; padding: 14px; background: var(--navy); }
+.presentStage { display: grid; min-width: 0; min-height: 0; flex: 1; overflow: hidden; place-items: center; }
+.presentCanvas { position: relative; width: min(100%, calc((100vh - 100px) * 1.7778)); aspect-ratio: 16 / 9; overflow: hidden; border-radius: var(--r-xs); }
+.presentCanvas > div { position: absolute; inset: 0; transform: scale(var(--present-scale, 1)); transform-origin: top left; }
+.speakerNotes { position: absolute; inset-block-end: 86px; inset-inline-end: 24px; width: min(460px, calc(100vw - 32px)); max-height: min(42vh, 320px); overflow: auto; padding: 16px 18px; color: var(--ink); background: var(--paper-note); border-radius: var(--r); box-shadow: var(--shadow-panel); font-size: 16px; line-height: 1.65; }
+.speakerNotes p { margin-block: 6px 0; }
+.presentControls { display: flex; justify-content: center; align-items: center; gap: 4px; padding: 5px; color: var(--white); border-radius: var(--r); background: color-mix(in srgb,var(--navy) 92%,transparent); }
+.presentControls span { padding-inline: 10px; color: var(--ink2); font: 12px var(--mono); }
+.presentControls button { color: var(--white); }
+.presentControls button:hover { background: color-mix(in srgb,var(--white) 10%,transparent); }
+.player :is(button, a, textarea):focus-visible, .present :is(button, a, textarea):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.playerToolbar { min-height: 56px; flex: none; padding-inline: 18px; background: var(--surface); }
+.loopPhases { display: flex; min-width: 0; align-items: center; gap: 4px; overflow: auto; scrollbar-width: none; }
+.loopPhases::-webkit-scrollbar { display: none; }
+.loopPhases a { display: inline-flex; min-height: 32px; flex: 0 0 auto; align-items: center; gap: 6px; padding-inline: 12px; color: var(--ink3); border: 1px solid transparent; border-radius: 999px; font-size: 13px; text-decoration: none; }
+.loopPhases a span { font: 11px var(--mono); }
+.loopPhases a:hover { color: var(--ink); border-color: var(--line); }
+.loopPhases a.phaseActive { color: var(--white); background: var(--navy); font-weight: 600; }
+.toolbarButton { display: grid; width: 34px; padding: 5px; place-items: center; border-color: var(--line); }
+.toolbarButton svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
+.toolbarButton[aria-pressed="true"] { color: var(--accent); background: var(--acc-soft); }
+.stageWrap { position: relative; min-width: 0; padding: 16px 20px 12px; }
+.playerFooter { padding-inline: 20px; padding-block-end: 14px; background: var(--surface); }
+.flagButton { border-color: var(--line); }
+.flagged { border-color: var(--feedback-color); background: var(--feedback-soft); }
+.flagged .flagIcon { color: var(--white); background: var(--feedback-color); }
+.flagIcon { display: grid; width: 30px; height: 30px; flex: none; place-items: center; color: var(--ink2); border-radius: 50%; background: var(--line2); }
+.chapterSegment em { transform: translateX(50%); }
+
+.loopPhases a:focus-visible, .feedback :is(button, textarea):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.feedback { position: absolute; z-index: 30; inset-block-end: 22px; inset-inline-end: 30px; display: flex; flex-direction: column; align-items: center; }
+.feedbackFab { display: grid; width: 58px; height: 58px; place-items: center; color: var(--white); border: 0; border-radius: 50%; background: var(--navy); box-shadow: var(--shadow-panel), 0 0 0 4px var(--surface); cursor: pointer; transition: transform 180ms ease, background 250ms ease; }
+.feedbackFab:hover { transform: translateY(-2px) scale(1.04); }
+.feedbackFabOpen { color: var(--ink2); background: var(--surface); box-shadow: var(--shadow-panel); font-size: 24px; }
+.feedbackTag { position: absolute; inset-block-end: 64px; white-space: nowrap; padding: 2px 9px; border-radius: 10px; background: var(--surface); box-shadow: var(--shadow-low); font-size: 11px; font-weight: 700; pointer-events: none; }
+.feedbackPopover { position: absolute; inset-block-end: 72px; inset-inline-end: 0; width: min(340px, calc(100vw - 30px)); overflow: hidden; border-radius: 16px; background: var(--surface); box-shadow: var(--shadow-panel); animation: feedback-in 180ms ease; transform-origin: bottom right; }
+@keyframes feedback-in { from { opacity: 0; transform: translateY(8px) scale(.97); } }
+.feedbackHeader { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; padding: 14px 16px 12px; color: var(--white); background: var(--navy); }
+.feedbackHeader b, .feedbackHeader span { display: block; }
+.feedbackHeader b { font-size: 14px; }
+.feedbackHeader span { max-width: 250px; overflow: hidden; margin-block-start: 2px; color: var(--on-navy); font-size: 12px; text-overflow: ellipsis; white-space: nowrap; }
+.feedbackHeader i { font-family: var(--mono); font-style: normal; }
+.feedbackHeader button { width: 28px; height: 28px; color: var(--on-navy); border: 0; border-radius: var(--r-xs); background: transparent; cursor: pointer; font-size: 20px; }
+.feedbackBody, .feedbackSent { padding: 14px 16px 16px; }
+.feedbackBody > b { display: block; margin-block-end: 10px; color: var(--ink2); font-size: 13px; }
+.feedbackOptions { display: flex; flex-direction: column; gap: 6px; }
+.feedbackOptions button { display: flex; width: 100%; align-items: center; gap: 10px; padding: 8px 10px; color: var(--ink2); border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--surface); text-align: start; cursor: pointer; }
+.feedbackOptions button > span:first-child, .feedbackSentCard > span { display: grid; width: 32px; height: 32px; flex: 0 0 32px; place-items: center; color: var(--feedback-color); border-radius: var(--r-sm); background: var(--feedback-soft); }
+.feedbackOptions button > span:last-child { display: grid; gap: 2px; }
+.feedbackOptions button b { font-size: 12px; }
+.feedbackOptions button small { color: var(--ink3); font-size: 10px; }
+.feedbackOptions button.feedbackOptionSelected { color: var(--feedback-color); border-color: var(--feedback-color); background: var(--feedback-soft); }
+.feedbackOptions button.feedbackOptionSelected > span:first-child { color: var(--white); background: var(--feedback-color); }
+.feedbackBody textarea { display: block; width: 100%; min-height: 72px; margin-block-start: 10px; padding: 9px 11px; resize: vertical; color: var(--ink); border: 1px solid var(--line); border-radius: var(--r-sm); background: var(--surface); font-size: 13px; }
+.feedbackBody footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-block-start: 10px; }
+.feedbackBody footer button { min-width: 86px; min-height: 38px; padding-inline: 14px; color: var(--white); border: 0; border-radius: var(--r-sm); background: var(--accent); cursor: pointer; }
+.feedbackBody footer button:disabled { opacity: .5; cursor: default; }
+.feedbackBody footer small { color: var(--ink3); font-size: 10px; }
+.feedbackError { margin: 8px 0 0; color: var(--feedback-error); font-size: 12px; }
+.feedbackSentCard { display: flex; align-items: flex-start; gap: 10px; padding: 12px; color: var(--feedback-color); border-radius: var(--r-sm); background: var(--feedback-soft); }
+.feedbackSentCard b { font-size: 13px; }
+.feedbackSentCard p { margin: 5px 0; color: var(--ink2); font-size: 12px; }
+.feedbackSentCard small { color: var(--ink3); font-size: 10px; }
+.feedbackActions { display: flex; gap: 14px; padding-block-start: 12px; }
+.feedbackActions button { padding: 0; color: var(--accent); border: 0; background: transparent; cursor: pointer; font-size: 12px; }
+.feedbackActions button:last-child { color: var(--feedback-error); }
+.feedbackDark { position: fixed; inset-inline-start: 24px; inset-inline-end: auto; inset-block-end: 44px; }
+.feedbackDark .feedbackFab { width: 50px; height: 50px; box-shadow: var(--shadow-panel), 0 0 0 3px var(--on-navy); }
+.feedbackDark .feedbackPopover { inset-inline-start: 0; inset-inline-end: auto; }
+
+/* The opened lesson has its own visual shell, distinct from the course workspace. */
+.player { flex-direction: column; background: #e6edf2; }
+.withOutline {}
+.withContext {}
+.playerWorkspace { position: relative; display: flex; width: 100%; min-width: 0; min-height: 0; flex: 1 1 0; }
+.playerToolbar {
+  z-index: 2;
+  width: 100%;
+  min-height: 64px;
+  flex: 0 0 64px;
+  justify-content: flex-start;
+  gap: clamp(10px, 1.5vw, 28px);
+  padding: 8px 18px;
+  color: #f5f8fb;
+  border: 0;
+  background: #13263e;
+  box-shadow: 0 3px 14px rgb(13 28 47 / 14%);
+}
+.lessonIdentity { display: flex; min-width: 0; flex: 1 1 auto; align-items: center; gap: 14px; }
+.courseBreadcrumb { display: inline-flex; min-height: 42px; flex: none; align-items: center; gap: 10px; padding: 4px 10px 4px 6px; color: #f5f8fb; border: 1px solid rgb(255 255 255 / 15%); border-radius: 12px; background: rgb(255 255 255 / 7%); text-decoration: none; }
+.courseBreadcrumb:hover { background: rgb(255 255 255 / 13%); }
+.breadcrumbArrow { display: grid; width: 28px; height: 28px; place-items: center; color: #13263e; border-radius: 50%; background: #f7fafc; font-size: 23px; line-height: 1; }
+.courseBreadcrumb small, .courseBreadcrumb b { display: block; white-space: nowrap; }
+.courseBreadcrumb small { color: #aebdce; font-size: 9px; }
+.courseBreadcrumb b { font-size: 11px; }
+.toolbarDivider { width: 1px; height: 28px; flex: none; background: rgb(255 255 255 / 18%); }
+.lessonMode { display: flex; flex: none; align-items: center; gap: 8px; color: #c1ccd9; font-size: 12px; white-space: nowrap; }
+.lessonMode b { color: #74d3dc; font-size: 12px; }
+.lessonMode svg { width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.lessonBadge { display: grid; width: 34px; height: 30px; flex: none; place-items: center; color: #70d0db; border: 1px solid #287c8a; border-radius: 8px; background: rgb(42 128 140 / 14%); font: 12px var(--mono); }
+.lessonTitle { min-width: 0; overflow: hidden; color: #fff; font-size: 12px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+.loopPhases { flex: 0 1 auto; gap: 3px; }
+.loopPhases a { min-height: 36px; padding-inline: 10px; color: #a9b7c7; font-size: 11px; }
+.loopPhases a:hover { color: #fff; border-color: rgb(255 255 255 / 20%); }
+.loopPhases a.phaseActive { color: #13263e; background: #f7fafc; }
+.toolbarActions { gap: 6px; }
+.toolbarButton, .toolbarButton[aria-pressed="true"] { width: 36px; min-height: 36px; color: #eaf1f7; border-color: rgb(255 255 255 / 15%); background: rgb(255 255 255 / 8%); }
+.toolbarButton[aria-pressed="true"] { color: #73d5df; border-color: rgb(115 213 223 / 45%); }
+.toolbarButton:hover { color: #fff; background: rgb(255 255 255 / 15%); }
+.presentButton { min-height: 36px; padding-inline: 14px; color: #10253a; border-radius: 8px; background: #73d5df; font-weight: 700; }
+.presentButton:hover { background: #92e4e9; }
+.closeLessonButton { min-height: 38px; color: #f1f5f9; border-color: rgb(255 255 255 / 18%); border-radius: 10px; background: rgb(255 255 255 / 7%); }
+.closeLessonButton:hover { color: #fff; background: rgb(255 255 255 / 14%); }
+.outline { box-sizing: border-box; width: 280px; min-width: 280px; flex: 0 0 280px; background: #f3f7f9; }
+.slideContext { box-sizing: border-box; width: 290px; min-width: 290px; flex: 0 0 290px; background: #f3f7f9; }
+.outline { border-inline-end: 1px solid #dce5eb; }
+.slideContext { border-inline-start: 1px solid #dce5eb; }
+.outlineHeader { gap: clamp(16px, .8vw, 25px); padding: clamp(20px, 1.1vw, 34px) clamp(18px, 1.4vw, 42px) clamp(20px, 1vw, 30px); background: #fff; }
+.outlineTitleRow { display: flex; min-height: clamp(60px, 2.9vw, 88px); align-items: center; gap: clamp(12px, .8vw, 24px); }
+.outlineTitleRow .lessonBadge { width: clamp(60px, 2.9vw, 88px); height: clamp(60px, 2.9vw, 88px); color: #70d0db; border: 0; border-radius: clamp(13px, .7vw, 22px); background: #13263e; font-size: clamp(17px, .8vw, 24px); }
+.outlineHeader h2 { margin-block-start: 3px; font-size: clamp(13px, .85vw, 25px); }
+.outlineHeader .eyebrow { color: #14838d; font-size: clamp(10px, .7vw, 18px); }
+.lessonProgress { display: flex; align-items: center; gap: clamp(10px, .8vw, 24px); direction: ltr; color: #7a8998; font-size: clamp(10px, .65vw, 17px); }
+.lessonProgress span { direction: rtl; white-space: nowrap; }
+.lessonProgress i { height: clamp(5px, .2vw, 7px); flex: 1; overflow: hidden; border-radius: 10px; background: #dce8ec; }
+.lessonProgress i b { display: block; height: 100%; border-radius: inherit; background: #14838d; }
+.outlineSectionHeading { padding: clamp(18px, 1vw, 30px) clamp(18px, 1.4vw, 42px) clamp(8px, .45vw, 14px); color: #8a96a6; font-size: clamp(10px, .6vw, 18px); font-weight: 700; }
+.outlineScroll { padding: 0 clamp(10px, .7vw, 22px) 16px; }
+.chapter { margin-block-end: clamp(5px, .3vw, 10px); }
+.chapterButton { height: 34px; min-height: 34px; padding-inline: 8px; font: 600 var(--fs-nav)/1.3 var(--font); color: var(--ink); }
+.chapterActive { color: var(--accent); }
+.chapterTitle { min-width: 0; flex: 1; overflow: hidden; font-size: inherit; text-overflow: ellipsis; white-space: nowrap; }
+.chapterNumber { width: 18px; font: 400 11px var(--mono); }
+.progressRing { width: 14px; height: 14px; flex: none; border-radius: 50%; background: conic-gradient(var(--accent) calc(var(--progress, 0) * 360deg), #d6dde4 0); }
+.progressRing { mask: radial-gradient(circle, transparent calc(50% - 4px), #000 calc(50% - 3px)); }
+.chapterSlides { margin-inline-start: clamp(14px, .8vw, 24px); padding-inline-start: clamp(6px, .4vw, 12px); border-color: #cfdee4; }
+.slideLink { height: 28px; min-height: 28px; padding: 0 8px; font: 400 var(--fs-sm)/1.35 var(--font); color: var(--ink2); }
+.slideNumber { width: 18px; font: 400 11px var(--mono); }
+.flagCount { padding: 0 6px; color: var(--feedback-count, #b4521b); background: var(--feedback-count-soft, #fdf3ea); border-radius: 8px; font: 10.5px var(--mono); }
+.slideContext { background: #eff5f8; }
+.contextHeader { min-height: 56px; padding-inline: 18px; color: #117e8a; border-color: #d7e2e8; background: #fff; font-size: 11px; font-weight: 700; }
+.contextHeader b { color: #8492a0; font-size: 11px; }
+.contextBody { padding: 14px 18px; }
+.flagButton, .takeaway { border-radius: 10px; }
+.formulaCard, .conceptCard { padding-inline: 10px; }
+.formulaCard b, .conceptCard b { font-size: 10px; }
+.formulaCard > div { font-size: 11px; }
+.noteLabel textarea { background: #fffdf7; }
+.stageWrap { background: linear-gradient(135deg, #e5edf2 0%, #dce7ed 100%); }
+.stageBox { box-shadow: 0 10px 34px rgb(22 43 64 / 15%); }
+.playerFooter { background: #e6edf2; }
+.playerFooter .chapterSegment { background: #cad8df; }
+.playerFooter .slideNav { min-height: 40px; }
+.chapterButton > *, .slideLink > * { font-size: inherit; }
+.chapterNumber, .slideNumber { font: 400 11px var(--mono); }
+.chapterButton { line-height: 1.3; }
+.slideLink { line-height: 1.35; }
+.slideActive { color: var(--accent); background: #fff; box-shadow: 0 0 0 1px #c9dde2; font-weight: 600; }
+.loopProgress { z-index: 2; height: 3px; flex: 0 0 3px; background: linear-gradient(to left, #6fd0da 0 33.33%, #ffffff1f 33.33%); }
+.drawerScrim { position: fixed; z-index: 39; inset: 0; width: 100vw; height: 100dvh; padding: 0; border: 0; background: #13233a33; cursor: pointer; }
+.lessonOverview { display: grid; gap: 7px; padding: 10px 0; }
+.lessonOverview h3 { margin: 0; color: var(--ink3); font-size: 11px; }
+.lessonOverviewRow { display: flex; min-width: 0; align-items: center; gap: 8px; padding: 6px 8px; border-radius: 7px; background: #fff; color: var(--ink2); font-size: 11px; }
+.lessonOverviewRow b { color: var(--accent); font: 11px var(--mono); }
+.lessonOverviewRow span { min-width: 0; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lessonOverviewRow small { color: var(--ink3); font: 10px var(--mono); white-space: nowrap; }
+.lessonOverview p { display: grid; gap: 3px; margin: 5px 0 0; color: var(--ink2); font-size: 11px; line-height: 1.5; }
+.lessonOverview p b { color: var(--accent); }
+.slideCount { direction: ltr; font-size: 12.5px; }
+.chapterLabel { flex: 0 1 auto; max-width: 30%; font-size: 13px; white-space: nowrap; }
+.timeLeft { flex: none; margin-inline-start: 0; color: var(--ink3); font-size: 12px; white-space: nowrap; }
+.feedback { inset-block-end: 16px; inset-inline-end: 24px; }
+.present .feedbackDark { inset-block-end: 52px; inset-inline-start: auto; inset-inline-end: 24px; }
+.toolbarButton, .toolbarButton[aria-pressed="true"] { width: 34px; min-height: 34px; color: #9fb0c4; border-color: transparent; border-radius: 8px; background: transparent; }
+.toolbarButton[aria-pressed="true"] { color: #fff; background: #ffffff1f; }
+.toolbarButton:hover { color: #fff; background: #ffffff1f; }
+.progressRing { background: conic-gradient(var(--accent) calc(var(--progress, 0) * 360deg), #d6dde4 0); }
+.slideLink { border: 1px solid transparent; }
+.slideActive { border-color: #c9dce2; background: #fff; box-shadow: 0 1px 4px rgb(23 54 74 / 7%); }
+.slideTitle { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.flagCount { font-size: 10.5px; }
+.interactiveMark { flex: none; color: #6247c9; font-size: 9px; }
+
+/* Keep Lesson 05 feedback at the viewport's physical left, clear of the RTL outline. */
+[data-lesson-id="lesson-05"] .feedback { position: fixed; z-index: 100; inset-inline-end: 24px; inset-inline-start: auto; inset-block-end: 16px; }
+[data-lesson-id="lesson-05"] .feedbackPopover { inset-inline-end: 0; inset-inline-start: auto; max-width: calc(100vw - 48px); max-height: calc(100dvh - 112px); overflow-y: auto; }
+[data-lesson-id="lesson-05"].present .feedbackDark { inset-inline-end: 24px; inset-inline-start: auto; inset-block-end: 44px; }
+[data-lesson-id="lesson-05"].present .feedbackDark .feedbackPopover { inset-inline-end: 0; inset-inline-start: auto; }
+
+@container lesson-player (max-width: 1191px) {
+  .slideContext { position: fixed; z-index: 40; inset-block: 0; inset-inline-end: 0; width: 290px; min-width: 290px; box-shadow: -8px 0 24px #13233a26; }
+  .slideContext .closePanel { display: inline-flex; align-items: center; justify-content: center; }
+  .loopPhases a { padding-inline: 8px; font-size: 11px; }
+  .stageWrap { padding: 8px; }
+  .playerToolbar { min-height: 104px; flex: 0 0 auto; flex-wrap: wrap; gap: 5px 10px; }
+  .lessonIdentity { order: 0; flex-basis: 100%; }
+  .loopPhases { order: 1; }
+  .toolbarActions { order: 2; margin-inline-start: auto; }
+}
+@container lesson-player (max-width: 899px) {
+  .outline { position: fixed; z-index: 40; inset-block: 0; inset-inline-start: 0; width: 280px; min-width: 280px; box-shadow: -8px 0 24px #13233a26; }
+  .outline .closePanel { display: inline-flex; align-items: center; justify-content: center; }
+}
+@container lesson-player (max-width: 760px) {
+  .playerToolbar { min-height: 0; gap: 3px; padding-inline: 6px; }
+  .lessonIdentity { gap: 7px; }
+  .courseBreadcrumb { min-height: 34px; gap: 6px; padding-inline: 5px; }
+  .courseBreadcrumb small { display: none; }
+  .courseBreadcrumb b, .lessonMode, .lessonMode b { font-size: 10px; }
+  .breadcrumbArrow { width: 23px; height: 23px; }
+  .lessonBadge { width: 28px; height: 26px; }
+  .lessonTitle { font-size: 11px; }
+  .loopPhases a { min-height: 30px; gap: 4px; padding-inline: 6px; font-size: 10px; }
+  .toolbarActions { gap: 2px; }
+  .toolbarButton, .presentButton { min-width: 30px; min-height: 30px; padding: 4px; }
+  .stageWrap { padding: 5px; }
+  .slideNav { flex-wrap: wrap; }
+  .timeLeft { margin-inline-start: 4px; }
+  .feedback { inset-inline-end: 15px; }
+  .feedbackFab { width: 50px; height: 50px; }
+  .feedbackPopover { width: min(340px, calc(100vw - 66px)); }
+  [data-lesson-id="lesson-05"] .feedback { inset-inline-end: 12px; inset-inline-start: auto; }
+  [data-lesson-id="lesson-05"] .feedbackPopover { width: min(340px, calc(100vw - 24px)); max-width: calc(100vw - 24px); max-height: calc(100dvh - 96px); }
+  [data-lesson-id="lesson-05"].present .feedbackDark { inset-inline-end: 12px; inset-inline-start: auto; inset-block-end: 56px; }
+}
+
+@media (max-width: 620px) {
+  .openLessonButton { justify-content: center; }
+}
+
+:global(.flow) { display: flex; align-items: stretch; justify-content: center; gap: 12px; direction: ltr; }
+:global(.flow > span) { align-self: center; color: var(--accent); font-size: 28px; }
+:global(.flow .sl-card) { display: grid; place-content: center; min-width: 150px; text-align: center; font-size: 24px; }
+@media (max-width: 760px) { :global(.flow) { flex-wrap: wrap; } }
+
+:global(.lab-controls), :global(.drill-grid) { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px 18px; }
+:global(.lab-controls label), :global(.drill-grid label) { display: grid; gap: 3px; font-size: 19px; }
+:global(.lab-controls input), :global(.drill-grid input) { width: 100%; accent-color: #00a878; }
+:global(.drill-grid) { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+:global(.drill-grid input) { min-height: 40px; padding: 5px 8px; border: 1px solid #9baeb0; border-radius: 8px; background: #fff; color: #172629; direction: ltr; }
+:global(.drill-actions) { display: flex; gap: 10px; margin-top: 12px; }
+:global(.drill-results), :global(.lab-results) { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; margin-top: 10px; }
+:global(.drill-results span), :global(.lab-results span) { padding: 8px 10px; border: 1px solid #b9d4ca; border-radius: 8px; background: #f1faf5; color: #173f31; font-size: 18px; direction: ltr; text-align: center; }
+:global(.drill-results p) { grid-column: 1 / -1; margin: 3px 0; font-size: 18px; }
+@media (max-width: 760px) {
+  :global(.lab-controls), :global(.drill-results), :global(.lab-results) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  :global(.drill-grid) { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+/* Lesson 05 uses this shared toolbar button for its text label. */
+.toolbarActions .toolbarTextButton,
+.toolbarActions .toolbarTextButton[aria-pressed="true"] { width: auto; min-width: 64px; padding-inline: 12px; white-space: nowrap; }

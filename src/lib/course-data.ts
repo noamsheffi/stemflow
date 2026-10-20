@@ -1,5 +1,6 @@
 import { conceptMap, conceptFormulaIds } from "./concept-map";
 import formulaSheet from "./formula-sheet-data.json";
+import { lesson06Slides } from "../components/lesson-06-data";
 
 export type ResourceKind = "lesson-html" | "simulation" | "exercise" | "supporting-material";
 
@@ -231,6 +232,19 @@ export const lessons: CourseLesson[] = [
     resources: [
       { resourceId: "lesson-05-main-html", kind: "lesson-html", title: "מערך שיעור — מקלט AM", href: "/course/communication-systems/lessons/lesson-05/slides" },
       { resourceId: "lesson-05-self-practice", kind: "exercise", title: "תרגול אינטראקטיבי — מקלט AM", href: "/course/communication-systems/lessons/lesson-05/practice" },
+    ],
+  },
+  {
+    lessonId: "lesson-06",
+    number: 6,
+    title: "עקרון אפנון FM ומשדר",
+    url: "/course/communication-systems/lessons/lesson-06",
+    topics: ["אפנון תדר", "FM", "רוחב פס", "VCO", "משדר"],
+    formulaIds: [],
+    conceptIds: [],
+    slides: lesson06Slides.map((slide) => ({ slideId: `lesson-06-fm-${String(slide.n).padStart(2, "0")}`, number: slide.n, title: slide.h })),
+    resources: [
+      { resourceId: "lesson-06-main-html", kind: "lesson-html", title: "מערך שיעור — אפנון FM ומשדר", href: "/course/communication-systems/lessons/lesson-06/slides" },
     ],
   },
 ];

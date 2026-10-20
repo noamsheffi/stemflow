@@ -60,7 +60,7 @@ const deckSlides: DeckSlide[] = publishedCatalog.map((entry) => ({
   interactive: entry.interactive,
   platformSlideId: entry.slideId,
 }));
-const deckVersion = "lesson-05-genspark-v2";
+const deckVersion = "lesson-05-genspark-v3";
 const extensionSlideCatalog = JSON.stringify(deckSlides.map((slide, index) => ({ slideId: slide.platformSlideId, slideNumber: index + 1, minutes: slide.minutes, title: slide.title, chapter: slide.chapter, section: false, interactive: Boolean(slide.interactive) })));
 export { deckSlides as lesson05Slides };
 
@@ -86,7 +86,7 @@ function ScaledSlide({ slide, index, hostClass }: { slide: DeckSlide; index: num
 }
 
 export default function Lesson05Player({ lecturerMode = false }: { lecturerMode?: boolean }) {
-  const stateKey = "syllo:student:lesson:lesson-05:genspark-v2";
+  const stateKey = "syllo:student:lesson:lesson-05:genspark-v3";
   const [index, setIndex] = useLessonState(stateKey + ":index", 0);
   const [seen, setSeen] = useLessonState<number[]>(stateKey + ":seen", []);
   const [outlineOpen, setOutlineOpen] = useLessonState(stateKey + ":outline", true);
@@ -107,14 +107,14 @@ export default function Lesson05Player({ lecturerMode = false }: { lecturerMode?
   const currentFeedback = feedbackBySlide[index + 1];
   useEffect(() => {
     try {
-      const current = window.localStorage.getItem("syllo:student:lesson:lesson-05:genspark-v2:feedback");
+      const current = window.localStorage.getItem("syllo:student:lesson:lesson-05:genspark-v3:feedback");
       if (current) setFeedbackBySlide(JSON.parse(current) as typeof feedbackBySlide);
     } catch { /* Feedback remains usable when browser storage is unavailable. */ }
     setFeedbackReady(true);
   }, []);
   useEffect(() => {
     if (!feedbackReady) return;
-    try { window.localStorage.setItem("syllo:student:lesson:lesson-05:genspark-v2:feedback", JSON.stringify(feedbackBySlide)); }
+    try { window.localStorage.setItem("syllo:student:lesson:lesson-05:genspark-v3:feedback", JSON.stringify(feedbackBySlide)); }
     catch { /* The panel still updates for this visit if storage is disabled. */ }
   }, [feedbackBySlide, feedbackReady]);
   const notifyLecturer = (eventName: "open" | "exit") => window.dispatchEvent(new CustomEvent(eventName === "open" ? "syllo:lesson-player-open" : "syllo:lesson-player-exit"));
@@ -219,7 +219,7 @@ export default function Lesson05Player({ lecturerMode = false }: { lecturerMode?
           optionalComment: feedbackComment.trim(),
           submittedAt: new Date().toISOString(),
           pageUrl: window.location.href,
-          idempotencyKey: `communication-systems:lesson-05:genspark-v2:slide-${suffix}`,
+          idempotencyKey: `communication-systems:lesson-05:genspark-v3:slide-${suffix}`,
         }),
       });
       if (!response.ok) throw new Error("שליחת המשוב נכשלה. נסו שוב.");
