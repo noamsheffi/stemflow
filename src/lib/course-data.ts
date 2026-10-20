@@ -237,14 +237,14 @@ export const lessons: CourseLesson[] = [
   {
     lessonId: "lesson-06",
     number: 6,
-    title: "עקרון אפנון FM ומשדר",
+    title: "מפגש משולב: השלמת מקלט AM ויסודות FM",
     url: "/course/communication-systems/lessons/lesson-06",
-    topics: ["אפנון תדר", "FM", "רוחב פס", "VCO", "משדר"],
+    topics: ["מקלט סופר־הטרודיין", "תדר ביניים", "אפנון תדר", "רוחב פס", "משדר FM"],
     formulaIds: [],
     conceptIds: [],
-    slides: lesson06Slides.map((slide) => ({ slideId: `lesson-06-fm-${String(slide.n).padStart(2, "0")}`, number: slide.n, title: slide.h })),
+    slides: lesson06Slides.map((slide) => ({ slideId: slide.slideId, number: slide.n, title: slide.h })),
     resources: [
-      { resourceId: "lesson-06-main-html", kind: "lesson-html", title: "מערך שיעור — אפנון FM ומשדר", href: "/course/communication-systems/lessons/lesson-06/slides" },
+      { resourceId: "lesson-06-main-html", kind: "lesson-html", title: "מערך שיעור — מקלט AM ויסודות FM", href: "/course/communication-systems/lessons/lesson-06/slides" },
     ],
   },
 ];

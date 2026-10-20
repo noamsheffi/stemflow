@@ -7,6 +7,7 @@ async function visit(dir) {
     const path = join(dir, entry.name);
     if (entry.isDirectory()) { await visit(path); continue; }
     if (!path.endsWith('.html')) continue;
+    if (path.endsWith(join('communication-systems', 'lesson-06', 'lesson.html'))) continue;
     const html = await readFile(path, 'utf8');
     if (!/class="[^"]*\bdeck\b/.test(html)) continue;
     const match = path.match(/(?:course|courses)\/([^/]+)\/(lesson-\d+)/);

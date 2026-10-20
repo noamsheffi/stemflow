@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 
 const read = (path) => readFile(new URL(path, import.meta.url), "utf8");
-const [lesson, source, attached, catalogText, player, studentPage, lecturerPage, eventsApi, fmData, fmPlayer, fmDeck, courseData, fmHtml] = await Promise.all([
+const [lesson, source, attached, catalogText, player, studentPage, lecturerPage, eventsApi, fmData, fmPlayer, courseData, fmHtml, fmSource, fmCatalogText] = await Promise.all([
   read("../public/courses/communication-systems/lesson-05/lesson.html"),
   read("../src/decks/lesson-05/genspark-source.html"),
   read("../lesson05_improved.html"),
@@ -12,9 +12,10 @@ const [lesson, source, attached, catalogText, player, studentPage, lecturerPage,
   read("../src/app/api/learning-events/route.ts"),
   read("../src/components/lesson-06-data.ts"),
   read("../src/components/lesson-06-player.tsx"),
-  read("../src/components/lesson-06-deck.tsx"),
   read("../src/lib/course-data.ts"),
   read("../public/courses/communication-systems/lesson-06/lesson.html"),
+  read("../src/decks/lesson-06/Lesson06_AM_FM_Final_v8.html"),
+  read("../src/decks/lesson-06/published-catalog.json"),
 ]);
 const catalog = JSON.parse(catalogText);
 const slides = [...lesson.matchAll(/<section class="slide-page[^>]*\bid="(s\d+)"/g)].map((match) => match[1]);
@@ -55,18 +56,22 @@ check(mixerSimulator.includes("הדגימו בסדר:") && mixerSimulator.includ
 check(player.includes('fetch("/api/learning-events"') && ["lesson_started", "slide_viewed", "lesson_ended"].every((event) => player.includes(`"${event}"`)), "The student player must send start, slide-view, and completion events.");
 check(studentPage.includes("<Lesson05Player />") && lecturerPage.includes("<Lesson05Player lecturerMode />"), "Both student and lecturer panels must render the same lesson player.");
 check(eventsApi.includes("parseStudentLearningEvent") && eventsApi.includes("INSERT INTO student_lesson_events"), "Learning events must be stored by the analytics API.");
-const fmSlides = [...fmData.matchAll(/\{ n: (\d+), ch: (\d+), sec: (true|false), min: (\d+)/g)];
-check(fmSlides.length === 24 && new Set(fmSlides.map((slide) => slide[1])).size === 24, "FM lesson must have 23 authored content slides plus one break divider, with unique stable numbers.");
-check(fmSlides.reduce((total, slide) => total + Number(slide[4]), 0) === 135 && fmSlides.filter((slide) => slide[3] === "true").length === 1, "FM lesson timings must include one break and total 135 minutes.");
-check(fmData.includes("β′=nβ") && fmData.includes("fₘ נשאר קבוע") && fmData.includes("כלל קרסון"), "FM lesson must explain multiplier behavior and Carson's rule.");
-check(fmData.includes("רעש תדר, קליטה חלשה והפרעות עדיין עלולים לפגוע") && fmData.includes("נצילות המשדר תלויה גם בתכנון"), "FM lesson must avoid claiming noise immunity or equating constant envelope with total transmitter efficiency.");
-check(fmData.includes("fmax=90.09 MHz") && fmData.includes("=200 kHz") && fmData.includes("=4 W") && fmData.includes("xFM(t)="), "FM guided solution must include the carrier deviation, signal expression, bandwidth, and power result.");
-check(fmPlayer.includes("lesson-06-fm-v1") && fmPlayer.includes("lesson-06-fm-${pad2(slide.n)}") && fmDeck.includes("function Reveal") && courseData.includes('lessonId: "lesson-06"'), "FM lesson must use stable analytics IDs, staged answer reveals, and course registration.");
-check(fmHtml.includes("const slides=") && fmHtml.includes("function render()") && fmHtml.includes("10 דקות הפסקה"), "FM standalone HTML must be exported from the lesson data and include its navigation renderer.");
-check(studentPage.includes("<Lesson06Player />") && lecturerPage.includes("<Lesson06Player lecturerMode />"), "FM lesson must share the same player in the student and lecturer paths.");
+const fmCatalog = JSON.parse(fmCatalogText);
+const fmAuthoredIds = [...fmSource.matchAll(/<section class="slide-page[^>]*\bid="([^"]+)"/g)].map((match) => match[1]);
+check(fmHtml === fmSource, "The published Lesson 06 HTML must be a byte-for-byte copy of the supplied, unmodified lesson.");
+check(fmAuthoredIds.length === 56 && fmCatalog.slides.length === fmAuthoredIds.length, "Lesson 06 must publish all 56 authored slides and matching catalog entries.");
+check(new Set(fmAuthoredIds).size === fmAuthoredIds.length && new Set(fmCatalog.slides.map((slide) => slide.slideId)).size === fmCatalog.slides.length, "Lesson 06 authored and platform slide IDs must be unique.");
+check(fmCatalog.slides.every((slide, index) => slide.id === fmAuthoredIds[index] && slide.number === index + 1 && slide.title && slide.chapter), "Lesson 06 catalog metadata must follow the source slide order and include titles and chapters.");
+check(fmCatalog.mainSlideCount === 45 && fmCatalog.totalMinutes === 135 && fmCatalog.slides[44]?.id === "s28" && fmCatalog.slides[45]?.id === "sAPX", "Lesson 06 must identify the 45-slide main path, 11 appendices, and 135-minute session without inventing per-slide timing.");
+check(fmPlayer.includes('const deckUrl = "/courses/communication-systems/lesson-06/lesson.html"') && fmPlayer.includes('event.origin !== window.location.origin') && fmPlayer.includes('event.source !== deckFrameRef.current?.contentWindow'), "Lesson 06 must embed the authored HTML and validate both origin and source on its navigation bridge.");
+check(fmPlayer.includes('data-slides={extensionSlideCatalog}') && fmPlayer.includes('slideId: item.slideId') && fmPlayer.includes('fetch("/api/learning-events"') && ["lesson_started", "slide_viewed", "lesson_ended"].every((event) => fmPlayer.includes(`"${event}"`)), "Lesson 06 must expose stable slide metadata to lecturer statistics and store student learning events.");
+check(fmPlayer.includes('slideId: slide.slideId') && fmPlayer.includes('deckVersion: lesson06DeckVersion'), "Lesson 06 feedback must use the canonical slide ID and content-derived deck version.");
+check(courseData.includes('lessonId: "lesson-06"') && courseData.includes('slide.slideId') && courseData.includes('lesson-06-main-html'), "Lesson 06 must be registered in course resources with canonical platform slide IDs.");
+check(studentPage.includes("<Lesson06Player />") && lecturerPage.includes("<Lesson06Player lecturerMode />"), "Lesson 06 must use the same player in student and lecturer panels.");
+check(fmPlayer.includes('embedded?.L6?.show?.(target)') && fmPlayer.includes('window.addEventListener("message", onDeckSlide)'), "Lesson 06 navigation must synchronize the platform controls with the authored deck.");
 if (errors.length) {
   console.error(errors.map((error) => `- ${error}`).join("\n"));
   process.exitCode = 1;
 } else {
-  console.log(`Lesson validation passed: lesson 05 (${catalog.length} slides) and lesson 06 (23 content slides + break, 135 minutes).`);
+  console.log(`Lesson validation passed: lesson 05 (${catalog.length} slides) and lesson 06 (45 main slides + 11 appendices, 135 minutes).`);
 }

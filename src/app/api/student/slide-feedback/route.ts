@@ -29,9 +29,10 @@ export async function DELETE(request: Request) {
   const input = body as Record<string, unknown>;
   const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   const lessonId = typeof input.lessonId === "string" ? input.lessonId : "";
-  if (typeof input.anonymousClientId !== "string" || !uuidPattern.test(input.anonymousClientId) || input.courseId !== "communication-systems" || !/^lesson-(04|05)$/.test(lessonId)) return NextResponse.json({ error: "invalid_submission" }, { status: 400 });
-  const slideIdPattern = new RegExp(`^${lessonId}-am-(?:0[1-9]|[1-9]\\d)$`);
-  if (typeof input.slideId !== "string" || !slideIdPattern.test(input.slideId)) return NextResponse.json({ error: "invalid_submission" }, { status: 400 });
+  if (typeof input.anonymousClientId !== "string" || !uuidPattern.test(input.anonymousClientId) || input.courseId !== "communication-systems" || !/^lesson-(04|05|06)$/.test(lessonId)) return NextResponse.json({ error: "invalid_submission" }, { status: 400 });
+  const slideId = typeof input.slideId === "string" ? input.slideId : "";
+  const validSlideId = lessonId === "lesson-06" ? /^lesson-06-s[A-Za-z0-9]+$/.test(slideId) : /^lesson-0[45]-am-(?:0[1-9]|[1-9]\d)$/.test(slideId);
+  if (!validSlideId) return NextResponse.json({ error: "invalid_submission" }, { status: 400 });
   try {
     await getSql()`DELETE FROM student_slide_feedback WHERE anonymous_client_id = ${input.anonymousClientId} AND course_id = ${input.courseId} AND lesson_id = ${input.lessonId} AND slide_id = ${input.slideId}`;
     return NextResponse.json({ deleted: true }, { status: 200 });

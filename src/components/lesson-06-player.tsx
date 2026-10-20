@@ -1,16 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { concepts, formulas } from "../lib/course-data";
 import { splitFormulaName } from "../lib/formula-name";
 import FormulaScroll from "./formula-scroll";
-import { L6_CHAPTERS, L6_LINKS, L6_SLIDES, Slide, Tex } from "./lesson-06-deck";
+import { Tex } from "./lesson-04-deck";
+import { lesson06Chapters, lesson06DeckVersion, lesson06MainSlideCount, lesson06Slides, lesson06TotalMinutes } from "./lesson-06-data";
 import styles from "./lesson-06-player.module.css";
 
 const courseId = "communication-systems";
 const lessonId = "lesson-06";
+const L6_CHAPTERS = lesson06Chapters;
+const L6_SLIDES = lesson06Slides;
+const L6_LINKS: Record<number, { c?: string[]; f?: string[] }> = {};
 const formulaAliases: Record<string, string> = {
   f1: "lambda", f3: "monopole", f7: "barkhausen_steady", f8: "am_time_domain",
   f9: "am_mod_index", f10: "am_bandwidth", f11: "am_power_total",
@@ -22,7 +26,10 @@ const conceptAliases: Record<string, string> = {
   c11: "power-efficiency-am", c12: "envelope-ma",
 };
 const pad2 = (value: number) => String(value).padStart(2, "0");
-const extensionSlideCatalog = JSON.stringify(L6_SLIDES.map((item) => ({ slideId: `lesson-06-fm-${pad2(item.n)}`, slideNumber: item.n, minutes: item.min, title: item.h, chapter: L6_CHAPTERS.find((chapter) => chapter.id === item.ch)?.title ?? "", section: item.sec })));
+const slideLabel = (item: (typeof L6_SLIDES)[number]) => item.n > lesson06MainSlideCount ? `נספח ${item.n - lesson06MainSlideCount}` : pad2(item.n);
+const extensionSlideCatalog = JSON.stringify(L6_SLIDES.map((item) => ({ slideId: item.slideId, slideNumber: item.n, minutes: item.min > 0 ? item.min : null, title: item.h, chapter: L6_CHAPTERS.find((chapter) => chapter.id === item.ch)?.title ?? "", section: item.sec })));
+const deckUrl = "/courses/communication-systems/lesson-06/lesson.html";
+type Lesson06FrameWindow = Window & { L6?: { show?: (index: number) => void; togglePresenter?: (force?: boolean) => void; toggleLecturer?: () => void } };
 const feedbackTypes = [
   { key: "unclear", label: "לא הבנתי", hint: "משהו בשקף לא ברור", color: "#D9731F", soft: "#FDF3EA" },
   { key: "example", label: "צריך עוד דוגמה", hint: "הבנתי חלקית, עוד דוגמה תעזור", color: "#137A86", soft: "#E8F4F5" },
@@ -56,7 +63,7 @@ function Chevron({ back = false }: { back?: boolean }) {
   return <svg className={back ? styles.previousIcon : undefined} viewBox="0 0 20 20" aria-hidden="true"><path d="m7 4 6 6-6 6" /></svg>;
 }
 
-function ScaledSlide({ slide, className }: { slide: (typeof L6_SLIDES)[number]; className: string }) {
+function ScaledSlide({ slide, className, frameRef, onFrameLoad }: { slide: (typeof L6_SLIDES)[number]; className: string; frameRef: React.RefObject<HTMLIFrameElement | null>; onFrameLoad: () => void }) {
   const host = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(0.5);
   useEffect(() => {
@@ -74,7 +81,9 @@ function ScaledSlide({ slide, className }: { slide: (typeof L6_SLIDES)[number]; 
   }, []);
   return <div ref={host} className={className}>
     <div className={styles.stageBox} style={{ width: 1600 * scale, height: 900 * scale }}>
-      <div className={styles.slideCanvas} data-current-slide="true" data-slide-id={`lesson-06-fm-${pad2(slide.n)}`} data-slide-id-source="authored" data-slide-number={slide.n} data-minutes={slide.min} style={{ transform: "scale(" + scale + ")" }}><Slide s={slide} key={slide.n} /></div>
+      <div className={styles.slideCanvas} data-current-slide="true" data-slide-id={slide.slideId} data-slide-id-source="authored" data-slide-number={slide.n} data-minutes={slide.min || ""} data-slide-title={slide.h} data-section={L6_CHAPTERS.find((item) => item.id === slide.ch)?.title ?? ""} style={{ transform: "scale(" + scale + ")" }}>
+        <iframe ref={frameRef} className={styles.deckFrame} src={deckUrl} title={`מערך שיעור 6 · ${slide.h}`} onLoad={onFrameLoad} />
+      </div>
     </div>
   </div>;
 }
@@ -96,26 +105,26 @@ function Outline({ index, go, feedback, seen, onClose }: { index: number; go: (i
   useEffect(() => setOpen((value) => ({ ...value, [current.ch]: true })), [current.ch]);
   return <aside className={styles.outline} aria-label="מבנה השיעור">
     <header className={styles.outlineHeader}>
-      <div className={styles.outlineTitleRow}><span className={styles.lessonBadge} dir="ltr">06</span><div><span className={styles.eyebrow}>מערכות תקשורת · 11.9004</span><h2>אפנון תדר FM ומשדר</h2></div></div>
-      <div className={styles.lessonProgress}><span>{seen.length}/{L6_SLIDES.length} שקפים נצפו</span><i><b style={{ width: `${Math.min(100, seen.length / L6_SLIDES.length * 100)}%` }} /></i></div>
+      <div className={styles.outlineTitleRow}><span className={styles.lessonBadge} dir="ltr">06</span><div><span className={styles.eyebrow}>מערכות תקשורת · שיעור 06</span><h2>מפגש משולב: מקלט AM ויסודות FM</h2></div></div>
+      <div className={styles.lessonProgress}><span>{seen.length}/{L6_SLIDES.length} שקפים נצפו · {lesson06MainSlideCount} במסלול החובה</span><i><b style={{ width: `${Math.min(100, seen.length / L6_SLIDES.length * 100)}%` }} /></i></div>
       <button type="button" className={styles.closePanel} onClick={onClose}>סגירה</button>
     </header>
-    <div className={styles.outlineSectionHeading}>מבנה השיעור</div>
+    <div className={styles.outlineSectionHeading}>השלמת מקלט AM · יסודות FM</div>
     <nav className={styles.outlineScroll} aria-label="פרקי השיעור">
       {L6_CHAPTERS.map((chapter) => {
-        const items = L6_SLIDES.filter((slide) => slide.ch === chapter.id && !slide.sec);
+        const items = L6_SLIDES.filter((slide) => slide.ch === chapter.id);
         const count = items.filter((slide) => seen.includes(slide.n)).length;
         const marked = items.filter((slide) => feedback[slide.n]).length;
         return <section className={styles.chapter} key={chapter.id}>
           <button type="button" className={[styles.chapterButton, current.ch === chapter.id ? styles.chapterActive : ""].join(" ")} aria-expanded={Boolean(open[chapter.id])} onClick={() => setOpen((value) => ({ ...value, [chapter.id]: !value[chapter.id] }))}>
-            <span className={styles.chapterNumber} dir="ltr">{chapter.id > 0 && chapter.id < 6 ? pad2(chapter.id) : "·"}</span><span className={styles.chapterTitle}>{chapter.title}</span>
+            <span className={styles.chapterNumber} dir="ltr">{chapter.id > 0 ? pad2(chapter.id) : "·"}</span><span className={styles.chapterTitle}>{chapter.title}</span>
             {marked > 0 && <span className={styles.flagCount} style={{ "--feedback-count": feedbackType("unclear").color, "--feedback-count-soft": feedbackType("unclear").soft } as React.CSSProperties}>{marked}</span>}
             <span className={styles.progressRing} style={{ "--progress": items.length ? count / items.length : 0 } as React.CSSProperties} aria-label={count + " מתוך " + items.length + " שקפים נצפו"} />
           </button>
           {open[chapter.id] && <div className={styles.chapterSlides}>{items.map((slide) => <button type="button" key={slide.n} className={[styles.slideLink, current.n === slide.n ? styles.slideActive : "", seen.includes(slide.n) ? styles.slideSeen : ""].join(" ")} onClick={() => go(slide.n - 1)} aria-current={slide.n === current.n ? "step" : undefined}>
-            <span className={styles.slideNumber} dir="ltr">{pad2(slide.n)}</span><span className={styles.slideTitle}>{slide.h}</span>
+            <span className={styles.slideNumber} dir="ltr">{slideLabel(slide)}</span><span className={styles.slideTitle}>{slide.h}</span>
             {feedback[slide.n] && <span className={styles.feedbackMarker} style={{ color: feedbackType(feedback[slide.n].t).color }} title={feedbackType(feedback[slide.n].t).label}><FeedbackIcon type={feedback[slide.n].t} size={13} /></span>}
-            {[11, 15, 16].includes(slide.n) && <span className={styles.interactiveMark} title="שקף עם חשיפת תשובה">◆</span>}
+            {slide.kind && <span className={styles.interactiveMark} title={slide.kind}>◆</span>}
           </button>)}</div>}
         </section>;
       })}
@@ -135,7 +144,7 @@ function FeedbackPopover({ slide, feedback, open, setOpen, onSave, onDelete, bus
   const type = current ? feedbackType(current.t) : undefined;
   return <div className={[styles.feedback, dark ? styles.feedbackDark : ""].join(" ")} style={{ "--feedback-error": feedbackType("mistake").color } as React.CSSProperties}>
     {open && <section className={styles.feedbackPopover} role="dialog" aria-label="משוב על השקף" aria-modal="false">
-      <header className={styles.feedbackHeader}><div><b>משוב על השקף</b><span><i dir="ltr">{pad2(slide.n)}</i> · {slide.h}</span></div><button type="button" onClick={() => setOpen(false)} aria-label="סגירת משוב">×</button></header>
+      <header className={styles.feedbackHeader}><div><b>משוב על השקף</b><span><i dir="ltr">{slideLabel(slide)}</i> · {slide.h}</span></div><button type="button" onClick={() => setOpen(false)} aria-label="סגירת משוב">×</button></header>
       {current && !editing ? <div className={styles.feedbackSent}><div className={styles.feedbackSentCard} style={{ "--feedback-color": type!.color, "--feedback-soft": type!.soft } as React.CSSProperties}><span><FeedbackIcon type={type!.key} size={18} /></span><div><b>{type!.label}</b>{current.text && <p>“{current.text}”</p>}<small>נשלח · אנונימי למרצה</small></div></div>{error && <p className={styles.feedbackError} role="alert">{error}</p>}<div className={styles.feedbackActions}><button type="button" onClick={() => setEditing(true)}>עריכה</button><button type="button" disabled={busy} onClick={() => void onDelete()}>{busy ? "מבטל…" : "ביטול המשוב"}</button></div></div> : <div className={styles.feedbackBody}>
         <b>מה תרצו לשתף?</b><div className={styles.feedbackOptions}>{feedbackTypes.map((item) => <button type="button" key={item.key} aria-pressed={pick === item.key} className={pick === item.key ? styles.feedbackOptionSelected : ""} style={{ "--feedback-color": item.color, "--feedback-soft": item.soft } as React.CSSProperties} onClick={() => setPick(item.key)}><span><FeedbackIcon type={item.key} size={18} /></span><span><b>{item.label}</b><small>{item.hint}</small></span></button>)}</div>
         <textarea ref={textArea} rows={3} maxLength={800} value={text} onChange={(event) => setText(event.target.value)} placeholder={pick === "question" ? "מה השאלה?" : pick === "mistake" ? "איפה הטעות?" : "אפשר להוסיף כמה מילים (אופציונלי)"} />
@@ -157,16 +166,16 @@ function SlideContext({ slide, feedback, openFeedback, notes, setNotes, onClose 
   const hasSlideContext = Boolean(slide.tk || slideFormulas.length || slideConcepts.length);
   const currentFeedbackType = currentFeedback ? feedbackType(currentFeedback.t) : undefined;
   return <aside className={styles.slideContext} aria-label="מידע והערות לשקף">
-    <header className={styles.contextHeader}><span>בשקף הזה</span><b dir="ltr">{pad2(slide.n)}</b><button type="button" className={styles.closePanel} onClick={onClose}>סגירה</button></header>
+    <header className={styles.contextHeader}><span>בשקף הזה</span><b dir="ltr">{slideLabel(slide)}</b><button type="button" className={styles.closePanel} onClick={onClose}>סגירה</button></header>
     <div className={styles.contextBody}>
       <button type="button" className={[styles.flagButton, currentFeedback ? styles.flagged : ""].join(" ")} style={currentFeedbackType ? { "--feedback-color": currentFeedbackType.color, "--feedback-soft": currentFeedbackType.soft } as React.CSSProperties : undefined} onClick={openFeedback}>
         <span className={styles.flagIcon}><FeedbackIcon type={currentFeedback?.t ?? "syllo"} size={18} /></span><span><b>{currentFeedbackType?.label ?? "משוב על השקף"}</b><small>{currentFeedback?.text ? `“${currentFeedback.text}”` : currentFeedback ? "נשלח · לחצו לעריכה" : "לא הבנתי, דוגמה, שאלה או טעות"}</small></span>
       </button>
       {slide.tk && <div className={styles.takeaway}><small>העיקר</small>{slide.tk}</div>}
       {!hasSlideContext && <section className={styles.lessonOverview}><h3>מפת השיעור</h3>
-        {L6_CHAPTERS.slice(1, 5).map((chapter, i) => {
-          const end = L6_CHAPTERS[i + 2].start - 1;
-          return <div className={styles.lessonOverviewRow} key={chapter.id}><b dir="ltr">{pad2(chapter.id)}</b><span>{chapter.title}</span><small dir="ltr">{pad2(chapter.start)}–{pad2(end)}</small></div>;
+        {L6_CHAPTERS.map((chapter, i) => {
+          const end = (L6_CHAPTERS[i + 1]?.start ?? L6_SLIDES.length + 1) - 1;
+          return <div className={styles.lessonOverviewRow} key={chapter.id}><b dir="ltr">{chapter.id ? pad2(chapter.id) : "·"}</b><span>{chapter.title}</span><small dir="ltr">{slideLabel(L6_SLIDES[chapter.start - 1])}–{slideLabel(L6_SLIDES[end - 1])}</small></div>;
         })}
         {L6_SLIDES[L6_SLIDES.length - 1]?.tk && <p><b>העיקר בשיעור</b>{L6_SLIDES[L6_SLIDES.length - 1].tk}</p>}
       </section>}
@@ -201,7 +210,7 @@ function ChapterBar({ index, go, feedback }: { index: number; go: (index: number
 }
 
 export default function Lesson06Player({ lecturerMode = false }: { lecturerMode?: boolean } = {}) {
-  const stateKey = "syllo:student:lesson:" + lessonId;
+  const stateKey = `syllo:student:lesson:${lessonId}:${lesson06DeckVersion}`;
   const [index, setIndex] = useLessonState(stateKey + ":index", 0);
   const [flags, setFlags] = useLessonState<number[]>(stateKey + ":flags", []);
   const [seen, setSeen] = useLessonState<number[]>(stateKey + ":seen", []);
@@ -214,6 +223,9 @@ export default function Lesson06Player({ lecturerMode = false }: { lecturerMode?
   const [feedbackError, setFeedbackError] = useState("");
   const [compact, setCompact] = useState(false);
   const playerRef = useRef<HTMLDivElement>(null);
+  const deckFrameRef = useRef<HTMLIFrameElement>(null);
+  const indexRef = useRef(index);
+  indexRef.current = index;
   const previewButtonRef = useRef<HTMLButtonElement>(null);
   const exitLessonLinkRef = useRef<HTMLAnchorElement>(null);
   const wasOpened = useRef(false);
@@ -225,11 +237,43 @@ export default function Lesson06Player({ lecturerMode = false }: { lecturerMode?
   const previewCardRef = useRef<HTMLElement>(null);
   const [narrow, setNarrow] = useState(false);
   const slide = L6_SLIDES[index];
-  const previewSlide = L6_SLIDES[0];
   const chapter = L6_CHAPTERS.find((item) => item.id === slide.ch)!;
   const lessonBaseHref = lecturerMode ? `/lecturer/lessons/${lessonId}` : `/course/${courseId}/lessons/${lessonId}`;
-  const minutesRemaining = useMemo(() => L6_SLIDES.slice(index).reduce((sum, item) => sum + item.min, 0), [index]);
-  const go = useCallback((next: number) => setIndex(Math.max(0, Math.min(L6_SLIDES.length - 1, next))), [setIndex]);
+  const go = useCallback((next: number) => {
+    const target = Math.max(0, Math.min(L6_SLIDES.length - 1, next));
+    setIndex(target);
+    const embedded = deckFrameRef.current?.contentWindow as Lesson06FrameWindow | null | undefined;
+    embedded?.L6?.show?.(target);
+  }, [setIndex]);
+  const onDeckFrameLoad = useCallback(() => {
+    const frame = deckFrameRef.current;
+    const embedded = frame?.contentWindow as Lesson06FrameWindow | null | undefined;
+    if (!frame || !embedded?.L6?.show) return;
+    try {
+      const document = frame.contentDocument;
+      if (document && !document.getElementById("syllo-platform-embed-style")) {
+        const style = document.createElement("style");
+        style.id = "syllo-platform-embed-style";
+        style.textContent = "body.presenting::after{display:none!important}";
+        document.head.append(style);
+      }
+    } catch { /* Same-origin static deck is expected; the outer player remains available if access is restricted. */ }
+    embedded.L6.togglePresenter?.(true);
+    try {
+      const lecturerNotesEnabled = frame.contentDocument?.defaultView?.localStorage.getItem("l6-lecturer") === "1";
+      if (lecturerNotesEnabled !== showSpeakerNotes) embedded.L6.toggleLecturer?.();
+    } catch { /* Speaker-note mode is optional when browser storage is restricted. */ }
+    embedded.L6.show(indexRef.current);
+  }, [showSpeakerNotes]);
+  useEffect(() => {
+    const frame = deckFrameRef.current;
+    const embedded = frame?.contentWindow as Lesson06FrameWindow | null | undefined;
+    if (!frame?.contentDocument || !embedded?.L6?.toggleLecturer) return;
+    try {
+      const lecturerNotesEnabled = frame.contentDocument.defaultView?.localStorage.getItem("l6-lecturer") === "1";
+      if (lecturerNotesEnabled !== showSpeakerNotes) embedded.L6.toggleLecturer();
+    } catch { /* Speaker-note mode is optional when browser storage is restricted. */ }
+  }, [showSpeakerNotes, index, opened, present]);
   const notifyLecturer = useCallback((type: "open" | "exit") => {
     window.dispatchEvent(new CustomEvent(`syllo:lesson-player-${type}`));
   }, []);
@@ -237,6 +281,16 @@ export default function Lesson06Player({ lecturerMode = false }: { lecturerMode?
     notifyLecturer("exit");
     setOpened(false);
   }, [notifyLecturer]);
+  useEffect(() => {
+    const onDeckSlide = (event: MessageEvent) => {
+      if (event.origin !== window.location.origin || event.source !== deckFrameRef.current?.contentWindow) return;
+      const next = event.data?.slideIndexChanged;
+      if (!Number.isInteger(next) || next < 0 || next >= L6_SLIDES.length) return;
+      setIndex(next);
+    };
+    window.addEventListener("message", onDeckSlide);
+    return () => window.removeEventListener("message", onDeckSlide);
+  }, [setIndex]);
   const enterPresentation = useCallback(() => {
     setPresent(true);
     if (document.fullscreenEnabled && !document.fullscreenElement) {
@@ -269,6 +323,48 @@ export default function Lesson06Player({ lecturerMode = false }: { lecturerMode?
     return () => { window.removeEventListener("resize", measure); observer.disconnect(); };
   }, [opened]);
   useEffect(() => { setSeen((value) => value.includes(slide.n) ? value : [...value, slide.n]); }, [setSeen, slide.n]);
+  const studentTelemetry = useRef({ sessionId: "", anonymousClientId: "", slideIndex: 0, slideStartedAt: 0, started: false });
+  useEffect(() => {
+    if (lecturerMode) return;
+    const state = studentTelemetry.current;
+    const send = (eventType: "lesson_started" | "slide_viewed" | "lesson_ended", slideIndex: number | null = null, activeDurationMs: number | null = null) => {
+      if (!state.sessionId || !state.anonymousClientId) return;
+      const slideForEvent = slideIndex === null ? null : L6_SLIDES[slideIndex];
+      void fetch("/api/learning-events", {
+        method: "POST", keepalive: true, headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          anonymous_client_id: state.anonymousClientId, session_id: state.sessionId,
+          course_id: courseId, lesson_id: lessonId, deck_version: lesson06DeckVersion,
+          event_type: eventType, slide_id: slideForEvent?.slideId ?? null,
+          slide_number: slideForEvent?.n ?? null, active_duration_ms: activeDurationMs,
+          occurred_at: new Date().toISOString(),
+        }),
+      }).catch(() => {});
+    };
+    if (!opened) {
+      if (state.started) {
+        send("slide_viewed", state.slideIndex, Math.max(0, Math.min(3_600_000, Date.now() - state.slideStartedAt)));
+        send("lesson_ended");
+        state.started = false;
+      }
+      return;
+    }
+    if (!state.started) {
+      const clientKey = "syllo:anonymous-client-id";
+      let clientId = window.localStorage.getItem(clientKey);
+      if (!clientId) { clientId = window.crypto.randomUUID(); window.localStorage.setItem(clientKey, clientId); }
+      state.anonymousClientId = clientId;
+      state.sessionId = window.crypto.randomUUID();
+      state.slideIndex = index;
+      state.slideStartedAt = Date.now();
+      state.started = true;
+      send("lesson_started");
+    } else if (state.slideIndex !== index) {
+      send("slide_viewed", state.slideIndex, Math.max(0, Math.min(3_600_000, Date.now() - state.slideStartedAt)));
+      state.slideIndex = index;
+      state.slideStartedAt = Date.now();
+    }
+  }, [opened, index, lecturerMode]);
   useEffect(() => {
     const handleLecturerNavigation = (event: Event) => {
       const slideNumber = (event as CustomEvent<number>).detail;
@@ -329,7 +425,7 @@ export default function Lesson06Player({ lecturerMode = false }: { lecturerMode?
       let anonymousClientId = window.localStorage.getItem(clientKey);
       if (!anonymousClientId) { anonymousClientId = window.crypto.randomUUID(); window.localStorage.setItem(clientKey, anonymousClientId); }
       const apiTypes: Record<FeedbackType, string> = { unclear: "NOT_UNDERSTOOD", example: "NEED_EXAMPLE", question: "QUESTION", mistake: "POSSIBLE_ERROR" };
-      const response = await fetch("/api/student/slide-feedback", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ anonymousClientId, courseId, lessonId, slideId: `lesson-06-fm-${pad2(slide.n)}`, slideNumber: slide.n, deckVersion: "lesson-06-fm-v1", feedbackType: apiTypes[value.t], optionalComment: value.text, submittedAt: new Date(value.ts).toISOString(), pageUrl: window.location.href, idempotencyKey: `${courseId}:${lessonId}:slide-${pad2(slide.n)}` }) });
+      const response = await fetch("/api/student/slide-feedback", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ anonymousClientId, courseId, lessonId, slideId: slide.slideId, slideNumber: slide.n, deckVersion: lesson06DeckVersion, feedbackType: apiTypes[value.t], optionalComment: value.text, submittedAt: new Date(value.ts).toISOString(), pageUrl: window.location.href, idempotencyKey: `${courseId}:${lessonId}:${slide.slideId}` }) });
       if (!response.ok) throw new Error("לא הצלחנו לשמור את המשוב. נסו שוב.");
       setFeedback((previous) => ({ ...previous, [slide.n]: value }));
       window.dispatchEvent(new CustomEvent("syllo:lesson-feedback-update", { detail: { feedback: { ...feedback, [slide.n]: value } } }));
@@ -345,7 +441,7 @@ export default function Lesson06Player({ lecturerMode = false }: { lecturerMode?
     try {
       const clientId = window.localStorage.getItem("syllo:anonymous-client-id");
       if (clientId) {
-        const response = await fetch("/api/student/slide-feedback", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ anonymousClientId: clientId, courseId, lessonId, slideId: `lesson-06-fm-${pad2(slide.n)}` }) });
+        const response = await fetch("/api/student/slide-feedback", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ anonymousClientId: clientId, courseId, lessonId, slideId: slide.slideId }) });
         if (!response.ok) throw new Error("לא הצלחנו לבטל את המשוב. נסו שוב.");
       }
       setFeedback((previous) => { const next = { ...previous }; delete next[slide.n]; return next; });
@@ -359,33 +455,33 @@ export default function Lesson06Player({ lecturerMode = false }: { lecturerMode?
 
   useEffect(() => { setFeedbackError(""); }, [slide.n]);
 
-  if (!opened) return <section ref={previewCardRef} style={{ "--above": `${previewAbove}px`, "--preview-width": `${previewWidth}px` } as React.CSSProperties} className={["l4-player", styles.preview].join(" ")} aria-label="תצוגה מקדימה של מערך השיעור" data-lesson-player="true" data-course-id={courseId} data-lesson-id={lessonId} data-deck-version="lesson-06-fm-v1" data-slides={extensionSlideCatalog}>
-    <div className={styles.previewStage}><ScaledSlide slide={previewSlide} className={styles.stage} /></div>
-    <footer className={styles.previewFooter}><div><strong>מערך שיעור 06 · אפנון תדר FM ומשדר</strong><span>{L6_SLIDES.length} שקפים · כ־{L6_SLIDES.reduce((sum, item) => sum + item.min, 0)} דקות</span></div><button ref={previewButtonRef} type="button" className={styles.openLessonButton} onClick={() => { notifyLecturer("open"); setIndex(0); setOutlineOpen(true); setContextOpen(window.innerWidth > 1191); setOpened(true); }}>פתיחת מערך השיעור <span aria-hidden="true">←</span></button></footer>
+  if (!opened) return <section ref={previewCardRef} style={{ "--above": `${previewAbove}px`, "--preview-width": `${previewWidth}px` } as React.CSSProperties} className={["l4-player", styles.preview].join(" ")} aria-label="תצוגה מקדימה של מערך השיעור">
+    <div className={styles.previewStage}><div className={styles.previewPlaceholder}><span>מערכות תקשורת · שיעור 06</span><strong>מפגש משולב: מקלט AM ויסודות FM</strong><small>הגרסה העדכנית של מערך השיעור מוכנה לפתיחה</small></div></div>
+    <footer className={styles.previewFooter}><div><strong>מערך שיעור 06 · מקלט AM ויסודות FM</strong><span>{lesson06MainSlideCount} שקפי מסלול חובה · {L6_SLIDES.length - lesson06MainSlideCount} נספחים · {lesson06TotalMinutes} דקות</span></div><button ref={previewButtonRef} type="button" className={styles.openLessonButton} onClick={() => { notifyLecturer("open"); setOutlineOpen(true); setContextOpen(window.innerWidth > 1191); setOpened(true); }}>פתיחת מערך השיעור <span aria-hidden="true">←</span></button></footer>
   </section>;
 
   if (typeof document === "undefined") return null;
 
-  if (present) return createPortal(<div dir="rtl" className={[styles.present, "l4-player", "syllo-student-app"].join(" ")} data-lesson-player="true" data-course-id={courseId} data-lesson-id={lessonId} data-deck-version="lesson-06-fm-v1" data-slides={extensionSlideCatalog} role="dialog" aria-label="הצגת שקף">
-    <ScaledSlide slide={slide} className={styles.presentStage} />
+  if (present) return createPortal(<div dir="rtl" className={[styles.present, "l4-player", "syllo-student-app"].join(" ")} data-lesson-player="true" data-course-id={courseId} data-lesson-id={lessonId} data-deck-version={lesson06DeckVersion} data-slides={extensionSlideCatalog} role="dialog" aria-label="הצגת שקף">
+    <ScaledSlide slide={slide} className={styles.presentStage} frameRef={deckFrameRef} onFrameLoad={onDeckFrameLoad} />
     <FeedbackPopover slide={slide} feedback={feedback} open={feedbackOpen} setOpen={setFeedbackOpen} onSave={saveFeedback} onDelete={deleteFeedback} busy={feedbackBusy} error={feedbackError} dark />
     {showSpeakerNotes && slide.notes && <aside className={styles.speakerNotes}><b>הערות מרצה</b><p>{slide.notes}</p></aside>}
     <div className={styles.presentControls}>
-      <button type="button" onClick={() => go(index - 1)}>הקודם</button><span dir="ltr">{pad2(slide.n)} / {L6_SLIDES.length}</span>
-      <button type="button" onClick={() => go(index + 1)}>הבא</button><button type="button" aria-pressed={showSpeakerNotes} onClick={() => setShowSpeakerNotes((value) => !value)}>הערות מרצה · N</button>
+      <button type="button" onClick={() => go(index - 1)}>הקודם</button><span dir="ltr">{slide.n <= lesson06MainSlideCount ? `${pad2(slide.n)} / ${pad2(lesson06MainSlideCount)}` : `${slideLabel(slide)} / נספחים ${L6_SLIDES.length - lesson06MainSlideCount}`}</span>
+      <button type="button" onClick={() => go(index + 1)}>הבא</button>{lecturerMode && <button type="button" aria-pressed={showSpeakerNotes} onClick={() => setShowSpeakerNotes((value) => !value)}>הערות מרצה · N</button>}
       <button type="button" onClick={exitPresentation}>יציאה · Esc</button>
     </div>
     <ChapterBar index={index} go={go} feedback={feedback} />
   </div>, document.body);
 
-  return createPortal(<div dir="rtl" ref={playerRef} className={["l4-player", "syllo-student-app", styles.player, outlineOpen ? styles.withOutline : "", contextOpen ? styles.withContext : ""].join(" ")} data-lesson-player="true" data-course-id={courseId} data-lesson-id={lessonId} data-deck-version="lesson-06-fm-v1" data-slides={extensionSlideCatalog}>
+  return createPortal(<div dir="rtl" ref={playerRef} className={["l4-player", "syllo-student-app", styles.player, outlineOpen ? styles.withOutline : "", contextOpen ? styles.withContext : ""].join(" ")} data-lesson-player="true" data-course-id={courseId} data-lesson-id={lessonId} data-deck-version={lesson06DeckVersion} data-slides={extensionSlideCatalog}>
     <header className={styles.playerToolbar}>
         <div className={styles.lessonIdentity}>
           <Link ref={exitLessonLinkRef} href={lecturerMode ? "/lecturer/sessions#lessons" : `/course/${courseId}`} onClick={exitLesson} className={styles.courseBreadcrumb} aria-label={lecturerMode ? "חזרה לפנל המרצים" : "חזרה לקורס מערכות תקשורת"}><span className={styles.breadcrumbArrow} aria-hidden="true">›</span><span><small>{lecturerMode ? "חזרה לפנל המרצים" : "חזרה לקורס"}</small><b>מערכות תקשורת</b></span></Link>
           <span className={styles.toolbarDivider} aria-hidden="true" />
           <span className={styles.lessonMode}><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3" y="3" width="14" height="11" rx="1.5"/><path d="M7 17h6M10 14v3"/></svg><b>מערך שיעור</b></span>
           <span className={styles.lessonBadge} dir="ltr">06</span>
-          <span className={styles.lessonTitle}>אפנון תדר FM ומשדר</span>
+          <span className={styles.lessonTitle}>מפגש משולב: מקלט AM ויסודות FM</span>
         </div>
         <nav className={styles.loopPhases} aria-label="שלבי הלמידה">
           <Link aria-current="page" className={styles.phaseActive} href={`${lessonBaseHref}/slides`}><span dir="ltr">01</span>בכיתה</Link>
@@ -403,14 +499,14 @@ export default function Lesson06Player({ lecturerMode = false }: { lecturerMode?
       {compact && (contextOpen || narrow && outlineOpen) && <button type="button" className={styles.drawerScrim} onClick={() => contextOpen ? setContextOpen(false) : setOutlineOpen(false)} aria-label={contextOpen ? "סגירת פאנל ההקשר" : "סגירת מבנה השיעור"} />}
       {outlineOpen && <Outline index={index} go={go} feedback={feedback} seen={seen} onClose={() => setOutlineOpen(false)} />}
       <main className={styles.playerMain} aria-label="נגן שיעור 06">
-      <div className={styles.stageWrap}><ScaledSlide slide={slide} className={styles.stage} /><FeedbackPopover slide={slide} feedback={feedback} open={feedbackOpen} setOpen={setFeedbackOpen} onSave={saveFeedback} onDelete={deleteFeedback} busy={feedbackBusy} error={feedbackError} /></div>
+      <div className={styles.stageWrap}><ScaledSlide slide={slide} className={styles.stage} frameRef={deckFrameRef} onFrameLoad={onDeckFrameLoad} /><FeedbackPopover slide={slide} feedback={feedback} open={feedbackOpen} setOpen={setFeedbackOpen} onSave={saveFeedback} onDelete={deleteFeedback} busy={feedbackBusy} error={feedbackError} /></div>
       <footer className={styles.playerFooter}>
         <ChapterBar index={index} go={go} feedback={feedback} />
         <div className={styles.slideNav}>
           <button type="button" className={styles.navButton} aria-label="לשקף הקודם" onClick={() => go(index - 1)}><Chevron back /></button>
-          <span className={styles.slideCount} dir="ltr">{pad2(slide.n)} / {L6_SLIDES.length}</span>
+          <span className={styles.slideCount} dir="ltr">{slide.n <= lesson06MainSlideCount ? `${pad2(slide.n)} / ${pad2(lesson06MainSlideCount)}` : `${slideLabel(slide)} / נספחים ${L6_SLIDES.length - lesson06MainSlideCount}`}</span>
           <button type="button" className={styles.navButton} aria-label="לשקף הבא" onClick={() => go(index + 1)}><Chevron /></button>
-          <span className={styles.chapterLabel}>{chapter.title}</span><span className={styles.timeLeft}>כ־{minutesRemaining} דק׳ לסיום</span>
+          <span className={styles.chapterLabel}>{chapter.title}</span><span className={styles.timeLeft}>{lesson06TotalMinutes} דק׳ · נספחים ברשות</span>
         </div>
       </footer>
       </main>

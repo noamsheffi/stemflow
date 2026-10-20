@@ -1,0 +1,676 @@
+{
+  "source": "Lesson06_AM_FM_Final_v8.html",
+  "deckVersion": "lesson-06-final-v8-80881c85bd8de6fe",
+  "mainSlideCount": 45,
+  "totalMinutes": 135,
+  "slides": [
+    {
+      "id": "sN1",
+      "title": "המפגש הזה: מסיימים את המקלט, ומתחילים את FM",
+      "chapter": "השלמת מקלט AM",
+      "kind": "הסבר",
+      "number": 1,
+      "section": false,
+      "minutes": null,
+      "chapterId": 0,
+      "slideId": "lesson-06-sN1"
+    },
+    {
+      "id": "sN5a",
+      "title": "\\(Q\\) — כמה חד צריך המסנן כדי לבחור תחנה אחת?",
+      "chapter": "השלמת מקלט AM",
+      "kind": "הדגמה קצרה",
+      "number": 2,
+      "section": false,
+      "minutes": null,
+      "chapterId": 0,
+      "slideId": "lesson-06-sN5a"
+    },
+    {
+      "id": "sN5b",
+      "title": "\\(Q\\) לאורך הסקאלה — למה זו בעיה?",
+      "chapter": "השלמת מקלט AM",
+      "kind": "תרגול",
+      "number": 3,
+      "section": false,
+      "minutes": null,
+      "chapterId": 0,
+      "slideId": "lesson-06-sN5b"
+    },
+    {
+      "id": "sN6a",
+      "title": "מקלט ישיר (TRF): למה קשה לממש אותו בסקאלה רחבה?",
+      "chapter": "השלמת מקלט AM",
+      "kind": "הסבר",
+      "number": 4,
+      "section": false,
+      "minutes": null,
+      "chapterId": 0,
+      "slideId": "lesson-06-sN6a"
+    },
+    {
+      "id": "sN6b",
+      "title": "הרעיון: להזיז את האות לתדר קבוע",
+      "chapter": "השלמת מקלט AM",
+      "kind": "הדגמה קצרה",
+      "number": 5,
+      "section": false,
+      "minutes": null,
+      "chapterId": 0,
+      "slideId": "lesson-06-sN6b"
+    },
+    {
+      "id": "sN7a",
+      "title": "מסלול הסופר־הטרודיין: מהאנטנה עד הרמקול",
+      "chapter": "השלמת מקלט AM",
+      "kind": "הסבר",
+      "number": 6,
+      "section": false,
+      "minutes": null,
+      "chapterId": 0,
+      "slideId": "lesson-06-sN7a"
+    },
+    {
+      "id": "sN7b",
+      "title": "TRF מול סופר־הטרודיין — מה הרווחנו ומה שילמנו",
+      "chapter": "השלמת מקלט AM",
+      "kind": "הסבר",
+      "number": 7,
+      "section": false,
+      "minutes": null,
+      "chapterId": 0,
+      "slideId": "lesson-06-sN7b"
+    },
+    {
+      "id": "sN8",
+      "title": "הערבל: מכפילים שני תדרים — מה יוצא?",
+      "chapter": "השלמת מקלט AM",
+      "kind": "הדגמה קצרה",
+      "number": 8,
+      "section": false,
+      "minutes": null,
+      "chapterId": 0,
+      "slideId": "lesson-06-sN8"
+    },
+    {
+      "id": "sN9a",
+      "title": "הבבואה: למה היא בלתי נמנעת?",
+      "chapter": "השלמת מקלט AM",
+      "kind": "הסבר",
+      "number": 9,
+      "section": false,
+      "minutes": null,
+      "chapterId": 0,
+      "slideId": "lesson-06-sN9a"
+    },
+    {
+      "id": "sN9b",
+      "title": "דחיית הבבואה — הפתרון המקובל במבנה הזה",
+      "chapter": "השלמת מקלט AM",
+      "kind": "הסבר",
+      "number": 10,
+      "section": false,
+      "minutes": null,
+      "chapterId": 0,
+      "slideId": "lesson-06-sN9b"
+    },
+    {
+      "id": "sN10",
+      "title": "תרגיל מסכם וסיכום מודול AM",
+      "chapter": "השלמת מקלט AM",
+      "kind": "תרגול",
+      "number": 11,
+      "section": false,
+      "minutes": null,
+      "chapterId": 0,
+      "slideId": "lesson-06-sN10"
+    },
+    {
+      "id": "sBR",
+      "title": "הפסקה",
+      "chapter": "הפסקה",
+      "kind": "הפסקה",
+      "number": 12,
+      "section": true,
+      "minutes": null,
+      "chapterId": 1,
+      "slideId": "lesson-06-sBR"
+    },
+    {
+      "id": "sN2",
+      "title": "AM מול FM : אותו אות מידע, שני מקומות שונים בגל",
+      "chapter": "יסודות FM",
+      "kind": "הדגמה קצרה",
+      "number": 13,
+      "section": false,
+      "minutes": null,
+      "chapterId": 2,
+      "slideId": "lesson-06-sN2"
+    },
+    {
+      "id": "s01",
+      "title": "עקרון אפנון FM ומשדר",
+      "chapter": "יסודות FM",
+      "kind": "הסבר",
+      "number": 14,
+      "section": false,
+      "minutes": null,
+      "chapterId": 2,
+      "slideId": "lesson-06-s01"
+    },
+    {
+      "id": "s03a",
+      "title": "איפה יושב המידע — במשרעת או בתדר?",
+      "chapter": "יסודות FM",
+      "kind": "הסבר",
+      "number": 15,
+      "section": false,
+      "minutes": null,
+      "chapterId": 2,
+      "slideId": "lesson-06-s03a"
+    },
+    {
+      "id": "s03b",
+      "title": "שתי השיטות זו מול זו",
+      "chapter": "יסודות FM",
+      "kind": "הסבר",
+      "number": 16,
+      "section": false,
+      "minutes": null,
+      "chapterId": 2,
+      "slideId": "lesson-06-s03b"
+    },
+    {
+      "id": "s05r",
+      "title": "הקשר בין אות המידע לסטיית התדר",
+      "chapter": "יסודות FM",
+      "kind": "הסבר",
+      "number": 17,
+      "section": false,
+      "minutes": null,
+      "chapterId": 2,
+      "slideId": "lesson-06-s05r"
+    },
+    {
+      "id": "s05",
+      "title": "הסימונים והיחידות — דרך תחנת רדיו אחת",
+      "chapter": "יסודות FM",
+      "kind": "הסבר",
+      "number": 18,
+      "section": false,
+      "minutes": null,
+      "chapterId": 2,
+      "slideId": "lesson-06-s05"
+    },
+    {
+      "id": "s06a",
+      "title": "התדר הרגעי: המתח של הרגע קובע את הצפיפות של הרגע",
+      "chapter": "יסודות FM",
+      "kind": "הדגמה קצרה",
+      "number": 19,
+      "section": false,
+      "minutes": null,
+      "chapterId": 2,
+      "slideId": "lesson-06-s06a"
+    },
+    {
+      "id": "s06b",
+      "title": "שלושה מצבים של מתח המידע — שלוש צפיפויות של הגל",
+      "chapter": "יסודות FM",
+      "kind": "הדגמה קצרה",
+      "number": 20,
+      "section": false,
+      "minutes": null,
+      "chapterId": 2,
+      "slideId": "lesson-06-s06b"
+    },
+    {
+      "id": "s07",
+      "title": "מה קובע את גודל הסטייה, ומה קובע את מהירות השינוי?",
+      "chapter": "יסודות FM",
+      "kind": "הדגמה קצרה",
+      "number": 21,
+      "section": false,
+      "minutes": null,
+      "chapterId": 2,
+      "slideId": "lesson-06-s07"
+    },
+    {
+      "id": "s08a",
+      "title": "תדר המידע מול סטיית התדר: \"כמה מהר\" מול \"כמה רחוק\"",
+      "chapter": "יסודות FM",
+      "kind": "הדגמה קצרה",
+      "number": 22,
+      "section": false,
+      "minutes": null,
+      "chapterId": 2,
+      "slideId": "lesson-06-s08a"
+    },
+    {
+      "id": "s08b",
+      "title": "חישוב מודרך: כמה התדר זז?",
+      "chapter": "יסודות FM",
+      "kind": "תרגול",
+      "number": 23,
+      "section": false,
+      "minutes": null,
+      "chapterId": 2,
+      "slideId": "lesson-06-s08b"
+    },
+    {
+      "id": "s09b",
+      "title": "עצירה: \\(f_m\\) או \\(\\Delta f\\)?",
+      "chapter": "יסודות FM",
+      "kind": "תרגול",
+      "number": 24,
+      "section": false,
+      "minutes": null,
+      "chapterId": 2,
+      "slideId": "lesson-06-s09b"
+    },
+    {
+      "id": "sN3",
+      "title": "המידע, התדר הרגעי, וגל ה־ FM — באותו חלון זמן",
+      "chapter": "יסודות FM",
+      "kind": "הדגמה קצרה",
+      "number": 25,
+      "section": false,
+      "minutes": null,
+      "chapterId": 2,
+      "slideId": "lesson-06-sN3"
+    },
+    {
+      "id": "s12",
+      "title": "פענחו את אות ה־ FM — רק מהגל",
+      "chapter": "המשך FM · מופע ואות",
+      "kind": "תרגול",
+      "number": 26,
+      "section": false,
+      "minutes": null,
+      "chapterId": 3,
+      "slideId": "lesson-06-s12"
+    },
+    {
+      "id": "s13a",
+      "title": "הספקטרום של FM : נושא ופסי צד",
+      "chapter": "המשך FM · רוחב פס",
+      "kind": "הדגמה קצרה",
+      "number": 27,
+      "section": false,
+      "minutes": null,
+      "chapterId": 4,
+      "slideId": "lesson-06-s13a"
+    },
+    {
+      "id": "s13b",
+      "title": "כלל קרסון — קירוב לרוחב הפס המשמעותי",
+      "chapter": "המשך FM · רוחב פס",
+      "kind": "הסבר",
+      "number": 28,
+      "section": false,
+      "minutes": null,
+      "chapterId": 4,
+      "slideId": "lesson-06-s13b"
+    },
+    {
+      "id": "s14",
+      "title": "FM צר ו־FM רחב: דוגמת קשר דיבור מול רדיו מסחרי",
+      "chapter": "המשך FM · רוחב פס",
+      "kind": "הדגמה קצרה",
+      "number": 29,
+      "section": false,
+      "minutes": null,
+      "chapterId": 4,
+      "slideId": "lesson-06-s14"
+    },
+    {
+      "id": "s17b",
+      "title": "בספקטרום אנלייזר: רוחב הפס גדל כש־\\(\\Delta f\\) גדל",
+      "chapter": "המשך FM · רוחב פס",
+      "kind": "הדגמה קצרה",
+      "number": 30,
+      "section": false,
+      "minutes": null,
+      "chapterId": 4,
+      "slideId": "lesson-06-s17b"
+    },
+    {
+      "id": "s41p",
+      "title": "מכפילים את \\(\\Delta f\\) — האם רוחב הפס מוכפל?",
+      "chapter": "המשך FM · רוחב פס",
+      "kind": "תרגול",
+      "number": 31,
+      "section": false,
+      "minutes": null,
+      "chapterId": 4,
+      "slideId": "lesson-06-s41p"
+    },
+    {
+      "id": "s15a",
+      "title": "מעטפת קבועה ⇒ הספק ממוצע קבוע",
+      "chapter": "המשך FM · הספק",
+      "kind": "הדגמה קצרה",
+      "number": 32,
+      "section": false,
+      "minutes": null,
+      "chapterId": 5,
+      "slideId": "lesson-06-s15a"
+    },
+    {
+      "id": "s15b",
+      "title": "ההספק: \\(P=\\dfrac{A^2}{2R}\\) — רק מתח השיא והעומס",
+      "chapter": "המשך FM · הספק",
+      "kind": "הסבר",
+      "number": 33,
+      "section": false,
+      "minutes": null,
+      "chapterId": 5,
+      "slideId": "lesson-06-s15b"
+    },
+    {
+      "id": "s16",
+      "title": "תרגול: סטייה, קצוות, רוחב פס והספק",
+      "chapter": "המשך FM · תרגול",
+      "kind": "תרגול",
+      "number": 34,
+      "section": false,
+      "minutes": null,
+      "chapterId": 6,
+      "slideId": "lesson-06-s16"
+    },
+    {
+      "id": "sBeta",
+      "title": "מקדם האפנון של FM : \\(\\beta\\)",
+      "chapter": "המשך FM · תרגול",
+      "kind": "הסבר",
+      "number": 35,
+      "section": false,
+      "minutes": null,
+      "chapterId": 6,
+      "slideId": "lesson-06-sBeta"
+    },
+    {
+      "id": "s17a",
+      "title": "FM בשלושה משפטים — ועוד הגדרה אחת",
+      "chapter": "המשך FM · תרגול",
+      "kind": "הסבר",
+      "number": 36,
+      "section": false,
+      "minutes": null,
+      "chapterId": 6,
+      "slideId": "lesson-06-s17a"
+    },
+    {
+      "id": "s20",
+      "title": "שרשרת משדר FM בשישה בלוקים",
+      "chapter": "משדר FM ומכפיל תדר",
+      "kind": "הסבר",
+      "number": 37,
+      "section": false,
+      "minutes": null,
+      "chapterId": 7,
+      "slideId": "lesson-06-s20"
+    },
+    {
+      "id": "s19",
+      "title": "VCO : הרכיב שממיר מתח לתדר",
+      "chapter": "משדר FM ומכפיל תדר",
+      "kind": "הסבר",
+      "number": 38,
+      "section": false,
+      "minutes": null,
+      "chapterId": 7,
+      "slideId": "lesson-06-s19"
+    },
+    {
+      "id": "s21",
+      "title": "מכפיל ×n: הנושא והסטייה מוכפלים, תדר המידע לא",
+      "chapter": "משדר FM ומכפיל תדר",
+      "kind": "הדגמה קצרה",
+      "number": 39,
+      "section": false,
+      "minutes": null,
+      "chapterId": 7,
+      "slideId": "lesson-06-s21"
+    },
+    {
+      "id": "s22",
+      "title": "תרגיל מודרך: הסטייה ביציאת ה־ VCO",
+      "chapter": "תרגול וסיכום",
+      "kind": "תרגול",
+      "number": 40,
+      "section": false,
+      "minutes": null,
+      "chapterId": 8,
+      "slideId": "lesson-06-s22"
+    },
+    {
+      "id": "s24",
+      "title": "מעבירים דרך מכפיל ×12 — לפני ואחרי",
+      "chapter": "תרגול וסיכום",
+      "kind": "תרגול",
+      "number": 41,
+      "section": false,
+      "minutes": null,
+      "chapterId": 8,
+      "slideId": "lesson-06-s24"
+    },
+    {
+      "id": "s25a",
+      "title": "מקדם האפנון \\(\\beta\\) ורוחב הפס ביציאה",
+      "chapter": "תרגול וסיכום",
+      "kind": "תרגול",
+      "number": 42,
+      "section": false,
+      "minutes": null,
+      "chapterId": 8,
+      "slideId": "lesson-06-s25a"
+    },
+    {
+      "id": "s25b",
+      "title": "ההספק ביציאה — ומה המכפיל לא עושה",
+      "chapter": "תרגול וסיכום",
+      "kind": "תרגול",
+      "number": 43,
+      "section": false,
+      "minutes": null,
+      "chapterId": 8,
+      "slideId": "lesson-06-s25b"
+    },
+    {
+      "id": "s26",
+      "title": "כרטיס יציאה: שלוש שאלות קצרות",
+      "chapter": "תרגול וסיכום",
+      "kind": "תרגול",
+      "number": 44,
+      "section": false,
+      "minutes": null,
+      "chapterId": 8,
+      "slideId": "lesson-06-s26"
+    },
+    {
+      "id": "s28",
+      "title": "סיכום: FM והמשדר — כל נושאי החובה",
+      "chapter": "תרגול וסיכום",
+      "kind": "הסבר",
+      "number": 45,
+      "section": false,
+      "minutes": null,
+      "chapterId": 8,
+      "slideId": "lesson-06-s28"
+    },
+    {
+      "id": "sAPX",
+      "title": "נספחים · רשות",
+      "chapter": "נספחים · רשות",
+      "kind": "",
+      "number": 46,
+      "section": true,
+      "minutes": null,
+      "chapterId": 9,
+      "slideId": "lesson-06-sAPX"
+    },
+    {
+      "id": "sN4a",
+      "title": "FM אידאלי מול משדר אמיתי",
+      "chapter": "נספחים · רשות",
+      "kind": "",
+      "number": 47,
+      "section": false,
+      "minutes": null,
+      "chapterId": 9,
+      "slideId": "lesson-06-sN4a"
+    },
+    {
+      "id": "sN4b",
+      "title": "מה הערוץ מוסיף — ומדוע היתרון נשמר",
+      "chapter": "נספחים · רשות",
+      "kind": "",
+      "number": 48,
+      "section": false,
+      "minutes": null,
+      "chapterId": 9,
+      "slideId": "lesson-06-sN4b"
+    },
+    {
+      "id": "sN4c",
+      "title": "תדר מול מהירות התפשטות — שני גדלים שונים לגמרי",
+      "chapter": "נספחים · רשות",
+      "kind": "",
+      "number": 49,
+      "section": false,
+      "minutes": null,
+      "chapterId": 9,
+      "slideId": "lesson-06-sN4c"
+    },
+    {
+      "id": "s10a",
+      "title": "מופע: הגל מקדים כשהתדר גבוה, ומפגר כשהוא נמוך",
+      "chapter": "נספחים · רשות",
+      "kind": "",
+      "number": 50,
+      "section": false,
+      "minutes": null,
+      "chapterId": 9,
+      "slideId": "lesson-06-s10a"
+    },
+    {
+      "id": "s10b",
+      "title": "מהתדר למופע — הגזירה המלאה אופציונלי",
+      "chapter": "נספחים · רשות",
+      "kind": "",
+      "number": 51,
+      "section": false,
+      "minutes": null,
+      "chapterId": 9,
+      "slideId": "lesson-06-s10b"
+    },
+    {
+      "id": "s09a",
+      "title": "משרעת אות מידע גדולה יותר ⇒ סטייה גדולה יותר",
+      "chapter": "נספחים · רשות",
+      "kind": "",
+      "number": 52,
+      "section": false,
+      "minutes": null,
+      "chapterId": 9,
+      "slideId": "lesson-06-s09a"
+    },
+    {
+      "id": "s11",
+      "title": "אותו רגע בשלושה גרפים: המידע, התדר הרגעי וגל ה־ FM",
+      "chapter": "נספחים · רשות",
+      "kind": "",
+      "number": 53,
+      "section": false,
+      "minutes": null,
+      "chapterId": 9,
+      "slideId": "lesson-06-s11"
+    },
+    {
+      "id": "s21b",
+      "title": "איך מכפילים תדר בפועל: הרמוניות וסינון",
+      "chapter": "נספחים · רשות",
+      "kind": "",
+      "number": 54,
+      "section": false,
+      "minutes": null,
+      "chapterId": 9,
+      "slideId": "lesson-06-s21b"
+    },
+    {
+      "id": "s22e",
+      "title": "קדם־הדגשה במשדר, הנחתה משלימה במקלט",
+      "chapter": "נספחים · רשות",
+      "kind": "",
+      "number": 55,
+      "section": false,
+      "minutes": null,
+      "chapterId": 9,
+      "slideId": "lesson-06-s22e"
+    },
+    {
+      "id": "s27",
+      "title": "שאלות הבנה: מכפיל, הספק ורעש",
+      "chapter": "נספחים · רשות",
+      "kind": "",
+      "number": 56,
+      "section": false,
+      "minutes": null,
+      "chapterId": 9,
+      "slideId": "lesson-06-s27"
+    }
+  ],
+  "chapters": [
+    {
+      "id": 0,
+      "title": "השלמת מקלט AM",
+      "start": 1
+    },
+    {
+      "id": 1,
+      "title": "הפסקה",
+      "start": 12
+    },
+    {
+      "id": 2,
+      "title": "יסודות FM",
+      "start": 13
+    },
+    {
+      "id": 3,
+      "title": "המשך FM · מופע ואות",
+      "start": 26
+    },
+    {
+      "id": 4,
+      "title": "המשך FM · רוחב פס",
+      "start": 27
+    },
+    {
+      "id": 5,
+      "title": "המשך FM · הספק",
+      "start": 32
+    },
+    {
+      "id": 6,
+      "title": "המשך FM · תרגול",
+      "start": 34
+    },
+    {
+      "id": 7,
+      "title": "משדר FM ומכפיל תדר",
+      "start": 37
+    },
+    {
+      "id": 8,
+      "title": "תרגול וסיכום",
+      "start": 40
+    },
+    {
+      "id": 9,
+      "title": "נספחים · רשות",
+      "start": 46
+    }
+  ]
+}

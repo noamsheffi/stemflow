@@ -16,6 +16,10 @@
 .previewStage { --stage-max-height: max(0px, calc(100dvh - var(--above, 300px) - var(--card-row, 64px) - 24px)); position: relative; display: grid; width: 100%; height: min(var(--stage-max-height), calc(100cqi * 9 / 16)); aspect-ratio: 16 / 9; margin-inline: auto; overflow: hidden; padding: 0; background: transparent; place-items: center; }
 .previewStage > div { width: 100%; height: 100%; }
 .previewStage .stageBox { border-radius: 10px 10px 0 0; box-shadow: none; }
+.previewPlaceholder { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; border-radius: inherit; background: #0f172a; color: #f8fafc; text-align: center; }
+.previewPlaceholder span { color: #b7c6d6; font-size: 16px; }
+.previewPlaceholder strong { max-width: 80%; font-size: clamp(24px, 3vw, 44px); }
+.previewPlaceholder small { color: #a8b6c6; font-size: 14px; }
 .previewFooter { box-sizing: border-box; display: flex; width: 100%; min-width: 0; min-height: 64px; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; }
 .previewFooter > div { display: grid; min-width: 0; flex: 1 1 auto; gap: 3px; }
 .previewFooter strong, .previewFooter span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -69,6 +73,7 @@
 .preview .stage { padding-inline-end: 0; }
 .stageBox { position: relative; overflow: hidden; flex: none; border-radius: var(--r-sm); background: var(--surface); box-shadow: var(--shadow-panel); }
 .slideCanvas { position: absolute; inset-block-start: 0; inset-inline-start: auto; inset-inline-end: 0; width: 1600px; height: 900px; direction: ltr; transform-origin: top right; }
+.deckFrame { position: absolute; inset: 0 auto auto 0; display: block; width: 1600px; height: 900px; border: 0; background: #0f172a; }
 .formulaEnglish { display: inline; margin: 0; color: var(--ink3); font-family: var(--mono); font-size: 10.5px; font-weight: 400; }
 .formulaScroll { max-width: 100%; overflow-x: auto; color: var(--ink); font-size: var(--u-15); white-space: nowrap; direction: ltr; }
 .formulaScroll .katex { color: var(--ink); }
