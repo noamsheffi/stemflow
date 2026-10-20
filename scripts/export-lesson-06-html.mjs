@@ -49,6 +49,7 @@ const catalog = {
   source: "Lesson06_AM_FM_Final_v8.html",
   deckVersion: `lesson-06-final-v8-${hash}`,
   mainSlideCount: 45,
+  appendixCount: rawSlides.filter((slide) => slide.number > 45 && !slide.section).length,
   totalMinutes: 135,
   slides: rawSlides,
   chapters: chapterNames.map((title, id) => ({ id, title, start: rawSlides.find((slide) => slide.chapterId === id).number })),
@@ -58,4 +59,4 @@ await mkdir(dirname(htmlPath), { recursive: true });
 await mkdir(dirname(catalogPath), { recursive: true });
 await writeFile(htmlPath, html);
 await writeFile(catalogPath, `${JSON.stringify(catalog, null, 2)}\n`);
-console.log(`Lesson 06 copied unchanged: ${rawSlides.length} authored slides (${catalog.mainSlideCount} required, ${rawSlides.length - catalog.mainSlideCount} appendix), version ${catalog.deckVersion}.`);
+console.log(`Lesson 06 copied unchanged: ${rawSlides.length} authored slides (${catalog.mainSlideCount} main-route slides, appendix divider + ${catalog.appendixCount} optional appendix slides), version ${catalog.deckVersion}.`);

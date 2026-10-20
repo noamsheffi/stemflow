@@ -20,6 +20,7 @@ export type Lesson06Slide = {
 type Catalog = {
   deckVersion: string;
   mainSlideCount: number;
+  appendixCount: number;
   totalMinutes: number;
   slides: Array<{
     id: string;
@@ -39,6 +40,7 @@ const deck = catalog as Catalog;
 
 export const lesson06DeckVersion = deck.deckVersion;
 export const lesson06MainSlideCount = deck.mainSlideCount;
+export const lesson06AppendixCount = deck.appendixCount;
 export const lesson06TotalMinutes = deck.totalMinutes;
 export const lesson06Chapters = deck.chapters;
 export const lesson06Slides: Lesson06Slide[] = deck.slides.map((slide) => ({

@@ -62,7 +62,7 @@ check(fmHtml === fmSource, "The published Lesson 06 HTML must be a byte-for-byte
 check(fmAuthoredIds.length === 56 && fmCatalog.slides.length === fmAuthoredIds.length, "Lesson 06 must publish all 56 authored slides and matching catalog entries.");
 check(new Set(fmAuthoredIds).size === fmAuthoredIds.length && new Set(fmCatalog.slides.map((slide) => slide.slideId)).size === fmCatalog.slides.length, "Lesson 06 authored and platform slide IDs must be unique.");
 check(fmCatalog.slides.every((slide, index) => slide.id === fmAuthoredIds[index] && slide.number === index + 1 && slide.title && slide.chapter), "Lesson 06 catalog metadata must follow the source slide order and include titles and chapters.");
-check(fmCatalog.mainSlideCount === 45 && fmCatalog.totalMinutes === 135 && fmCatalog.slides[44]?.id === "s28" && fmCatalog.slides[45]?.id === "sAPX", "Lesson 06 must identify the 45-slide main path, 11 appendices, and 135-minute session without inventing per-slide timing.");
+check(fmCatalog.mainSlideCount === 45 && fmCatalog.appendixCount === 10 && fmCatalog.totalMinutes === 135 && fmCatalog.slides[44]?.id === "s28" && fmCatalog.slides[45]?.id === "sAPX" && fmCatalog.slides.slice(46).every((slide) => !slide.section), "Lesson 06 must identify the 45-slide main path, a separate appendix divider, 10 optional appendix slides, and a 135-minute session without inventing per-slide timing.");
 check(fmPlayer.includes('const deckUrl = "/courses/communication-systems/lesson-06/lesson.html"') && fmPlayer.includes('event.origin !== window.location.origin') && fmPlayer.includes('event.source !== deckFrameRef.current?.contentWindow'), "Lesson 06 must embed the authored HTML and validate both origin and source on its navigation bridge.");
 check(fmPlayer.includes('data-slides={extensionSlideCatalog}') && fmPlayer.includes('slideId: item.slideId') && fmPlayer.includes('fetch("/api/learning-events"') && ["lesson_started", "slide_viewed", "lesson_ended"].every((event) => fmPlayer.includes(`"${event}"`)), "Lesson 06 must expose stable slide metadata to lecturer statistics and store student learning events.");
 check(fmPlayer.includes('slideId: slide.slideId') && fmPlayer.includes('deckVersion: lesson06DeckVersion'), "Lesson 06 feedback must use the canonical slide ID and content-derived deck version.");
@@ -73,5 +73,5 @@ if (errors.length) {
   console.error(errors.map((error) => `- ${error}`).join("\n"));
   process.exitCode = 1;
 } else {
-  console.log(`Lesson validation passed: lesson 05 (${catalog.length} slides) and lesson 06 (45 main slides + 11 appendices, 135 minutes).`);
+  console.log(`Lesson validation passed: lesson 05 (${catalog.length} slides) and lesson 06 (45 main-route slides, appendix divider + 10 appendices, 135 minutes).`);
 }

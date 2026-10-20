@@ -7,7 +7,7 @@ import { concepts, formulas } from "../lib/course-data";
 import { splitFormulaName } from "../lib/formula-name";
 import FormulaScroll from "./formula-scroll";
 import { Tex } from "./lesson-04-deck";
-import { lesson06Chapters, lesson06DeckVersion, lesson06MainSlideCount, lesson06Slides, lesson06TotalMinutes } from "./lesson-06-data";
+import { lesson06Chapters, lesson06DeckVersion, lesson06MainSlideCount, lesson06AppendixCount, lesson06Slides, lesson06TotalMinutes } from "./lesson-06-data";
 import styles from "./lesson-06-player.module.css";
 
 const courseId = "communication-systems";
@@ -26,7 +26,8 @@ const conceptAliases: Record<string, string> = {
   c11: "power-efficiency-am", c12: "envelope-ma",
 };
 const pad2 = (value: number) => String(value).padStart(2, "0");
-const slideLabel = (item: (typeof L6_SLIDES)[number]) => item.n > lesson06MainSlideCount ? `נספח ${item.n - lesson06MainSlideCount}` : pad2(item.n);
+const slideLabel = (item: (typeof L6_SLIDES)[number]) => item.sourceId === "sAPX" ? "נספחים" : item.n > lesson06MainSlideCount ? `נספח ${item.n - lesson06MainSlideCount - 1}` : pad2(item.n);
+const slideCounter = (item: (typeof L6_SLIDES)[number]) => item.n <= lesson06MainSlideCount ? `${pad2(item.n)} / ${pad2(lesson06MainSlideCount)}` : item.sourceId === "sAPX" ? `נספחים · ${lesson06AppendixCount} שקפים` : `${slideLabel(item)} / נספחים ${lesson06AppendixCount}`;
 const extensionSlideCatalog = JSON.stringify(L6_SLIDES.map((item) => ({ slideId: item.slideId, slideNumber: item.n, minutes: item.min > 0 ? item.min : null, title: item.h, chapter: L6_CHAPTERS.find((chapter) => chapter.id === item.ch)?.title ?? "", section: item.sec })));
 const deckUrl = "/courses/communication-systems/lesson-06/lesson.html";
 type Lesson06FrameWindow = Window & { L6?: { show?: (index: number) => void; togglePresenter?: (force?: boolean) => void; toggleLecturer?: () => void } };
@@ -113,13 +114,15 @@ function Outline({ index, go, feedback, seen, onClose }: { index: number; go: (i
     <nav className={styles.outlineScroll} aria-label="פרקי השיעור">
       {L6_CHAPTERS.map((chapter) => {
         const items = L6_SLIDES.filter((slide) => slide.ch === chapter.id);
-        const count = items.filter((slide) => seen.includes(slide.n)).length;
+        const appendixDivider = chapter.title === "נספחים · רשות";
+        const progressItems = appendixDivider ? items.filter((slide) => slide.sourceId !== "sAPX") : items;
+        const count = progressItems.filter((slide) => seen.includes(slide.n)).length;
         const marked = items.filter((slide) => feedback[slide.n]).length;
         return <section className={styles.chapter} key={chapter.id}>
           <button type="button" className={[styles.chapterButton, current.ch === chapter.id ? styles.chapterActive : ""].join(" ")} aria-expanded={Boolean(open[chapter.id])} onClick={() => setOpen((value) => ({ ...value, [chapter.id]: !value[chapter.id] }))}>
             <span className={styles.chapterNumber} dir="ltr">{chapter.id > 0 ? pad2(chapter.id) : "·"}</span><span className={styles.chapterTitle}>{chapter.title}</span>
             {marked > 0 && <span className={styles.flagCount} style={{ "--feedback-count": feedbackType("unclear").color, "--feedback-count-soft": feedbackType("unclear").soft } as React.CSSProperties}>{marked}</span>}
-            <span className={styles.progressRing} style={{ "--progress": items.length ? count / items.length : 0 } as React.CSSProperties} aria-label={count + " מתוך " + items.length + " שקפים נצפו"} />
+            <span className={styles.progressRing} style={{ "--progress": progressItems.length ? count / progressItems.length : 0 } as React.CSSProperties} aria-label={count + " מתוך " + progressItems.length + " שקפים נצפו"} />
           </button>
           {open[chapter.id] && <div className={styles.chapterSlides}>{items.map((slide) => <button type="button" key={slide.n} className={[styles.slideLink, current.n === slide.n ? styles.slideActive : "", seen.includes(slide.n) ? styles.slideSeen : ""].join(" ")} onClick={() => go(slide.n - 1)} aria-current={slide.n === current.n ? "step" : undefined}>
             <span className={styles.slideNumber} dir="ltr">{slideLabel(slide)}</span><span className={styles.slideTitle}>{slide.h}</span>
@@ -457,7 +460,7 @@ export default function Lesson06Player({ lecturerMode = false }: { lecturerMode?
 
   if (!opened) return <section ref={previewCardRef} style={{ "--above": `${previewAbove}px`, "--preview-width": `${previewWidth}px` } as React.CSSProperties} className={["l4-player", styles.preview].join(" ")} aria-label="תצוגה מקדימה של מערך השיעור">
     <div className={styles.previewStage}><div className={styles.previewPlaceholder}><span>מערכות תקשורת · שיעור 06</span><strong>מפגש משולב: מקלט AM ויסודות FM</strong><small>הגרסה העדכנית של מערך השיעור מוכנה לפתיחה</small></div></div>
-    <footer className={styles.previewFooter}><div><strong>מערך שיעור 06 · מקלט AM ויסודות FM</strong><span>{lesson06MainSlideCount} שקפי מסלול חובה · {L6_SLIDES.length - lesson06MainSlideCount} נספחים · {lesson06TotalMinutes} דקות</span></div><button ref={previewButtonRef} type="button" className={styles.openLessonButton} onClick={() => { notifyLecturer("open"); setOutlineOpen(true); setContextOpen(window.innerWidth > 1191); setOpened(true); }}>פתיחת מערך השיעור <span aria-hidden="true">←</span></button></footer>
+    <footer className={styles.previewFooter}><div><strong>מערך שיעור 06 · מקלט AM ויסודות FM</strong><span>{lesson06MainSlideCount} שקפי מסלול חובה · {lesson06AppendixCount} נספחים · {lesson06TotalMinutes} דקות</span></div><button ref={previewButtonRef} type="button" className={styles.openLessonButton} onClick={() => { notifyLecturer("open"); setOutlineOpen(true); setContextOpen(window.innerWidth > 1191); setOpened(true); }}>פתיחת מערך השיעור <span aria-hidden="true">←</span></button></footer>
   </section>;
 
   if (typeof document === "undefined") return null;
@@ -467,7 +470,7 @@ export default function Lesson06Player({ lecturerMode = false }: { lecturerMode?
     <FeedbackPopover slide={slide} feedback={feedback} open={feedbackOpen} setOpen={setFeedbackOpen} onSave={saveFeedback} onDelete={deleteFeedback} busy={feedbackBusy} error={feedbackError} dark />
     {showSpeakerNotes && slide.notes && <aside className={styles.speakerNotes}><b>הערות מרצה</b><p>{slide.notes}</p></aside>}
     <div className={styles.presentControls}>
-      <button type="button" onClick={() => go(index - 1)}>הקודם</button><span dir="ltr">{slide.n <= lesson06MainSlideCount ? `${pad2(slide.n)} / ${pad2(lesson06MainSlideCount)}` : `${slideLabel(slide)} / נספחים ${L6_SLIDES.length - lesson06MainSlideCount}`}</span>
+      <button type="button" onClick={() => go(index - 1)}>הקודם</button><span dir="ltr">{slideCounter(slide)}</span>
       <button type="button" onClick={() => go(index + 1)}>הבא</button>{lecturerMode && <button type="button" aria-pressed={showSpeakerNotes} onClick={() => setShowSpeakerNotes((value) => !value)}>הערות מרצה · N</button>}
       <button type="button" onClick={exitPresentation}>יציאה · Esc</button>
     </div>
@@ -504,7 +507,7 @@ export default function Lesson06Player({ lecturerMode = false }: { lecturerMode?
         <ChapterBar index={index} go={go} feedback={feedback} />
         <div className={styles.slideNav}>
           <button type="button" className={styles.navButton} aria-label="לשקף הקודם" onClick={() => go(index - 1)}><Chevron back /></button>
-          <span className={styles.slideCount} dir="ltr">{slide.n <= lesson06MainSlideCount ? `${pad2(slide.n)} / ${pad2(lesson06MainSlideCount)}` : `${slideLabel(slide)} / נספחים ${L6_SLIDES.length - lesson06MainSlideCount}`}</span>
+          <span className={styles.slideCount} dir="ltr">{slideCounter(slide)}</span>
           <button type="button" className={styles.navButton} aria-label="לשקף הבא" onClick={() => go(index + 1)}><Chevron /></button>
           <span className={styles.chapterLabel}>{chapter.title}</span><span className={styles.timeLeft}>{lesson06TotalMinutes} דק׳ · נספחים ברשות</span>
         </div>
