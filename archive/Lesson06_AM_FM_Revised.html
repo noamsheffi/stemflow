@@ -1,0 +1,2738 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>שיעור 06 · מקלט AM ויסודות FM</title>
+<style>
+/* =========================================================
+   שיעור 06 · מערכות תקשורת · מקלט AM ויסודות FM
+   שכבת עיצוב אחת לכל המצגת. הקנבס קבוע: 1400 × 788.
+   ========================================================= */
+:root{
+  --ink:#0e1726; --ink2:#26344a; --body:#42526b; --muted:#7d8ba1;
+  --line:#dfe6ef; --line2:#eef2f7; --surface:#ffffff;
+  --canvas:#eff3f8;
+  --accent:#0891b2; --accent-d:#0b6e83; --accent-p:#e6f9fc;
+  --violet:#7c5cf0; --violet-p:#f2eeff;
+  --good:#0f8a5f; --good-p:#e9f9f1; --warn:#b45309; --warn-p:#fff6e8;
+  --bad:#c02a2a;
+  --mono:ui-monospace,SFMono-Regular,"DejaVu Sans Mono",Consolas,monospace;
+  --sans:"Heebo","Assistant","Noto Sans Hebrew","Segoe UI",system-ui,Arial,sans-serif;
+  --serif:"Cambria Math",Cambria,"Times New Roman",serif;
+  --r:12px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  font-family:var(--sans); color:var(--ink); background:#0b1220;
+  -webkit-font-smoothing:antialiased;
+}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:3px solid rgba(8,145,178,.45);outline-offset:2px}
+
+/* ---------------- shell ---------------- */
+.deck{display:flex;flex-direction:column;height:100dvh;overflow:hidden}
+.toolbar{
+  flex:none;display:flex;align-items:center;gap:14px;padding:9px 18px;
+  background:#0b1220;color:#dbe7f3;border-bottom:1px solid #1b2a3d;
+}
+.toolbar .t-title{font-size:13.5px;font-weight:700;letter-spacing:.02em;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.toolbar .t-title span{color:#7d93ab;font-weight:600}
+.toolbar .t-right{margin-inline-start:auto;display:flex;align-items:center;gap:8px;flex:none}
+.toolbar button{
+  background:#152438;border:1px solid #24384f;border-radius:8px;height:30px;padding:0 11px;
+  font-size:12.5px;font-weight:700;color:#c7d7e6;
+}
+.toolbar button:hover{background:#1d3149;border-color:#33506e;color:#fff}
+.toolbar button[aria-pressed=true]{background:#0e7490;border-color:#0891b2;color:#fff}
+.toolbar .count{font:700 12px var(--mono);color:#8aa2ba;direction:ltr}
+
+.stagewrap{flex:1 1 auto;min-height:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px}
+.stage{
+  position:relative;flex:none;overflow:hidden;background:var(--canvas);
+  border-radius:14px;box-shadow:0 18px 50px rgba(0,0,0,.38);
+  width:1400px;height:788px;transform-origin:center center;
+}
+.slide{position:absolute;inset:0;display:none}
+.slide.on{display:block}
+
+.controls{flex:none;display:flex;align-items:center;justify-content:center;gap:4px;padding:0 0 12px}
+.controls button{min-width:70px;height:34px;border:0;border-radius:9px;background:#152438;color:#dbe7f3;font-weight:800;font-size:13px}
+.controls button:hover:not(:disabled){background:#0e7490;color:#fff}
+.controls button:disabled{opacity:.3;cursor:default}
+.controls .pos{color:#8aa2ba;font:700 12px var(--mono);padding:0 10px;direction:ltr}
+.progress{position:absolute;bottom:0;left:0;height:3px;background:linear-gradient(90deg,var(--accent),var(--violet));transition:width .25s ease;z-index:5}
+
+/* ---------------- slide frame ---------------- */
+.sl{
+  width:1400px;height:788px;direction:rtl;position:relative;overflow:hidden;
+  display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;gap:10px;
+  padding:26px 44px 14px;background:
+    radial-gradient(ellipse 62% 44% at 96% -6%,rgba(8,145,178,.10),transparent 70%),
+    radial-gradient(ellipse 48% 36% at 2% 104%,rgba(124,92,240,.07),transparent 70%),
+    var(--canvas);
+  color:var(--ink);
+}
+.sl::after{content:"";position:absolute;bottom:0;left:0;width:256px;height:4px;background:linear-gradient(90deg,var(--accent),var(--violet));border-radius:0 3px 0 0}
+.hd{flex:none;border-bottom:1.5px solid var(--line);padding-bottom:8px;min-width:0}
+.eb{font-size:13px;font-weight:800;letter-spacing:.08em;color:var(--accent-d);text-transform:none}
+.hd h2{font-size:33px;line-height:1.1;font-weight:800;letter-spacing:-.022em;margin:3px 0 0;text-wrap:balance}
+.sl.dense .hd h2{font-size:30px}
+.bd{min-height:0;display:flex;flex-direction:column;gap:10px;justify-content:center}
+.tk{
+  flex:none;display:flex;align-items:center;gap:12px;background:var(--surface);
+  border:1px solid var(--line);border-radius:11px;padding:7px 14px;
+  font-size:17.5px;font-weight:600;color:var(--ink2);line-height:1.35;
+}
+.tk>b{
+  flex:none;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;
+  border-radius:7px;padding:4px 10px;font-size:12.5px;font-weight:800;letter-spacing:.03em;
+}
+.ft{flex:none;display:flex;justify-content:space-between;align-items:center;font-size:12px;font-weight:700;letter-spacing:.05em;color:var(--muted)}
+.ft .num{direction:ltr;font-family:var(--mono)}
+
+/* section / break slides */
+.sl.sec{background:linear-gradient(148deg,#0b1220 0%,#132a3f 52%,#0b4f5e 130%);grid-template-rows:minmax(0,1fr) auto}
+.sl.sec .hd{border-color:rgba(255,255,255,.16)}
+.sl.sec .hd h2{color:#eaf7fb;font-size:58px;line-height:1.06;max-width:20ch}
+.sl.sec .eb{color:#5fd4e6;font-size:15px}
+.sl.sec .tk{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.16);color:#dcecf3}
+.sl.sec .ft{color:#8aa2ba}
+.sl.sec::after{width:100%;height:5px}
+
+/* ---------------- primitives ---------------- */
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px}
+.g4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:9px}
+.g21{display:grid;grid-template-columns:1.12fr .88fr;gap:12px;align-items:start}
+.g12{display:grid;grid-template-columns:.88fr 1.12fr;gap:12px;align-items:start}
+.row{display:flex;gap:10px;align-items:stretch}
+.grow{flex:1 1 auto;min-height:0}
+
+.card{
+  background:var(--surface);border:1px solid var(--line);border-radius:var(--r);
+  padding:11px 15px;display:flex;flex-direction:column;gap:5px;min-width:0;
+  box-shadow:0 1px 2px rgba(14,23,38,.04);
+}
+.card h3{margin:0;font-size:15.5px;font-weight:800;color:var(--accent-d);letter-spacing:.01em}
+.card p,.card li{margin:0;font-size:18px;line-height:1.44;color:var(--body)}
+.card b{color:var(--ink)}
+.card.ask{background:var(--accent-p);border-color:#a9e8f2}
+.card.ask h3{color:#0a6675}
+.card.ok{background:var(--good-p);border-color:#b3e8cf}
+.card.ok h3{color:#0a6b4a}
+.card.warn{background:var(--warn-p);border-color:#f6d9a8}
+.card.warn h3{color:#8a4407}
+.card.flat{box-shadow:none;border-style:dashed;background:#f8fafc}
+.card ul{margin:0;padding-inline-start:1.15em;display:grid;gap:2px}
+.card .cap{font-size:15px;color:var(--muted);font-weight:700}
+
+.bridge{
+  display:flex;align-items:center;gap:10px;padding:6px 12px;border-radius:9px;
+  background:linear-gradient(90deg,rgba(125,139,161,.10),rgba(8,145,178,.05));
+  border:1px solid var(--line);border-inline-start:4px solid #b6c3d4;
+  font-size:16px;line-height:1.4;color:var(--ink2);
+}
+.bridge em{
+  flex:none;font-style:normal;font-size:12px;font-weight:800;letter-spacing:.03em;
+  color:#5b6b81;background:#fff;border:1px solid var(--line);border-radius:6px;padding:2px 7px;
+}
+.bridge p{margin:0}
+
+.keyidea{
+  display:flex;align-items:center;gap:12px;padding:9px 15px;border-radius:11px;
+  background:linear-gradient(135deg,var(--accent-p),var(--violet-p));
+  border:1px solid #a9e8f2;
+}
+.keyidea em{flex:none;font-style:normal;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff;border-radius:7px;padding:4px 9px;font-size:12px;font-weight:800}
+.keyidea p{margin:0;font-size:20px;font-weight:800;line-height:1.35}
+
+.note{font-size:17px;line-height:1.4;padding:7px 13px;border-radius:9px;background:#f6f9fc;border:1px solid var(--line);color:var(--ink2)}
+.note b{color:var(--ink)}
+.caveat{display:flex;gap:10px;align-items:flex-start;padding:7px 13px;border-radius:9px;background:var(--warn-p);border:1px solid #f6d9a8;font-size:16.5px;line-height:1.38;color:#7c3d06}
+.caveat em{flex:none;font-style:normal;font-size:12px;font-weight:800;color:#8a4407;padding-top:3px}
+.caveat p{margin:0}
+.caveat.info{background:#f4f8fc;border-color:var(--line);color:var(--ink2)}
+.caveat.info em{color:var(--muted)}
+
+.eq{direction:ltr;display:inline-block;font-family:var(--serif);font-size:1.1em;letter-spacing:.01em;white-space:nowrap}
+.eq i,.var{font-family:var(--serif);font-style:italic}
+.formula{
+  direction:ltr;text-align:center;background:linear-gradient(135deg,#eefbfe,#f4f1ff);
+  border:1px solid #b8e9f1;border-radius:9px;padding:5px 14px;
+  font-family:var(--serif);font-size:25px;color:#0a5d70;
+}
+.formula.sm{font-size:21px;padding:4px 12px}
+.formula.lg{font-size:30px;padding:8px 16px}
+.ltr{direction:ltr;unicode-bidi:isolate;white-space:nowrap;display:inline-block}
+.pill{
+  display:inline-block;direction:ltr;font:700 13px var(--mono);color:var(--accent-d);
+  background:#eef7fa;border:1px solid #cde9f0;border-radius:6px;padding:1px 7px;
+}
+.divider{height:1px;background:var(--line);margin:1px 0}
+
+/* tables */
+.tbl{width:100%;border-collapse:separate;border-spacing:0;background:#fff;border:1px solid var(--line);border-radius:10px;overflow:hidden;font-size:16.5px}
+.tbl th{background:#132234;color:#eef4fa;font-size:14px;font-weight:800;padding:5px 9px;text-align:center}
+.tbl td{padding:4px 9px;border-top:1px solid var(--line2);text-align:center;color:var(--ink2);line-height:1.34}
+.tbl td.l{text-align:right}
+.tbl .sym{font-family:var(--mono);font-weight:700;color:var(--accent-d);direction:ltr}
+.tbl tr.hl td{background:#f2fbfd}
+.tbl .am{background:#f4f9ff}
+.tbl .fm{background:#f3fcfd}
+
+/* ---------- charts ---------- */
+.plots{display:grid;gap:8px;min-height:0}
+.plot{
+  position:relative;margin:0;background:#fff;border:1px solid var(--line);border-radius:11px;
+  padding:6px 10px 4px;display:flex;flex-direction:column;min-height:0;overflow:hidden;
+}
+.plot canvas{flex:1 1 auto;width:100%;height:100%;display:block;min-height:0}
+.plot figcaption{flex:none;font-size:13.5px;font-weight:700;color:var(--muted);letter-spacing:.01em;padding-top:2px}
+.plot figcaption b{color:var(--ink2)}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:13.5px;font-weight:700;color:var(--body)}
+.legend i{display:inline-block;width:18px;height:4px;border-radius:2px;vertical-align:middle;margin-inline-end:5px}
+
+/* ---------- controls ---------- */
+.simwrap{display:flex;gap:11px;min-height:0;flex:1 1 0;align-items:stretch}
+.simwrap>.plots{flex:1 1 auto;min-width:0}
+.simwrap>.side{flex:0 0 344px;width:344px;display:flex;flex-direction:column;gap:8px;min-height:0;overflow:auto;padding-inline-end:2px}
+.ctrl{background:#fff;border:1px solid var(--line);border-radius:11px;padding:8px 13px;display:flex;flex-direction:column;gap:6px}
+.ctl{display:grid;gap:0}
+.ctl>div{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.ctl label{font-size:16px;font-weight:800;color:var(--ink)}
+.ctl output{font:800 16px var(--mono);color:var(--accent-d);direction:ltr;white-space:nowrap}
+input[type=range]{width:100%;height:20px;direction:ltr;accent-color:var(--accent);cursor:pointer;margin:0}
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px}
+.stats.c3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.stat{background:#f7fafc;border:1px solid var(--line);border-radius:8px;padding:3px 9px;display:flex;flex-direction:column;min-width:0}
+.stat small{font-size:12.5px;font-weight:700;color:var(--muted);line-height:1.25}
+.stat b{font:800 17px var(--mono);color:var(--ink);direction:ltr;white-space:nowrap}
+.stat.hl{background:var(--accent-p);border-color:#b8e9f1}
+.stat.hl b{color:#0a5d70}
+.status{font-size:15px;font-weight:700;line-height:1.35;padding:5px 10px;border-radius:8px;background:var(--good-p);color:#085b40;border:1px solid #b3e8cf;margin:0}
+.status.info{background:#f2f6fb;color:#334155;border-color:var(--line)}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{font:700 14px inherit;font-family:inherit;padding:4px 10px;border-radius:7px;border:1.5px solid #cfd9e5;background:#fff;color:var(--ink2)}
+.chip:hover{border-color:var(--accent)}
+.chip[aria-pressed=true]{background:#132234;border-color:#132234;color:#fff}
+.btn{font:800 15px inherit;font-family:inherit;padding:6px 14px;border-radius:9px;border:0;background:linear-gradient(135deg,var(--accent),var(--violet));color:#fff}
+.btn.ghost{background:#fff;color:var(--accent-d);border:1.5px solid var(--accent)}
+.btn:disabled{opacity:.4;cursor:default}
+
+/* reveal blocks */
+.rev{display:grid;gap:6px}
+.rbox{display:none;background:var(--good-p);border:1px solid #b3e8cf;border-radius:9px;padding:7px 12px;font-size:17px;line-height:1.42;color:#0a5c42}
+.rbox.on{display:block}
+.rbox b{color:#08503a}
+
+/* stepped solution */
+.steps{display:grid;gap:5px;counter-reset:st}
+.step{display:none;background:#fff;border:1px solid var(--line);border-inline-start:4px solid var(--accent);border-radius:8px;padding:6px 12px;font-size:17px;line-height:1.4;color:var(--ink2)}
+.step:first-child,.step.on{display:block;background:#fff}
+.steps[data-step="1"] .step:nth-child(-n+1),
+.steps[data-step="2"] .step:nth-child(-n+2),
+.steps[data-step="3"] .step:nth-child(-n+3),
+.steps[data-step="4"] .step:nth-child(-n+4){display:block}
+.step b{color:var(--ink)}
+
+/* mcq */
+.mcq{display:grid;gap:5px}
+.mcq button{font:inherit;font-size:16.5px;text-align:right;padding:6px 12px;border-radius:8px;border:1.5px solid #cfd9e5;background:#fff;color:var(--ink2);line-height:1.35}
+.mcq button:hover{border-color:var(--accent)}
+.mcq button.right{background:var(--good-p);border-color:#4fb98a}
+.mcq button.wrong{background:#fdf0f0;border-color:#e08d8d}
+.mcq button:disabled{cursor:default}
+.fb{display:none;font-size:15.5px;line-height:1.38;padding:5px 10px;border-radius:8px;margin:0}
+.fb.on{display:block}
+.fb.good{background:var(--good-p);border:1px solid #b3e8cf;color:#0a5c42}
+.fb.bad{background:#fdf0f0;border:1px solid #f2c4c4;color:#8f2020}
+
+/* chain blocks */
+.schem{display:flex;align-items:stretch;gap:7px}
+.schem>button{
+  flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;
+  padding:8px 6px;border-radius:10px;background:#fff;border:2px solid var(--c,#cfd9e5);
+  color:var(--ink);font-size:16px;font-weight:800;text-align:center;line-height:1.2;
+}
+.schem>button small{font-size:13px;font-weight:700;color:var(--muted)}
+.schem>button:hover{box-shadow:0 0 0 3px rgba(8,145,178,.13)}
+.schem>button[aria-pressed=true]{background:var(--c);border-color:var(--c);color:#fff}
+.schem>button[aria-pressed=true] small{color:rgba(255,255,255,.85)}
+.schem>i{align-self:center;color:#9fb0c4;font-style:normal;font-size:18px;font-weight:800}
+.schem>.gone{opacity:.35;filter:grayscale(1)}
+.st-mic{--c:#5b6b81}.st-aud{--c:#0d7f96}.st-vco{--c:#6d4ce0}.st-mul{--c:#0e7490}.st-pa{--c:#b03a72}.st-ant{--c:#132234}
+.st-rf{--c:#0d7f96}.st-mix{--c:#6d4ce0}.st-if{--c:#0f8a5f}.st-det{--c:#b03a72}
+.stinfo{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.stinfo>div{background:#fff;border:1px solid var(--line);border-top:4px solid var(--c,var(--accent));border-radius:10px;padding:7px 12px}
+.stinfo h4{margin:0 0 2px;font-size:13px;color:var(--muted);font-weight:800;letter-spacing:.03em}
+.stinfo p{margin:0;font-size:16.5px;line-height:1.36;color:var(--ink2)}
+
+/* timeline (session map) */
+.tline{display:flex;gap:4px;height:80px}
+.tline>div{border-radius:9px;padding:6px 10px;color:#fff;display:flex;flex-direction:column;justify-content:space-between;min-width:0;overflow:hidden}
+.tline b{font-size:15px;line-height:1.2;font-weight:800}
+.tline span{font-size:15px;font-weight:800;direction:ltr;text-align:end}
+.tline .brk{background:repeating-linear-gradient(135deg,#dbe4ee 0 9px,#eef2f7 9px 18px);color:#42526b}
+
+/* misc */
+.bigq{font-size:25px;font-weight:800;line-height:1.28;margin:0;color:var(--ink)}
+.kicker{font-size:15px;font-weight:800;color:var(--muted);letter-spacing:.05em}
+.tasklist{margin:0;padding-inline-start:1.2em;display:grid;gap:2px;font-size:17px;color:var(--body)}
+.cover-art{background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px}
+.cover-art canvas{width:100%;height:210px;display:block}
+
+/* outline drawer */
+.drawer{
+  position:fixed;top:0;bottom:0;inset-inline-start:0;width:min(400px,88vw);z-index:60;
+  background:#fff;display:flex;flex-direction:column;box-shadow:12px 0 40px rgba(6,15,28,.28);
+  border-inline-end:1px solid var(--line);direction:rtl;
+}
+.drawer[hidden]{display:none}
+.drawer-h{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:13px 16px;border-bottom:1px solid var(--line);flex:none}
+.drawer-h b{font-size:15px}
+.drawer-h button{border:1px solid var(--line);background:#fff;border-radius:7px;height:28px;padding:0 10px;font-size:12.5px;font-weight:700;color:var(--muted)}
+.drawer-b{overflow:auto;padding:8px;flex:1 1 auto}
+.ol-ch{font-size:11.5px;font-weight:800;letter-spacing:.06em;color:var(--muted);padding:10px 8px 4px;border-top:1px solid var(--line2)}
+.ol-ch:first-child{border-top:0}
+.ol-i{display:flex;gap:9px;width:100%;padding:6px 8px;border:0;background:transparent;border-radius:7px;font-size:13px;color:var(--body);text-align:right;line-height:1.35}
+.ol-i:hover{background:#f2f6fb;color:var(--ink)}
+.ol-i.on{background:var(--accent-p);color:var(--accent-d);font-weight:800}
+.ol-i .n{font:700 11px var(--mono);color:var(--muted);direction:ltr;padding-top:1px;flex:none;width:16px}
+.ol-i.on .n{color:var(--accent-d)}
+
+/* present mode */
+body.presenting .toolbar,body.presenting .controls{display:none}
+body.presenting .stagewrap{padding:0}
+body.presenting::after{
+  content:"מצב הקרנה · Esc ליציאה";position:fixed;bottom:8px;inset-inline-end:12px;
+  font:600 11px var(--sans);color:#94a3b8;background:rgba(11,18,32,.55);
+  border-radius:6px;padding:4px 8px;pointer-events:none;z-index:70;
+}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+
+.note-block h3{margin:2px 0 8px;font-size:15px;color:#0b6e83}
+.note-block h4{margin:12px 0 4px;font-size:13px;letter-spacing:.03em;color:#7d8ba1}
+.note-block ul,.note-block ol{margin:0;padding-inline-start:1.15em;display:grid;gap:4px}
+.note-block li{font-size:14px;line-height:1.5;color:#26344a}
+.note-block li b{color:#0e1726}
+.note-block p{font-size:14px;color:#42526b}
+.drawer.notes .drawer-b{padding:14px 16px}
+
+</style>
+</head>
+<body>
+<div class="deck">
+  <header class="toolbar">
+    <div class="t-title">מערכות תקשורת · שיעור 06 <span>· מקלט AM ויסודות FM</span></div>
+    <div class="t-right">
+      <span class="count" data-pos>01 / 51</span>
+      <button id="notesBtn" type="button" aria-pressed="false">הערות מרצה</button>
+      <button id="outlineBtn" type="button" aria-pressed="false">תוכן</button>
+      <button id="presentBtn" type="button" aria-pressed="false">מצב הקרנה</button>
+    </div>
+  </header>
+  <div class="stagewrap">
+    <div class="stage" id="stage">
+<section class="slide" id="s01" data-label="מפת המפגש" data-chapter="השלמת מקלט AM">
+<div class="sl">
+  <header class="hd"><div class="eb">מפגש משולב · 135 דקות</div><h2>המפגש הזה: מסיימים את המקלט, ומתחילים את <span class="ltr">FM</span></h2></header>
+  <div class="bd">
+  <div class="tline">
+    <div style="flex:55;background:#1d4ed8"><b>השלמת מקלט AM</b><span>55′</span></div>
+    <div style="flex:5" class="brk"><b>הפסקה</b><span>5′</span></div>
+    <div style="flex:64;background:#0e7490"><b>יסודות FM</b><span>64′</span></div>
+    <div style="flex:11;background:#132234"><b>סגירה</b><span>11′</span></div>
+  </div>
+  <div class="g2">
+    <div class="card"><h3>מחצית א׳ · משלימים את AM</h3><ul>
+      <li>בחירת תחנה: רוחב פס ו־<i>Q</i>.</li>
+      <li>למה מקלט ישיר לא נותן ברירות אחידה.</li>
+      <li>סופר־הטרודיין: ערבל ותדר ביניים.</li>
+      <li>הבבואה ודחייתה.</li>
+    </ul><p class="cap">לא במפגש הזה: גלאי המעטפת, תכן RC ו־AGC.</p></div>
+    <div class="card"><h3>מחצית ב׳ · מתחילים FM</h3><ul>
+      <li>איפה יושב המידע בכל שיטה.</li>
+      <li>התדר הרגעי, הסטייה והמופע.</li>
+      <li>ספקטרום, רוחב פס והספק.</li>
+      <li>שרשרת המשדר ומכפיל תדר.</li>
+    </ul><p class="cap">המפגש מסתיים בשאלה: איך מקלט FM משחזר את המידע?</p></div>
+  </div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>מסלול אחד: מן הברירות של AM ועד שרשרת משדר FM — ניסוי, ניבוי ומסקנה בכל צעד.</div></div>
+  <footer class="ft"><span>השלמת מקלט AM</span><span class="num">01 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s02" data-label="רוחב פס ו־Q" data-chapter="השלמת מקלט AM">
+<div class="sl">
+  <header class="hd"><div class="eb">ברירות</div><h2>כמה חד צריך המסנן כדי לבחור תחנה אחת?</h2></header>
+  <div class="bd">
+  <div class="bridge"><em>בשקף הקודם</em><p>המסנן צריך להיות צר מספיק כדי להעביר תחנה אחת ולא שתיים. את החדות מודדים במספר אחד — <i>Q</i>.</p></div>
+  <div class="keyidea"><em>ההגדרה</em><div><p class="ltr" style="font-size:26px">Q = f₀ ⁄ BW</p><p style="font-size:15px;font-weight:600;margin:2px 0 0">יחס בין תדר התהודה לרוחב הפס — מספר חסר יחידות.</p></div></div>
+  <div class="g3">
+    <div class="card"><h3><i>f</i><sub>0</sub> · תדר התהודה</h3><p>התדר שאליו המסנן מכוון. ב־AM: 540–1600 kHz.</p></div>
+    <div class="card"><h3>BW · רוחב הפס</h3><p>התחום שהמסנן מעביר. ב־AM הוא נקבע מהמידע: <span class="ltr">BW = 2f<sub>m,max</sub></span> — עבור 5 kHz מתקבל 10 kHz.</p></div>
+    <div class="card ok"><h3><i>Q</i> · מה זה אומר</h3><p><b>Q גבוה = מסנן צר וחד.</b> דוגמה: 1000 kHz עם 10 kHz נותן <span class="ltr">Q = 100</span>.</p></div>
+  </div>
+  <div class="caveat"><em>טעות נפוצה</em><p><i>Q</i> הוא תכונה של <b>המסנן</b>, לא של התחנה: אותה תחנה תיראה צרה או רחבה לפי המסנן שדרכו היא עוברת.</p></div></div>
+  <div class="tk"><b>שורה תחתונה</b><div><i>Q</i> גבוה פירושו מסנן צר; רוחב הפס של AM נקבע מהמידע, לא מתדר התחנה.</div></div>
+  <footer class="ft"><span>השלמת מקלט AM</span><span class="num">02 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s03" data-label="Q לאורך הסקאלה" data-chapter="השלמת מקלט AM">
+<div class="sl">
+  <header class="hd"><div class="eb">דוגמה מספרית</div><h2>אותו רוחב פס — אבל <span class="ltr">Q</span> משתנה פי שלושה</h2></header>
+  <div class="bd">
+  <div class="bridge"><em>בשקף הקודם</em><p>הגדרנו <span class="ltr">Q = f₀/BW</span>. עכשיו נציב את קצוות הסקאלה — והבעיה מתגלה רק כשמסתכלים על שניהם יחד.</p></div>
+  <div class="g21">
+    <figure class="plot"><canvas data-draw="qscale"></canvas><figcaption><b>Q הנדרש</b> לכל תדר, כאשר רוחב הפס קבוע על 10 kHz</figcaption></figure>
+    <div class="card ok"><h3>ההצבה</h3><p class="ltr" style="font-size:18px;line-height:1.6">540 ⁄ 10 = 54<br>1000 ⁄ 10 = 100<br>1600 ⁄ 10 = 160</p><p>רוחב הפס קבוע והתדר משתנה — ולכן <b>ה־Q הנדרש גדל כמעט פי שלושה</b>.</p></div>
+  </div>
+  <p class="note"><b>המסקנה שתוביל לשקף הבא:</b> מסנן יחיד לא יכול להיות גם רחב מספיק בקצה התחתון וגם צר מספיק בקצה העליון.</p></div>
+  <div class="tk"><b>שורה תחתונה</b><div>Q עולה מ־54 ל־160 לאורך הסקאלה — ולכן מסנן אחד לא נותן ברירות אחידה.</div></div>
+  <footer class="ft"><span>השלמת מקלט AM</span><span class="num">03 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s04" data-label="למה מקלט ישיר לא מספיק" data-chapter="השלמת מקלט AM">
+<div class="sl">
+  <header class="hd"><div class="eb">הבעיה המבנית</div><h2>שני כשלים במקלט ישיר — ואי אפשר לתקן אותם במסנן</h2></header>
+  <div class="bd">
+  <div class="bridge"><em>בשקף הקודם</em><p>ה־Q הנדרש משתנה פי שלושה. זה לא עניין של רכיב טוב יותר — זו בעיה של מבנה.</p></div>
+  <div class="g2">
+    <div class="card warn"><h3>1 · ברירות לא אחידה</h3><p>כל הדרגות מכוונות לאותו תדר. רוחב הפס קבוע והתדר משתנה פי 3 — בקצה התחתון תחנות שכנות נכנסות יחד, ובקצה העליון האות עצמו נחתך.</p></div>
+    <div class="card warn"><h3>2 · הגבר תלוי־תדר</h3><p>ההגבר של דרגה תהודתית תלוי בתדר, ולכן אותה תחנה תישמע בעוצמה שונה בין קצה לקצה. כל כיוונון מחייב לכוון מחדש את כל הדרגות.</p></div>
+  </div>
+  <div class="caveat"><em>נקודה מדויקת</em><p>מסנן <b>חד יותר</b> לא פותר את הבעיה — הוא מחמיר אותה בקצה העליון, שבו המסנן כבר צר מדי.</p></div>
+  <div class="note"><b>להמחשה:</b> ב־AM תחנה תופסת 10 kHz מתוך סקאלה של 1060 kHz — הפרדה קשה במיוחד.</div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>הבעיה אינה רכיב אלא ארכיטקטורה: מסנן אחד לא יכול לשרת תחום שמשתנה פי שלושה.</div></div>
+  <footer class="ft"><span>השלמת מקלט AM</span><span class="num">04 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s05" data-label="להזיז את האות לתדר קבוע" data-chapter="השלמת מקלט AM">
+<div class="sl">
+  <header class="hd"><div class="eb">הרעיון</div><h2>במקום להזיז את המסנן — מזיזים את האות</h2></header>
+  <div class="bd">
+  <div class="bridge"><em>בשקף הקודם</em><p>מסנן אחד לא יכול לשרת את כל הסקאלה. השאלה הופכת: מה אם נשאיר את המסנן במקום?</p></div>
+  <div class="keyidea"><em>הפתרון</em><div><p>כל תחנה מועברת לאותו תדר ביניים קבוע — <span class="ltr">IF</span> — ואז מסנן אחד מתאים לכולן.</p></div></div>
+  <div class="g3">
+    <div class="card"><h3>שלב 1 · מזיזים</h3><p>ערבל ממיר את תדר התחנה לתדר ביניים אחיד. המידע נשמר.</p></div>
+    <div class="card"><h3>שלב 2 · מסננים</h3><p>המסנן יושב על תדר קבוע, ולכן <span class="ltr">Q = f<sub>IF</sub>/BW</span> קבוע לכל הסקאלה.</p></div>
+    <div class="card ok"><h3>שלב 3 · מגלים</h3><p>האות כבר בתדר נוח. כאן AM ו־FM נפרדים: גלאי מעטפת מול גלאי תדר.</p></div>
+  </div>
+  <div class="caveat info"><em>לדיוק</em><p>האות לא "משנה תדר" פיזיקלית. נוצר עותק חדש בתדר אחר, והמידע עובר אליו.</p></div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>מזיזים את האות לתדר קבוע — ומקבלים ברירות אחידה ממסנן יחיד.</div></div>
+  <footer class="ft"><span>השלמת מקלט AM</span><span class="num">05 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s06" data-label="סופר־הטרודיין — לחצו על דרגה" data-chapter="השלמת מקלט AM">
+<div class="sl">
+  <header class="hd"><div class="eb">המסלול</div><h2>ארבע דרגות, תפקיד אחד לכל אחת</h2></header>
+  <div class="bd">
+  <div class="bridge"><em>בשקף הקודם</em><p>הרעיון ברור. עכשיו רואים אותו בפועל — לחצו על דרגה כדי לראות מה נכנס, מה יוצא ומה קורה אם היא חסרה.</p></div>
+  <div class="schem" data-explorer="st">
+    <button class="st-rf" data-name="אנטנה וקדם־מסנן" data-role="בוחרת תחום גס ומחלישה את הבבואה לפני ההמרה" data-in="כל התחנות" data-out="תחום צר סביב התחנה" data-miss="הבבואה חוזרת במלוא עוצמתה">אנטנה + RF<small>בחירה גסה</small></button><i>›</i>
+    <button class="st-mix" data-name="ערבל + מתנד מקומי" data-role="ממיר את תדר התחנה לתדר ביניים קבוע" data-in="תחנה + LO" data-out="סכום והפרש" data-miss="אין המרה — המסנן היה צריך לזוז עם התחנה">ערבל<small>+ LO</small></button><i>›</i>
+    <button class="st-if" data-name="מסנן תדר ביניים" data-role="קובע את הברירות האמיתית של המקלט" data-in="תדר ביניים" data-out="תחנה אחת" data-miss="אין ברירות — כל התחנות עוברות">מסנן IF<small>ברירות</small></button><i>›</i>
+    <button class="st-det" data-name="גלאי" data-role="מוציא את המידע מן האות" data-in="IF מאופנן" data-out="שמע" data-miss="אין שמע — האות נשאר מאופנן">גלאי<small>שמע</small></button>
+  </div>
+  <div class="stinfo" data-info></div>
+  <div class="caveat"><em>בדיקה</em><p>הסירו את מסנן ה־IF — הברירות נעלמת. הסירו את קדם־המסנן — הבבואה חוזרת. לכל דרגה תפקיד אחד בלבד.</p></div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>הברירות נעשית במסנן ה־IF, כי הוא היחיד שעובד בתדר קבוע.</div></div>
+  <footer class="ft"><span>השלמת מקלט AM</span><span class="num">06 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s07" data-label="TRF מול סופר־הטרודיין" data-chapter="השלמת מקלט AM">
+<div class="sl">
+  <header class="hd"><div class="eb">השוואה</div><h2>מה הרווחנו — ומה שילמנו</h2></header>
+  <div class="bd">
+  <div class="bridge"><em>בשקף הקודם</em><p>כל פתרון בתקשורת קונה יתרון במחיר. כאן קנינו ברירות אחידה, ושילמנו בבעיה חדשה.</p></div>
+  <table class="tbl">
+    <thead><tr><th style="width:132px">היבט</th><th>מקלט ישיר (TRF)</th><th>סופר־הטרודיין</th></tr></thead>
+    <tbody>
+      <tr><td class="l">מה זז בכיוונון</td><td class="am">כל המסננים וההגבר</td><td class="fm">רק המתנד המקומי</td></tr>
+      <tr><td class="l">ברירות</td><td class="am">תלויה בתדר — לא אחידה</td><td class="fm">אחידה, <span class="ltr">Q</span> קבוע</td></tr>
+      <tr><td class="l">הגבר</td><td class="am">משתנה עם התדר</td><td class="fm">יציב וקבוע</td></tr>
+      <tr class="hl"><td class="l">המחיר</td><td class="am">פשוט, בלי ערבל</td><td class="fm">ערבל ומתנד — ומכאן נולדת הבבואה</td></tr>
+    </tbody>
+  </table>
+  <div class="g2">
+    <div class="card"><h3>מה הבבואה מלמדת</h3><p>ההמרה ל־IF יוצרת <b>שני</b> תדרים שמגיעים לאותו הפרש — הבעיה נולדת מן הפתרון עצמו.</p></div>
+    <div class="card warn"><h3>מה לא לתקן</h3><p>מסנן IF צר יותר לא מסלק בבואה: היא כבר בתוך תדר הביניים. היא נדחית <b>לפני</b> הערבל.</p></div>
+  </div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>הסופר־הטרודיין פותר ברירות והגבר — ומציג בעיה חדשה: הבבואה.</div></div>
+  <footer class="ft"><span>השלמת מקלט AM</span><span class="num">07 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s08" data-label="הערבל — סכום והפרש" data-chapter="השלמת מקלט AM">
+<div class="sl">
+  <header class="hd"><div class="eb">המנגנון</div><h2>הערבל יוצר שני עותקים — המסנן בוחר אחד</h2></header>
+  <div class="bd">
+  <div class="simwrap">
+    <figure class="plot"><canvas data-draw="mixer8"></canvas><figcaption><b>מיקום התדרים</b> על הציר. ההפרש הוא מה שנבחר לתדר הביניים</figcaption></figure>
+    <div class="side">
+      <div class="ctrl">
+        <div class="ctl"><div><label for="m8-rf">תדר תחנה</label><output data-o="rf"></output></div><input id="m8-rf" data-k="frf" type="range" min="540" max="1600" step="10" value="1000"></div>
+        <div class="ctl"><div><label for="m8-lo">מתנד מקומי</label><output data-o="lo"></output></div><input id="m8-lo" data-k="flo" type="range" min="1000" max="2100" step="5" value="1455"></div>
+        <div class="stats">
+          <div class="stat hl"><small>הפרש = IF</small><b data-o="if"></b></div>
+          <div class="stat"><small>סכום</small><b data-o="sum"></b></div>
+        </div>
+      </div>
+      <p class="status info">המקלט בוחר את <b>ההפרש</b>. לכן תחנה שנמצאת במרחק זהה מעבר ל־LO תיפול לאותו IF.</p>
+    </div>
+  </div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>ערבל = סכום והפרש. ה־IF הוא ההפרש, והמסנן מחליט מי נשאר.</div></div>
+  <footer class="ft"><span>השלמת מקלט AM</span><span class="num">08 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s09" data-label="הבבואה — למה בלתי נמנעת" data-chapter="השלמת מקלט AM">
+<div class="sl">
+  <header class="hd"><div class="eb">המחיר</div><h2>שתי תחנות שונות, אותו תדר ביניים</h2></header>
+  <div class="bd">
+  <div class="bridge"><em>בשקף הקודם</em><p>המסנן בוחר את ההפרש. אבל שני תדרים שונים יכולים לתת אותו הפרש — ואת זה המסנן לא מבחין.</p></div>
+  <div class="g2">
+    <div class="card ok"><h3>התחנה שאנחנו רוצים</h3><p class="ltr" style="font-size:20px">LO − RF = 1455 − 1000 = 455 kHz</p></div>
+    <div class="card warn"><h3>התחנה שמתחזה לה</h3><p class="ltr" style="font-size:20px">1910 − 1455 = 455 kHz</p><p>תדר הבבואה: <b>LO + IF</b></p></div>
+  </div>
+  <div class="keyidea"><em>ההבדל היחיד</em><div><p style="font-size:18px">שתי התוצאות מגיעות לאותו IF — אבל רק אחת מהן היא התחנה. ההפרש עצמו אינו נושא מידע על הכיוון.</p></div></div>
+  <div class="caveat"><em>לכן</em><p>הבבואה אינה תקלה של רכיב. היא <b>מבנית</b>: נובעת מכך שהערבל יוצר סכום והפרש כאחד.</p></div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>תחנה בתדר <span class="ltr">LO + IF</span> נופלת בדיוק על אותה נקודה — והמסנן שאחרי הערבל לא יכול להבדיל.</div></div>
+  <footer class="ft"><span>השלמת מקלט AM</span><span class="num">09 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s10" data-label="דחיית הבבואה — קדם־מסנן" data-chapter="השלמת מקלט AM">
+<div class="sl">
+  <header class="hd"><div class="eb">הפתרון</div><h2>דוחים את הבבואה לפני שהיא נכנסת לערבל</h2></header>
+  <div class="bd">
+  <div class="bridge"><em>בשקף הקודם</em><p>אחרי הערבל שני התדרים זהים לגמרי. לכן ההחלטה חייבת להתקבל לפניו.</p></div>
+  <div class="g2">
+    <div class="card"><h3>מה עושה קדם־המסנן</h3><p>מסנן רחב סביב תדר התחנה. הוא לא קובע ברירות — הוא מחליש את התדר שנמצא במרחק <span class="ltr">2·f<sub>IF</sub></span> מן התחנה.</p></div>
+    <div class="card ok"><h3>המספר שמעניין</h3><p><span class="ltr">2 × 455 = 910 kHz</span> הרחק מן התחנה. ב־AM זה מרווח גדול, ולכן דחייה טובה אינה יקרה.</p></div>
+  </div>
+  <div class="caveat info"><em>הפשרה</em><p>קדם־מסנן צר מדי יחתוך את האות הרצוי. לכן הוא נשאר רחב, והדחייה אינה מושלמת — היא מספקת.</p></div>
+  <div class="note"><b>המרחק שממנו נולדת הדחייה:</b> בין התחנה לבבואה מפרידים <span class="ltr">2f<sub>IF</sub></span>. ככל שה־IF נמוך, קל יותר לדחות.</div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>דחיית הבבואה נעשית בקדם־מסנן, לפני הערבל — ולא במסנן ה־IF שאחריו.</div></div>
+  <footer class="ft"><span>השלמת מקלט AM</span><span class="num">10 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s11" data-label="תרגול מסכם — מודול AM" data-chapter="השלמת מקלט AM">
+<div class="sl">
+  <header class="hd"><div class="eb">תרגול</div><h2>שלוש בדיקות קצרות לפני המעבר</h2></header>
+  <div class="bd">
+  <div class="g3">
+    <div class="card ask"><h3>1 · Q</h3><p>תחנה ב־1200 kHz ברוחב פס 10 kHz. מהו ה־Q הנדרש?</p>
+      <div class="rev" data-box><button class="btn ghost" data-reveal>חשוף תשובה</button><div class="rbox"><b>120.</b> <span class="ltr">1200/10 = 120</span></div></div></div>
+    <div class="card ask"><h3>2 · IF</h3><p>LO = 1455 kHz והתחנה 1300 kHz. מהו תדר הביניים?</p>
+      <div class="rev" data-box><button class="btn ghost" data-reveal>חשוף תשובה</button><div class="rbox"><b>155 kHz</b> — ההפרש, ולא הסכום.</div></div></div>
+    <div class="card ask"><h3>3 · בבואה</h3><p>מהו תדר הבבואה עבור אותה תחנה, כאשר IF = 455 kHz?</p>
+      <div class="rev" data-box><button class="btn ghost" data-reveal>חשוף תשובה</button><div class="rbox"><b>1910 kHz.</b> <span class="ltr">LO + IF = 1455 + 455</span></div></div></div>
+  </div>
+  <div class="note"><b>מה סגרנו:</b> בחירת תחנה, המרה לתדר ביניים ודחיית בבואה. שלושת אלה משותפים גם למקלט FM — ולכן לא נחזור עליהם.</div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>ה־IF הוא לב המקלט: תדר קבוע, מסנן קבוע, ברירות אחידה — והבבואה כמחיר.</div></div>
+  <footer class="ft"><span>השלמת מקלט AM</span><span class="num">11 / 51</span></footer>
+</div>
+</section>
+<section class="slide sec" id="s12" data-label="הפסקה · 5 דקות" data-chapter="הפסקה">
+<div class="sl sec">
+  <header class="hd"><div class="eb">הפסקה · 5 דקות</div><h2>חוזרים אל <span class="ltr">FM</span> — מאותו מקום שבו AM נגמר</h2></header>
+  <div class="bd">
+  <div class="g2">
+    <div class="card"><h3>מה נשאר פתוח</h3><p>במקלט AM עצרנו לפני הגלאי. את גלאי המעטפת, תכן ה־RC וה־AGC נשלים במפגש הבא.</p></div>
+    <div class="card"><h3>מה מתחילים</h3><p>אותו אות מידע — אבל במקום אחר בגל: לא בגובה, בתדר.</p></div>
+  </div>
+  <div class="note">חזרה ב־5 דקות. ממשיכים מן השקף הבא: <b>AM מול FM</b>.</div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>הפסקה של 5 דקות — ואז אותו אות מידע, במקום אחר בגל.</div></div>
+  <footer class="ft"><span>הפסקה</span><span class="num">12 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s13" data-label="AM מול FM — ראיה ויזואלית" data-chapter="יסודות FM">
+<div class="sl">
+  <header class="hd"><div class="eb">הבדל מרכזי · ראיה ויזואלית</div><h2>אותו אות מידע — בשני מקומות שונים בגל</h2></header>
+  <div class="bd">
+  <div class="simwrap">
+    <div class="plots" style="grid-template-rows:1fr">
+      <figure class="plot"><canvas data-draw="amfm"></canvas><figcaption><b>שלושה גלים מסונכרנים:</b> AM למעלה, FM באמצע, ואותו מידע למטה</figcaption></figure>
+    </div>
+    <div class="side">
+      <div class="ctrl">
+        <div class="ctl"><div><label for="af-ma">עומק אפנון ב־AM</label><output data-o="ma"></output></div><input id="af-ma" data-k="ma" type="range" min="0" max="1" step="0.05" value="0.8"></div>
+        <div class="ctl"><div><label for="af-df">סטייה ב־FM [kHz]</label><output data-o="df"></output></div><input id="af-df" data-k="df" type="range" min="0" max="100" step="5" value="75"></div>
+        <div class="stats"><div class="stat hl"><small>סטייה</small><b data-o="dfv"></b></div><div class="stat"><small>עומק</small><b data-o="mav"></b></div></div>
+      </div>
+      <p class="status info"><b>הזיזו את המחוונים:</b> בגרף העליון הגובה זז; בגרף האמצעי הגובה קבוע והמרווח בין השיאים משתנה.</p>
+    </div>
+  </div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>AM משנה משרעת; FM משנה תדר. בשניהם — אותו אות מידע בדיוק.</div></div>
+  <footer class="ft"><span>יסודות FM</span><span class="num">13 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s14" data-label="סימולטור FM — שלושה גרפים מסונכרנים" data-chapter="יסודות FM">
+<div class="sl">
+  <header class="hd"><div class="eb">המחשה מלאה</div><h2>המידע, התדר הרגעי וגל ה־<span class="ltr">FM</span> — באותו חלון זמן</h2></header>
+  <div class="bd">
+  <div class="simwrap">
+    <div class="plots" style="grid-template-rows:.8fr 1fr 1fr">
+      <figure class="plot"><canvas data-draw="triple"></canvas><figcaption>שלושת הגרפים באותו חלון זמן — <b>שני מחזורי מידע</b></figcaption></figure>
+    </div>
+    <div class="side">
+      <div class="ctrl">
+        <div class="ctl"><div><label for="ff-fc">תדר נושא f<sub>c</sub> [kHz]</label><output data-o="fc"></output></div><input id="ff-fc" data-k="fc" type="range" min="20" max="300" step="10" value="100"></div>
+        <div class="ctl"><div><label for="ff-fm">תדר מידע f<sub>m</sub> [kHz]</label><output data-o="fm"></output></div><input id="ff-fm" data-k="fm" type="range" min="1" max="20" step="0.5" value="5"></div>
+        <div class="ctl"><div><label for="ff-df">סטייה Δf [kHz]</label><output data-o="df"></output></div><input id="ff-df" data-k="df" type="range" min="0" max="50" step="0.5" value="10"></div>
+        <div class="stats">
+          <div class="stat hl"><small>טווח התדר</small><b data-o="frange"></b></div>
+          <div class="stat"><small>מחזורי מידע בחלון</small><b>2</b></div>
+        </div>
+      </div>
+      <p class="status info">הגובה נשאר <span class="ltr">A<sub>c</sub></span> בכל הגדרה — רק צפיפות התנודות משתנה.</p>
+    </div>
+  </div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>שלושת הגרפים באותו חלון זמן: שינוי בסטייה מרחיב את טווח התדר — והגובה נשאר קבוע.</div></div>
+  <footer class="ft"><span>יסודות FM</span><span class="num">14 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s15" data-label="עקרון אפנון FM ומשדר" data-chapter="יסודות FM">
+<div class="sl">
+  <header class="hd"><div class="eb">שער FM · מטרות</div><h2>עקרון אפנון <span class="ltr">FM</span> ומשדר</h2></header>
+  <div class="bd">
+  <div class="g21">
+    <div style="display:grid;gap:9px">
+      <div class="cover-art"><canvas data-draw="cover"></canvas></div>
+      <p class="note"><b>מה רואים בגרף:</b> הקווים המקווקווים מסמנים את גובה הגל המרבי — והם <b>לא זזים</b>. מה שמשתנה הוא המרחק בין שיא לשיא: <b>קצב התנודה</b>.</p>
+    </div>
+    <div class="card"><h3>בסוף השיעור תדעו להסביר ולחשב</h3><ol style="gap:5px">
+      <li><b>ההבדל מ־AM:</b> למה מעבירים את המידע מן המשרעת לתדר.</li>
+      <li><b>התדר הרגעי:</b> כיצד מתח המידע קובע את התדר בכל רגע.</li>
+      <li><b>הסטייה:</b> Δf — כמה התדר זז.</li>
+      <li><b>רוחב הפס:</b> כמה מקום האות תופס בספקטרום.</li>
+      <li><b>ההספק:</b> ולמה הוא אינו תלוי במידע.</li>
+      <li><b>המשדר:</b> אילו דרגות הופכות מידע לשידור.</li>
+    </ol></div>
+  </div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>בסוף השיעור: תדעו להסביר מה זז בגל, לחשב סטייה ורוחב פס, ולהכיר את שרשרת המשדר.</div></div>
+  <footer class="ft"><span>יסודות FM</span><span class="num">15 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s16" data-label="ההבדל המרכזי — שתי הנוסחאות" data-chapter="יסודות FM">
+<div class="sl">
+  <header class="hd"><div class="eb">ההבדל</div><h2>שתי הנוסחאות, הבדל אחד</h2></header>
+  <div class="bd">
+  <div class="g2">
+    <div class="card"><h3><span class="ltr">AM</span> · המשרעת נושאת את המידע</h3>
+      <p class="ltr" style="font-size:20px;line-height:1.6">x_AM(t) = [A_c + A_m·cos(ω_m t)]·cos(ω_c t)</p>
+      <p><b>הגובה משתנה.</b> התדר נשאר <span class="ltr">f<sub>c</sub></span> לכל אורך השידור.</p></div>
+    <div class="card"><h3><span class="ltr">FM</span> · התדר הרגעי נושא את המידע</h3>
+      <p class="ltr" style="font-size:20px;line-height:1.6">f(t) = f_c + K_f·x(t)</p>
+      <p><b>הגובה קבוע.</b> התדר זז מעלה ומטה לפי אות המידע.</p></div>
+  </div>
+  <div class="keyidea"><em>ההבדל בשורה</em><div><p style="font-size:18px">ב־AM המידע נמצא ב<b>מעטפת</b> של הגל; ב־FM הוא נמצא ב<b>מרווח</b> בין שיא לשיא.</p></div></div>
+  <div class="caveat info"><em>לזכור</em><p>שתי הנוסחאות מתארות את אותו רעיון — <b>גל נושא אחד שנושא מידע</b>. ההבדל הוא מה משתנה.</p></div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>AM: A משתנה, f קבוע. FM: A קבוע, f משתנה.</div></div>
+  <footer class="ft"><span>יסודות FM</span><span class="num">16 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s17" data-label="שתי השיטות בהשוואה" data-chapter="יסודות FM">
+<div class="sl">
+  <header class="hd"><div class="eb">השוואה</div><h2>מה משתנה עם המידע — ומה נשאר</h2></header>
+  <div class="bd">
+  <table class="tbl">
+    <thead><tr><th style="width:190px">היבט</th><th class="amt">AM</th><th class="fmt">FM</th></tr></thead>
+    <tbody>
+      <tr><td class="l">מה משתנה</td><td class="am">המשרעת (המעטפת)</td><td class="fm">התדר הרגעי</td></tr>
+      <tr><td class="l">מה נשאר קבוע</td><td class="am">התדר f<sub>c</sub></td><td class="fm">המשרעת A<sub>c</sub></td></tr>
+      <tr><td class="l">המידע נמצא ב־</td><td class="am">גובה הגל</td><td class="fm">צפיפות התנודות</td></tr>
+      <tr><td class="l">רוחב הפס</td><td class="am">‎2f<sub>m</sub> — צר</td><td class="fm">רחב יותר, תלוי גם בסטייה</td></tr>
+      <tr class="hl"><td class="l">רגישות לרעש משרעת</td><td class="am">גבוהה — הרעש מוסיף לגובה</td><td class="fm">נמוכה — הגובה אינו נושא מידע</td></tr>
+    </tbody>
+  </table>
+  <div class="g2">
+    <div class="card"><h3>מה מרוויחים ב־FM</h3><p>רעש שמשנה את המשרעת כמעט אינו מזיק, כי המידע אינו בגובה.</p></div>
+    <div class="card warn"><h3>מה משלמים</h3><p>רוחב פס גדול יותר, ומעגלים מדויקים יותר — גם משדר וגם מקלט.</p></div>
+  </div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>AM נושא מידע בגובה וסובל מרעש; FM נושא מידע בתדר ומשלם ברוחב פס.</div></div>
+  <footer class="ft"><span>יסודות FM</span><span class="num">17 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s18" data-label="FM אידאלי מול משדר אמיתי" data-chapter="יסודות FM">
+<div class="sl">
+  <header class="hd"><div class="eb">מהמודל למציאות</div><h2>FM אידאלי מול משדר אמיתי</h2></header>
+  <div class="bd">
+  <div class="g2">
+    <div class="card ok"><h3>המודל האידאלי</h3><ul>
+      <li>המשרעת קבועה לחלוטין.</li>
+      <li>התדר משתנה בדיוק לפי המידע.</li>
+      <li>אין רעש, אין עיוות, אין הגבלת רוחב פס.</li>
+    </ul></div>
+    <div class="card warn"><h3>המציאות</h3><ul>
+      <li>הגבר מגביל את המשרעת — ולכן גם יוצר עיוות אם האות לא נחתך נקי.</li>
+      <li>אי־ליניאריות של VCO מוסיפה עיוות.</li>
+      <li>הערוץ מוסיף רעש, דעיכה והחזרות.</li>
+    </ul></div>
+  </div>
+  <div class="keyidea"><em>הגבלת משרעת</em><div><p style="font-size:18px">הגבלת המשרעת במשדר FM אינה מזיקה למידע — היא מסלקת רעש. זהו היתרון המרכזי של השיטה.</p></div></div>
+  <p class="note">במפגש הבא נראה כיצד המקלט מנצל זאת: מגביל, מסנן ומגלה את התדר.</p></div>
+  <div class="tk"><b>שורה תחתונה</b><div>המודל האידאלי נותן מעטפת קבועה; המציאות מוסיפה עיוות, רעש והחזרות — אך לא מוותרת על היתרון.</div></div>
+  <footer class="ft"><span>יסודות FM</span><span class="num">18 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s19" data-label="מה הערוץ מוסיף" data-chapter="יסודות FM">
+<div class="sl">
+  <header class="hd"><div class="eb">הערוץ</div><h2>מה קורה לאות בין המשדר למקלט</h2></header>
+  <div class="bd">
+  <div class="g3">
+    <div class="card"><h3>רעש</h3><p>מתח אקראי שמתווסף לאות ונכנס למשרעת. ב־FM רובו נחתך בהגבלה.</p></div>
+    <div class="card"><h3>דעיכה</h3><p>האות נחלש עם המרחק. ב־FM החלשות אינה הרסנית עד שהיחס לרעש יורד.</p></div>
+    <div class="card"><h3>החזרות</h3><p>אותו שידור מגיע בכמה נתיבים ובזמנים שונים — ויוצר הפרעות.</p></div>
+  </div>
+  <div class="caveat"><em>ההשלכה</em><p>ב־FM רעש שמתווסף למשרעת נחתך, אבל רעש שמזיז את <b>רגעי המעבר</b> של הגל — דווקא פוגע במידע, כי המידע יושב בתדר.</p></div>
+  <div class="note"><b>המסקנה:</b> היתרון של FM אינו ביטול הרעש, אלא <b>העברת הרעש</b> מן המקום שבו המידע נמצא למקום שבו הוא לא נמצא.</div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>FM אינו חסין לרעש — הוא ממקם את הרעש במקום שבו המידע אינו יושב.</div></div>
+  <footer class="ft"><span>יסודות FM</span><span class="num">19 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s20" data-label="תדר מול מהירות התפשטות" data-chapter="יסודות FM">
+<div class="sl">
+  <header class="hd"><div class="eb">הבחנה</div><h2>תדר ומהירות התפשטות — שני דברים שונים</h2></header>
+  <div class="bd">
+  <div class="keyidea"><em>ההבחנה</em><div><p style="font-size:19px">תדר = כמה תנודות בשנייה. מהירות התפשטות = כמה מהר הגל עובר במרחב. שינוי בתדר <b>אינו</b> משנה את מהירות ההתפשטות.</p></div></div>
+  <div class="g2">
+    <div class="card"><h3>בתוך הגל</h3><p>התדר הרגעי משתנה — מרווח בין שיא לשיא מתקצר ומתארך.</p></div>
+    <div class="card"><h3>במרחב</h3><p>הגל נע במהירות <span class="ltr">c</span>. המידע arrives מוקדם יותר או מאוחר יותר — אבל לא מהר יותר.</p></div>
+  </div>
+  <div class="caveat info"><em>לזכור</em><p>התדר משתנה <b>בתוך</b> האות, לא בדרך. מהירות ההתפשטות נקבעת על ידי התווך.</p></div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>תדר משתנה בתוך האות; מהירות ההתפשטות נקבעת על ידי התווך.</div></div>
+  <footer class="ft"><span>יסודות FM</span><span class="num">20 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s21" data-label="הסימונים והיחידות" data-chapter="יסודות FM">
+<div class="sl">
+  <header class="hd"><div class="eb">כלים</div><h2>חמישה סימונים — דרך דוגמה אחת מהרדיו</h2></header>
+  <div class="bd">
+  <div class="keyidea"><em>הדוגמה</em><div><p style="font-size:18px">תחנה ב־<span class="ltr">100.0 MHz</span>. כשהשדרן שותק — התדר בדיוק 100.0. כשהוא מדבר — התדר זז מעלה ומטה סביב 100.0.</p></div></div>
+  <table class="tbl">
+    <thead><tr><th style="width:150px">גודל</th><th style="width:92px">סימון</th><th style="width:92px">יחידה</th><th>בדוגמה שלנו</th></tr></thead>
+    <tbody>
+      <tr class="hl"><td class="l">תדר נושא</td><td class="sym">f_c</td><td>MHz</td><td>100.0 — התדר כשאין מידע</td></tr>
+      <tr><td class="l">תדר מידע</td><td class="sym">f_m</td><td>kHz</td><td>5 — כמה מהר הסטייה מתחלפת</td></tr>
+      <tr class="hl"><td class="l">סטייה מרבית</td><td class="sym">Δf</td><td>kHz</td><td>75 — המרחק המרבי מן המרכז</td></tr>
+      <tr><td class="l">רגישות התדר</td><td class="sym">K_f</td><td>kHz/V</td><td>כמה kHz זז התדר על כל וולט</td></tr>
+      <tr><td class="l">רוחב פס</td><td class="sym">BW</td><td>kHz</td><td>כמה מקום האות תופס בספקטרום</td></tr>
+    </tbody>
+  </table>
+  <p class="note"><b>שלוש יחידות שונות, שלושה סדרי גודל:</b> תדר נושא ב־MHz, תדר מידע וסטייה ב־kHz, רגישות ב־kHz לוולט. ערבוב ביניהם הוא מקור השגיאה הנפוץ ביותר.</p></div>
+  <div class="tk"><b>שורה תחתונה</b><div>f<sub>c</sub> ב־MHz, f<sub>m</sub> ו־Δf ב־kHz, K<sub>f</sub> ב־kHz/V — שלושה סדרי גודל, שלוש יחידות.</div></div>
+  <footer class="ft"><span>יסודות FM</span><span class="num">21 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s22" data-label="התדר הרגעי — ההגדרה" data-chapter="יסודות FM">
+<div class="sl">
+  <header class="hd"><div class="eb">הגדרה</div><h2>מתח המידע קובע את התדר הרגעי</h2></header>
+  <div class="bd">
+  <div class="bridge"><em>בשקף הקודם</em><p>יש לנו שמות ליחידות. עכשיו נחבר ביניהן — וזו ההגדרה שממנה נובע כל המשך השיעור.</p></div>
+  <div class="keyidea"><em>ההגדרה</em><div><p class="ltr" style="font-size:25px">f(t) = f_c + K_f · x(t)</p></div></div>
+  <div class="g4">
+    <div class="card"><h3><i>f</i><sub>c</sub></h3><p>תדר המרכז — התדר כשהמתח אפס. אינו משתנה לאורך השידור.</p></div>
+    <div class="card"><h3><i>x</i>(t)</h3><p>מתח המידע מהמיקרופון. נע בין חיובי לשלילי לפי הקול.</p></div>
+    <div class="card"><h3><i>K</i><sub>f</sub></h3><p>רגישות התדר — שיפוע האופיין של הרכיב. הקבוע היחיד בנוסחה.</p></div>
+    <div class="card ok"><h3><i>f</i>(t)</h3><p>התדר הרגעי. זה מה שנושא את המידע.</p></div>
+  </div>
+  <p class="note"><b>המשמעות במשפט:</b> אין תדר "אחד" לאות FM. בכל רגע יש תדר אחר — לפי גובה <b>וסימן</b> אות המידע באותו רגע.</p></div>
+  <div class="tk"><b>שורה תחתונה</b><div>f(t) = f<sub>c</sub> + K<sub>f</sub>·x(t) — K<sub>f</sub> קובע כמה הרץ לכל וולט; אם x(t)=0 אז f(t)=f<sub>c</sub>.</div></div>
+  <footer class="ft"><span>יסודות FM</span><span class="num">22 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s23" data-label="שלושת המצבים של אות המידע" data-chapter="יסודות FM">
+<div class="sl">
+  <header class="hd"><div class="eb">שלושה מצבים</div><h2>חיובי, אפס, שלילי — שלוש צפיפויות</h2></header>
+  <div class="bd">
+  <div class="bridge"><em>בשקף הקודם</em><p>ההגדרה עובדת בכל רגע. נעצור אותה בשלושה רגעים — ונראה מה קורה לגל בכל אחד.</p></div>
+  <figure class="plot grow"><canvas data-draw="states"></canvas><figcaption><b>שלושה רגעים של אותו אות:</b> המשרעת אינה משתנה באף אחד מהם — רק צפיפות התנודות</figcaption></figure>
+  <div class="keyidea"><em>הכלל</em><div><p style="font-size:18px">מתח חיובי → תדר גבוה מ־f<sub>c</sub>. מתח אפס → בדיוק f<sub>c</sub>. מתח שלילי → תדר נמוך מ־f<sub>c</sub>.</p></div></div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>חיובי = צפוף, אפס = רגיל, שלילי = מרווח. המשרעת נשארת קבועה בכל שלושתם.</div></div>
+  <footer class="ft"><span>יסודות FM</span><span class="num">23 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s24" data-label="מה קובע את הסטייה ומה את הקצב" data-chapter="יסודות FM">
+<div class="sl">
+  <header class="hd"><div class="eb">ניסוי</div><h2>שני מחוונים — שני דברים שונים לגמרי</h2></header>
+  <div class="bd">
+  <div class="simwrap">
+    <div class="plots" style="grid-template-rows:1fr">
+      <figure class="plot"><canvas data-draw="devrate"></canvas><figcaption><b>שמאל:</b> גודל המשרעת · <b>ימין:</b> קצב המידע — שני גדלים שאינם תלויים זה בזה</figcaption></figure>
+    </div>
+    <div class="side">
+      <div class="ctrl">
+        <div class="ctl"><div><label for="dr-am">משרעת המידע [V]</label><output data-o="am"></output></div><input id="dr-am" data-k="am" type="range" min="0.2" max="4" step="0.1" value="2"></div>
+        <div class="ctl"><div><label for="dr-fm">תדר המידע [kHz]</label><output data-o="fm"></output></div><input id="dr-fm" data-k="fm" type="range" min="1" max="12" step="0.5" value="5"></div>
+        <div class="ctl"><div><label for="dr-kf">רגישות K<sub>f</sub> [kHz/V]</label><output data-o="kf"></output></div><input id="dr-kf" data-k="kf" type="range" min="1" max="10" step="0.5" value="5"></div>
+        <div class="stats">
+          <div class="stat hl"><small>סטייה = K<sub>f</sub>·A<sub>m</sub></small><b data-o="dev"></b></div>
+          <div class="stat"><small>קצב שינוי</small><b data-o="rate"></b></div>
+        </div>
+      </div>
+      <p class="status info"><b>נסו:</b> שנו את המשרעת בלבד. הסטייה משתנה, הקצב לא. שנו את תדר המידע — ההפך.</p>
+    </div>
+  </div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>משרעת המידע קובעת <b>כמה</b> התדר זז; תדר המידע קובע <b>כמה מהר</b> הוא מתחלף.</div></div>
+  <footer class="ft"><span>יסודות FM</span><span class="num">24 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s25" data-label="תדר מידע מול סטייה" data-chapter="יסודות FM">
+<div class="sl">
+  <header class="hd"><div class="eb">ההבחנה הקריטית</div><h2>5 kHz אינם 75 kHz — שני גדלים, שני סדרי גודל</h2></header>
+  <div class="bd">
+  <div class="simwrap">
+    <div class="plots" style="grid-template-rows:1fr">
+      <figure class="plot"><canvas data-draw="fmvsdev"></canvas><figcaption><b>למעלה:</b> קצב המידע. <b>למטה:</b> טווח התדרים שהאות תופס סביב f<sub>c</sub></figcaption></figure>
+    </div>
+    <div class="side">
+      <div class="ctrl">
+        <div class="ctl"><div><label for="fd-fc">תדר נושא [MHz]</label><output data-o="fc"></output></div><input id="fd-fc" data-k="fc" type="range" min="88" max="108" step="0.1" value="98.7"></div>
+        <div class="ctl"><div><label for="fd-df">סטייה Δf [kHz]</label><output data-o="df"></output></div><input id="fd-df" data-k="df" type="range" min="5" max="100" step="5" value="75"></div>
+        <div class="ctl"><div><label for="fd-fm">תדר מידע [kHz]</label><output data-o="fm"></output></div><input id="fd-fm" data-k="fm" type="range" min="1" max="15" step="1" value="5"></div>
+        <div class="stats"><div class="stat hl"><small>טווח תדר</small><b data-o="span"></b></div><div class="stat"><small>קצב החלפה</small><b data-o="rate"></b></div></div>
+      </div>
+      <p class="status info"><b>ההבחנה:</b> תדר המידע הוא <b>קצב</b>; הסטייה היא <b>מרחק</b>. אין ביניהם יחס ישר.</p>
+    </div>
+  </div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>תדר המידע (5 kHz) הוא קצב; הסטייה (±75 kHz) היא מרחק מן המרכז. שני גדלים בלתי תלויים.</div></div>
+  <footer class="ft"><span>יסודות FM</span><span class="num">25 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s26" data-label="סטייה — חישוב מודרך" data-chapter="יסודות FM">
+<div class="sl">
+  <header class="hd"><div class="eb">חישוב</div><h2>מתח של 2V על רגישות 5 kHz/V — סטייה של 10 kHz</h2></header>
+  <div class="bd">
+  <div class="bridge"><em>בשקף הקודם</em><p>ההבחנה ברורה מהגרף. עכשיו נציב מספרים — ונראה מה עוד לא סגור.</p></div>
+  <div class="g21">
+    <div style="display:grid;gap:9px">
+      <div class="simwrap" style="flex:0 0 auto">
+        <div class="plots" style="grid-template-rows:1fr">
+          <figure class="plot"><canvas data-draw="devcalc"></canvas><figcaption>מיקום הסטייה על ציר התדר — <b>2Δf</b> הוא הטווח, לא רוחב הפס</figcaption></figure>
+        </div>
+      </div>
+      <div class="ctrl">
+        <div class="ctl"><div><label for="dc-kf">רגישות K<sub>f</sub> [kHz/V]</label><output data-o="kf"></output></div><input id="dc-kf" data-k="kf" type="range" min="1" max="15" step="0.5" value="5"></div>
+        <div class="ctl"><div><label for="dc-vm">מתח מידע שיא [V]</label><output data-o="vm"></output></div><input id="dc-vm" data-k="vm" type="range" min="0.5" max="4" step="0.5" value="2"></div>
+        <div class="stats"><div class="stat hl"><small>Δf = K<sub>f</sub>·V<sub>m</sub></small><b data-o="dev"></b></div><div class="stat"><small>טווח 2Δf</small><b data-o="span"></b></div></div>
+      </div>
+    </div>
+    <div style="display:grid;gap:9px">
+      <div class="card ok"><h3>התרגיל</h3><p>רגישות 5 kHz/V ומתח שיא של 2V.</p><p class="ltr" style="font-size:19px">Δf = 5 · 2 = 10 kHz</p></div>
+      <div class="card warn"><h3>מה עוד לא סגור</h3><p><b>2Δf אינו רוחב הפס של FM.</b> רוחב הפס תלוי גם בתדר המידע — וזה מה שנחשב בהמשך.</p></div>
+    </div>
+  </div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>Δf = K<sub>f</sub>·V<sub>m</sub> = 10 kHz. אבל 2Δf הוא רק הטווח שהתדר נע בו — לא רוחב הפס.</div></div>
+  <footer class="ft"><span>יסודות FM</span><span class="num">26 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s27" data-label="קול חזק יותר = סטייה גדולה יותר" data-chapter="יסודות FM">
+<div class="sl">
+  <header class="hd"><div class="eb">ניסוי מחשבתי</div><h2>"קול חזק יותר" — מה באמת משתנה?</h2></header>
+  <div class="bd">
+  <div class="simwrap">
+    <div class="plots" style="grid-template-rows:1fr">
+      <figure class="plot"><canvas data-draw="ampdev"></canvas><figcaption>אותו תדר מידע — <b>רק משרעת המידע שונה</b>. שימו לב מה לא זז</figcaption></figure>
+    </div>
+    <div class="side">
+      <div class="ctrl">
+        <div class="ctl"><div><label for="ad-am">משרעת אות המידע [V]</label><output data-o="am"></output></div><input id="ad-am" data-k="am" type="range" min="0.5" max="4" step="0.5" value="2"></div>
+        <div class="ctl"><div><label for="ad-kf">רגישות [kHz/V]</label><output data-o="kf"></output></div><input id="ad-kf" data-k="kf" type="range" min="1" max="10" step="0.5" value="5"></div>
+        <div class="stats"><div class="stat hl"><small>סטייה</small><b data-o="dev"></b></div><div class="stat"><small>תדר מרכז</small><b data-o="fc"></b></div></div>
+      </div>
+      <p class="status info"><b>שימו לב:</b> המעטפת של הגל <b>אינה משתנה</b>. רק המרווח בין שיא לשיא נע על טווח גדול יותר.</p>
+    </div>
+  </div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>משרעת מידע גדולה יותר → סטייה גדולה יותר. תדר המרכז ומשרעת הנושא נשארים קבועים.</div></div>
+  <footer class="ft"><span>יסודות FM</span><span class="num">27 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s28" data-label="מופע — למה התדר משנה זווית" data-chapter="יסודות FM">
+<div class="sl">
+  <header class="hd"><div class="eb">מופע</div><h2>מופע = הזווית שהגל צבר — ותדר הוא קצב צבירת הזווית</h2></header>
+  <div class="bd">
+  <div class="g21">
+    <figure class="plot"><canvas data-draw="phase"></canvas><figcaption><b>מימין:</b> וקטור שמסתובב. <b>משמאל:</b> הגל הנוצר — ככל שהסיבוב מהיר יותר, המחזורים צפופים יותר</figcaption></figure>
+    <div style="display:grid;gap:9px">
+      <div class="keyidea"><em>הרעיון</em><div><p style="font-size:17px">תדר גבוה = הזווית נצברת מהר. תדר נמוך = הזווית נצברת לאט. אותו מידע — בצורת שינוי בקצב צבירת הזווית.</p></div></div>
+      <div class="card"><h3>למה זה מספיק</h3><p>אם התדר הרגעי הוא קצב שינוי המופע, אז שינוי תדר <b>מתבטא</b> בהצטברות זווית שונה — וזה מה שאפשר לשדר.</p></div>
+      <div class="caveat"><em>מה לא עושים כאן</em><p>לא כותבים אינטגרל. הרעיון הוא חזותי: זווית שנצברת בקצב משתנה.</p></div>
+    </div>
+  </div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>תדר = קצב שינוי המופע. לכן אפנון תדר הוא בפועל אפנון של קצב צבירת הזווית.</div></div>
+  <footer class="ft"><span>יסודות FM</span><span class="num">28 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s29" data-label="האות המלא של FM" data-chapter="יסודות FM">
+<div class="sl">
+  <header class="hd"><div class="eb">האות</div><h2>מה קורה למופע כאשר המידע ממשיך להשתנות</h2></header>
+  <div class="bd">
+  <div class="bridge"><em>בשקף הקודם</em><p>המופע נצבר. אבל המידע אינו מחזיק תדר קבוע — הוא משתנה כל הזמן. מה קורה אז?</p></div>
+  <div class="g2">
+    <div class="card"><h3>אם התדר קבוע</h3><p>המופע גדל linearly: זווית = 2πf·t. הגל חלק ואחיד.</p></div>
+    <div class="card"><h3>אם התדר משתנה</h3><p>המופע הוא <b>הצטברות</b> של כל התדרים הרגעיים — ולכן הוא מתעקל, לא גדל בקו ישר.</p></div>
+  </div>
+  <div class="keyidea"><em>המסקנה</em><div><p style="font-size:18px">המופע של FM אינו קו ישר. הוא הסכום של כל הזוויות הקטנות שנצברו — וזה מה שיוצר את הצורה האופיינית.</p></div></div>
+  <div class="caveat info"><em>בקצרה</em><p>בגלל שהתדר משתנה, אי אפשר לתאר את האות כ־<span class="ltr">cos(ω_c t + φ)</span> עם φ קבוע. המופע עצמו הופך לחלק מן המידע.</p></div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>כשהתדר משתנה, המופע מתעקל — ולכן האות אינו קוסינוס בתדר קבוע עם הזזה.</div></div>
+  <footer class="ft"><span>יסודות FM</span><span class="num">29 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s30" data-label="הצורה הסופית — בלי גזירה" data-chapter="יסודות FM">
+<div class="sl">
+  <header class="hd"><div class="eb">הצורה הסופית</div><h2>איך נראה האות המלא — בלי לחשב</h2></header>
+  <div class="bd">
+  <div class="g21">
+    <figure class="plot"><canvas data-draw="inst"></canvas><figcaption><b>מידע</b> (מקווקו) מול <b>התדר הרגעי</b> — אותם רגעים, שני גדלים</figcaption></figure>
+    <div style="display:grid;gap:9px">
+      <div class="card ok"><h3>מה שמתקבל</h3><p>גל בתדר משתנה, עם מעטפת קבועה. הצורה: צפופה כשב־x(t) גבוה, מרווחת כשהוא נמוך.</p></div>
+      <div class="card"><h3>הנוסחה — כקיצור דרך</h3><p class="ltr" style="font-size:17px">x(t) = A_c·cos(2πf_c t + φ(t))</p><p>כאשר φ(t) הוא המופע הנצבר. אין צורך לחשב אותו ידנית.</p></div>
+      <div class="caveat"><em>הרחבה למרצה</em><p>הגזירה המלאה (אינטגרל של הסטייה) מופיעה בנספח, ואינה נדרשת להמשך.</p></div>
+    </div>
+  </div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>אות FM = גל במעטפת קבועה שתדרו משתנה. המופע הנצבר הוא מה שמאפשר לו "לזכור" את המידע.</div></div>
+  <footer class="ft"><span>יסודות FM</span><span class="num">30 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s31" data-label="המחשה בזמן — לקרוא גל FM" data-chapter="יסודות FM">
+<div class="sl">
+  <header class="hd"><div class="eb">פענוח</div><h2>פענחו את אות ה־<span class="ltr">FM</span></h2></header>
+  <div class="bd">
+  <div class="simwrap">
+    <div class="plots" style="grid-template-rows:1.25fr .75fr">
+      <figure class="plot"><canvas data-draw="fmread"></canvas><figcaption><b>שלב 1:</b> קראו רק את הגל. איפה התדר גבוה, נמוך, ושווה למרכז?</figcaption></figure>
+      <figure class="plot"><canvas data-draw="fmreadmsg"></canvas><figcaption><b>שלב 2:</b> חשפו את אות המידע ובדקו את הניבוי</figcaption></figure>
+    </div>
+    <div class="side">
+      <div class="ctrl">
+        <div class="ctl"><div><label for="fr-df">סטייה [kHz]</label><output data-o="df"></output></div><input id="fr-df" data-k="df" type="range" min="0" max="60" step="2" value="30"></div>
+        <div class="ctl"><div><label for="fr-fm">תדר מידע [kHz]</label><output data-o="fm"></output></div><input id="fr-fm" data-k="fm" type="range" min="1" max="8" step="1" value="4"></div>
+      </div>
+      <div class="rev" data-box>
+        <button class="btn ghost" data-reveal>חשוף את אות המידע</button>
+        <button class="btn ghost" data-reveal>חשוף מסקנה</button>
+      </div>
+      <p class="status info">בכל שלושת המצבים המשרעת זהה — רק המרווח משתנה.</p>
+    </div>
+  </div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>גל FM נקרא לפי הצפיפות: צפוף = תדר גבוה, מרווח = תדר נמוך, אחיד = בשיא או בשפל.</div></div>
+  <footer class="ft"><span>יסודות FM</span><span class="num">31 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s32" data-label="הספקטרום של FM" data-chapter="יסודות FM">
+<div class="sl">
+  <header class="hd"><div class="eb">ספקטרום</div><h2>מהצפיפות בגל — לקווים בספקטרום</h2></header>
+  <div class="bd">
+  <div class="simwrap">
+    <div class="plots" style="grid-template-rows:1fr">
+      <figure class="plot"><canvas data-draw="spectrum"></canvas><figcaption><b>נושא ופסי צד</b> במרווחים של f<sub>m</sub> — הסטייה קובעת כמה פסים משמעותיים</figcaption></figure>
+    </div>
+    <div class="side">
+      <div class="ctrl">
+        <div class="ctl"><div><label for="sp-fc">תדר נושא [kHz]</label><output data-o="fc"></output></div><input id="sp-fc" data-k="fc" type="range" min="90" max="110" step="1" value="100"></div>
+        <div class="ctl"><div><label for="sp-fm">מרווח בין פסים f<sub>m</sub> [kHz]</label><output data-o="fm"></output></div><input id="sp-fm" data-k="fm" type="range" min="2" max="15" step="1" value="5"></div>
+        <div class="ctl"><div><label for="sp-df">סטייה Δf [kHz]</label><output data-o="df"></output></div><input id="sp-df" data-k="df" type="range" min="0" max="80" step="2" value="20"></div>
+        <div class="stats"><div class="stat hl"><small>רוחב פס משוער</small><b data-o="bw"></b></div><div class="stat"><small>פסים משמעותיים</small><b data-o="nb"></b></div></div>
+      </div>
+      <p class="status info">הפסים <b>אינם</b> נגמרים בחדות — יש גבול רק ל"מה משמעותי", לא לספקטרום.</p>
+    </div>
+  </div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>ספקטרום FM = נושא ומספר פסי צד במרווחים של f<sub>m</sub>. הסטייה קובעת כמה מהם משמעותיים.</div></div>
+  <footer class="ft"><span>יסודות FM</span><span class="num">32 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s33" data-label="כלל קרסון — רוחב פס" data-chapter="יסודות FM">
+<div class="sl">
+  <header class="hd"><div class="eb">חישוב רוחב פס</div><h2>כלל קרסון: רוחב הפס בקירוב טוב</h2></header>
+  <div class="bd">
+  <div class="bridge"><em>בשקף הקודם</em><p>הספקטרום ממשיך עד אין סוף — אבל אפשר להעריך היטב כמה ממנו <b>משמעותי</b>. זו מטרתו של כלל קרסון.</p></div>
+  <div class="keyidea"><em>הכלל</em><div><p class="ltr" style="font-size:26px">BW ≈ 2(Δf + f_m)</p><p style="font-size:15px;font-weight:600;margin:2px 0 0">קירוב לרוחב הפס המשמעותי — לא תחימה מוחלטת של הספקטרום.</p></div></div>
+  <div class="g2">
+    <div class="simwrap" style="flex-direction:column">
+      <div class="plots" style="grid-template-rows:1fr">
+        <figure class="plot"><canvas data-draw="carson"></canvas></figure>
+      </div>
+      <div class="ctrl">
+        <div class="ctl"><div><label for="ca-df">סטייה Δf [kHz]</label><output data-o="df"></output></div><input id="ca-df" data-k="df" type="range" min="5" max="100" step="5" value="75"></div>
+        <div class="ctl"><div><label for="ca-fm">תדר מידע f<sub>m</sub> [kHz]</label><output data-o="fm"></output></div><input id="ca-fm" data-k="fm" type="range" min="1" max="20" step="1" value="15"></div>
+      </div>
+    </div>
+    <div style="display:grid;gap:9px">
+      <div class="card ok"><h3>הדוגמה</h3><p>סטייה 75 kHz ותדר מידע 15 kHz:</p><p class="ltr" style="font-size:19px">BW ≈ 2(75 + 15) = 180 kHz</p></div>
+      <div class="rev" data-box><button class="btn" data-reveal>הצג את שלבי הפתרון</button>
+        <div class="rbox"><b>1.</b> מחברים סטייה ותדר מידע. <b>2.</b> מכפילים בשניים. <b>3.</b> מקבלים 180 kHz — הערכה, לא ערך מדויק.</div></div>
+      <div class="caveat"><em>לזכור</em><p>הכלל מניח סטייה ותדר מידע שניהם רלוונטיים. כאשר Δf קטן מאוד, מתקבל <span class="ltr">BW ≈ 2f<sub>m</sub></span> — כמו AM.</p></div>
+    </div>
+  </div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>BW ≈ 2(Δf + f<sub>m</sub>) — קירוב לרוחב הפס המשמעותי. בדוגמה: 180 kHz.</div></div>
+  <footer class="ft"><span>יסודות FM</span><span class="num">33 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s34" data-label="צר־פס ורחב־פס" data-chapter="יסודות FM">
+<div class="sl">
+  <header class="hd"><div class="eb">סיווג</div><h2>FM צר־פס ו־FM רחב־פס — אותו עיקרון, שני קני מידה</h2></header>
+  <div class="bd">
+  <div class="simwrap">
+    <div class="plots" style="grid-template-rows:1fr">
+      <figure class="plot"><canvas data-draw="narrowwide"></canvas><figcaption><b>קשר דיבור</b> מול <b>שידור FM</b> — אותו מבנה ספקטרלי, רוחב שונה בסדרי גודל</figcaption></figure>
+    </div>
+    <div class="side">
+      <div class="g2" style="gap:7px">
+        <div class="card" style="padding:8px 11px"><h3>קשר דיבור</h3><p style="font-size:15px">סטייה קטנה, רוחב פס צר — מתאים לערוצים צרים.</p></div>
+        <div class="card" style="padding:8px 11px"><h3>שידור FM</h3><p style="font-size:15px">סטייה גדולה, רוחב פס רחב — מתאים לאיכות שמע גבוהה.</p></div>
+      </div>
+      <p class="status info"><b>ההבחנה:</b> תדר המידע אינו "קצב המידע". הוא רק קובע את המרווח בין פסי הצד.</p>
+      <div class="caveat"><em>לזכור</em><p>שני המקרים הם FM תקף. ההבדל הוא בבחירת הסטייה — כלומר ברוחב הפס שמקצים.</p></div>
+    </div>
+  </div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>אותו עיקרון, שני קני מידה: הסטייה היא זו שמבדילה צר־פס מרחב־פס.</div></div>
+  <footer class="ft"><span>יסודות FM</span><span class="num">34 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s35" data-label="הספק — למה הוא קבוע" data-chapter="יסודות FM">
+<div class="sl">
+  <header class="hd"><div class="eb">הספק</div><h2>מעטפת קבועה — הספק שאינו תלוי במידע</h2></header>
+  <div class="bd">
+  <div class="simwrap">
+    <div class="plots" style="grid-template-rows:1fr">
+      <figure class="plot"><canvas data-draw="powerenv"></canvas><figcaption><b>AM למעלה:</b> המשרעת זזה, ולכן ההספק הרגעי זז. <b>FM למטה:</b> המעטפת קבועה</figcaption></figure>
+    </div>
+    <div class="side">
+      <div class="ctrl">
+        <div class="chips">
+          <button class="chip" data-mode="mode" data-v="am" aria-pressed="false">הדגש AM</button>
+          <button class="chip" data-mode="mode" data-v="fm" aria-pressed="true">הדגש FM</button>
+        </div>
+      </div>
+      <p class="status info"><b>בהנחת</b> משרעת נושא קבועה ועומס קבוע: הספק FM אינו תלוי בסטייה ובתדר המידע.</p>
+      <div class="caveat"><em>לזכור</em><p>הקביעות נובעת מן ההנחות. שינוי בהספק המשדר או בעומס משנה את ההספק — אבל לא המידע עצמו.</p></div>
+    </div>
+  </div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>הספק FM קבוע משום שהמעטפת קבועה — לא משום שהמידע "חזק" יותר.</div></div>
+  <footer class="ft"><span>יסודות FM</span><span class="num">35 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s36" data-label="הספק — חישוב ותנאי תקפות" data-chapter="יסודות FM">
+<div class="sl">
+  <header class="hd"><div class="eb">חישוב</div><h2>P = A² / 2R — מתח שיא, לא מתח אפקטיבי</h2></header>
+  <div class="bd">
+  <div class="g21">
+    <figure class="plot"><canvas data-draw="pq"></canvas><figcaption><b>ההספק עולה בריבוע המתח</b> ויורד עם העומס</figcaption></figure>
+    <div class="ctrl">
+      <div class="keyidea" style="padding:8px 12px"><em>הנוסחה</em><div><p class="ltr" style="font-size:21px">P = A² / (2R)</p></div></div>
+      <div class="ctl"><div><label for="pq-a">מתח שיא A [V]</label><output data-o="a"></output></div><input id="pq-a" data-k="a" type="range" min="1" max="25" step="0.5" value="10"></div>
+      <div class="ctl"><div><label for="pq-r">התנגדות עומס R [Ω]</label><output data-o="r"></output></div><input id="pq-r" data-k="r" type="range" min="25" max="100" step="5" value="50"></div>
+      <div class="stats"><div class="stat hl"><small>הספק</small><b data-o="p"></b></div><div class="stat"><small>מתח אפקטיבי</small><b data-o="rms"></b></div></div>
+      <p class="status info"><b>10V על 50Ω → 1W.</b> שינוי הסטייה לבדה אינו משנה את ההספק האידיאלי.</p>
+    </div>
+  </div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>P = A²/(2R) עם A מתח שיא: 10V על 50Ω נותן 1W. Δf אינו משנה את ההספק האידיאלי.</div></div>
+  <footer class="ft"><span>יסודות FM</span><span class="num">36 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s37" data-label="תרגול מודרך — שלושה גדלים" data-chapter="יסודות FM">
+<div class="sl">
+  <header class="hd"><div class="eb">תרגול</div><h2>אותה תחנה, שלושה חישובים</h2></header>
+  <div class="bd">
+  <div class="g3">
+    <div class="card ask"><h3>1 · סטייה</h3><p>רגישות 8 kHz/V ומתח שיא 3V. מהי הסטייה?</p>
+      <div class="rev" data-box><button class="btn ghost" data-reveal>חשוף תשובה</button><div class="rbox"><b>24 kHz.</b> <span class="ltr">8 × 3 = 24</span></div></div></div>
+    <div class="card ask"><h3>2 · רוחב פס</h3><p>Δf = 24 kHz ו־f<sub>m</sub> = 6 kHz. מהו רוחב הפס לפי קרסון?</p>
+      <div class="rev" data-box><button class="btn ghost" data-reveal>חשוף תשובה</button><div class="rbox"><b>60 kHz.</b> <span class="ltr">2(24 + 6) = 60</span></div></div></div>
+    <div class="card ask"><h3>3 · הספק</h3><p>מתח שיא 20V על עומס 50Ω. מהו ההספק?</p>
+      <div class="rev" data-box><button class="btn ghost" data-reveal>חשוף תשובה</button><div class="rbox"><b>4W.</b> <span class="ltr">400/100 = 4</span></div></div></div>
+  </div>
+  <div class="caveat"><em>שגיאה נפוצה</em><p>בשאלה 3: להשתמש במתח אפקטיבי במקום במתח שיא — ואז ההספק יוצא כפול.</p></div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>שלושה חישובים, שלוש מלכודות: יחידות, קירוב קרסון, ומתח שיא מול אפקטיבי.</div></div>
+  <footer class="ft"><span>יסודות FM</span><span class="num">37 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s38" data-label="מה תלוי במה" data-chapter="יסודות FM">
+<div class="sl">
+  <header class="hd"><div class="eb">מיפוי תלות</div><h2>מה תלוי במה — טבלה אחת</h2></header>
+  <div class="bd">
+  <table class="tbl">
+    <thead><tr><th style="width:210px">משתנה</th><th>משרעת המידע A<sub>m</sub></th><th>תדר המידע f<sub>m</sub></th><th>הספק המשדר</th></tr></thead>
+    <tbody>
+      <tr class="hl"><td class="l">סטייה Δf</td><td>גדלה ביחס ישר</td><td>אינה תלויה</td><td>אינה תלויה</td></tr>
+      <tr><td class="l">רוחב פס</td><td>גדל</td><td>גדל</td><td>אינה תלויה</td></tr>
+      <tr><td class="l">תדר מרכז f<sub>c</sub></td><td>אינו משתנה</td><td>אינו משתנה</td><td>אינו משתנה</td></tr>
+      <tr class="hl"><td class="l">הספק</td><td>אינו משתנה</td><td>אינו משתנה</td><td>גדל</td></tr>
+    </tbody>
+  </table>
+  <div class="g2">
+    <div class="card ok"><h3>הכלל שמאחורי הטבלה</h3><p>המידע משפיע על <b>התדר</b>, לא על <b>ההספק</b>. כל שורה בטבלה נגזרת מן ההנחה הזו.</p></div>
+    <div class="card warn"><h3>מה הטבלה לא אומרת</h3><p>שה־Δf "לא משנה כלום". הוא משנה את <b>רוחב הפס</b> — וזו המשמעות של תחנה רחבה.</p></div>
+  </div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>משרעת המידע משנה סטייה ורוחב פס; תדר המידע משנה רוחב פס; המידע אינו משנה הספק.</div></div>
+  <footer class="ft"><span>יסודות FM</span><span class="num">38 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s39" data-label="שלושה משפטים + שאלה" data-chapter="יסודות FM">
+<div class="sl">
+  <header class="hd"><div class="eb">סיכום ביניים</div><h2>FM בשלושה משפטים</h2></header>
+  <div class="bd">
+  <div class="rows">
+    <div class="card"><h3>1 · הסטייה</h3><p>תלויה במשרעת אות המידע וברגישות התדר של המשדר — ולא בתדר המידע.</p></div>
+    <div class="card"><h3>2 · רוחב הפס</h3><p>תלוי בסטייה <b>ובתדר המידע</b> גם יחד. לכן תחנה רחבה משלמת ביותר מגדל אחד.</p></div>
+    <div class="card"><h3>3 · ההספק</h3><p>קבוע, בהנחת מעטפת ועומס קבועים — ואינו נושא את המידע.</p></div>
+  </div>
+  <div class="card ask"><h3>שאלה</h3><p>אם מכפילים את משרעת אות המידע — מה משתנה ומה לא?</p>
+    <div class="rev" data-box><button class="btn ghost" data-reveal>חשוף תשובה</button>
+      <div class="rbox"><b>משתנה:</b> הסטייה, ולכן גם רוחב הפס. <b>לא משתנה:</b> תדר המידע, תדר המרכז וההספק.</div></div></div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>שלושה משפטים: סטייה ממשרעת המידע, רוחב פס משניהם, הספק קבוע.</div></div>
+  <footer class="ft"><span>יסודות FM</span><span class="num">39 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s40" data-label="מנתח ספקטרום — מה הוא מראה" data-chapter="יסודות FM">
+<div class="sl">
+  <header class="hd"><div class="eb">מכשיר</div><h2>מנתח ספקטרום: מה רואים — ומה לא</h2></header>
+  <div class="bd">
+  <div class="simwrap">
+    <div class="plots" style="grid-template-rows:1fr">
+      <figure class="plot"><canvas data-draw="spectrum"></canvas><figcaption>כאשר <b>Δf גדלה ו־f<sub>m</sub> קבוע</b> — מספר הפסים המשמעותיים גדל ורוחב הפס מתרחב</figcaption></figure>
+    </div>
+    <div class="side">
+      <div class="ctrl">
+        <div class="ctl"><div><label for="sa-df">סטייה Δf [kHz]</label><output data-o="df"></output></div><input id="sa-df" data-k="df" type="range" min="0" max="80" step="2" value="10"></div>
+        <div class="ctl"><div><label for="sa-fm">תדר מידע f<sub>m</sub> [kHz] — קבוע</label><output data-o="fm"></output></div><input id="sa-fm" data-k="fm" type="range" min="5" max="5" step="1" value="5"></div>
+        <div class="stats"><div class="stat hl"><small>רוחב פס</small><b data-o="bw"></b></div><div class="stat"><small>פסים</small><b data-o="nb"></b></div></div>
+      </div>
+      <div class="caveat"><em>מה המכשיר לא מודד</em><p>מנתח ספקטרום מראה את <b>התפלגות ההספק בתדר</b>. הוא אינו קורא את הסטייה הרגעית של האות.</p></div>
+      <p class="status info"><b>המסקנה:</b> התרחבות הספקטרום היא הראיה העקיפה לסטייה — לא מדידה ישירה שלה.</p>
+    </div>
+  </div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>מנתח ספקטרום מראה התרחבות רוחב פס — לא את הסטייה הרגעית. אל תטעו ביניהם.</div></div>
+  <footer class="ft"><span>יסודות FM</span><span class="num">40 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s41" data-label="שרשרת המשדר — שישה בלוקים" data-chapter="המשדר">
+<div class="sl">
+  <header class="hd"><div class="eb">התמונה השלמה</div><h2>שרשרת המשדר: שישה בלוקים, תפקיד אחד לכל אחד</h2></header>
+  <div class="bd">
+  <div class="schem" data-explorer="st">
+    <button class="st-mic" data-name="מיקרופון" data-role="ממיר את הקול לאות חשמלי" data-in="גל קול" data-out="מתח קטן" data-miss="אין מקור מידע">מיקרופון<small>מקור מידע</small></button><i>‹</i>
+    <button class="st-aud" data-name="מגבר שמע" data-role="מתאים את רמת המתח לכניסת ה־VCO" data-in="מתח קטן" data-out="מתח מתאים" data-miss="הסטייה קטנה מדי">מגבר שמע<small>התאמת רמה</small></button><i>‹</i>
+    <button class="st-vco" data-name="VCO" data-role="יוצר את האפנון: מתח כניסה קובע את תדר היציאה" data-in="מתח מידע" data-out="FM בתדר נמוך" data-miss="אין אפנון">VCO<small>יוצר FM</small></button><i>‹</i>
+    <button class="st-mul" data-name="מכפיל תדר ×n" data-role="מעלה את תדר הנושא ואת הסטייה לפי אותו מקדם" data-in="FM נמוך" data-out="FM גבוה" data-miss="התדר נמוך מדי לשידור">מכפיל ×n<small>העלאת תדר</small></button><i>‹</i>
+    <button class="st-pa" data-name="מגבר הספק PA" data-role="מעלה את ההספק לשידור" data-in="FM" data-out="FM בהספק גבוה" data-miss="טווח שידור קצר">מגבר הספק<small>הספק</small></button><i>‹</i>
+    <button class="st-ant" data-name="אנטנה" data-role="מקרינה את האות למרחב" data-in="הספק גבוה" data-out="גל אלקטרומגנטי" data-miss="אין שידור">אנטנה<small>שידור</small></button>
+  </div>
+  <div class="stinfo" data-info></div>
+  <p class="note"><b>לחצו על בלוק</b> כדי לראות מה נכנס, מה יוצא, ומה קורה אם הוא חסר. שימו לב: הוצאת מגבר ההספק מפחיתה עוצמה — <b>אינה מבטלת את האפנון</b>.</p></div>
+  <div class="tk"><b>שורה תחתונה</b><div>האפנון נולד ב־VCO; המכפיל מעלה תדר; מגבר ההספק מוסיף עוצמה — ולא יוצר אפנון.</div></div>
+  <footer class="ft"><span>המשדר</span><span class="num">41 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s42" data-label="VCO — הרכיב שממיר מתח לתדר" data-chapter="המשדר">
+<div class="sl">
+  <header class="hd"><div class="eb">הרכיב המרכזי</div><h2><span class="ltr">VCO</span>: הרכיב שממיר מתח לתדר</h2></header>
+  <div class="bd">
+  <div class="simwrap">
+    <div class="plots" style="grid-template-rows:1fr">
+      <figure class="plot"><canvas data-draw="vco"></canvas><figcaption><b>אופיין ההמרה:</b> מתח כניסה בציר האופקי, תדר יציאה בציר האנכי</figcaption></figure>
+    </div>
+    <div class="side">
+      <div class="ctrl">
+        <div class="keyidea" style="padding:8px 12px"><em>המודל</em><div><p class="ltr" style="font-size:19px">f_out = f_0 + K_f·v_in</p></div></div>
+        <div class="ctl"><div><label for="vc-vm">מתח כניסה [V]</label><output data-o="vm"></output></div><input id="vc-vm" data-k="vm" type="range" min="-2" max="2" step="0.1" value="1.5"></div>
+        <div class="ctl"><div><label for="vc-kf">שיפוע K<sub>f</sub> [kHz/V]</label><output data-o="kf"></output></div><input id="vc-kf" data-k="kf" type="range" min="1" max="10" step="0.5" value="5"></div>
+        <div class="ctl"><div><label for="vc-fc">תדר מרכז [kHz]</label><output data-o="fc"></output></div><input id="vc-fc" data-k="fc" type="range" min="60" max="140" step="5" value="100"></div>
+        <div class="stats"><div class="stat hl"><small>תדר יציאה</small><b data-o="fout"></b></div></div>
+      </div>
+      <p class="status info">הקו הישר הוא <b>ההגדרה</b> של VCO — והשיפוע שלו הוא בדיוק K<sub>f</sub>.</p>
+    </div>
+  </div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>VCO הוא קו ישר: מתח כניסה קובע תדר יציאה, והשיפוע הוא K<sub>f</sub>.</div></div>
+  <footer class="ft"><span>המשדר</span><span class="num">42 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s43" data-label="מכפיל תדר ×n — מה מוכפל" data-chapter="המשדר">
+<div class="sl">
+  <header class="hd"><div class="eb">מכפיל תדר · יחידה א׳</div><h2>מכפיל תדר ×n: מה מוכפל — ומה לא</h2></header>
+  <div class="bd">
+  <div class="simwrap">
+    <div class="plots" style="grid-template-rows:1fr">
+      <figure class="plot"><canvas data-draw="multip"></canvas><figcaption><b>לפני ואחרי:</b> הקו המרכזי והסטייה מוכפלים; המרווח בין פסי הצד נשאר</figcaption></figure>
+    </div>
+    <div class="side">
+      <div class="ctrl">
+        <div class="ctl"><div><label for="mp-n">מקדם הכפלה n</label><output data-o="n"></output></div><input id="mp-n" data-k="n" type="range" min="1" max="12" step="1" value="3"></div>
+        <div class="ctl"><div><label for="mp-fc">תדר כניסה [MHz]</label><output data-o="fc"></output></div><input id="mp-fc" data-k="fc" type="range" min="1" max="20" step="0.5" value="7.5"></div>
+        <div class="ctl"><div><label for="mp-df">סטייה בכניסה [kHz]</label><output data-o="df"></output></div><input id="mp-df" data-k="df" type="range" min="1" max="20" step="0.5" value="7.5"></div>
+        <div class="stats">
+          <div class="stat hl"><small>תדר יציאה</small><b data-o="out"></b></div>
+          <div class="stat hl"><small>סטייה ביציאה</small><b data-o="dev"></b></div>
+        </div>
+      </div>
+      <p class="status info">הכפלה משמרת את <b>תדר המידע</b>: הוא אינו מוכפל, כי הוא לא היה חלק מן התדר.</p>
+    </div>
+  </div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>f<sub>c</sub>′ = n·f<sub>c</sub> ו־Δf′ = n·Δf — אבל f<sub>m</sub> נשאר במקומו.</div></div>
+  <footer class="ft"><span>המשדר</span><span class="num">43 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s44" data-label="הרמוניות וסינון" data-chapter="המשדר">
+<div class="sl">
+  <header class="hd"><div class="eb">מכפיל תדר · יחידה ב׳</div><h2>למה מכפיל יוצר הרמוניות — ואיך מסננים</h2></header>
+  <div class="bd">
+  <div class="simwrap">
+    <div class="plots" style="grid-template-rows:1fr">
+      <figure class="plot"><canvas data-draw="harm"></canvas><figcaption><b>הרמוניות של תדר הנושא:</b> רק fc נדרש; השאר חייבות להיות מדוכאות</figcaption></figure>
+    </div>
+    <div class="side">
+      <div class="ctrl">
+        <div class="chips">
+          <button class="chip" data-mode="filt" data-v="on" aria-pressed="true">עם מסנן</button>
+          <button class="chip" data-mode="filt" data-v="off" aria-pressed="false">בלי מסנן</button>
+        </div>
+      </div>
+      <p class="status info">מכפיל תדר הוא מעגל לא־ליניארי: הוא יוצר הרמוניות <b>בנוסף</b> לתדר הרצוי.</p>
+      <div class="caveat"><em>ההשלכה</em><p>ללא סינון, המשדר משדר גם ב־2f<sub>c</sub> וב־3f<sub>c</sub> — הספק מבוזבז והפרעה לתחנות אחרות.</p></div>
+    </div>
+  </div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>מכפיל יוצר הרמוניות; מסנן אחריו משאיר רק את תדר הנושא הרצוי.</div></div>
+  <footer class="ft"><span>המשדר</span><span class="num">44 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s45" data-label="קדם־הדגשה והשלמה" data-chapter="המשדר">
+<div class="sl">
+  <header class="hd"><div class="eb">עיבוד שמע</div><h2>קדם־הדגשה במשדר — והנחתה משלימה במקלט</h2></header>
+  <div class="bd">
+  <div class="simwrap">
+    <div class="plots" style="grid-template-rows:1fr">
+      <figure class="plot"><canvas data-draw="emphasis"></canvas><figcaption><b>שתי עקומות משלימות:</b> מה שמוגבר במשדר מונחת בדיוק באותו שיעור במקלט</figcaption></figure>
+    </div>
+    <div class="side">
+      <div class="ctrl">
+        <div class="chips">
+          <button class="chip" data-mode="mode" data-v="on" aria-pressed="true">עם קדם־הדגשה</button>
+          <button class="chip" data-mode="mode" data-v="off" aria-pressed="false">בלעדיה</button>
+        </div>
+      </div>
+      <p class="status info"><b>מדוע:</b> רעש ב־FM גובר בתדרי שמע גבוהים. הגברתם במשדר והנחתתם במקלט משפרת את יחס האות־רעש.</p>
+      <div class="caveat"><em>לזכור</em><p>השתיים חייבות להיות משלימות: אחרת נשמע צליל "דק" או "כהה" מדי.</p></div>
+    </div>
+  </div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>קדם־הדגשה במשדר והנחתה משלימה במקלט — שתי עקומות הופכיות שמשפרות יחס אות־רעש.</div></div>
+  <footer class="ft"><span>המשדר</span><span class="num">45 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s46" data-label="מכפיל ×12 — דוגמה מלאה" data-chapter="המשדר">
+<div class="sl">
+  <header class="hd"><div class="eb">דוגמה</div><h2>המכפיל ×12: מה קורה לתדר ולסטייה</h2></header>
+  <div class="bd">
+  <div class="simwrap">
+    <div class="plots" style="grid-template-rows:1fr">
+      <figure class="plot"><canvas data-draw="multip"></canvas><figcaption><b>לפני המכפיל</b> (7.5 MHz) מול <b>אחרי ×12</b> (90 MHz)</figcaption></figure>
+    </div>
+    <div class="side">
+      <div class="g12" style="gap:8px">
+        <div class="card" style="padding:8px 11px"><h3>כניסה</h3><p style="font-size:15px"><span class="ltr">f<sub>c</sub> = 7.5 MHz</span><br><span class="ltr">Δf = 7.5 kHz</span><br><span class="ltr">f<sub>m</sub> = 10 kHz</span></p></div>
+        <div class="card ok" style="padding:8px 11px"><h3>יציאה ×12</h3><p style="font-size:15px"><span class="ltr">f<sub>c</sub> = 90 MHz</span><br><span class="ltr">Δf = 90 kHz</span><br><span class="ltr">f<sub>m</sub> = 10 kHz</span></p></div>
+      </div>
+      <div class="rev" data-box><button class="btn" data-reveal>הצג את החישוב</button>
+        <div class="rbox"><b>תדר:</b> 7.5 × 12 = 90 MHz. <b>סטייה:</b> 7.5 × 12 = 90 kHz. <b>תדר מידע:</b> ללא שינוי.</div></div>
+      <p class="status info">שימו לב: הסטייה גדולה פי 12 — אבל מספר פסי הצד המשמעותיים גדל אף הוא.</p>
+    </div>
+  </div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>f<sub>c</sub> 7.5→90 MHz, Δf 7.5→90 kHz, f<sub>m</sub> נשאר 10 kHz. אין כאן חישוב β.</div></div>
+  <footer class="ft"><span>המשדר</span><span class="num">46 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s47" data-label="רוחב הפס אחרי המכפיל" data-chapter="המשדר">
+<div class="sl">
+  <header class="hd"><div class="eb">חישוב</div><h2>אחרי ×12: רוחב הפס גדל גם הוא</h2></header>
+  <div class="bd">
+  <div class="g21">
+    <figure class="plot"><canvas data-draw="carson"></canvas><figcaption><b>רוחב הפס של האות היוצא:</b> Δf = 90 kHz, f<sub>m</sub> = 10 kHz</figcaption></figure>
+    <div style="display:grid;gap:9px">
+      <div class="card"><h3>הנתונים</h3><p><span class="ltr">Δf = 90 kHz</span> · <span class="ltr">f<sub>m</sub> = 10 kHz</span></p></div>
+      <div class="rev" data-box><button class="btn" data-reveal>הצג את הפתרון בשלבים</button>
+        <div class="rbox"><b>1.</b> <span class="ltr">BW ≈ 2(Δf + f<sub>m</sub>)</span><br><b>2.</b> <span class="ltr">2(90 + 10)</span><br><b>3.</b> <span class="ltr">= 200 kHz</span><br>קירוב — לא גבול מדויק.</div></div>
+      <div class="caveat"><em>השלכה מעשית</em><p>סטייה של 90 kHz דורשת ערוץ של 200 kHz בקירוב. לכן תחנות FM מרווחות ב־200 kHz.</p></div>
+      <div class="caveat info"><em>מה הוצא מכאן</em><p>נוסחת האות הארוכה וחישוב ההספק אינם נדרשים בשקף הזה.</p></div>
+    </div>
+  </div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>BW ≈ 2(90 + 10) = 200 kHz — קירוב; רוחב הערוץ נגזר ממנו.</div></div>
+  <footer class="ft"><span>המשדר</span><span class="num">47 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s48" data-label="ההספק — מכפיל אינו מגבר" data-chapter="המשדר">
+<div class="sl">
+  <header class="hd"><div class="eb">הספק</div><h2>האם מכפיל ×12 מכפיל גם את ההספק?</h2></header>
+  <div class="bd">
+  <div class="g21">
+    <figure class="plot"><canvas data-draw="pq"></canvas><figcaption><b>מתח שיא 20V על 50Ω</b> — 4W, לא משנה מהו מקדם ההכפלה</figcaption></figure>
+    <div style="display:grid;gap:9px">
+      <div class="card ok"><h3>החישוב</h3><p class="ltr" style="font-size:19px">P = 20² / (2·50) = 4 W</p></div>
+      <div class="card ask"><h3>שאלה</h3><p>אם המכפיל מעלה את התדר פי 12 — האם גם ההספק עולה פי 12?</p>
+        <div class="rev" data-box><button class="btn ghost" data-reveal>חשוף תשובה</button>
+          <div class="rbox"><b>לא.</b> מכפיל תדר אינו מגבר הספק. במערכת ממשית אף ייתכנו הפסדים.</div></div></div>
+      <div class="caveat"><em>לזכור</em><p>עלייה בתדר אינה עלייה בהספק. מי שמעלה את ההספק הוא מגבר ההספק — ורק הוא.</p></div>
+    </div>
+  </div></div>
+  <div class="tk"><b>שורה תחתונה</b><div>P = A²/2R = 4W. מכפיל תדר אינו מגבר הספק — ובמציאות אף מפסיד.</div></div>
+  <footer class="ft"><span>המשדר</span><span class="num">48 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s49" data-label="כרטיס יציאה — 60 שניות" data-chapter="המשדר">
+<div class="sl">
+  <header class="hd"><div class="eb">כרטיס יציאה</div><h2>שלוש שאלות, דקה אחת</h2></header>
+  <div class="bd">
+  <div class="rows">
+    <div class="card ask"><h3>1 · מה נשאר קבוע?</h3><p>כאשר מכפילים את תדר הנושא פי n — מה משתנה ומה נשאר?</p>
+      <div class="rev" data-box><button class="btn ghost" data-reveal>תשובה</button><div class="rbox">תדר הנושא והסטייה מוכפלים; תדר המידע נשאר.</div></div></div>
+    <div class="card ask"><h3>2 · הספק</h3><p>האם ההספק עולה עם התדר?</p>
+      <div class="rev" data-box><button class="btn ghost" data-reveal>תשובה</button><div class="rbox">לא. ההספק נקבע על ידי המשרעת והעומס — לא על ידי התדר.</div></div></div>
+    <div class="card ask"><h3>3 · רוחב פס</h3><p>Δf = 50 kHz ו־f<sub>m</sub> = 10 kHz. מהו רוחב הפס המשוער?</p>
+      <div class="rev" data-box><button class="btn ghost" data-reveal>תשובה</button><div class="rbox"><span class="ltr">2(50+10) = 120 kHz</span></div></div></div>
+  </div>
+  <p class="note"><b>לסיכום הדקה:</b> תדר מוכפל, סטייה מוכפלת, תדר מידע נשאר, הספק נשאר — ורוחב הפס גדל.</p></div>
+  <div class="tk"><b>שורה תחתונה</b><div>תדר וסטייה מוכפלים; תדר המידע וההספק לא. רוחב הפס גדל.</div></div>
+  <footer class="ft"><span>המשדר</span><span class="num">49 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s50" data-label="שאלות הבנה עם משוב" data-chapter="המשדר">
+<div class="sl">
+  <header class="hd"><div class="eb">בקרה</div><h2>שלוש שאלות הבנה</h2></header>
+  <div class="bd">
+  <div class="g2">
+    <div class="card"><h3>1 · מה מכפיל תדר משנה?</h3>
+      <div class="mcq" data-mcq>
+        <button data-ok="0" data-why="מכפיל תדר מעלה את תדר הנושא — אבל אינו מוסיף הספק. מגבר ההספק הוא זה שמעלה עוצמה.">את ההספק המשודר</button>
+        <button data-ok="1" data-why="תדר הנושא והסטייה מוכפלים, ותדר המידע נשאר — ולכן רוחב הפס גדל.">את תדר הנושא ואת הסטייה</button>
+        <button data-ok="0" data-why="תדר המידע דווקא נשאר — הוא לא היה חלק מתדר הנושא.">את תדר המידע</button>
+      </div><p class="fb" data-fb></p></div>
+    <div class="card"><h3>2 · מה קובע את ההספק?</h3>
+      <div class="mcq" data-mcq>
+        <button data-ok="0" data-why="הסטייה קובעת את רוחב הפס, לא את ההספק. ההספק תלוי במשרעת ובעומס.">הסטייה</button>
+        <button data-ok="1" data-why="P = A²/(2R) — מתח השיא והעומס, ולא תדר או סטייה.">המשרעת והעומס</button>
+        <button data-ok="0" data-why="תדר המידע קובע את רוחב הפס ואת קצב השינוי — לא את ההספק.">תדר המידע</button>
+      </div><p class="fb" data-fb></p></div>
+  </div>
+  <div class="nosnip"></div></div>
+  
+  <footer class="ft"><span>המשדר</span><span class="num">50 / 51</span></footer>
+</div>
+</section>
+<section class="slide" id="s51" data-label="סיכום: AM מול FM" data-chapter="סיכום">
+<div class="sl">
+  <header class="hd"><div class="eb">סיכום השיעור</div><h2>סיכום: <span class="ltr">AM</span> משנה משרעת, <span class="ltr">FM</span> משנה תדר</h2></header>
+  <div class="bd">
+  <table class="tbl">
+    <thead><tr><th style="width:170px">היבט</th><th class="amt">AM</th><th class="fmt">FM</th></tr></thead>
+    <tbody>
+      <tr><td class="l">מה משתנה</td><td class="am">המשרעת</td><td class="fm">התדר הרגעי</td></tr>
+      <tr><td class="l">מה נשאר קבוע</td><td class="am">התדר</td><td class="fm">המשרעת</td></tr>
+      <tr><td class="l">רוחב פס</td><td class="am">צר</td><td class="fm">רחב יותר</td></tr>
+      <tr class="hl"><td class="l">הספק</td><td class="am">תלוי בעומק האפנון</td><td class="fm">קבוע</td></tr>
+    </tbody>
+  </table>
+  <div class="card ask"><h3>שאלת המעבר</h3><p>אם המידע ב־FM יושב בתדר הרגעי — <b>כיצד מקלט משחזר אותו</b>?</p></div>
+  <p class="note"><b>התשובה תיפתח במפגש הבא:</b> המקלט צריך להמיר שינויי תדר חזרה לשינויי מתח — וזה תפקידו של גלאי התדר.</p></div>
+  <div class="tk"><b>שורה תחתונה</b><div>AM משנה משרעת; FM משנה תדר. במפגש הבא: כיצד מקלט FM משחזר את המידע מן התדר.</div></div>
+  <footer class="ft"><span>סיכום</span><span class="num">51 / 51</span></footer>
+</div>
+</section>
+      <div class="progress" id="progress"></div>
+    </div>
+  </div>
+  <nav class="controls">
+    <button id="prev" type="button">הקודם</button>
+    <span class="pos" data-pos>01 / 51</span>
+    <button id="next" type="button">הבא</button>
+  </nav>
+</div>
+<aside class="drawer" id="outline" hidden>
+  <div class="drawer-h"><b>תוכן המפגש</b><button type="button" data-close>סגירה</button></div>
+  <div class="drawer-b" id="outlineList"></div>
+</aside>
+<aside class="drawer notes" id="notes" hidden>
+  <div class="drawer-h"><b>הערות מרצה</b><button type="button" data-close>סגירה</button></div>
+  <div class="drawer-b" id="notesBody"><div class="note-block" data-note="0" hidden><h3>01 · מפת המפגש</h3><h4>מטרת המפגש</h4><ul>
+    <li><b>הקשר:</b> מפגש מעבר — סוגרים את חלקי המקלט המשותפים לשתי השיטות (ברירת תחנה, המרה לתדר ביניים, דחיית בבואה), ומשם נכנסים ל־FM.</li>
+    <li><b>החוט המקשר:</b> ערבל, מתנד מקומי ומסנן תדר ביניים משמשים גם במקלט FM — ולכן אין לחזור עליהם.</li>
+    <li><b>נקודת עצירה:</b> המפגש מסתיים אחרי הסיכום; שרשרת המקלט FM המלאה במפגש הבא.</li>
+    <li><b>טעות נפוצה:</b> לחשוב ש־FM הוא "עוד סוג של אפנון משרעת". לא — שם משתנה התדר, לא הגובה.</li></ul></div>
+<div class="note-block" data-note="1" hidden><h3>02 · רוחב פס ו־Q</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות במילים:</b> Q אומר "כמה מחזורים של הגל נכנסים לרוחב הפס". Q=100 פירושו שרוחב הפס הוא אחוז אחד מתדר התהודה.</li>
+    <li><b>איך זה עובד:</b> מסנן תהודה בנוי מסליל וקבל; ככל שהתהודה חדה יותר הוא מעביר תחום צר יותר.</li>
+    <li><b>למה זה חשוב:</b> רוחב הפס קובע איזו תחנה נכנסת ואיזו נחסמת — זו כל מהות הברירות.</li>
+    <li><b>טעות נפוצה:</b> לחשוב ש־Q הוא תכונה של התחנה. הוא תכונה של המסנן.</li></ul>
+    <h4>הנחיית הוראה</h4><ul><li>שאלו: "אם Q גבוה כל כך טוב, למה לא תמיד גבוה?" — מכאן נפתחת הבעיה של שקף 3.</li></ul></div>
+<div class="note-block" data-note="2" hidden><h3>03 · Q לאורך הסקאלה</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המהלך:</b> רוחב הפס של המידע קבוע (10 kHz), התדר משתנה פי 3 — ולכן Q חייב להשתנות פי 3.</li>
+    <li><b>משמעות מעשית:</b> 540 kHz — סליל וקבל רגילים; 1000 kHz — עדיין אפשרי, רגיש לכיוונון; 1600 kHz — דורש מסנן איכותי ויציב.</li>
+    <li><b>המסקנה:</b> אין מסנן יחיד שעונה על שני הקצוות גם יחד. זו הבעיה שמובילה לזנוח את המקלט הישיר.</li></ul></div>
+<div class="note-block" data-note="3" hidden><h3>04 · למה מקלט ישיר לא מספיק</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות:</b> הבעיה אינה רכיב לא טוב — היא מבנית.</li>
+    <li><b>למה זה חשוב:</b> מי שמבין את הבעיה המבנית מבין מיד למה הפתרון הבא עובד.</li>
+    <li><b>הקשרי:</b> TRF אינו "מקלט גרוע" — הוא פשוט לא מתאים לסקאלה רחבה.</li>
+    <li><b>טעות נפוצה:</b> לחשוב שאפשר "לתקן" את TRF במסנן חד יותר.</li></ul></div>
+<div class="note-block" data-note="4" hidden><h3>05 · להזיז את האות לתדר קבוע</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>הרעיון המרכזי:</b> במקום להתאים את המסנן לתחנה, מתאימים את התחנה למסנן — זה כל הקסם של הסופר־הטרודיין.</li>
+    <li><b>למה זה עובד:</b> Q תלוי ביחס בין תדר לרוחב פס; כשהתדר קבוע, גם Q קבוע.</li>
+    <li><b>טעות נפוצה:</b> לחשוב שהאות משנה תדר פיזיקלית.</li></ul>
+    <h4>הנחיית הוראה</h4><ul><li>שאלו: "לאן כדאי להעביר את האות?" — תדר נמוך מספיק כדי לאפשר מסנן צר ויציב, גבוה מספיק כדי להתרחק מרעש 1/f.</li></ul></div>
+<div class="note-block" data-note="5" hidden><h3>06 · סופר־הטרודיין — לחצו על דרגה</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות:</b> כל דרגה ממלאת תפקיד אחד; הסרת דרגה שוברת תפקוד מוגדר.</li>
+    <li><b>למה זה חשוב:</b> מכאן ואילך המקלט הוא שרשרת של החלטות, לא רכיב אחד.</li></ul>
+    <h4>איך להדגים בכיתה</h4><ol>
+    <li>עברו ל"קדם־מסנן RF" ושאלו: אם הוא כל כך רחב, למה צריך אותו בכלל?</li>
+    <li>התלמידים אמורים לזהות שזו הדרגה היחידה שמחלישה בבואה <b>לפני</b> ההמרה.</li>
+    <li>חשיפת תשובה: "באיזו דרגה נקבעת הברירות?" — במסנן ה־IF, היחיד שעובד בתדר קבוע.</li></ol></div>
+<div class="note-block" data-note="6" hidden><h3>07 · TRF מול סופר־הטרודיין</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>הפשרה:</b> כל פתרון בתקשורת קונה יתרון במחיר. כאן קנינו ברירות אחידה במחיר הבבואה.</li>
+    <li><b>הקשרי:</b> TRF אינו מקלט גרוע — הוא פתרון שלא מתאים לסקאלה רחבה.</li>
+    <li><b>טעות נפוצה:</b> לחשוב שהבבואה היא תקלה שאפשר לתקן במסנן ה־IF.</li></ul></div>
+<div class="note-block" data-note="7" hidden><h3>08 · הערבל — סכום והפרש</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות:</b> הערבל אינו "מוסיף" תדר — הוא מכפיל שני אותות, ובמכפלה מופיעים סכום והפרש.</li>
+    <li><b>למה זה חשוב:</b> בחירת ההפרש היא לב הסופר־הטרודיין; בחירת הסכום הייתה נותנת תדר גבוה מדי.</li>
+    <li><b>טעות נפוצה:</b> לחשוב שהערבל "מזהה" את התחנה. הוא לא מזהה — הוא רק ממיר.</li></ul>
+    <h4>איך להדגים בכיתה</h4><ol>
+    <li>הזיזו את תחנת השידור ב־10 kHz ושאלו מה קרה לתדר הביניים.</li>
+    <li>הזיזו את המתנד המקומי — התדר הביניים זז באותו כיוון ובאותו גודל.</li></ol></div>
+<div class="note-block" data-note="8" hidden><h3>09 · הבבואה — למה בלתי נמנעת</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות:</b> הזהות אינה "בגלל רכיב רע" אלא אריתמטיקה: שני מרחקים שווים משני צדי ה־LO.</li>
+    <li><b>ההשלכה:</b> תחנה חזקה בתדר הבבואה תישמע יחד עם התחנה הרצויה, באותו תדר ביניים.</li>
+    <li><b>טעות נפוצה:</b> לנסות "לסנן אותה ב־IF" — שם היא כבר זהה לחלוטין לתחנה.</li></ul></div>
+<div class="note-block" data-note="9" hidden><h3>10 · דחיית הבבואה — קדם־מסנן</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות:</b> המסנן שלפני הערבל אינו צריך להיות חד — רק להחליש את הבבואה דיו.</li>
+    <li><b>למה זה חשוב:</b> זהו שיקול תכן אמיתי: בחירת IF נמוך מקלה על דחיית הבבואה אך מקשה על סינון דמות.</li>
+    <li><b>טעות נפוצה:</b> להפוך את קדם־המסנן למסנן הברירות. הברירות נשארת ב־IF.</li></ul></div>
+<div class="note-block" data-note="10" hidden><h3>11 · תרגול מסכם — מודול AM</h3><h4>מהלך התרגול</h4><ul>
+    <li>הציגו את השאלה, בקשו ניבוי בכתב (30 שניות), ורק אז חשפו.</li>
+    <li>שאלה 2 בודקת הבחנה בין סכום להפרש — שגיאה נפוצה מאוד.</li>
+    <li>שאלה 3 דורשת להבין שהבבואה נמצאת מעבר ל־LO, במרחק IF.</li></ul></div>
+<div class="note-block" data-note="11" hidden><h3>12 · הפסקה · 5 דקות</h3><h4>הנחיית הוראה</h4><ul><li>אל תפתחו את FM לפני שהתלמידים יודעים לומר במשפט אחד מה ההבדל: ב־AM המידע בגובה, ב־FM בתדר.</li></ul></div>
+<div class="note-block" data-note="12" hidden><h3>13 · AM מול FM — ראיה ויזואלית</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות:</b> אותו מידע, שני מקומות שונים בגל. לא "איכות" — אלא מיקום המידע.</li>
+    <li><b>הקשר:</b> ב־AM שינינו את הגובה לפי המידע; כאן משנים את הקצב.</li></ul>
+    <h4>איך להדגים בכיתה</h4><ol>
+    <li><b>ערכים:</b> עומק 0.8, סטייה 75 kHz.</li>
+    <li>הזיזו את עומק האפנון ל־0 ואז ל־1 — והסתכלו רק על הגרף העליון. המעטפת זזה: הגובה משתנה.</li>
+    <li>עברו למחוון הסטייה והסתכלו על הגרף האמצעי: המעטפת לא זזה, רק המרווח בין שיא לשיא.</li>
+    <li>בקשו לזהות איפה העקומה העליונה גבוהה — שם התנודות צפופות.</li>
+    <li><b>המסקנה:</b> ב־AM המידע במשרעת, ב־FM בתדר הרגעי.</li></ol>
+    <h4>נקודה לדיון</h4><ul><li>מה יקרה לאות FM אם נחתוך את גובהו באמצע? התשובה: כלום — המידע אינו בגובה. זו הסיבה שמקלט FM יכול להגביל משרעת בלי לאבד מידע.</li></ul></div>
+<div class="note-block" data-note="13" hidden><h3>14 · סימולטור FM — שלושה גרפים מסונכרנים</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות:</b> זהו "המודל המלא" של FM לפני שנוסחה — שלושה גרפים שמראים סיבתיות: מידע ← תדר ← גל.</li>
+    <li><b>ההבחנה:</b> תדר המידע קובע <b>כמה מהר</b> הסטייה מתחלפת; הסטייה קובעת <b>כמה רחוק</b> התדר זז.</li>
+    <li><b>טעות נפוצה:</b> לבלבל בין תדר המידע (5 kHz) לבין התדר הנושא (100 MHz) — שני גדלים בסדרי גודל שונים.</li></ul>
+    <h4>איך להדגים בכיתה</h4><ol>
+    <li>הגדילו את הסטייה ל־30 ושאלו מה השתנה בגרף האמצעי ומה לא השתנה בגרף התחתון.</li>
+    <li>שנו את תדר המידע — מספר המחזורים בחלון משתנה, אך רוחב טווח התדר נשאר.</li></ol>
+    <p class="ltr" style="font-size:15px;color:#42526b">f(t) = f_c + Δf·cos(2π f_m t) · x_FM(t) = A_c·cos[ω_c t + β·sin(ω_m t)]</p></div>
+<div class="note-block" data-note="14" hidden><h3>15 · עקרון אפנון FM ומשדר</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות:</b> המפגש בונה את שלושת המדדים של FM — תדר רגעי, סטייה ורוחב פס — ואת ההספק שלהם.</li>
+    <li><b>למה זה חשוב:</b> אלה הכלים שנדרשים כדי לתכנן משדר ולא רק לתאר גל.</li></ul>
+    <h4>הנחיית הוראה</h4><ul><li>פתחו בשאלה: "אם הגובה נשאר קבוע, איפה בכלל נמצא המידע?" — ואל תענו בעצמכם.</li></ul></div>
+<div class="note-block" data-note="15" hidden><h3>16 · ההבדל המרכזי — שתי הנוסחאות</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות:</b> אין "עוד סוג של אפנון משרעת" — זהו ערוץ מידע אחר לגמרי.</li>
+    <li><b>הקשרי:</b> ההבדל הזה הוא גם הסיבה להבדל בעמידות לרעש — נראה בשקף 36.</li>
+    <li><b>טעות נפוצה:</b> לכתוב <span class="ltr">f(t)=f_c+K_f·x(t)</span> עם <span class="ltr">K_f</span> ב־Hz־לוולט — ולשכוח את היחידה. בלי יחידה אין משמעות מספרית.</li></ul></div>
+<div class="note-block" data-note="16" hidden><h3>17 · שתי השיטות בהשוואה</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות:</b> הטבלה היא לא רשימת עובדות — היא הסבר למה FM דורש תחנה רחבה יותר.</li>
+    <li><b>למה זה חשוב:</b> הקשר בין רוחב פס ליתרון הרעש הוא לב השיקול ההנדסי.</li></ul>
+    <h4>שאלה לדיון</h4><ul><li>"אם FM כל כך טוב, למה עדיין משדרים AM?" — פשטות, טווח, רוחב פס ועלות מקלט.</li></ul></div>
+<div class="note-block" data-note="17" hidden><h3>18 · FM אידאלי מול משדר אמיתי</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות:</b> המודל הוא כלי חשיבה, לא תיאור של המשדר.</li>
+    <li><b>למה זה חשוב:</b> מי שמבין שהגובה אינו נושא מידע מבין למה הגבלה משפרת ולא מקלקלת.</li>
+    <li><b>טעות נפוצה:</b> לחשוב שהגבלת המשרעת "מוחקת" מידע.</li></ul></div>
+<div class="note-block" data-note="18" hidden><h3>19 · מה הערוץ מוסיף</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות:</b> היתרון הוא יחסי, לא מוחלט. יש רעש שמזיק ל־FM יותר מאשר ל־AM.</li>
+    <li><b>למה זה חשוב:</b> זו הסיבה לסף הרעש הידוע של FM — עד נקודה מסוימת הכל נקי, ומעבר לה הקריסה פתאומית.</li></ul></div>
+<div class="note-block" data-note="19" hidden><h3>20 · תדר מול מהירות התפשטות</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>טעות נפוצה:</b> "תדר גבוה יותר מגיע מהר יותר". לא — הוא רק מתנודד יותר פעמים בדרך.</li>
+    <li><b>הקשרי:</b> זו הסיבה שאפנון תדר אינו משנה את זמן ההגעה הכולל, אלא את צורת האות.</li></ul></div>
+<div class="note-block" data-note="20" hidden><h3>21 · הסימונים והיחידות</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות:</b> הסימונים אינם קישוט — כל אחד מהם עונה על שאלה אחרת (איפה המרכז, כמה רחוק, כמה מהר, כמה רגיש).</li>
+    <li><b>למה זה חשוב:</b> בלי להבחין בין f<sub>m</sub> ל־Δf אי אפשר לחשב רוחב פס נכון.</li>
+    <li><b>טעות נפוצה:</b> לכתוב 100 MHz כש־100,000 kHz — אותו דבר, אבל לא אותה יחידה.</li></ul>
+    <h4>הנחיית הוראה</h4><ul><li>בקשו מן התלמידים למלא את הטבלה עבור תחנה אחרת (למשל 98.7 MHz) לפני שאתם מציגים אותה.</li></ul></div>
+<div class="note-block" data-note="21" hidden><h3>22 · התדר הרגעי — ההגדרה</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות:</b> התדר משתנה לפי ה<b>רגע</b> ולפי ה<b>סימן</b> של x(t) — לא לפי המשרעת הממוצעת של המידע.</li>
+    <li><b>איך זה עובד:</b> K<sub>f</sub> הוא שיפוע המרה מוולט להרץ. מתח אפס מחזיר בדיוק את f<sub>c</sub>.</li>
+    <li><b>למה זה חשוב:</b> מכאן נגזרים הסטייה, המופע והגל — כל השאר.</li>
+    <li><b>טעות נפוצה:</b> "התדר משתנה לפי המשרעת" — לא; לפי הערך הרגעי של x(t).</li></ul></div>
+<div class="note-block" data-note="22" hidden><h3>23 · שלושת המצבים של אות המידע</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות:</b> הסימן קובע את הכיוון, הגודל קובע את המרחק מן המרכז.</li>
+    <li><b>למה זה חשוב:</b> זהו הבסיס לכל הגרפים הבאים — ה"ענן" של התדר הוא בעצם רצף של שלושת המצבים.</li>
+    <li><b>טעות נפוצה:</b> לחשוב שמתח שלילי "מכבה" את האות. הוא רק מוריד את התדר.</li></ul>
+    <h4>איך להדגים בכיתה</h4><ol>
+    <li>בקשו מהתלמידים להצביע על הקטע הצפוף ביותר — ואז לזהות מה היה המתח שם.</li>
+    <li>שאלו: מה היה קורה אילו היינו מכפילים את המשרעת פי שניים? (אותה צורה, מרחק גדול יותר מן המרכז.)</li></ol></div>
+<div class="note-block" data-note="23" hidden><h3>24 · מה קובע את הסטייה ומה את הקצב</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>ההבחנה המרכזית:</b> שני גדלים, שני תפקידים. בלבול ביניהם הוא מקור רוב הטעויות בשלב הזה.</li>
+    <li><b>הקשרי:</b> ב־AM לעומת זאת, המשרעת קובעת את העומק והתדר את הקצב — אבל המידע יושב במקום אחר.</li></ul>
+    <h4>איך להדגים בכיתה</h4><ol>
+    <li>התחילו מ־2V ו־5 kHz. שאלו: "מה יקרה לסטייה אם נכפיל את המשרעת?" — בקשו ניבוי לפני ההזזה.</li>
+    <li>הזיזו את המשרעת ל־4. הסטייה הוכפלה — מספר המחזורים בגרף לא השתנה.</li>
+    <li>הזיזו את תדר המידע. עכשיו המחזורים התקצרו, והסטייה נשארה.</li></ol></div>
+<div class="note-block" data-note="24" hidden><h3>25 · תדר מידע מול סטייה</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות:</b> אפשר לשדר מידע איטי עם סטייה גדולה, ומידע מהיר עם סטייה קטנה.</li>
+    <li><b>למה זה חשוב:</b> הסטייה היא בחירת תכן של המשדר, לא תכונה של הקול.</li>
+    <li><b>טעות נפוצה:</b> "ככל שהקול גבוה יותר, הסטייה גדלה" — לא. גובה הקול הוא תדר המידע; עצמתו היא המשרעת.</li></ul>
+    <h4>איך להדגים בכיתה</h4><ol>
+    <li>שנו את תדר המידע — הציר התחתון לא זז, רק מספר המחזורים למעלה.</li>
+    <li>שנו את הסטייה — הציר התחתון מתרחב, גרף המידע לא משתנה.</li></ol></div>
+<div class="note-block" data-note="25" hidden><h3>26 · סטייה — חישוב מודרך</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות:</b> החישוב עצמו פשוט — המלכודת היא להסיק ממנו שרוחב הפס הוא 20 kHz.</li>
+    <li><b>למה זה חשוב:</b> ההבחנה בין טווח התדר לרוחב הפס הספקטרלי היא ההבחנה שתחזור בשקף 33.</li>
+    <li><b>טעות נפוצה:</b> <span class="ltr">BW = 2Δf</span>. נכון רק עבור מידע איטי מאוד.</li></ul>
+    <h4>איך להדגים בכיתה</h4><ol>
+    <li>בקשו לחשב עבור 3V. אחר כך בקשו להסביר מה היה קורה אילו הרגישות הייתה 10 kHz/V.</li>
+    <li>שאלו: "האם שינוי תדר המידע משנה את Δf?" — לא, והוא משנה את רוחב הפס. זה השלב הבא.</li></ol></div>
+<div class="note-block" data-note="26" hidden><h3>27 · קול חזק יותר = סטייה גדולה יותר</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>ניסוח מדויק:</b> לא "קול חזק יותר" — אלא <b>משרעת אות מידע גדולה יותר</b>. זה מה שמגדיל את הסטייה.</li>
+    <li><b>מה לא משתנה:</b> תדר המרכז f<sub>c</sub> ומשרעת הנושא A<sub>c</sub>.</li>
+    <li><b>טעות נפוצה:</b> לחשוב שעוצמת השמע משנה את עוצמת השידור. היא משנה את הסטייה, לא את ההספק.</li></ul></div>
+<div class="note-block" data-note="27" hidden><h3>28 · מופע — למה התדר משנה זווית</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות:</b> זהו הגשר בין "התדר משתנה" לבין "הגל נראה אחרת".</li>
+    <li><b>למה זה חשוב:</b> בלי שלב הזה, הנוסחה של האות המלא נראית כמו קסם.</li>
+    <li><b>טעות נפוצה:</b> לחשוב שמופע הוא "השהיה" של הגל. הוא מצב זוויתי, לא זמן.</li></ul>
+    <h4>הנחיית הוראה</h4><ul><li>הראו את הווקטור המסתובב בזמן שהגל מצטייר. שאלו: "כשהסיבוב מהיר — מה קורה למרחק בין השיאים?"</li></ul></div>
+<div class="note-block" data-note="28" hidden><h3>29 · האות המלא של FM</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות:</b> זה השלב שבו "התדר משתנה" הופך ל"הגל נראה כך".</li>
+    <li><b>למה זה חשוב:</b> מכאן נובע שהספקטרום של FM אינו שני קווים כמו ב־AM, אלא nekonečné פסי צד.</li></ul></div>
+<div class="note-block" data-note="29" hidden><h3>30 · הצורה הסופית — בלי גזירה</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>ההחלטה הפדגוגית:</b> אין גזירה במסלול החובה. אם שומרים אותה — רק כהרחבת מרצה, ולא כשקף חובה.</li>
+    <li><b>למה זה חשוב:</b> התלמידים צריכים לזהות את הצורה, לא לגזור אותה.</li>
+    <li><b>טעות נפוצה:</b> לחשוב שהנוסחה "מוכיחה" את האפנון. ההגדרה היא ההוכחה; הנוסחה היא תוצאה.</li></ul></div>
+<div class="note-block" data-note="30" hidden><h3>31 · המחשה בזמן — לקרוא גל FM</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>הסדר:</b> קודם רק הגל — בלי אות המידע. רק אחרי שהתלמידים ניחשו, חושפים.</li>
+    <li><b>מה מבקשים לזהות:</b> היכן התדר גבוה מן המרכז, היכן נמוך, והיכן בדיוק שווה לו.</li>
+    <li><b>המסקנה:</b> המשרעת קבועה בכל המצבים — ולכן אי אפשר לקרוא את המידע מן הגובה.</li></ul>
+    <h4>איך להדגים בכיתה</h4><ol>
+    <li>הציגו את הגל בלבד. שאלו: "כאן התדר גבוה — מה היה המתח של המידע באותו רגע?"</li>
+    <li>חשפו את אות המידע. השוו בין הניבוי לבין המציאות, ורק אז הסבירו.</li>
+    <li>שנו סטייה ל־0 ושאלו מה קרה — הגל אחיד, ואין מידע.</li></ol></div>
+<div class="note-block" data-note="31" hidden><h3>32 · הספקטרום של FM</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות:</b> ב־AM יש שני פסי צד בלבד; ב־FM יש nekonečně רבים, ורק חלקם משמעותיים.</li>
+    <li><b>למה זה חשוב:</b> מכאן נובע שרוחב הפס של FM תלוי <b>גם</b> בסטייה, ולא רק בתדר המידע.</li>
+    <li><b>טעות נפוצה:</b> לחפש "גבול" חד לספקטרום. אין גבול כזה — יש רק ירידה בעוצמה.</li></ul>
+    <h4>איך להדגים בכיתה</h4><ol>
+    <li>הגדילו את הסטייה מ־5 ל־40 ושאלו: מה השתנה במרווח שבין הפסים, ומה השתנה במספרם?</li>
+    <li>שנו את f<sub>m</sub> — המרווח בין הפסים משתנה, מספר הפסים המרכזיים פחות.</li></ol></div>
+<div class="note-block" data-note="32" hidden><h3>33 · כלל קרסון — רוחב פס</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות:</b> רוחב הפס של FM תלוי בשני גדלים — בסטייה ובתדר המידע.</li>
+    <li><b>הדיוק:</b> הכלל הוא קירוב. הוא טוב כאשר Δf גדול מ־f<sub>m</sub>, ופחות מדויק בגבול ההפוך.</li>
+    <li><b>טעות נפוצה:</b> להשתמש בכלל כאילו הוא נותן את הגבול המדויק של הספקטרום.</li></ul>
+    <h4>איך להדגים בכיתה</h4><ol>
+    <li>בקשו ניבוי: "אם נכפיל את הסטייה — האם רוחב הפס יוכפל?"</li>
+    <li>הציגו את הפתרון בשלבים, לא בבת אחת.</li></ol></div>
+<div class="note-block" data-note="33" hidden><h3>34 · צר־פס ורחב־פס</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות:</b> FM אינו "שידור רדיו" בלבד — זהו עיקרון אפנון עם טווח יישומים רחב.</li>
+    <li><b>ההבחנה הקריטית:</b> תדר המידע אינו קצב המידע. הוא קובע את מרווח הפסים, לא את כמות המידע.</li>
+    <li><b>טעות נפוצה:</b> לחשוב שצר־פס הוא "FM פחות טוב". הוא פשוט מיועד לערוץ צר.</li></ul></div>
+<div class="note-block" data-note="34" hidden><h3>35 · הספק — למה הוא קבוע</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>ההסבר החזותי:</b> המשרעת של FM אינה זזה; המשרעת של AM זזה תדיר. ההספק הרגעי הולך אחרי המשרעת.</li>
+    <li><b>ההנחות שחייבות להיאמר:</b> משרעת קבועה ועומס קבוע. בלעדיהן אין קביעות.</li>
+    <li><b>טעות נפוצה:</b> "FM חזק יותר כי המידע בתדר". לא — ההספק הממוצע זהה לחלוטין לזה של גל נושא לא־מאופנן.</li></ul></div>
+<div class="note-block" data-note="35" hidden><h3>36 · הספק — חישוב ותנאי תקפות</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>הדיוק:</b> A הוא <b>מתח שיא</b>, לא מתח אפקטיבי. הכנסת מתח אפקטיבי לכאן תיתן תוצאה שגויה.</li>
+    <li><b>תוקף:</b> הנוסחה מתייחסת לאות סינוסואידלי עם מעטפת קבועה על עומס התנגדותי.</li>
+    <li><b>טעות נפוצה:</b> לחשוב שהגדלת הסטייה מגדילה את ההספק. היא מגדילה רוחב פס, לא הספק.</li></ul>
+    <h4>איך להדגים בכיתה</h4><ol>
+    <li>שנו את A מ־10 ל־20 ושאלו בכמה גדל ההספק (פי 4 — בגלל הריבוע).</li>
+    <li>שנו את R ובדקו את הקשר ההפוך.</li></ol></div>
+<div class="note-block" data-note="36" hidden><h3>37 · תרגול מודרך — שלושה גדלים</h3><h4>מהלך התרגול</h4><ul>
+    <li>בקשו ניבוי לפני כל חשיפה — גם אם התלמידים לא בטוחים.</li>
+    <li>התייחסו לשגיאות הנפוצות במפורש: שכחת ×2 בקרסון, וערבוב מתח שיא ואפקטיבי.</li>
+    <li>אם הזמן קצר, דלגו על שאלה 2 — היא חוזרת בשקף 39.</li></ul></div>
+<div class="note-block" data-note="37" hidden><h3>38 · מה תלוי במה</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות:</b> הטבלה היא כלי בקרה עצמית לפני בחינה.</li>
+    <li><b>טעות נפוצה:</b> להסיק ש־Δf קטן "חוסך הספק". הוא חוסך רוחב פס, לא הספק.</li></ul>
+    <h4>הנחיית הוראה</h4><ul><li>בקשו מן התלמידים לנסח שלוש שורות בטבלה במילים שלהם, לא להעתיק.</li></ul></div>
+<div class="note-block" data-note="38" hidden><h3>39 · שלושה משפטים + שאלה</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המטרה:</b> שלושה משפטים שכל תלמיד אמור לומר בסוף השיעור.</li>
+    <li><b>ההבחנה:</b> המשפט השני הוא היחיד שיש בו שני גורמים. זו טעות נפוצה להסתפק באחד.</li></ul>
+    <h4>הנחיית הוראה</h4><ul><li>הציגו את השאלה, בקשו תשובה בכתב, ורק אחר כך חשפו.</li></ul></div>
+<div class="note-block" data-note="39" hidden><h3>40 · מנתח ספקטרום — מה הוא מראה</h3><h4>החלטה מפורשת</h4><ul>
+    <li><b>מה מדגימים:</b> הדגמה אחת של התרחבות רוחב הפס כאשר Δf גדלה ו־f<sub>m</sub> קבוע.</li>
+    <li><b>מה לא טוענים:</b> שהמכשיר מודד ישירות סטיית תדר רגעית. הוא מודד התפלגות הספק.</li>
+    <li><b>טעות נפוצה:</b> לקרוא את רוחב הפס מן המסך ולהסיק ממנו את Δf בלי לדעת f<sub>m</sub>.</li></ul></div>
+<div class="note-block" data-note="40" hidden><h3>41 · שרשרת המשדר — שישה בלוקים</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות:</b> כל בלוק ממלא תפקיד אחד. הבלבול הנפוץ הוא בין "מגביר" ל"מאפנן".</li>
+    <li><b>למה זה חשוב:</b> הסרת מגבר ההספק מפחיתה טווח, אבל המידע נשאר באפנון.</li>
+    <li><b>טעות נפוצה:</b> לחשוב שה־PA "מגביר את המידע". הוא מגביר את האות כולו.</li></ul>
+    <h4>איך להדגים בכיתה</h4><ol>
+    <li>לחצו על VCO ושאלו: "אם נסתיר את הבלוק הזה, מה נשאר?" — גל נושא ללא מידע.</li>
+    <li>לחצו על PA ושאלו מה יקרה לטווח השידור אם נסיר אותו.</li></ol></div>
+<div class="note-block" data-note="41" hidden><h3>42 · VCO — הרכיב שממיר מתח לתדר</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות:</b> כל הגדרה של FM הופכת לחומרה אחת — קו ישר.</li>
+    <li><b>למה זה חשוב:</b> אי־ליניאריות של הקו הזה היא מקור העיוות במשדר אמיתי.</li>
+    <li><b>טעות נפוצה:</b> לחשוב ש־VCO "מחשב" את הנוסחה. הוא מיישם אותה באופן אנלוגי.</li></ul></div>
+<div class="note-block" data-note="42" hidden><h3>43 · מכפיל תדר ×n — מה מוכפל</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות:</b> הכפלה תדרית מכפילה כל תדר — ולכן גם את הסטייה, שהיא הפרש תדרים.</li>
+    <li><b>מה לא עושים כאן:</b> אין β ואין רוחב פס בסימולציה הזאת. הם יבואו בשקף 47.</li>
+    <li><b>טעות נפוצה:</b> להכפיל גם את תדר המידע. הוא נשאר, ולכן מספר הפסים המשמעותיים גדל.</li></ul>
+    <h4>איך להדגים בכיתה</h4><ol>
+    <li>התחילו מ־n=1 כדי לראות את המצב ההתחלתי.</li>
+    <li>העלו ל־2 ואז ל־4. שאלו מה גדל פי כמה ומה נשאר.</li></ol></div>
+<div class="note-block" data-note="43" hidden><h3>44 · הרמוניות וסינון</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות:</b> הכפלה אינה "פעולה נקייה" — היא מייצרת תדרים נוספים.</li>
+    <li><b>למה זה חשוב:</b> זו הסיבה שמסנן המוצא הוא חלק חובה בשרשרת, לא תוספת.</li>
+    <li><b>טעות נפוצה:</b> לחשוב שההרמוניות "משפרות" את השידור. הן רק מפריעות.</li></ul></div>
+<div class="note-block" data-note="44" hidden><h3>45 · קדם־הדגשה והשלמה</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות:</b> זו דוגמה לעיבוד שאינו "תיקון" אלא <b>שיפור יחס אות־רעש</b>.</li>
+    <li><b>למה זה חשוב:</b> בלי ההנחתה במקלט, ההגברה במשדר הייתה מיוצגת כעיוות שמיעתי.</li></ul>
+    <h4>שאלה לדיון</h4><ul><li>"מה יקרה אם המקלט לא ידע שהמשדר השתמש בקדם־הדגשה?"</li></ul></div>
+<div class="note-block" data-note="45" hidden><h3>46 · מכפיל ×12 — דוגמה מלאה</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>המשמעות:</b> המכפיל מעלה את תדר הנושא לרמה שמתאימה לשידור — ואגב כך גם את הסטייה.</li>
+    <li><b>מה לא עושים:</b> לא מחשבים β בשקף הזה. הוא מגיע בשקף 47, אחרי שהתלמידים ראו את המספרים.</li>
+    <li><b>טעות נפוצה:</b> לחשוב ש־f<sub>m</sub> מוכפל. הוא לא, ולכן מספר הפסים המשמעותיים גדל.</li></ul></div>
+<div class="note-block" data-note="46" hidden><h3>47 · רוחב הפס אחרי המכפיל</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>ההבחנה:</b> הסטייה גדלה פי 12, אבל רוחב הפס לא גדל פי 12 — כי f<sub>m</sub> לא זז.</li>
+    <li><b>למה זה חשוב:</b> זה ההסבר לכך שמרווח התחנות ב־FM הוא 200 kHz ולא 900.</li>
+    <li><b>טעות נפוצה:</b> להכפיל את רוחב הפס המקורי ב־12.</li></ul></div>
+<div class="note-block" data-note="47" hidden><h3>48 · ההספק — מכפיל אינו מגבר</h3><h4>מה חשוב להסביר</h4><ul>
+    <li><b>ההבחנה:</b> הכפלת תדר משנה את <b>המקום</b> בספקטרום, לא את <b>כמות</b> האנרגיה.</li>
+    <li><b>המציאות:</b> כל דרגה מכפילה מכניסה הפסד. לכן משדר אמיתי צריך מגבר הספק אחרי המכפיל.</li>
+    <li><b>טעות נפוצה:</b> להסיק מ־"×12" שההספק גדל אף הוא.</li></ul></div>
+<div class="note-block" data-note="48" hidden><h3>49 · כרטיס יציאה — 60 שניות</h3><h4>הנחיית הוראה</h4><ul>
+    <li>כרטיס יציאה עצמאי של 60–90 שניות: הציגו שלוש שאלות, תנו זמן כתיבה, ורק אז חשפו.</li>
+    <li>אין כאן ארבע נוסחאות במקביל — בכוונה. שלוש שאלות, שלושה רעיונות.</li></ul></div>
+<div class="note-block" data-note="49" hidden><h3>50 · שאלות הבנה עם משוב</h3><h4>הנחיית הוראה</h4><ul>
+    <li>שלוש שאלות הבנה אינטראקטיביות עם משוב. אין כאן השוואת נצילות AM מול FM — היא פשטנית ומטעה.</li></ul></div>
+<div class="note-block" data-note="50" hidden><h3>51 · סיכום: AM מול FM</h3><h4>סגירת המפגש</h4><ul>
+    <li><b>המשפט האחד:</b> AM משנה משרעת, FM משנה תדר — וזה כל ההבדל.</li>
+    <li><b>השאלה שפותחת את המפגש הבא:</b> כיצד מקלט FM משחזר את המידע?</li>
+    <li><b>אל תסכמו את כל השיעור שוב.</b> הטבלה מספיקה; השאלה היא מה שנשאר איתם.</li></ul></div></div>
+</aside>
+<script>
+/* =========================================================
+   שיעור 06 · ספריית גרפים
+   כל גרף מחושב מהפרמטרים של המחוונים שבשקף — אין תמונות מוכנות.
+   ========================================================= */
+(function () {
+  const L6 = (window.L6 = window.L6 || {});
+  const S = (L6.sims = L6.sims || {});
+
+  const C = {
+    ink: '#0e1726', ink2: '#26344a', body: '#42526b', muted: '#7d8ba1',
+    line: '#dfe6ef', grid: '#eef2f7',
+    acc: '#0891b2', accD: '#0b6e83', vio: '#7c5cf0', good: '#0f8a5f', warn: '#b45309', bad: '#c02a2a', pink: '#b03a72'
+  };
+  const font = (s, w) => (w || 700) + ' ' + s + 'px Heebo, Assistant, Arial, sans-serif';
+  const mono = (s, w) => (w || 700) + ' ' + s + 'px ui-monospace,Consolas,monospace';
+
+  function val(root, k, fb) {
+    const e = root && root.querySelector('input[data-k="' + k + '"]');
+    if (!e) return fb;
+    const v = +e.value;
+    return isFinite(v) ? v : fb;
+  }
+  function picked(root, k) {
+    const b = root && root.querySelector('[data-mode="' + k + '"][aria-pressed="true"]');
+    return b ? b.dataset.v : null;
+  }
+  function txt(ctx, s, x, y, o) {
+    o = o || {};
+    ctx.save();
+    ctx.font = font(o.size || 12, o.weight || 700);
+    ctx.fillStyle = o.color || C.muted;
+    ctx.textAlign = o.align || 'right';
+    ctx.textBaseline = o.base || 'middle';
+    if (o.dir) ctx.direction = o.dir;
+    ctx.fillText(s, x, y);
+    ctx.restore();
+  }
+  function frame(ctx, w, h, o) {
+    const pL = o.pL == null ? 40 : o.pL, pR = o.pR == null ? 10 : o.pR,
+      pT = o.pT == null ? 12 : o.pT, pB = o.pB == null ? 22 : o.pB;
+    const x = v => pL + (v - o.x0) / (o.x1 - o.x0) * (w - pL - pR);
+    const y = v => h - pB - (v - o.y0) / (o.y1 - o.y0) * (h - pT - pB);
+    return { x, y, pL, pR, pT, pB, w, h };
+  }
+  function axes(ctx, m, o) {
+    o = o || {};
+    ctx.save();
+    ctx.strokeStyle = C.grid; ctx.lineWidth = 1;
+    (o.yTicks || []).forEach(v => {
+      const yy = Math.round(m.y(v)) + .5;
+      ctx.beginPath(); ctx.moveTo(m.pL, yy); ctx.lineTo(m.w - m.pR, yy); ctx.stroke();
+    });
+    ctx.strokeStyle = C.line; ctx.lineWidth = 1.2;
+    const y0 = Math.round(m.y(o.zero == null ? 0 : o.zero)) + .5;
+    ctx.beginPath(); ctx.moveTo(m.pL, y0); ctx.lineTo(m.w - m.pR, y0); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(m.pL, m.pT); ctx.lineTo(m.pL, m.h - m.pB); ctx.stroke();
+    ctx.restore();
+    (o.yLabels || []).forEach(l => txt(ctx, l.t, m.pL - 6, m.y(l.v), { align: 'right', size: 10.5, color: C.muted }));
+    (o.xLabels || []).forEach(l => txt(ctx, l.t, m.x(l.v), m.h - m.pB + 11, { align: 'center', size: 10.5, color: C.muted, dir: 'rtl' }));
+  }
+  function wave(ctx, m, fn, x0, x1, style) {
+    ctx.save();
+    ctx.beginPath();
+    const N = Math.max(180, Math.round((x1 - x0) / 1.1));
+    for (let i = 0; i <= N; i++) {
+      const t = x0 + (x1 - x0) * i / N;
+      const yy = m.y(fn(t));
+      i ? ctx.lineTo(m.x(t), yy) : ctx.moveTo(m.x(t), yy);
+    }
+    ctx.strokeStyle = style.color; ctx.lineWidth = style.lw || 1.6;
+    ctx.lineJoin = 'round';
+    if (style.dash) ctx.setLineDash(style.dash);
+    ctx.stroke();
+    ctx.restore();
+  }
+  function arrow(ctx, x1, y1, x2, y2, color, lw) {
+    ctx.save();
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = lw || 1.4;
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+    const a = Math.atan2(y2 - y1, x2 - x1), s = 5;
+    ctx.beginPath();
+    ctx.moveTo(x2, y2);
+    ctx.lineTo(x2 - s * Math.cos(a - .4), y2 - s * Math.sin(a - .4));
+    ctx.lineTo(x2 - s * Math.cos(a + .4), y2 - s * Math.sin(a + .4));
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+  }
+  function band(ctx, m, x1, x2, color) {
+    ctx.save();
+    ctx.fillStyle = color;
+    ctx.fillRect(m.x(x1), m.pT, Math.max(1, m.x(x2) - m.x(x1)), m.h - m.pT - m.pB);
+    ctx.restore();
+  }
+  function caption(ctx, s, x, y, o) { txt(ctx, s, x, y, Object.assign({ size: 12, color: C.body }, o)); }
+
+  /* =========================================================
+     1 · AM מול FM — אותו אות מידע (שקף 13)
+     ========================================================= */
+  S.amfm = function (ctx, w, h, root) {
+    const ma = val(root, 'ma', .8), df = val(root, 'df', 75);
+    const gap = 9, hh = (h - gap * 2) / 3;
+    const bands = [
+      { y: 0, kind: 'am' },
+      { y: hh + gap, kind: 'fm' },
+      { y: (hh + gap) * 2, kind: 'msg' }
+    ];
+    bands.forEach(function (b) {
+      ctx.save();
+      ctx.beginPath(); ctx.rect(0, b.y, w, hh); ctx.clip();
+      ctx.translate(0, b.y);
+      const m = frame(ctx, w, hh, { x0: 0, x1: 2, y0: -1.9, y1: 1.9, pL: 34, pR: 10, pT: 16, pB: 10 });
+      if (b.kind === 'am') {
+        const env = t => 1 + ma * Math.cos(2 * Math.PI * t);
+        ctx.beginPath();
+        for (let i = 0; i <= 120; i++) { const t = 2 * i / 120; ctx.lineTo(m.x(t), m.y(env(t))); }
+        for (let i = 120; i >= 0; i--) { const t = 2 * i / 120; ctx.lineTo(m.x(t), m.y(-env(t))); }
+        ctx.closePath(); ctx.fillStyle = 'rgba(176,58,114,.06)'; ctx.fill();
+        wave(ctx, m, env, 0, 2, { color: C.pink, lw: 1.4, dash: [5, 4] });
+        wave(ctx, m, t => -env(t), 0, 2, { color: C.pink, lw: 1.4, dash: [5, 4] });
+        wave(ctx, m, t => env(t) * Math.cos(2 * Math.PI * 26 * t), 0, 2, { color: C.ink, lw: 1.5 });
+        axes(ctx, m, { zero: 0, pB: 10 });
+        txt(ctx, 'AM · המשרעת משתנה עם המידע', w - 8, 10, { size: 11.5, color: C.pink });
+      } else if (b.kind === 'fm') {
+        const beta = df / 100 * 26;
+        const ph = t => 2 * Math.PI * (26 * t + beta * Math.sin(2 * Math.PI * t));
+        wave(ctx, m, t => Math.cos(ph(t)), 0, 2, { color: C.accD, lw: 1.5 });
+        ctx.save();
+        ctx.strokeStyle = 'rgba(14,23,38,.25)'; ctx.setLineDash([3, 4]); ctx.lineWidth = 1;
+        [1, -1].forEach(v => { ctx.beginPath(); ctx.moveTo(m.pL, m.y(v)); ctx.lineTo(w - m.pR, m.y(v)); ctx.stroke(); });
+        ctx.restore();
+        axes(ctx, m, { zero: 0, pB: 10 });
+        txt(ctx, 'FM · המשרעת קבועה, הצפיפות משתנה', w - 8, 10, { size: 11.5, color: C.accD });
+      } else {
+        wave(ctx, m, t => Math.cos(2 * Math.PI * t), 0, 2, { color: C.good, lw: 1.8 });
+        axes(ctx, m, { zero: 0, pB: 10 });
+        txt(ctx, 'אותו אות מידע x(t)', w - 8, 10, { size: 11.5, color: C.good });
+      }
+      ctx.restore();
+    });
+  };
+
+  /* =========================================================
+     2 · שלושה גרפים מסונכרנים: מידע · תדר רגעי · גל FM
+     ========================================================= */
+  S.triple = function (ctx, w, h, root) {
+    const fc = val(root, 'fc', 100), fm = val(root, 'fm', 5), df = val(root, 'df', 10);
+    const gap = 7, h1 = (h - gap * 2) * .24, h2 = (h - gap * 2) * .33, h3 = (h - gap * 2) * .43;
+    const T = 2 / fm;               // שני מחזורי מידע
+    // message
+    let m = frame(ctx, w, h1, { x0: 0, x1: T, y0: -1.25, y1: 1.25, pL: 38, pR: 8, pT: 6, pB: 10 });
+    wave(ctx, m, t => Math.cos(2 * Math.PI * fm * t), 0, T, { color: C.good, lw: 1.7 });
+    axes(ctx, m, { zero: 0, pB: 10, yTicks: [0] });
+    caption(ctx, 'אות מידע', 6, 9, { align: 'left', size: 10.5, color: C.good });
+    // frequency
+    let y = h1 + gap;
+    ctx.save(); ctx.translate(0, y);
+    m = frame(ctx, w, h2, { x0: 0, x1: T, y0: fc - df * 1.9 - 2, y1: fc + df * 1.9 + 2, pL: 38, pR: 8, pT: 8, pB: 12 });
+    band(ctx, m, 0, T, 'rgba(8,145,178,.06)');
+    ctx.save();
+    ctx.strokeStyle = 'rgba(14,23,38,.3)'; ctx.setLineDash([4, 4]); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(m.pL, m.y(fc)); ctx.lineTo(w - m.pR, m.y(fc)); ctx.stroke();
+    ctx.restore();
+    wave(ctx, m, t => fc + df * Math.cos(2 * Math.PI * fm * t), 0, T, { color: C.acc, lw: 2 });
+    axes(ctx, m, {
+      zero: fc, pB: 12, yTicks: [fc, fc + df, fc - df],
+      yLabels: [{ v: fc + df, t: '+' + df }, { v: fc, t: 'fc' }, { v: fc - df, t: '−' + df }]
+    });
+    caption(ctx, 'תדר רגעי', 6, 9, { align: 'left', size: 10.5, color: C.accD });
+    txt(ctx, 'f = ' + fc + ' kHz', w - 8, 9, { size: 10.5, color: C.muted });
+    ctx.restore();
+    // wave
+    y = h1 + gap + h2 + gap;
+    ctx.save(); ctx.translate(0, y);
+    m = frame(ctx, w, h3, { x0: 0, x1: T, y0: -1.3, y1: 1.3, pL: 38, pR: 8, pT: 6, pB: 10 });
+    const base = 26, kdev = df / fc * 26;
+    wave(ctx, m, t => Math.cos(2 * Math.PI * (base * fm * t + (kdev / (2 * Math.PI * fm)) * Math.sin(2 * Math.PI * fm * t)) ), 0, T, { color: C.ink, lw: 1.5 });
+    ctx.save();
+    ctx.strokeStyle = 'rgba(14,23,38,.25)'; ctx.setLineDash([3, 4]);
+    [1.15, -1.15].forEach(v => { ctx.beginPath(); ctx.moveTo(m.pL, m.y(v)); ctx.lineTo(w - m.pR, m.y(v)); ctx.stroke(); });
+    ctx.restore();
+    axes(ctx, m, { zero: 0, pB: 10 });
+    caption(ctx, 'גל FM · מעטפת קבועה', 6, 9, { align: 'left', size: 10.5, color: C.ink2 });
+    ctx.restore();
+  };
+
+  /* =========================================================
+     3 · תדר רגעי בלבד (שקף 22)
+     ========================================================= */
+  S.inst = function (ctx, w, h, root) {
+    const fc = val(root, 'fc', 100), fm = val(root, 'fm', 5);
+    const df = val(root, 'df', 10);
+    const T = 2 / fm;
+    const m = frame(ctx, w, h, { x0: 0, x1: T, y0: -1.35, y1: 1.35, pL: 44, pR: 14, pT: 16, pB: 22 });
+    wave(ctx, m, t => Math.cos(2 * Math.PI * fm * t), 0, T, { color: C.good, lw: 1.8, dash: [6, 4] });
+    axes(ctx, m, { zero: 0, pB: 22, yLabels: [{ v: 1, t: '+1' }, { v: 0, t: '0' }, { v: -1, t: '−1' }] });
+    caption(ctx, 'x(t)', m.x(T * .02) + 6, m.y(1.1), { align: 'left', size: 13, color: C.good });
+    // arrows to frequency axis
+    const fc0 = fc, span = df;
+    ctx.save();
+    ctx.strokeStyle = 'rgba(8,145,178,.5)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(m.pL, m.pT); ctx.lineTo(m.pL, m.h - m.pB); ctx.stroke();
+    ctx.restore();
+    txt(ctx, 'f(t) = fc + Kf · x(t)', w - 12, 14, { align: 'right', size: 14, color: C.accD, dir: 'ltr' });
+    txt(ctx, 'המתח בשיא — התדר הגבוה ביותר', w - 12, h - 10, { align: 'right', size: 12, color: C.body });
+  };
+
+  /* =========================================================
+     4 · שלושת המצבים (שקף 23)
+     ========================================================= */
+  S.states = function (ctx, w, h, root) {
+    const cases = [
+      { t: 'מתח חיובי', s: '+', f: 'צפוף', col: C.pink, k: 1 },
+      { t: 'מתח אפס', s: '0', f: 'רגיל', col: C.ink2, k: 0 },
+      { t: 'מתח שלילי', s: '−', f: 'מרווח', col: C.acc, k: -1 }
+    ];
+    const gap = 10, cw = (w - gap * 2) / 3;
+    cases.forEach((c, i) => {
+      const x0 = i * (cw + gap);
+      ctx.save(); ctx.beginPath(); ctx.rect(x0, 0, cw, h); ctx.clip();
+      const m = frame(ctx, cw, h, { x0: 0, x1: 1, y0: -1.35, y1: 1.35, pL: 8, pR: 8, pT: 34, pB: 30 });
+      const cycles = c.k === 1 ? 22 : c.k === -1 ? 9 : 15;
+      wave(ctx, m, t => Math.cos(2 * Math.PI * cycles * t), 0, 1, { color: c.col, lw: 1.7 });
+      ctx.save();
+      ctx.strokeStyle = 'rgba(14,23,38,.18)'; ctx.setLineDash([3, 4]);
+      [1.12, -1.12].forEach(v => { ctx.beginPath(); ctx.moveTo(m.pL, m.y(v)); ctx.lineTo(cw - m.pR, m.y(v)); ctx.stroke(); });
+      ctx.restore();
+      // header
+      txt(ctx, c.t, x0 + cw - 8, 13, { size: 13, color: c.col, align: 'right' });
+      txt(ctx, c.f + (c.k > 0 ? ' · תדר גבוה' : c.k < 0 ? ' · תדר נמוך' : ' · תדר fc'), x0 + cw - 8, 28, { size: 11, color: C.body, align: 'right' });
+      // sign badge
+      ctx.save();
+      ctx.beginPath(); ctx.arc(x0 + 16, 20, 10, 0, 7); ctx.fillStyle = c.col + '22'; ctx.fill();
+      ctx.restore();
+      txt(ctx, c.s, x0 + 16, 20, { size: 13, color: c.col, align: 'center', dir: 'ltr' });
+      // amplitude bracket
+      txt(ctx, 'A קבוע', x0 + cw - 8, h - 12, { size: 11, color: C.muted, align: 'right' });
+      txt(ctx, 'ציר הזמן ←', x0 + 8, h - 12, { size: 10.5, color: C.muted, align: 'left' });
+      ctx.restore();
+    });
+  };
+
+  /* =========================================================
+     5 · מה קובע את הסטייה ומה את הקצב (שקף 24)
+     ========================================================= */
+  S.devrate = function (ctx, w, h, root) {
+    const am = val(root, 'am', 2), Kf = val(root, 'kf', 5), fm = val(root, 'fm', 5);
+    const gap = 16, cw = (w - gap) / 2;
+    // left: deviation band vs amplitude
+    ctx.save(); ctx.beginPath(); ctx.rect(0, 0, cw, h); ctx.clip();
+    let m = frame(ctx, cw, h, { x0: 0, x1: 2, y0: -1.45, y1: 1.45, pL: 34, pR: 12, pT: 30, pB: 26 });
+    wave(ctx, m, t => Math.cos(2 * Math.PI * t), 0, 2, { color: C.good, lw: 1.5 });
+    ctx.save();
+    ctx.setLineDash([4, 4]); ctx.strokeStyle = C.good;
+    ctx.beginPath(); ctx.moveTo(m.pL, m.y(1)); ctx.lineTo(cw - m.pR, m.y(1)); ctx.stroke();
+    ctx.restore();
+    axes(ctx, m, { zero: 0, pB: 26 });
+    txt(ctx, 'משרעת המידע Am = ' + am.toFixed(1) + ' V', cw - 10, 13, { size: 12, color: C.ink, align: 'right' });
+    txt(ctx, '→ סטייה  Δf = ' + (Kf * am).toFixed(0) + ' kHz', cw - 10, 28, { size: 12, color: C.pink, align: 'right' });
+    txt(ctx, 'המשרעת קובעת כמה רחוק התדר זז', cw / 2, h - 3, { size: 11, color: C.muted, align: 'center' });
+    ctx.restore();
+    // right: rate vs message frequency
+    const x0 = cw + gap;
+    ctx.save(); ctx.beginPath(); ctx.rect(x0, 0, cw, h); ctx.clip();
+    ctx.translate(x0, 0);
+    m = frame(ctx, cw, h, { x0: 0, x1: 1, y0: -1.45, y1: 1.45, pL: 34, pR: 12, pT: 30, pB: 26 });
+    // show message cycles = fm scaled
+    const cyc = Math.max(1, Math.round(fm));
+    wave(ctx, m, t => Math.cos(2 * Math.PI * cyc * t), 0, 1, { color: C.good, lw: 1.5 });
+    axes(ctx, m, { zero: 0, pB: 26 });
+    txt(ctx, 'תדר המידע fm = ' + fm.toFixed(1) + ' kHz', cw - 10, 13, { size: 12, color: C.ink, align: 'right' });
+    txt(ctx, '→ ' + cyc + ' מחזורים בחלון', cw - 10, 28, { size: 12, color: C.accD, align: 'right' });
+    txt(ctx, 'התדר קובע כמה מהר הסטייה מתחלפת', cw / 2, h - 3, { size: 11, color: C.muted, align: 'center' });
+    ctx.restore();
+  };
+
+  /* =========================================================
+     6 · fm מול Δf — שני גדלים שונים (שקפים 25, 26)
+     ========================================================= */
+  S.fmvsdev = function (ctx, w, h, root) {
+    const fc = val(root, 'fc', 98.7), df = val(root, 'df', 75), fm = val(root, 'fm', 5);
+    const gap = 12, hTop = h * .5;
+    // top: message with period marked
+    let m = frame(ctx, w, hTop, { x0: 0, x1: 3, y0: -1.4, y1: 1.4, pL: 42, pR: 12, pT: 22, pB: 22 });
+    wave(ctx, m, t => Math.cos(2 * Math.PI * fm * t), 0, 3, { color: C.good, lw: 1.8 });
+    axes(ctx, m, { zero: 0, pB: 22 });
+    // period arrow
+    const per = 1 / fm;
+    if (per < 3) {
+      ctx.save(); ctx.strokeStyle = C.good; ctx.lineWidth = 1.3;
+      ctx.beginPath(); ctx.moveTo(m.x(0), m.y(-1.28)); ctx.lineTo(m.x(per), m.y(-1.28)); ctx.stroke();
+      ctx.restore();
+      txt(ctx, 'מחזור אחד', m.x(per / 2), m.y(-1.28) + 12, { size: 11, color: C.good, align: 'center' });
+    }
+    txt(ctx, 'תדר המידע fm = ' + fm + ' kHz → קצב החלפת הסטייה', w - 12, 12, { size: 12.5, color: C.good });
+    // bottom: frequency axis
+    const y = hTop + gap;
+    ctx.save(); ctx.translate(0, y);
+    const lo = fc * 1000 - df * 3, hi = fc * 1000 + df * 3;
+    let mm = frame(ctx, w, h - hTop - gap, { x0: lo, x1: hi, y0: 0, y1: 1, pL: 42, pR: 12, pT: 26, pB: 34 });
+    // deviation band
+    band(ctx, mm, (fc * 1000) - df, (fc * 1000) + df, 'rgba(176,58,114,.10)');
+    ctx.save();
+    ctx.strokeStyle = C.ink; ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.moveTo(mm.pL, mm.y(.55)); ctx.lineTo(w - mm.pR, mm.y(.55)); ctx.stroke();
+    // carriers ticks
+    ctx.strokeStyle = C.ink2; ctx.lineWidth = 2;
+    [[-1, '−' + df], [0, 'fc'], [1, '+' + df]].forEach(p => {
+      const xx = mm.x(fc * 1000 + p[0] * df);
+      ctx.beginPath(); ctx.moveTo(xx, mm.y(.42)); ctx.lineTo(xx, mm.y(.68)); ctx.stroke();
+      txt(ctx, p[1], xx, mm.y(.28), { size: 12, color: C.ink2, align: 'center', dir: 'ltr' });
+    });
+    ctx.restore();
+    arrow(ctx, mm.x(fc * 1000 - df), mm.y(.55), mm.x(fc * 1000 + df), mm.y(.55), C.pink, 1.2);
+    txt(ctx, 'טווח התדר שהאות תופס: ±Δf = ±' + df + ' kHz', w - 14, mm.y(.55) - 14, { size: 12, color: C.pink });
+    ctx.restore();
+    txt(ctx, 'תדר נושא fc = ' + fc + ' MHz', 8, h - 6, { size: 11, color: C.muted, align: 'left', dir: 'ltr' });
+  };
+
+  /* =========================================================
+     7 · ציר הסטייה ומה שבינו לבין רוחב הפס (שקף 26)
+     ========================================================= */
+  S.devcalc = function (ctx, w, h, root) {
+    const fc = val(root, 'fc', 100), Kf = val(root, 'kf', 5), vm = val(root, 'vm', 2);
+    const df = Kf * vm;
+    const m = frame(ctx, w, h, { x0: fc - df * 2.6 - 1, x1: fc + df * 2.6 + 1, y0: 0, y1: 1, pL: 30, pR: 14, pT: 30, pB: 30 });
+    band(ctx, m, fc - df, fc + df, 'rgba(8,145,178,.09)');
+    ctx.save();
+    ctx.strokeStyle = C.line; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(m.pL, m.y(.5)); ctx.lineTo(w - m.pR, m.y(.5)); ctx.stroke();
+    ctx.strokeStyle = C.accD; ctx.lineWidth = 2.4;
+    const xc = m.x(fc);
+    ctx.beginPath(); ctx.moveTo(xc, m.y(.34)); ctx.lineTo(xc, m.y(.66)); ctx.stroke();
+    ctx.strokeStyle = C.pink; ctx.lineWidth = 1.6;
+    [fc - df, fc + df].forEach(v => { ctx.beginPath(); ctx.moveTo(m.x(v), m.y(.4)); ctx.lineTo(m.x(v), m.y(.6)); ctx.stroke(); });
+    ctx.restore();
+    txt(ctx, 'fc', xc, m.y(.76), { align: 'center', size: 12, color: C.accD, dir: 'ltr' });
+    txt(ctx, 'fc−Δf', m.x(fc - df), m.y(.24), { align: 'center', size: 11, color: C.pink, dir: 'ltr' });
+    txt(ctx, 'fc+Δf', m.x(fc + df), m.y(.24), { align: 'center', size: 11, color: C.pink, dir: 'ltr' });
+    arrow(ctx, xc, m.y(.64), m.x(fc + df), m.y(.64), C.pink, 1.1);
+    txt(ctx, 'Δf = ' + df.toFixed(0) + ' kHz', (xc + m.x(fc + df)) / 2, m.y(.64) - 12, { align: 'center', size: 11.5, color: C.pink, dir: 'ltr' });
+    txt(ctx, 'רוחב התחום שהתדר נע בו: 2Δf = ' + (2 * df).toFixed(0) + ' kHz — עדיין לא רוחב הפס', w - 12, 13, { size: 12, color: C.ink2 });
+    txt(ctx, 'עודף רוחב הפס נובע מפסי הצד של האפנון', w - 12, h - 8, { size: 11, color: C.muted });
+  };
+
+  /* =========================================================
+     8 · אותו קול "חזק" — משרעת גדולה יותר (שקף 27)
+     ========================================================= */
+  S.ampdev = function (ctx, w, h, root) {
+    const am = val(root, 'am', 2), Kf = val(root, 'kf', 5), fc = val(root, 'fc', 100);
+    const df = Kf * am;
+    const gap = 14, cw = (w - gap) / 2;
+    [1, 3].forEach((mul, idx) => {
+      const x0 = idx * (cw + gap);
+      ctx.save(); ctx.beginPath(); ctx.rect(x0, 0, cw, h); ctx.clip(); ctx.translate(x0, 0);
+      const m = frame(ctx, cw, h, { x0: 0, x1: 1, y0: fc - df * 2.2 - 1, y1: fc + df * 2.2 + 1, pL: 34, pR: 10, pT: 30, pB: 26 });
+      // wave whose instantaneous freq follows a slow cosine
+      const base = 20, k = df / fc * 20;
+      const ph = t => 2 * Math.PI * (base * t + (k / (2 * Math.PI)) * Math.sin(2 * Math.PI * t));
+      const mm = frame(ctx, cw, h, { x0: 0, x1: 1, y0: -1.4, y1: 1.4, pL: 34, pR: 10, pT: 30, pB: 26 });
+      wave(ctx, mm, t => Math.cos(ph(t)), 0, 1, { color: idx ? C.pink : C.ink2, lw: 1.5 });
+      axes(ctx, mm, { zero: 0, pB: 26 });
+      const lab = idx ? 'משרעת כפולה → סטייה כפולה' : 'משרעת קטנה';
+      txt(ctx, lab, cw - 8, 12, { size: 11.5, color: idx ? C.pink : C.ink2, align: 'right' });
+      txt(ctx, (idx ? 'Δf = ' : 'Δf = ') + (idx ? df.toFixed(0) : (df / 3).toFixed(0)) + ' kHz', cw - 8, 27, { size: 11.5, color: C.accD, align: 'right', dir: 'rtl' });
+      txt(ctx, 'fc ו־A אינם משתנים', cw / 2, h - 4, { size: 10.5, color: C.muted, align: 'center' });
+      ctx.restore();
+    });
+  };
+
+  /* =========================================================
+     9 · מופע — מספר המחזורים שנצברו (שקף 29)
+     ========================================================= */
+  S.phase = function (ctx, w, h, root) {
+    const fm = 5;
+    const r = Math.min(w * .16, h * .34);
+    const cx = w - r - 26, cy = h * .36;
+    // circle + rotating radius
+    ctx.save();
+    ctx.strokeStyle = C.line; ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, 7); ctx.stroke();
+    ctx.strokeStyle = C.muted; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(cx - r, cy); ctx.lineTo(cx + r, cy); ctx.moveTo(cx, cy - r); ctx.lineTo(cx, cy + r); ctx.stroke();
+    const ang = -Math.PI * .62;
+    arrow(ctx, cx, cy, cx + r * Math.cos(ang), cy + r * Math.sin(ang), C.accD, 2);
+    ctx.beginPath(); ctx.arc(cx, cy, r * .34, 0, ang > 0 ? ang : ang + 2 * Math.PI, ang < 0);
+    ctx.strokeStyle = C.vio; ctx.lineWidth = 1.6; ctx.stroke();
+    ctx.restore();
+    txt(ctx, 'θ(t)', cx + r * .42, cy - 12, { size: 12, color: C.vio, align: 'left', dir: 'ltr' });
+    txt(ctx, 'מופע = הזווית שנצברה', cx, cy + r + 16, { size: 11.5, color: C.body, align: 'center' });
+    // wave with phase markers
+    const m = frame(ctx, w * .62, h, { x0: 0, x1: 2, y0: -1.3, y1: 1.3, pL: 34, pR: 10, pT: 22, pB: 26 });
+    const ph = t => 2 * Math.PI * (16 * t + 2.2 * Math.sin(2 * Math.PI * fm / 2 * t));
+    wave(ctx, m, t => Math.cos(ph(t)), 0, 2, { color: C.ink, lw: 1.6 });
+    axes(ctx, m, { zero: 0, pB: 26 });
+    txt(ctx, 'תדר גבוה = המופע צובר זווית מהר יותר', 8, 12, { size: 11.5, color: C.ink2, align: 'left' });
+    txt(ctx, 'לכן אותו מידע מופיע כשינוי בצפיפות המחזורים', 8, h - 8, { size: 11, color: C.muted, align: 'left' });
+  };
+
+  /* =========================================================
+     10 · מעטפת קבועה והספק (שקף 36)
+     ========================================================= */
+  S.powerenv = function (ctx, w, h, root) {
+    const rel = picked(root, 'mode') || 'fm';
+    const gap = 10, hh = (h - gap) / 2;
+    // AM
+    let m = frame(ctx, w, hh, { x0: 0, x1: 2, y0: -2.1, y1: 2.1, pL: 34, pR: 12, pT: 18, pB: 14 });
+    const ma = .8, env = t => 1 + ma * Math.cos(2 * Math.PI * t);
+    wave(ctx, m, t => env(t) * Math.cos(2 * Math.PI * 24 * t), 0, 2, { color: C.pink, lw: 1.3 });
+    ctx.save(); ctx.setLineDash([4, 4]); ctx.strokeStyle = 'rgba(176,58,114,.6)'; ctx.lineWidth = 1.1;
+    wave(ctx, m, env, 0, 2, { color: 'rgba(176,58,114,.6)', lw: 1.1, dash: [4, 4] });
+    wave(ctx, m, t => -env(t), 0, 2, { color: 'rgba(176,58,114,.6)', lw: 1.1, dash: [4, 4] });
+    // mean power line for AM (P ~ 1 + ma^2/2)
+    const pAm = 1 + ma * ma / 2;
+    ctx.strokeStyle = C.ink2; ctx.lineWidth = 1.1; ctx.setLineDash([7, 5]);
+    ctx.beginPath(); ctx.moveTo(m.pL, m.y(pAm)); ctx.lineTo(w - m.pR, m.y(pAm)); ctx.stroke();
+    ctx.restore();
+    axes(ctx, m, { zero: 0, pB: 14 });
+    txt(ctx, 'AM · המשרעת משתנה — ולכן גם ההספק הרגעי', w - 12, 11, { size: 11.5, color: C.pink });
+    txt(ctx, 'P ממוצע תלוי בעומק האפנון', w - 12, m.y(pAm) - 11, { size: 10.5, color: C.ink2 });
+    // FM
+    ctx.save(); ctx.translate(0, hh + gap);
+    m = frame(ctx, w, hh, { x0: 0, x1: 2, y0: -2.1, y1: 2.1, pL: 34, pR: 12, pT: 22, pB: 12 });
+    const ph = t => 2 * Math.PI * (24 * t + 3.4 * Math.sin(2 * Math.PI * t));
+    wave(ctx, m, t => Math.cos(ph(t)), 0, 2, { color: rel === 'fm' ? C.accD : C.muted, lw: 1.4 });
+    ctx.save(); ctx.strokeStyle = C.accD; ctx.lineWidth = 1.2; ctx.setLineDash([7, 5]);
+    [1, -1].forEach(v => { ctx.beginPath(); ctx.moveTo(m.pL, m.y(v)); ctx.lineTo(w - m.pR, m.y(v)); ctx.stroke(); });
+    ctx.strokeStyle = C.good; ctx.setLineDash([]); ctx.lineWidth = 2;
+    ctx.restore();
+    axes(ctx, m, { zero: 0, pB: 12 });
+    txt(ctx, 'FM · המשרעת קבועה — וההספק הממוצע קבוע', w - 12, 12, { size: 11.5, color: C.accD });
+    txt(ctx, 'P ממוצע = Ac² / (2R) — לא תלוי ב־Δf', w - 12, h - 9, { size: 10.5, color: C.good });
+    ctx.restore();
+  };
+
+  /* =========================================================
+     11 · P = A²/(2R) (שקף 37)
+     ========================================================= */
+  S.pq = function (ctx, w, h, root) {
+    const A = val(root, 'a', 10), R = val(root, 'r', 50);
+    const P = A * A / (2 * R);
+    const m = frame(ctx, w, h, { x0: 0, x1: 25, y0: 0, y1: 7, pL: 40, pR: 14, pT: 18, pB: 26 });
+    axes(ctx, m, {
+      zero: 0, pB: 26, yTicks: [1, 2, 3, 4, 5, 6],
+      yLabels: [1, 2, 3, 4, 5, 6].map(v => ({ v, t: v + 'W' })),
+      xLabels: [{ v: 0, t: '0' }, { v: 5, t: '5' }, { v: 10, t: '10' }, { v: 15, t: '15' }, { v: 20, t: '20' }, { v: 25, t: '25V' }]
+    });
+    // curve for current R
+    ctx.save();
+    ctx.beginPath();
+    for (let i = 0; i <= 120; i++) { const a = 25 * i / 120; const p = a * a / (2 * R); const yy = m.y(Math.min(p, 7)); i ? ctx.lineTo(m.x(a), yy) : ctx.moveTo(m.x(a), yy); }
+    ctx.strokeStyle = C.acc; ctx.lineWidth = 2; ctx.stroke();
+    ctx.restore();
+    // marker
+    const mx = m.x(A), my = m.y(Math.min(P, 6.95));
+    ctx.save();
+    ctx.beginPath(); ctx.arc(mx, my, 5.5, 0, 7); ctx.fillStyle = C.pink; ctx.fill();
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.setLineDash([4, 4]); ctx.strokeStyle = 'rgba(176,58,114,.5)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(m.pL, my); ctx.lineTo(mx, my); ctx.moveTo(mx, my); ctx.lineTo(mx, m.h - m.pB); ctx.stroke();
+    ctx.restore();
+    txt(ctx, 'P = ' + (P >= 10 ? P.toFixed(1) : P.toFixed(2)) + ' W', Math.min(mx + 10, w - 70), my - 13, { size: 13, color: C.pink, align: 'left', dir: 'ltr' });
+    txt(ctx, 'A (מתח שיא) →', w - 14, h - 9, { size: 11, color: C.muted, dir: 'ltr' });
+    txt(ctx, 'R = ' + R + ' Ω', 8, 12, { size: 11.5, color: C.muted, align: 'left', dir: 'ltr' });
+  };
+
+  /* =========================================================
+     12 · ספקטרום FM (שקפים 33, 40, 41)
+     ========================================================= */
+  S.spectrum = function (ctx, w, h, root) {
+    const fc = val(root, 'fc', 100), fm = val(root, 'fm', 5), df = val(root, 'df', 10);
+    const nMax = Math.max(2, Math.min(9, Math.ceil(df / fm) + 2));
+    const m = frame(ctx, w, h, { x0: fc - (nMax + 1) * fm, x1: fc + (nMax + 1) * fm, y0: 0, y1: 1, pL: 28, pR: 14, pT: 26, pB: 34 });
+    // significant BW bracket per Carson (approx)
+    const bw = 2 * (df + fm);
+    band(ctx, m, fc - bw / 2, fc + bw / 2, 'rgba(8,145,178,.055)');
+    ctx.save();
+    ctx.strokeStyle = C.line; ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.moveTo(m.pL, m.y(0)); ctx.lineTo(w - m.pR, m.y(0)); ctx.stroke();
+    ctx.restore();
+    // Bessel-ish amplitudes (normalized, qualitative but symmetric)
+    const beta = df / fm;
+    function J(n, b) {
+      // crude Bessel Jn via series
+      let s = 0;
+      for (let k = 0; k < 12; k++) {
+        let t = Math.pow(-1, k) / (fact(k) * fact(k + n)) * Math.pow(b / 2, 2 * k + n);
+        s += t;
+      }
+      return s;
+    }
+    function fact(k) { let r = 1; for (let i = 2; i <= k; i++) r *= i; return r; }
+    const amps = [];
+    for (let n = -nMax; n <= nMax; n++) amps.push({ n, a: Math.abs(J(Math.abs(n), beta)) });
+    const mx = Math.max.apply(null, amps.map(x => x.a)) || 1;
+    amps.forEach(o => {
+      const xx = m.x(fc + o.n * fm);
+      const hgt = Math.max(1.5, (o.a / mx) * (h - m.pT - m.pB) * .82);
+      ctx.save();
+      ctx.fillStyle = o.n === 0 ? C.ink : C.vio;
+      ctx.globalAlpha = o.n === 0 ? 1 : .82;
+      ctx.fillRect(xx - 3.2, m.y(0) - hgt, 6.4, hgt);
+      ctx.restore();
+      if (Math.abs(o.n) <= Math.min(nMax, 5)) txt(ctx, (o.n > 0 ? '+ ' : o.n < 0 ? '− ' : '') + Math.abs(o.n) + 'fm', xx, m.h - m.pB + 11, { align: 'center', size: 10, color: C.body, dir: 'ltr' });
+    });
+    txt(ctx, 'fc', m.x(fc), m.y(0) - (h - m.pT - m.pB) * .92, { align: 'center', size: 11.5, color: C.ink, dir: 'ltr' });
+    // BW bracket
+    const yb = m.h - 16;
+    ctx.save(); ctx.strokeStyle = C.acc; ctx.lineWidth = 1.3;
+    ctx.beginPath(); ctx.moveTo(m.x(fc - bw / 2), yb); ctx.lineTo(m.x(fc + bw / 2), yb); ctx.stroke();
+    ctx.restore();
+    txt(ctx, 'רוחב פס משמעותי ≈ ' + Math.round(bw) + ' kHz', m.x(fc), yb - 9, { align: 'center', size: 11, color: C.accD });
+    txt(ctx, 'המרחק בין קווים = fm = ' + fm + ' kHz', w - 14, 12, { size: 11.5, color: C.vio });
+    txt(ctx, 'הספקטרום ממשיך גם מחוץ לתחום — אין גבול חד', w - 14, m.pT + 2, { size: 10.5, color: C.muted });
+  };
+
+  /* =========================================================
+     13 · כלל קרסון — פירוק לרוחב (שקף 34, 49)
+     ========================================================= */
+  S.carson = function (ctx, w, h, root) {
+    const fm = val(root, 'fm', 15), df = val(root, 'df', 75);
+    const bw = 2 * (df + fm);
+    const m = frame(ctx, w, h, { x0: 0, x1: bw * 1.12, y0: 0, y1: 1, pL: 30, pR: 14, pT: 30, pB: 36 });
+    ctx.save();
+    // segments
+    const segs = [
+      { x: 0, w: df, c: C.pink, t: 'Δf' },
+      { x: df, w: 2 * fm, c: C.acc, t: '2fm' },
+      { x: df + 2 * fm, w: df, c: C.pink, t: 'Δf' }
+    ];
+    segs.forEach(s => {
+      ctx.fillStyle = s.c + '26';
+      ctx.fillRect(m.x(s.x), m.y(.72), m.x(s.x + s.w) - m.x(s.x), m.y(.28) - m.y(.72));
+      ctx.strokeStyle = s.c; ctx.lineWidth = 1.4;
+      ctx.strokeRect(m.x(s.x), m.y(.72), m.x(s.x + s.w) - m.x(s.x), m.y(.28) - m.y(.72));
+      txt(ctx, s.t, (m.x(s.x) + m.x(s.x + s.w)) / 2, m.y(.5), { align: 'center', size: 13, color: s.c, dir: 'ltr' });
+      txt(ctx, Math.round(s.w) + ' kHz', (m.x(s.x) + m.x(s.x + s.w)) / 2, m.y(.5) + 17, { align: 'center', size: 11, color: C.body, dir: 'ltr' });
+    });
+    // overall bracket
+    const yb = m.y(.14);
+    ctx.strokeStyle = C.ink; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(m.x(0), yb); ctx.lineTo(m.x(bw), yb); ctx.stroke();
+    ctx.restore();
+    txt(ctx, 'BW ≈ 2(Δf + fm) = ' + Math.round(bw) + ' kHz', m.x(bw / 2), yb - 12, { align: 'center', size: 13.5, color: C.ink, dir: 'ltr' });
+    txt(ctx, 'קירוב לרוחב הפס המשמעותי — לא תחימה מוחלטת', m.x(bw / 2), h - 8, { align: 'center', size: 11, color: C.muted });
+  };
+
+  /* =========================================================
+     14 · צר־פס מול רחב־פס (שקף 35)
+     ========================================================= */
+  S.narrowwide = function (ctx, w, h, root) {
+    const gap = 16, cw = (w - gap) / 2;
+    const cases = [
+      { t: 'קשר דיבור', df: 2.5, fm: 3, c: C.good },
+      { t: 'שידור FM', df: 75, fm: 15, c: C.vio }
+    ];
+    cases.forEach((cc, i) => {
+      const x0 = i * (cw + gap);
+      ctx.save(); ctx.beginPath(); ctx.rect(x0, 0, cw, h); ctx.clip(); ctx.translate(x0, 0);
+      const bw = 2 * (cc.df + cc.fm);
+      const m = frame(ctx, cw, h, { x0: -bw * .78, x1: bw * .78, y0: 0, y1: 1, pL: 16, pR: 16, pT: 30, pB: 34 });
+      band(ctx, m, -bw / 2, bw / 2, cc.c + '12');
+      ctx.save(); ctx.strokeStyle = C.line; ctx.lineWidth = 1.3;
+      ctx.beginPath(); ctx.moveTo(m.pL, m.y(0)); ctx.lineTo(cw - m.pR, m.y(0)); ctx.stroke(); ctx.restore();
+      const nmax = Math.min(8, Math.ceil(cc.df / cc.fm) + 1);
+      for (let n = -nmax; n <= nmax; n++) {
+        const xx = m.x(n * cc.fm);
+        const hh = (n === 0 ? .95 : .62) * (h - m.pT - m.pB) * Math.exp(-Math.abs(n) * .28);
+        ctx.fillStyle = n === 0 ? C.ink : cc.c;
+        ctx.fillRect(xx - 2.4, m.y(0) - hh, 4.8, hh);
+      }
+      txt(ctx, cc.t, cw - 12, 12, { size: 12.5, color: cc.c, align: 'right' });
+      txt(ctx, 'BW ≈ ' + Math.round(bw) + ' kHz', cw - 12, 27, { size: 11.5, color: C.ink2, align: 'right', dir: 'rtl' });
+      txt(ctx, 'Δf = ' + cc.df + ' · fm = ' + cc.fm + ' kHz', cw / 2, h - 10, { size: 10.5, color: C.muted, align: 'center', dir: 'rtl' });
+      ctx.restore();
+    });
+  };
+
+  /* =========================================================
+     15 · מכפיל תדר — לפני ואחרי (שקפים 44, 48)
+     ========================================================= */
+  S.multip = function (ctx, w, h, root) {
+    const n = val(root, 'n', 3), fc = val(root, 'fc', 7.5), df = val(root, 'df', 7.5), fm = val(root, 'fm', 10);
+    const gap = 16, cw = (w - gap) / 2;
+    const cases = [
+      { t: 'כניסה', fc: fc, df: df, c: C.muted },
+      { t: 'יציאה ×' + n, fc: fc * n, df: df * n, c: C.vio }
+    ];
+    cases.forEach((cc, i) => {
+      const x0 = i * (cw + gap);
+      ctx.save(); ctx.beginPath(); ctx.rect(x0, 0, cw, h); ctx.clip(); ctx.translate(x0, 0);
+      const span = Math.max(cc.df * 2.4, fm * 2.2);
+      const m = frame(ctx, cw, h, { x0: cc.fc - span, x1: cc.fc + span, y0: 0, y1: 1, pL: 18, pR: 18, pT: 30, pB: 34 });
+      band(ctx, m, cc.fc - cc.df, cc.fc + cc.df, cc.c + '18');
+      case0(ctx, m, cc, i === 1);
+      ctx.restore();
+    });
+    function case0(ctx, m, cc, after) {
+      ctx.save();
+      const nmax = 4;
+      for (let k = -nmax; k <= nmax; k++) {
+        const xx = m.x(cc.fc + k * fm);
+        if (xx < 4 || xx > m.w - 4) continue;
+        const hh = (k === 0 ? .92 : .58) * (m.h - m.pT - m.pB) * Math.exp(-Math.abs(k) * .3);
+        ctx.fillStyle = k === 0 ? C.ink : cc.c;
+        ctx.fillRect(xx - 2.2, m.y(0) - hh, 4.4, hh);
+      }
+      ctx.strokeStyle = C.line; ctx.lineWidth = 1.3;
+      ctx.beginPath(); ctx.moveTo(m.pL, m.y(0)); ctx.lineTo(m.w - m.pR, m.y(0)); ctx.stroke();
+      ctx.restore();
+      txt(ctx, cc.t, m.w - 12, 12, { size: 12.5, color: after ? C.vio : C.muted, align: 'right' });
+      txt(ctx, 'fc = ' + cc.fc.toFixed(1) + ' MHz · Δf = ' + cc.df.toFixed(1) + ' kHz', m.w - 12, 27, { size: 11, color: C.ink2, align: 'right', dir: 'rtl' });
+      txt(ctx, 'fm = ' + fm + ' kHz (לא משתנה)', m.w / 2, m.h - 10, { size: 10.5, color: C.muted, align: 'center', dir: 'rtl' });
+    }
+  };
+
+  /* =========================================================
+     16 · הרמוניות וסינון (שקף 45)
+     ========================================================= */
+  S.harm = function (ctx, w, h, root) {
+    const on = picked(root, 'filt') !== 'off';
+    const m = frame(ctx, w, h, { x0: 0, x1: 6.2, y0: 0, y1: 1, pL: 30, pR: 16, pT: 26, pB: 34 });
+    // filter mask region
+    ctx.save();
+    if (on) { ctx.fillStyle = 'rgba(15,138,95,.07)'; ctx.fillRect(m.pL, m.pT, m.x(1.5) - m.pL, m.h - m.pT - m.pB); }
+    ctx.strokeStyle = 'rgba(15,138,95,.45)'; ctx.setLineDash([5, 4]); ctx.lineWidth = 1.2;
+    ctx.beginPath(); ctx.moveTo(m.x(1.5), m.pT); ctx.lineTo(m.x(1.5), m.h - m.pB); ctx.stroke();
+    ctx.restore();
+    const labels = ['fc', '2fc', '3fc', '4fc', '5fc', '6fc'];
+    for (let i = 1; i <= 6; i++) {
+      const xx = m.x(i);
+      const killed = on && i > 1;
+      const hh = (h - m.pT - m.pB) * (i === 1 ? .92 : .62 / i);
+      ctx.save();
+      ctx.globalAlpha = killed ? .18 : 1;
+      ctx.fillStyle = i === 1 ? C.ink : C.vio;
+      ctx.fillRect(xx - 3, m.y(0) - hh, 6, hh);
+      ctx.restore();
+      txt(ctx, labels[i - 1], xx, m.h - m.pB + 12, { align: 'center', size: 10.5, color: killed ? C.muted : C.ink2, dir: 'ltr' });
+    }
+    ctx.save(); ctx.strokeStyle = C.line; ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.moveTo(m.pL, m.y(0)); ctx.lineTo(w - m.pR, m.y(0)); ctx.stroke(); ctx.restore();
+    txt(ctx, on ? 'מסנן מעביר רק את fc — ההרמוניות מדוכאות' : 'ללא סינון: כל ההרמוניות יוצאות', w - 14, 12, { size: 11.5, color: on ? C.good : C.warn });
+  };
+
+  /* =========================================================
+     17 · קדם־הדגשה והשלמה (שקף 46)
+     ========================================================= */
+  S.emphasis = function (ctx, w, h, root) {
+    const on = picked(root, 'mode') !== 'off';
+    const m = frame(ctx, w, h, { x0: 0, x1: 15, y0: -12, y1: 14, pL: 40, pR: 14, pT: 24, pB: 30 });
+    axes(ctx, m, {
+      zero: 0, pB: 30, yTicks: [-10, 0, 10],
+      yLabels: [{ v: 10, t: '+10dB' }, { v: 0, t: '0' }, { v: -10, t: '−10' }],
+      xLabels: [{ v: 0, t: '0' }, { v: 3, t: '3' }, { v: 6, t: '6' }, { v: 10, t: '10' }, { v: 15, t: '15kHz' }]
+    });
+    const pre = f => 10 * Math.log10(1 + Math.pow(f / 3.2, 2)) / 2;
+    const de = f => -pre(f);
+    if (on) {
+      wave(ctx, m, pre, 0, 15, { color: C.pink, lw: 2 });
+      wave(ctx, m, de, 0, 15, { color: C.acc, lw: 2, dash: [6, 4] });
+      txt(ctx, 'קדם־הדגשה במשדר', w - 14, m.pT + 6, { size: 11.5, color: C.pink });
+      txt(ctx, 'הנחתה משלימה במקלט', w - 14, m.pT + 22, { size: 11.5, color: C.accD });
+    } else {
+      wave(ctx, m, f => 0, 0, 15, { color: C.muted, lw: 1.6, dash: [6, 4] });
+      txt(ctx, 'ללא קדם־הדגשה: כל התדרים באותה עוצמה', w - 14, m.pT + 6, { size: 11.5, color: C.muted });
+    }
+    txt(ctx, 'תדר שמע', w - 14, h - 8, { size: 10.5, color: C.muted });
+  };
+
+  /* =========================================================
+     18 · Q לאורך הסקאלה (שקף 3)
+     ========================================================= */
+  S.qscale = function (ctx, w, h, root) {
+    const bw = 10;
+    const m = frame(ctx, w, h, { x0: 500, x1: 1700, y0: 0, y1: 190, pL: 40, pR: 16, pT: 22, pB: 30 });
+    axes(ctx, m, {
+      zero: 0, pB: 30, yTicks: [50, 100, 150],
+      yLabels: [{ v: 50, t: '50' }, { v: 100, t: '100' }, { v: 150, t: '150' }],
+      xLabels: [{ v: 540, t: '540' }, { v: 1000, t: '1000' }, { v: 1600, t: '1600' }]
+    });
+    wave(ctx, m, f => f / bw, 540, 1650, { color: C.acc, lw: 2.2 });
+    [[540, '54'], [1000, '100'], [1600, '160']].forEach(p => {
+      const xx = m.x(p[0]), yy = m.y(p[0] / bw);
+      ctx.save();
+      ctx.beginPath(); ctx.arc(xx, yy, 4.5, 0, 7); ctx.fillStyle = C.pink; ctx.fill();
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.6; ctx.stroke();
+      ctx.restore();
+      txt(ctx, p[1], xx, yy - 12, { align: 'center', size: 11.5, color: C.pink, dir: 'ltr' });
+    });
+    txt(ctx, 'Q נדרש', 8, 10, { size: 11, color: C.muted, align: 'left' });
+    txt(ctx, 'תדר תחנה [kHz] →', w - 14, h - 8, { size: 10.5, color: C.muted, dir: 'rtl' });
+  };
+
+  /* =========================================================
+     19 · ערבל — סכום והפרש (שקף 8)
+     ========================================================= */
+  S.mixer8 = function (ctx, w, h, root) {
+    const frf = val(root, 'frf', 1000), flo = val(root, 'flo', 1455);
+    const sum = frf + flo, diff = Math.abs(flo - frf);
+    const m = frame(ctx, w, h, { x0: 0, x1: 2500, y0: 0, y1: 1, pL: 26, pR: 16, pT: 24, pB: 32 });
+    ctx.save(); ctx.strokeStyle = C.line; ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.moveTo(m.pL, m.y(0)); ctx.lineTo(w - m.pR, m.y(0)); ctx.stroke(); ctx.restore();
+    const bars = [
+      { f: frf, t: 'RF', c: C.acc, s: .8 },
+      { f: flo, t: 'LO', c: C.ink, s: .72 },
+      { f: diff, t: 'הפרש (IF)', c: C.good, s: .62 },
+      { f: sum, t: 'סכום', c: C.vio, s: .5 }
+    ];
+    bars.forEach(b => {
+      if (b.f > 2500) return;
+      const xx = m.x(b.f), hh = b.s * (h - m.pT - m.pB);
+      ctx.fillStyle = b.c; ctx.fillRect(xx - 3, m.y(0) - hh, 6, hh);
+      txt(ctx, b.t, xx, m.y(0) - hh - 9, { align: 'center', size: 10.5, color: b.c });
+      txt(ctx, b.f + 'k', xx, m.h - m.pB + 11, { align: 'center', size: 9.8, color: C.muted, dir: 'ltr' });
+    });
+    txt(ctx, 'המסנן בוחר את הפרש התדרים', w - 12, 12, { size: 11.5, color: C.good });
+  };
+
+  /* =========================================================
+     20 · VCO — מתח לתדר (שקף 42)
+     ========================================================= */
+  S.vco = function (ctx, w, h, root) {
+    const fc = val(root, 'fc', 100), Kf = val(root, 'kf', 5), vm = val(root, 'vm', 1.5);
+    const m = frame(ctx, w, h, { x0: -2, x1: 2, y0: fc - 25, y1: fc + 25, pL: 42, pR: 16, pT: 22, pB: 30 });
+    axes(ctx, m, {
+      zero: fc, pB: 30, yTicks: [fc - 20, fc, fc + 20],
+      yLabels: [{ v: fc + 20, t: (fc + 20) + 'k' }, { v: fc, t: fc + 'k' }, { v: fc - 20, t: (fc - 20) + 'k' }],
+      xLabels: [{ v: -2, t: '−2' }, { v: 0, t: '0' }, { v: 2, t: '+2V' }]
+    });
+    wave(ctx, m, v => fc + Kf * v, -2, 2, { color: C.acc, lw: 2 });
+    const xx = m.x(vm), yy = m.y(fc + Kf * vm);
+    ctx.save(); ctx.beginPath(); ctx.arc(xx, yy, 5, 0, 7); ctx.fillStyle = C.vio; ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke(); ctx.restore();
+    txt(ctx, 'f = ' + (fc + Kf * vm).toFixed(1) + ' kHz', Math.min(xx + 10, w - 80), yy - 12, { size: 11.5, color: C.vio, align: 'left', dir: 'ltr' });
+    txt(ctx, 'שיפוע = Kf = ' + Kf + ' kHz/V', 8, 12, { size: 11, color: C.muted, align: 'left' });
+  };
+
+  /* =========================================================
+     21 · כרטיס פתיחה — AM מול FM (שקף 15)
+     ========================================================= */
+  S.cover = function (ctx, w, h, root) {
+    const gap = 12, hh = (h - gap) / 2;
+    let m = frame(ctx, w, hh, { x0: 0, x1: 2, y0: -1.9, y1: 1.9, pL: 12, pR: 10, pT: 20, pB: 8 });
+    wave(ctx, m, t => (1 + .75 * Math.cos(2 * Math.PI * t)) * Math.cos(2 * Math.PI * 22 * t), 0, 2, { color: C.pink, lw: 1.3 });
+    txt(ctx, 'AM', 8, 10, { size: 12, color: C.pink, align: 'left', dir: 'ltr' });
+    ctx.save(); ctx.translate(0, hh + gap);
+    m = frame(ctx, w, hh, { x0: 0, x1: 2, y0: -1.9, y1: 1.9, pL: 12, pR: 10, pT: 10, pB: 8 });
+    wave(ctx, m, t => Math.cos(2 * Math.PI * (22 * t + 3 * Math.sin(2 * Math.PI * t))), 0, 2, { color: C.accD, lw: 1.3 });
+    txt(ctx, 'FM', 8, 10, { size: 12, color: C.accD, align: 'left', dir: 'ltr' });
+    ctx.restore();
+  };
+
+  /* =========================================================
+     עדכון תוויות המחוונים — לפי סוג הגרף שבשקף
+     ========================================================= */
+  const fmt = (v, d) => (Math.round(v * Math.pow(10, d || 0)) / Math.pow(10, d || 0)).toString();
+  S.out = {
+    amfm: function (r) {
+      const ma = val(r, 'ma', .8), df = val(r, 'df', 75);
+      return { ma: ma.toFixed(2), df: df + ' kHz', dfv: df + ' kHz', mav: (ma * 100).toFixed(0) + '%' };
+    },
+    triple: function (r) {
+      const fc = val(r, 'fc', 100), fm = val(r, 'fm', 5), df = val(r, 'df', 10);
+      return { fc: fc + ' kHz', fm: fm + ' kHz', df: df + ' kHz', frange: (fc - df) + '–' + (fc + df) + ' kHz' };
+    },
+    devrate: function (r) {
+      const am = val(r, 'am', 2), kf = val(r, 'kf', 5), fm = val(r, 'fm', 5);
+      return { am: am.toFixed(1) + ' V', kf: kf.toFixed(1) + ' kHz/V', fm: fm.toFixed(1) + ' kHz', dev: (kf * am).toFixed(1) + ' kHz', rate: fm.toFixed(1) + ' kHz' };
+    },
+    fmvsdev: function (r) {
+      const fc = val(r, 'fc', 98.7), df = val(r, 'df', 75), fm = val(r, 'fm', 5);
+      return { fc: fc.toFixed(1) + ' MHz', df: df + ' kHz', fm: fm + ' kHz', span: '±' + df + ' kHz', rate: fm + ' kHz' };
+    },
+    devcalc: function (r) {
+      const kf = val(r, 'kf', 5), vm = val(r, 'vm', 2);
+      return { kf: kf.toFixed(1) + ' kHz/V', vm: vm.toFixed(1) + ' V', dev: (kf * vm).toFixed(0) + ' kHz', span: (2 * kf * vm).toFixed(0) + ' kHz' };
+    },
+    ampdev: function (r) {
+      const am = val(r, 'am', 2), kf = val(r, 'kf', 5);
+      return { am: am.toFixed(1) + ' V', kf: kf.toFixed(1) + ' kHz/V', dev: (kf * am).toFixed(0) + ' kHz', fc: '100 kHz' };
+    },
+    mixer8: function (r) {
+      const frf = val(r, 'frf', 1000), flo = val(r, 'flo', 1455);
+      return { rf: frf + ' kHz', lo: flo + ' kHz', if: Math.abs(flo - frf) + ' kHz', sum: (flo + frf) + ' kHz' };
+    },
+    spectrum: function (r) {
+      const fm = val(r, 'fm', 5), df = val(r, 'df', 20);
+      return { fc: val(r, 'fc', 100) + ' kHz', fm: fm + ' kHz', df: df + ' kHz', bw: (2 * (df + fm)) + ' kHz', nb: Math.max(1, 2 * Math.ceil(df / fm) + 1) };
+    },
+    carson: function (r) {
+      const fm = val(r, 'fm', 15), df = val(r, 'df', 75);
+      return { df: df + ' kHz', fm: fm + ' kHz', bw: (2 * (df + fm)) + ' kHz' };
+    },
+    pq: function (r) {
+      const a = val(r, 'a', 10), R = val(r, 'r', 50);
+      const p = a * a / (2 * R);
+      return { a: a.toFixed(1) + ' V', r: R + ' Ω', p: p.toFixed(2) + ' W', rms: (a / Math.SQRT2).toFixed(1) + ' V' };
+    },
+    vco: function (r) {
+      const fc = val(r, 'fc', 100), kf = val(r, 'kf', 5), vm = val(r, 'vm', 1.5);
+      return { vm: vm.toFixed(1) + ' V', kf: kf.toFixed(1) + ' kHz/V', fc: fc + ' kHz', fout: (fc + kf * vm).toFixed(1) + ' kHz' };
+    },
+    multip: function (r) {
+      const n = val(r, 'n', 3), fc = val(r, 'fc', 7.5), df = val(r, 'df', 7.5);
+      return { n: '×' + n, fc: fc.toFixed(1) + ' MHz', df: df.toFixed(1) + ' kHz', out: (fc * n).toFixed(1) + ' MHz', dev: (df * n).toFixed(1) + ' kHz' };
+    }
+  };
+
+  /* =========================================================
+     22 · לקרוא גל FM — הגל בלבד, ואז המידע (שקף 31)
+     ========================================================= */
+  S.fmread = function (ctx, w, h, root) {
+    const df = val(root, 'df', 30), fm = val(root, 'fm', 4);
+    const T = 1 / fm;
+    const m = frame(ctx, w, h, { x0: 0, x1: T, y0: -1.5, y1: 1.5, pL: 40, pR: 12, pT: 18, pB: 22 });
+    const base = 30, k = df / 60 * 12;
+    const ph = t => 2 * Math.PI * (base * fm * t + (k / (2 * Math.PI * fm)) * Math.sin(2 * Math.PI * fm * t));
+    // highlight regions: high freq where cos msg = +1
+    const n = 60;
+    for (let i = 0; i < n; i++) {
+      const t0 = T * i / n, t1 = T * (i + 1) / n, tm = (t0 + t1) / 2;
+      const c = Math.cos(2 * Math.PI * fm * tm);
+      const col = c > .45 ? 'rgba(176,58,114,.07)' : c < -.45 ? 'rgba(8,145,178,.07)' : 'rgba(125,139,161,.03)';
+      ctx.fillStyle = col;
+      ctx.fillRect(m.x(t0), m.pT, m.x(t1) - m.x(t0) + .5, m.h - m.pT - m.pB);
+    }
+    wave(ctx, m, t => Math.cos(ph(t)), 0, T, { color: C.ink, lw: 1.6 });
+    ctx.save();
+    ctx.strokeStyle = 'rgba(14,23,38,.22)'; ctx.setLineDash([3, 4]);
+    [1, -1].forEach(v => { ctx.beginPath(); ctx.moveTo(m.pL, m.y(v)); ctx.lineTo(w - m.pR, m.y(v)); ctx.stroke(); });
+    ctx.restore();
+    axes(ctx, m, { zero: 0, pB: 22 });
+    txt(ctx, 'תדר גבוה', m.x(T * .02), m.pT + 8, { size: 11, color: C.pink, align: 'left' });
+    txt(ctx, 'תדר נמוך', m.x(T * .48), m.pT + 8, { size: 11, color: C.accD, align: 'center' });
+    txt(ctx, 'הגובה זהה לכל האורך — המידע בצפיפות', w - 12, h - 8, { size: 11, color: C.muted });
+  };
+
+  S.fmreadmsg = function (ctx, w, h, root) {
+    const df = val(root, 'df', 30), fm = val(root, 'fm', 4);
+    const T = 1 / fm;
+    const m = frame(ctx, w, h, { x0: 0, x1: T, y0: -1.35, y1: 1.35, pL: 40, pR: 12, pT: 12, pB: 18 });
+    wave(ctx, m, t => Math.cos(2 * Math.PI * fm * t), 0, T, { color: C.good, lw: 2 });
+    axes(ctx, m, { zero: 0, pB: 18, yTicks: [0] });
+    txt(ctx, 'אות המידע שממנו נגזר התדר', w - 12, 8, { size: 11, color: C.good });
+  };
+
+  /* =========================================================
+     22 · מכפיל — מסלול ויזואלי (שקף 47)
+     ========================================================= */
+  S.prediction = function (ctx, w, h, root) {
+    const dmul = picked(root, 'ans') === 'double' ? 2 : 1;
+    const m = frame(ctx, w, h, { x0: 0, x1: 3, y0: 0, y1: 1, pL: 24, pR: 16, pT: 24, pB: 30 });
+    ctx.save(); ctx.strokeStyle = C.line; ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.moveTo(m.pL, m.y(0)); ctx.lineTo(w - m.pR, m.y(0)); ctx.stroke(); ctx.restore();
+    const base = [[1, .86, 'Δf'], [2, .56, 'fm']];
+    base.forEach(b => {
+      const xx = m.x(b[0]), hh = b[1] * (h - m.pT - m.pB);
+      ctx.fillStyle = C.pink; ctx.fillRect(xx - 4, m.y(0) - hh, 8, hh);
+      txt(ctx, b[2], xx, m.y(0) - hh - 10, { align: 'center', size: 11, color: C.pink, dir: 'ltr' });
+    });
+    const xx = m.x(2.5), hh = Math.min(.95, .86 * dmul / 2 + .2) * (h - m.pT - m.pB);
+    ctx.fillStyle = C.vio; ctx.fillRect(xx - 5, m.y(0) - hh, 10, hh);
+    txt(ctx, 'BW?', xx, m.y(0) - hh - 10, { align: 'center', size: 11, color: C.vio, dir: 'ltr' });
+    txt(ctx, 'Δf מוכפל, fm קבוע', w - 14, 12, { size: 11.5, color: C.ink2 });
+  };
+})();
+
+</script>
+<script>
+/* =========================================================
+   שיעור 06 · מנוע המצגת
+   קנבס 1400×788 · סקיילינג · ניווט · חשיפה מדורגת · גרפים
+   ========================================================= */
+(function () {
+  const L = (window.L6 = window.L6 || {});
+  const W = 1400, H = 788;
+  const stage = document.getElementById('stage');
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const posEls = document.querySelectorAll('[data-pos]');
+  const bar = document.getElementById('progress');
+  const KEY = 'l6-rev-slide';
+  let cur = 0;
+
+  /* ---------- scaling ---------- */
+  function fit() {
+    const wrap = stage.parentElement;
+    const r = wrap.getBoundingClientRect();
+    const pad = parseFloat(getComputedStyle(wrap).paddingLeft) || 0;
+    const availW = r.width - pad * 2;
+    const availH = r.height - (parseFloat(getComputedStyle(wrap).paddingTop) || 0) * 2;
+    const s = Math.min(availW / W, availH / H);
+    stage.style.width = W + 'px';
+    stage.style.height = H + 'px';
+    stage.style.transform = 'scale(' + s + ')';
+    stage.style.margin = ((availH - H * s) / 2) + 'px auto';
+  }
+
+  /* ---------- charts ---------- */
+  const charts = new Map(); // slide index -> [canvas]
+  slides.forEach((sl, i) => charts.set(i, Array.from(sl.querySelectorAll('canvas[data-draw]'))));
+
+  function paint(sl) {
+    if (!sl) return;
+    sl.querySelectorAll('canvas[data-draw]').forEach(cv => {
+      const fn = L.sims && L.sims[cv.dataset.draw];
+      if (!fn) return;
+      const box = cv.parentElement.getBoundingClientRect();
+      const cw = Math.max(60, Math.round(box.width - 4));
+      const ch = Math.max(40, Math.round(cv.getBoundingClientRect().height || box.height - 22));
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      cv.width = Math.round(cw * dpr);
+      cv.height = Math.round(ch * dpr);
+      const ctx = cv.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, cw, ch);
+      ctx.direction = 'ltr';
+      try { fn(ctx, cw, ch, cv); } catch (e) { console.error('draw ' + cv.dataset.draw, e); }
+    });
+  }
+  L.paint = paint;
+
+  /* ---------- explorers (בלוקים לחיצים) ---------- */
+  function wireExplorers(sl) {
+    if (!sl) return;
+    sl.querySelectorAll('[data-explorer="st"]').forEach(function (box) {
+      const info = sl.querySelector('[data-info]');
+      const btns = Array.from(box.querySelectorAll('button'));
+      function select(b) {
+        btns.forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+        if (!info) return;
+        info.innerHTML =
+          '<div class="st-' + 'xx"><h4>מה נכנס</h4><p>' + b.dataset.in + '</p></div>' +
+          '<div><h4>מה יוצא</h4><p>' + b.dataset.out + '</p></div>' +
+          '<div><h4>התפקיד</h4><p>' + b.dataset.role + '</p></div>';
+      }
+      btns.forEach(function (b, i) {
+        b.addEventListener('click', function () { select(b); });
+        if (i === 0) select(b);
+      });
+    });
+  }
+  function wireChips(sl) {
+    if (!sl) return;
+    sl.querySelectorAll('.chips [data-mode]').forEach(function (b) {
+      b.addEventListener('click', function () {
+        sl.querySelectorAll('.chips [data-mode="' + b.dataset.mode + '"]').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+        paint(sl);
+      });
+    });
+  }
+  L.wireSlide = function (sl) { wireExplorers(sl); wireChips(sl); syncOutputs(sl); };
+  document.querySelectorAll('.slide').forEach(function (s) { L.wireSlide(s); });
+
+
+  /* ---------- תוויות מחוונים + סטטיסטיקות ---------- */
+  function syncOutputs(sl) {
+    if (!sl) return;
+    const canv = sl.querySelector('.plot canvas[data-draw]');
+    if (!canv || !L.sims || !L.sims.out) return;
+    const f = L.sims.out[canv.dataset.draw];
+    if (!f) return;
+    const blk = canv.closest('.plot').parentElement;
+    const wrappers = [];
+    if (blk && blk.classList.contains('simwrap')) wrappers.push(blk);
+    else {
+      wrappers.push(sl);
+    }
+    let vals;
+    try { vals = f(sl); } catch (err) { return; }
+    Object.keys(vals).forEach(k => {
+      sl.querySelectorAll('[data-o="' + k + '"]').forEach(o => { o.textContent = vals[k]; });
+    });
+  }
+  L.syncOutputs = syncOutputs;
+
+  /* ---------- show ---------- */
+  function show(i) {
+    cur = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach((s, k) => {
+      const on = k === cur;
+      s.classList.toggle('on', on);
+      s.setAttribute('aria-hidden', String(!on));
+    });
+    const label = String(cur + 1).padStart(2, '0') + ' / ' + slides.length;
+    posEls.forEach(e => (e.textContent = label));
+    if (bar) bar.style.width = ((cur + 1) / slides.length * 100) + '%';
+    document.querySelectorAll('.ol-i').forEach(b => b.classList.toggle('on', +b.dataset.go === cur));
+    ['prev', 'next'].forEach(id => {
+      const b = document.getElementById(id);
+      if (!b) return;
+      b.disabled = id === 'prev' ? cur === 0 : cur === slides.length - 1;
+    });
+    try { localStorage.setItem(KEY, String(cur)); } catch (e) {}
+    try { window.parent.postMessage({ slideIndexChanged: cur }, '*'); } catch (e) {}
+    const sl = slides[cur];
+    requestAnimationFrame(() => {
+      paint(sl); syncOutputs(sl);
+      requestAnimationFrame(() => { paint(sl); syncOutputs(sl); });
+    });
+  }
+  L.show = show;
+
+  document.getElementById('prev')?.addEventListener('click', () => show(cur - 1));
+  document.getElementById('next')?.addEventListener('click', () => show(cur + 1));
+
+  document.addEventListener('keydown', e => {
+    const t = e.target;
+    if (t && /^(INPUT|SELECT|TEXTAREA)$/.test(t.tagName)) return;
+    if (e.key === 'ArrowLeft' || e.key === 'PageDown') { e.preventDefault(); show(cur + 1); }
+    else if (e.key === 'ArrowRight' || e.key === 'PageUp') { e.preventDefault(); show(cur - 1); }
+    else if (e.key === ' ') { e.preventDefault(); show(cur + 1); }
+    else if (e.key === 'Home') { e.preventDefault(); show(0); }
+    else if (e.key === 'End') { e.preventDefault(); show(slides.length - 1); }
+    else if (e.key === 'Escape') { closeOutline(); document.body.classList.remove('presenting'); syncPresentBtn(); }
+    else if (e.key === 'f' || e.key === 'F') togglePresent();
+    else if (e.key === 'o' || e.key === 'O') toggleOutline();
+  });
+
+  document.addEventListener('input', e => {
+    if (!e.target.matches('input[type=range]')) return;
+    const sl = e.target.closest('.slide');
+    paint(sl); syncOutputs(sl);
+  });
+
+  /* ---------- reveal groups ---------- */
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-reveal]');
+    if (!b) return;
+    const box = b.closest('[data-box]') || b.parentElement;
+    box.querySelectorAll('.rbox').forEach(r => r.classList.add('on'));
+    b.disabled = true;
+    b.textContent = 'התשובה מוצגת';
+    paint(slides[cur]);
+  });
+
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-next-step]');
+    if (!b) return;
+    const steps = b.closest('[data-box]')?.querySelector('.steps') || b.parentElement.querySelector('.steps');
+    if (!steps) return;
+    const total = steps.querySelectorAll('.step').length;
+    let n = +(steps.dataset.step || 1);
+    if (n < total) { n++; steps.dataset.step = String(n); }
+    if (n >= total) { b.disabled = true; b.textContent = 'הפתרון המלא מוצג'; }
+    else b.textContent = 'השלב הבא (' + n + '/' + total + ')';
+    paint(slides[cur]);
+  });
+
+  /* ---------- mcq ---------- */
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-mcq] button');
+    if (!b) return;
+    const q = b.closest('[data-mcq]');
+    const fb = q.parentElement.querySelector('[data-fb]');
+    q.querySelectorAll('button').forEach(x => { x.classList.remove('right', 'wrong'); x.disabled = true; });
+    const ok = b.dataset.ok === '1';
+    b.classList.add(ok ? 'right' : 'wrong');
+    if (!ok) q.querySelectorAll('button[data-ok="1"]').forEach(x => x.classList.add('right'));
+    if (fb) { fb.classList.add('on', ok ? 'good' : 'bad'); fb.innerHTML = (ok ? '<b>נכון.</b> ' : '<b>לא מדויק.</b> ') + b.dataset.why; }
+  });
+
+  /* ---------- outline ---------- */
+  const drawer = document.getElementById('outline');
+  const list = document.getElementById('outlineList');
+  if (list) {
+    let html = '', lastCh = null;
+    slides.forEach((s, i) => {
+      const ch = s.dataset.chapter || '';
+      if (ch !== lastCh) { html += '<div class="ol-ch">' + ch + '</div>'; lastCh = ch; }
+      html += '<button class="ol-i" data-go="' + i + '"><span class="n">' + String(i + 1).padStart(2, '0') + '</span><span>' + (s.dataset.label || '') + '</span></button>';
+    });
+    list.innerHTML = html;
+    list.addEventListener('click', e => {
+      const b = e.target.closest('[data-go]');
+      if (b) { show(+b.dataset.go); closeOutline(); }
+    });
+  }
+  function toggleOutline() {
+    if (!drawer) return;
+    drawer.hidden = !drawer.hidden;
+    document.getElementById('outlineBtn')?.setAttribute('aria-pressed', String(!drawer.hidden));
+  }
+  function closeOutline() {
+    if (!drawer) return;
+    drawer.hidden = true;
+    document.getElementById('outlineBtn')?.setAttribute('aria-pressed', 'false');
+  }
+  document.getElementById('outlineBtn')?.addEventListener('click', toggleOutline);
+  drawer?.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', closeOutline));
+
+  /* ---------- present ---------- */
+  function syncPresentBtn() {
+    const b = document.getElementById('presentBtn');
+    if (!b) return;
+    const on = document.body.classList.contains('presenting');
+    b.setAttribute('aria-pressed', String(on));
+    b.textContent = on ? 'יציאה מהקרנה' : 'מצב הקרנה';
+  }
+  function togglePresent() {
+    document.body.classList.toggle('presenting');
+    syncPresentBtn();
+    requestAnimationFrame(() => { fit(); paint(slides[cur]); });
+  }
+  document.getElementById('presentBtn')?.addEventListener('click', togglePresent);
+
+  /* ---------- boot ---------- */
+  window.addEventListener('resize', () => { fit(); paint(slides[cur]); });
+  fit();
+  const hash = (location.hash || '').match(/^#s?(\d+)$/);
+  let start = 0;
+  if (hash) start = +hash[1] - 1;
+  else { try { start = +(localStorage.getItem(KEY) || 0); } catch (e) {} }
+  show(isFinite(start) ? start : 0);
+  window.addEventListener('load', () => { fit(); paint(slides[cur]); });
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { fit(); paint(slides[cur]); });
+  L.ready = true;
+})();
+
+</script>
+<script>
+(function(){
+  var body=document.getElementById('notesBody'), drawer=document.getElementById('notes'), btn=document.getElementById('notesBtn');
+  var all=document.querySelectorAll('.slide');
+  function sync(i){ body.querySelectorAll('[data-note]').forEach(function(n){ n.hidden=(+n.dataset.note!==i); }); }
+  btn.addEventListener('click', function(){ drawer.hidden=!drawer.hidden; btn.setAttribute('aria-pressed',String(!drawer.hidden)); });
+  drawer.querySelectorAll('[data-close]').forEach(function(b){ b.addEventListener('click',function(){ drawer.hidden=true; btn.setAttribute('aria-pressed','false'); }); });
+  var base=window.L6.show;
+  window.L6.show=function(i){ base(i); sync(i); };
+  var t=setInterval(function(){ var on=document.querySelector('.slide.on'); if(on){ sync([].indexOf.call(all,on)); clearInterval(t); } }, 40);
+})();
+</script>
+</body>
+</html>
