@@ -1,8 +1,5 @@
-import MidtermPractice from "../../../../components/midterm-practice";
-import CourseLayout from "../../../../components/course-layout";
-
-export const metadata = { title: "תרגול הכנה לבוחן אמצע | מערכות תקשורת" };
+import { redirect } from "next/navigation";
 
 export default function MidtermPracticePage() {
-  return <CourseLayout><MidtermPractice /></CourseLayout>;
+  redirect("/course/communication-systems/midterm-exam-practice-lessons-1-6.html");
 }
