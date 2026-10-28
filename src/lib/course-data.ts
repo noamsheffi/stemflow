@@ -1,6 +1,7 @@
 import { conceptMap, conceptFormulaIds } from "./concept-map";
 import formulaSheet from "./formula-sheet-data.json";
 import { lesson06Slides } from "../components/lesson-06-data";
+import { lesson07Slides } from "../components/lesson-07-data";
 
 export type ResourceKind = "lesson-html" | "simulation" | "exercise" | "supporting-material";
 
@@ -245,6 +246,19 @@ export const lessons: CourseLesson[] = [
     slides: lesson06Slides.map((slide) => ({ slideId: slide.slideId, number: slide.n, title: slide.h })),
     resources: [
       { resourceId: "lesson-06-main-html", kind: "lesson-html", title: "מערך שיעור — מקלט AM ויסודות FM", href: "/course/communication-systems/lessons/lesson-06/slides" },
+    ],
+  },
+  {
+    lessonId: "lesson-07",
+    number: 7,
+    title: "מקלט FM",
+    url: "/course/communication-systems/lessons/lesson-07",
+    topics: ["בחירת תחנה", "סופר־הטרודיין", "תדר ביניים", "מגבל", "גלאי FM", "PLL", "AFC"],
+    formulaIds: [],
+    conceptIds: [],
+    slides: lesson07Slides.map((slide) => ({ slideId: slide.slideId, number: slide.n, title: slide.h })),
+    resources: [
+      { resourceId: "lesson-07-main-html", kind: "lesson-html", title: "מערך שיעור — מקלט FM", href: "/course/communication-systems/lessons/lesson-07/slides" },
     ],
   },
 ];

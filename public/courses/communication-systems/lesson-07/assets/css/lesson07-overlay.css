@@ -1,0 +1,1028 @@
+/* =========================================================
+   שיעור 07 · מקלט FM — שכבת הרחבה על מערכת העיצוב של שיעור 06
+   אין כאן טוקנים חדשים: כל הצבעים, הרדיוסים והצללים
+   מגיעים מ־--b-* ומ־--c-* שהוגדרו ב־lesson06-design-system.css
+   ========================================================= */
+
+/* ---------- מיפוי מפת המקלט (הרכיב החוזר המרכזי) ---------- */
+.rcmap{display:flex;align-items:stretch;gap:7px;margin:0}
+.rcmap .rc{
+  flex:1 1 0;min-width:0;position:relative;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;
+  padding:7px 5px;border-radius:11px;background:#fff;
+  border:2px solid var(--rc, #cbd5e1);text-align:center;
+  font-size:19px;font-weight:800;line-height:1.15;color:var(--b-ink);
+  transition:background .18s,color .18s,box-shadow .18s,opacity .18s;
+}
+.rcmap .rc small{font-size:16px;font-weight:600;color:var(--b-text);line-height:1.1}
+.rcmap .rc.on{background:var(--rc);color:#fff;box-shadow:0 4px 12px rgba(15,23,42,.14)}
+.rcmap .rc.on small{color:rgba(255,255,255,.92)}
+.rcmap .rc.off{opacity:.4}
+.rcmap .rc.lo{border-style:dashed}
+.rcmap .rc.side{border-color:#94a3b8;color:var(--b-muted);background:#f8fafc}
+.rcmap .rc.side.on{background:#475569;color:#fff}
+.rcmap>i{align-self:center;color:var(--b-accent);font-style:normal;font-weight:800;font-size:20px;flex:none}
+
+/* מפת המקלט הזעירה בפינת השקף — תזכורת מתמדת */
+.rcmini{display:flex;gap:4px;align-items:center}
+.rcmini span{
+  font-size:14.5px;font-weight:700;padding:2px 7px;border-radius:6px;
+  background:#fff;border:1.5px solid var(--rc,#cbd5e1);color:var(--b-muted);white-space:nowrap;
+}
+.rcmini span.on{background:var(--rc);color:#fff;border-color:var(--rc)}
+.rcmini i{font-style:normal;color:#cbd5e1;font-size:12px}
+
+/* ---------- שורת דוגמה מחושבת: נתון · נוסחה · הצבה · תוצאה ---------- */
+.numline{display:grid;grid-template-columns:auto 1fr auto;gap:10px 12px;align-items:center;
+  background:#fff;border:1px solid var(--b-line);border-radius:10px;padding:6px 13px;box-shadow:var(--b-shadow-sm)}
+.numline .nl-k{font-size:19px;font-weight:800;color:var(--b-muted);white-space:nowrap}
+.numline .nl-f{direction:ltr;unicode-bidi:isolate;text-align:left;font-size:21px;color:var(--b-ink);overflow-x:auto;overflow-y:hidden;white-space:nowrap}
+.numline .nl-r{font:800 21px var(--mono);color:var(--b-accent-dark);direction:ltr;white-space:nowrap}
+.numline .nl-f .katex{font-size:.96em}
+.numline.hl{background:var(--b-accent-pale);border-color:#a5f3fc}
+.numline.ok .nl-r{color:#047857}
+
+/* ---------- טבלת סימונים ויחידות ---------- */
+.vars{width:100%;border-collapse:separate;border-spacing:0;background:#fff;border-radius:10px;
+  overflow:hidden;box-shadow:var(--b-shadow-sm);font-size:19px}
+.vars th{background:var(--b-ink);color:#f1f5f9;font-size:17px;font-weight:700;padding:5px 10px;text-align:right}
+.vars td{padding:4px 10px;border-top:1px solid var(--b-line);color:var(--b-ink-soft);vertical-align:middle}
+.vars td.s{font-family:var(--mono);color:var(--b-accent-dark);font-weight:700;direction:ltr;text-align:left;white-space:nowrap}
+.vars td.u{font-family:var(--mono);font-size:17px;color:var(--b-muted);direction:ltr;text-align:left;white-space:nowrap}
+.vars tr:first-child td{border-top:0}
+
+/* ---------- כרטיס סטציה / בחירה ---------- */
+.stns{display:flex;flex-wrap:wrap;gap:6px}
+.stns button{
+  font:700 19px inherit;font-family:inherit;padding:5px 12px;border-radius:9px;
+  border:1.5px solid #cbd5e1;background:#fff;color:var(--b-ink);direction:ltr;
+}
+.stns button:hover{border-color:var(--b-accent)}
+.stns button[aria-pressed=true]{background:var(--b-accent-dark);border-color:var(--b-accent-dark);color:#fff}
+
+/* ---------- תיבת "מה המשמעות של כל סימון" ---------- */
+.symkey{padding:7px 12px;border-radius:10px;background:#f8fafc;border:1px dashed #cbd5e1;font-size:19px;line-height:1.4;color:var(--b-ink-soft)}
+.symkey b{color:var(--b-ink)}
+.symkey .s{font-family:var(--mono);color:var(--b-accent-dark);direction:ltr;font-weight:700}
+
+/* ---------- צ'יפ שלב (קדם / הבא) ---------- */
+.chain{display:flex;gap:6px;align-items:center;font-size:18px;color:var(--b-muted);flex-wrap:wrap}
+.chain b{color:var(--b-ink)}
+.chain .arr{color:#cbd5e1}
+
+/* ---------- שורות טבלה צפופה ---------- */
+.tbl.tightc td{padding:3px 9px;font-size:20px}
+.tbl.tightc th{padding:5px 9px;font-size:18px}
+
+/* ---------- גרפים: תיבת גרף עם כיתוב ---------- */
+.plotbox.tight{padding:6px 10px;gap:3px}
+.plotcap.sm{font-size:18px}
+
+/* ---------- בקרות קומפקטיות ---------- */
+.ctl.sm label{font-size:19px}
+.ctl.sm output{font-size:20px}
+.ctrl.tight{padding:9px 13px;gap:6px}
+.ctrl .hint{font-size:17.5px;line-height:1.35;color:var(--b-muted);margin:0}
+.ctrl .hint b{color:var(--b-ink)}
+
+/* ---------- שורת复选框 ---------- */
+.togglerow{display:flex;align-items:center;gap:9px;font-size:20px;font-weight:700;color:var(--b-ink)}
+.togglerow input{width:22px;height:22px;accent-color:var(--b-accent);cursor:pointer}
+
+/* ---------- מקרא קומפקטי ---------- */
+.legend.sm{font-size:15px;gap:4px 12px}
+.legend.sm i{width:17px;height:4px}
+
+/* ---------- באנר מודל (תיוג סימולציה) ---------- */
+.mdl{
+  display:inline-flex;align-items:center;gap:7px;padding:2px 9px;border-radius:7px;
+  background:#f1f5f9;border:1px solid #cbd5e1;color:var(--b-muted);
+  font-size:16px;font-weight:700;letter-spacing:.02em;white-space:nowrap;
+}
+.mdl::before{content:"";width:7px;height:7px;border-radius:50%;background:#94a3b8}
+
+/* ---------- שקף שער מקטע ---------- */
+.sl.l7sec{background:linear-gradient(145deg,#0f172a 0%,#1e293b 60%,#0e7490 145%)}
+.sl.l7sec .sl-h{border-color:rgba(236,254,255,.16)}
+.sl.l7sec .sl-h h2{color:#ecfeff;font-size:62px;line-height:1.05}
+.sl.l7sec .sl-eb{color:#67e8f9;font-size:19px}
+.sl.l7sec .sl-f{color:#94a3b8}
+.sl.l7sec .sl-tk{background:rgba(255,255,255,.07);border-color:rgba(255,255,255,.15);color:#e2e8f0;box-shadow:none}
+.sl.l7sec .sl-tk>span:first-child{background:rgba(255,255,255,.16)}
+.sl.l7sec .rcmap .rc{background:rgba(255,255,255,.06);color:#e2e8f0;border-color:rgba(255,255,255,.18)}
+.sl.l7sec .rcmap .rc.on{background:var(--rc);color:#fff;border-color:var(--rc)}
+.sl.l7sec .rcmap .rc small{color:rgba(226,232,240,.72)}
+.sl.l7sec .card5{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.15);box-shadow:none}
+.sl.l7sec .card5 h3{color:#67e8f9}
+.sl.l7sec .card5 p,.sl.l7sec .card5 li{color:#e2e8f0}
+.sl.l7sec::after{background:linear-gradient(90deg,#06b6d4,#8b5cf6)}
+
+/* ---------- טיימר הפסקה ---------- */
+.brkclock{display:flex;align-items:center;gap:18px;background:#fff;border:1px solid var(--b-line);
+  border-radius:16px;padding:14px 22px;box-shadow:var(--b-shadow-md)}
+.brkclock b{font:800 54px var(--mono);color:var(--b-ink);direction:ltr;min-width:150px;text-align:center}
+.brkclock span{font-size:21px;color:var(--b-text);line-height:1.35}
+
+/* ---------- ערכי מונוספייס ארוכים בתאי קריאה ---------- */
+/* "108.800 MHz" ב־24px חרג ב־10px מהתא בשקף AFC. הכלל חייב לנצח
+   את .sl.tight .ro b (אותה ספציפיות, אך הטעינה שלנו אחרונה). */
+.ro b{font-size:22px}
+.ro.r3 b,.ro.r4 b{font-size:20px}
+.sl.tight .ro b{font-size:19px}
+.sl.tight .ro small{font-size:17px}
+
+/* =========================================================
+   כיווניות: מתמטיקה תמיד LTR, גם בתוך משפט עברי
+   =========================================================
+   ה־KaTeX יורש direction:rtl מההורה, וזה הופך את סדר
+   האיברים בנוסחה (K_f x(t) + f_c נראה כ־f_c + K_f x(t)).
+   הפתרון: בידוד דו־כיווני על כל רכיב מתמטי — לא רק על
+   הקופסה שעוטפת אותו. */
+.katex,.katex-display,.mth,.fxb,.fx-line{direction:ltr;unicode-bidi:isolate;text-align:center}
+.katex *{direction:ltr}
+/* מתמטיקה בתוך שורה עברית: נשארת במקומה הטבעי במשפט,
+   אבל הפנים שלה נשאר LTR */
+.card5 li .katex,.card5 p .katex,.explain .katex,.step .katex,.caveat .katex,.teach .katex,.keyidea .katex{unicode-bidi:isolate}
+.katex-display{margin:.35em 0}
+
+/* ---------- יחידות: תמיד מימין לנוסחה/לערך ---------- */
+/* [יחידה] נכתב אחרי הנוסחה ומיושר לשמאל שלה, כנהוג בטקסט הנדסי */
+.unit{font-family:var(--mono);font-size:.92em;color:var(--b-muted);white-space:nowrap;direction:ltr;unicode-bidi:isolate}
+.fxb .unit{margin-inline-start:.5em}
+
+/* ---------- מקרא פרמטרים צמוד לנוסחה ---------- */
+.pkey{
+  display:grid;gap:1px;margin-top:5px;
+  background:#fff;border:1px solid var(--b-line);border-radius:8px;
+  padding:5px 9px;font-size:17.5px;line-height:1.3;color:var(--b-ink-soft);
+}
+.pkey .r{display:flex;gap:7px;align-items:baseline;justify-content:flex-start;direction:rtl}
+.pkey .r b{
+  font-family:var(--mono);color:var(--b-accent-dark);font-size:16.5px;
+  direction:ltr;unicode-bidi:isolate;flex:0 0 auto;min-width:52px;text-align:left;
+}
+.pkey .r span{flex:1 1 auto;min-width:0}
+.pkey .r em{
+  font-style:normal;font-family:var(--mono);font-size:15.5px;color:var(--b-muted);
+  direction:ltr;unicode-bidi:isolate;flex:0 0 auto;white-space:nowrap;
+}
+.pkey .cap{
+  font-size:15px;font-weight:800;letter-spacing:.04em;color:var(--b-muted);
+  text-transform:none;border-bottom:1px dashed var(--b-line);padding-bottom:2px;margin-bottom:1px;
+}
+
+/* ---------- מניעת גלישת טקסט בכל תאי התוכן ---------- */
+.card5 p,.card5 li,.explain,.caveat p,.keyidea p,.hint,.status,.symkey,.teach li{
+  overflow-wrap:anywhere;word-break:normal;hyphens:auto;text-wrap:pretty;
+}
+/* נוסחה ארוכה: גוללת אופקית ולא נחתכת ולא דוחפת את הכרטיס */
+.fxb{max-width:100%;overflow-x:auto;overflow-y:hidden;white-space:nowrap}
+.fxb .katex-display{white-space:nowrap}
+.numline .nl-f{overflow-x:auto}
+
+/* ---------- גלילה חסומה לכרטיסי סימולציה ---------- */
+.simwrap>.gtcol>.ctrl{flex:0 0 auto}
+
+/* ---------- הדגשת אזור בתרשים ---------- */
+.tagline{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:18px;color:var(--b-text)}
+.tagline .k{background:var(--b-ink);color:#fff;border-radius:6px;padding:1px 8px;font-weight:800;font-size:16px}
+
+/* ---------- מקטע בכרטיסיות שלוש ---------- */
+.g3.tightgap{gap:9px}
+
+/* ---------- תווית "היכן אנחנו" בשקף ---------- */
+.wherenow{display:flex;align-items:center;gap:9px;font-size:16.5px;font-weight:700;color:var(--b-muted)}
+.wherenow b{color:var(--b-accent-dark)}
+
+
+/* =========================================================
+   תיקוני פריסה · 27.10.2026
+   שלוש גלישות שנמדדו בדוח הבדיקה האוטומטי:
+   1. שקף 1  — כרטיסיית "רמקול" נגלשת 12px משמאל לבמה.
+   2. שקף 10 — כרטיסיית הנוסחאות בעמודת הבקרות נגלשת 38px.
+   3. שקף 19 — משפט הטופולוגיה (bdi ארוך) נגלש 43px.
+   ========================================================= */
+
+.rcmap{max-width:100%;min-width:0}
+.rcmap .rc{overflow-wrap:anywhere}
+.rcmap .rc small{overflow-wrap:anywhere}
+
+.simwrap>.gtcol{max-width:100%;min-width:0}
+.simwrap>.gtcol>*{min-width:0;max-width:100%}
+.simwrap>.gtcol .card5{overflow:hidden}
+.simwrap>.gtcol .fxb{line-height:1.15;padding-inline:6px}
+.simwrap>.gtcol .fxb .katex-display{margin:.2em 0}
+.simwrap>.gtcol .fxb .katex{font-size:.88em}
+.simwrap>.gtcol .fxb .unit{font-size:0.82em;inset-inline-end:4px}
+.simwrap>.gtcol .pkey .r{min-width:0}
+.simwrap>.gtcol .pkey .r>*{min-width:0}
+
+.card5 bdi,.card5 .explain bdi{white-space:normal;overflow-wrap:break-word}
+.card5 p,.card5 li{overflow-wrap:break-word}
+
+/* =========================================================
+   שקפים 02–03 · 27.10.2026
+   שקף 02: שלושה גרפים זה מתחת לזה, סמן זמן משותף.
+   שקף 03: בדיקת הבנה תלת־שלבית עם חשיפת תשובה.
+   ========================================================= */
+
+.plotstack{min-height:0}
+.plotstack>.plotbox{flex:1 1 0;min-height:0}
+/* שקף 02: הגרף האמצעי (גל ה-FM) מקבל יותר גובה.
+   הקנבס ממלא את התיבה במלואה — הגרף נדחס/נמתח אך לא נשאר
+   תלוי באמצע עם שוליים לבנים. */
+#s02 .plotstack{display:grid;grid-template-rows:1fr 1.6fr 1fr;gap:6px}
+#s02 .plotbox{display:block;padding:0;overflow:hidden}
+#s02 .plotbox>canvas{display:block;width:100%!important;height:100%!important;margin:0}
+#s02 .plotstack,#s03 .plotstack{padding-inline-end:0}
+/* שקף 03: שני גרפים שווים */
+#s03 .plotstack{display:grid;grid-template-rows:1fr 1fr;gap:6px}
+#s03 .plotbox{display:block;padding:0;overflow:hidden}
+#s03 .plotbox>canvas{display:block;width:100%!important;height:100%!important;margin:0}
+
+.qnow{margin:0;font-size:19px;line-height:1.38;font-weight:700;color:var(--b-ink);
+  background:#f8fafc;border:1px solid var(--b-line);border-radius:10px;padding:8px 11px}
+.simwrap>.gtcol .fb{font-size:18px;line-height:1.35}
+.simwrap>.gtcol .chips{gap:7px}
+.simwrap>.gtcol .chip{font-size:18px;padding:5px 11px}
+.simwrap>.gtcol .chip:disabled{opacity:.42}
+
+.sl .explain.tight{font-size:19px;line-height:1.36;padding:6px 12px}
+
+
+/* =========================================================
+   שקף 05 · שני מסלולים: בלי סינון / עם סינון
+   ארבעה גרפים ב-2x2, שני זוגות זה לצד זה.
+   ========================================================= */
+/* .sl-body>* הוא flex:0 0 auto — לכן גובה הגרפים מתאפס אלא אם
+   העטיפה מקבלת במפורש flex:1. זה היה הגורם לארבעה קנבסים בגובה 0. */
+.sl-body>.gstep,
+.gstep{display:flex;flex-direction:column;gap:7px;flex:1 1 0;min-height:0;overflow:hidden}
+.gstep>.keyidea{flex:0 0 auto}
+/* שלב 1: מסלול אחד ברוחב מלא. שלב 2: השוואה בשני טורים.
+   זה מה שמונע חצי שקף ריק לפני הלחיצה הראשונה. */
+.gsrow{display:grid;grid-template-columns:1fr;gap:18px;flex:1 1 0;min-height:0}
+.gsrow.open{grid-template-columns:1fr 1fr}
+.gspanel{display:flex;flex-direction:column;gap:6px;min-width:0;min-height:0}
+.gs-h{display:flex;align-items:baseline;gap:8px;padding:0 2px;flex:0 0 auto}
+.gs-h b{font-size:22px;font-weight:800;color:var(--b-ink)}
+.gs-h span{font-size:16px;font-weight:600;color:var(--b-muted)}
+
+.gsflow{display:flex;align-items:center;gap:6px;justify-content:center;flex:0 0 auto}
+.gsflow i{color:var(--b-accent);font-style:normal;font-weight:800;font-size:20px;flex:none}
+.gsbox{padding:5px 12px;border-radius:8px;background:#fff;border:2px solid var(--b-line);
+  font-size:17px;font-weight:800;line-height:1.15;text-align:center;color:var(--b-ink);white-space:nowrap}
+.gsbox.amp{border-color:#0891b2;color:#0e7490;background:#ecfeff}
+.gsbox.bpf{border-color:#7c3aed;color:#6d28d9;background:#f5f3ff}
+
+.gspair{display:grid;grid-template-columns:1fr 1fr;gap:7px;flex:1 1 0;min-height:0}
+.gspair .plotbox{min-height:0;padding:0;overflow:hidden;border-radius:9px}
+.gspair .plotbox>canvas{display:block;width:100%!important;height:100%!important;margin:0}
+
+.gsrow .gspanel{transition:opacity .22s}
+.gsrow .gspanel.locked{opacity:.28;pointer-events:none}
+
+.gsfoot{display:flex;align-items:center;gap:14px;flex:0 0 auto}
+.gsfoot .gscap-l{display:none;margin:0;font-size:19px;line-height:1.3;color:var(--b-text);
+  background:#f8fafc;border:1px solid var(--b-line);border-radius:9px;padding:6px 12px;flex:1 1 auto}
+.gsfoot .gscap-l b{color:var(--b-ink)}
+.gsfoot .gscap-l.cur{display:block}
+.gsrow:not(.open) .gspanel[data-panel="2"]{display:none}
+.gsrow:not(.open) .gspair{max-width:1180px;margin:0 auto;width:100%}
+.gsnav{display:flex;align-items:center;gap:7px;flex:0 0 auto}
+.gsnav .chip{font-size:16.5px;padding:4px 11px}
+.gsnav .chip:disabled{opacity:.42}
+.gsnote{font-size:15px;color:var(--b-muted);white-space:nowrap}
+
+.keyidea.tight{padding:6px 14px;gap:12px;flex:0 0 auto;margin-top:2px}
+.keyidea.tight p{font-size:23px;line-height:1.2;white-space:normal}
+.keyidea.tight .k-lab{font-size:16px;min-width:64px;padding:4px 8px}
+
+/* =========================================================
+   שקף 06 · תרשים המסלול — האלמנט המרכזי
+   עשרה בלוקים בשורה אחת, זרימה מימין לשמאל.
+   ========================================================= */
+.bigmap{display:flex;align-items:center;gap:3px;flex:0 0 auto;
+  justify-content:center;padding:22px 0 8px}
+.bigmap>.rc{flex:1 1 0;min-width:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:4px;
+  min-height:132px;padding:14px 3px;border-radius:12px;background:#fff;
+  border:2.5px solid var(--rc,#cbd5e1);text-align:center;
+  font-size:17.5px;font-weight:800;line-height:1.14;color:var(--b-ink);
+  overflow-wrap:anywhere;box-shadow:var(--b-shadow-sm)}
+.bigmap>.rc small{font-size:14px;font-weight:600;color:var(--b-text);line-height:1.12;
+  overflow-wrap:anywhere}
+.bigmap>i{align-self:center;color:var(--b-accent);font-style:normal;
+  font-weight:800;font-size:20px;flex:none}
+
+.explain.tight.big{font-size:21px;line-height:1.38;padding:10px 16px;flex:0 0 auto}
+
+.mdl{font-size:15px;color:var(--b-muted);text-align:center;line-height:1.1;flex:0 0 auto}
+
+
+
+
+/* =========================================================
+   שקף 05 · פריסה דטרמיניסטית
+   תקציב: 788 − 62 ריפוד − 48 מרווחים − 69 כותרת − 39 תחתית − 28 פוטר = 542
+   בפועל: 24 (בורר) + 320 (גרפים) + 40 (כיתוב) + 8+8 + 58 (מסקנה) = 458
+   נותר מרווח נשימה — ולכן המסקנה לעולם אינה נחתכת.
+   ========================================================= */
+#s05 .sl{padding-top:30px;padding-bottom:18px;gap:12px}
+#s05 .sl-body{justify-content:flex-start;gap:10px;overflow:visible}
+#s05 .gstep{flex:0 0 auto;gap:6px}
+#s05 .gs-h{flex:0 0 auto}
+#s05 .gsflow{flex:0 0 auto}
+#s05 .gsrow{flex:0 0 430px;height:430px;min-height:420px;max-height:440px}
+#s05 .gspair{height:100%;min-height:0}
+#s05 .gsfoot{flex:0 0 auto;min-height:40px}
+#s05 .keyidea{flex:0 0 auto;padding:6px 14px}
+#s05 .keyidea p{font-size:22px;line-height:1.22}
+#s05 .keyidea .k-lab{font-size:16px;min-width:62px;padding:4px 8px}
+
+
+/* =========================================================
+   שקף 06 · המפה היא האלמנט המרכזי
+   עשרה בלוקים בשורה; גדולים מספיק להקרנה, בלי גלישה.
+   ========================================================= */
+#s06 .sl-body{justify-content:center;gap:26px}
+#s06 .bigmap{gap:4px;padding:0;align-items:stretch}
+#s06 .bigmap>.rc{min-height:268px;padding:22px 4px;font-size:25px;
+  border-width:3px;border-radius:14px;gap:6px}
+#s06 .bigmap>.rc small{font-size:18px;line-height:1.16}
+#s06 .bigmap>i{font-size:27px;color:#0891b2}
+#s06 .explain.tight.big{font-size:24px;line-height:1.4;padding:14px 20px;text-align:center}
+
+
+/* =========================================================
+   שקף 07 · דרגת ה-RF — הגרף דומיננטי, בלי שטח מת
+   ========================================================= */
+.sl-body>.rfwrap,
+.rfwrap{display:grid;grid-template-columns:1fr 318px;gap:16px;
+  flex:1 1 0;min-height:0}
+.rfplot{min-width:0;min-height:0;background:#fff;border:1px solid var(--b-line);
+  border-radius:12px;box-shadow:var(--b-shadow-md);overflow:hidden;display:flex}
+.rfplot>canvas{display:block;width:100%!important;height:100%!important;margin:0}
+
+.rfside{display:flex;flex-direction:column;gap:10px;min-width:0;min-height:0}
+.rfctl{background:#fff;border:1px solid var(--b-line);border-radius:12px;
+  box-shadow:var(--b-shadow-sm);padding:11px 13px;display:flex;
+  flex-direction:column;gap:9px;flex:0 0 auto}
+.rfctl .ctl{margin:0}
+.rfctl label{font-size:18px;font-weight:700}
+.rfctl output{font-size:18px}
+.rfctl .ro{display:grid;gap:6px}
+.rfctl .status{font-size:17px;line-height:1.32;margin:0}
+
+.rfmsg{background:linear-gradient(135deg,#ecfeff,#f5f3ff);border:1px solid #a5f3fc;
+  border-radius:12px;padding:13px 15px;flex:1 1 auto;display:flex;
+  align-items:flex-start;justify-content:center;flex-direction:column}
+.rfmsg p{margin:0;font-size:20px;line-height:1.48;color:var(--b-ink-soft);text-align:start;text-wrap:pretty}
+.rfmsg b{color:var(--b-accent-dark)}
+
+
+/* =========================================================
+   שורת התחתית · 27.10.2026
+   עדכון ה-tk נכתב כעת ל-DOM (rev-apply.setTk), ולכן שורה
+   ארוכה עלולה להישבר לשתיים ולגלוש. כאן היא נשארת בשורה
+   אחת ומתכווצת קלות במקום להיחתך.
+   ========================================================= */
+.sl-tk{overflow:visible}
+.sl-tk .tk-text{white-space:normal;line-height:1.24;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sl-tk{min-height:0}
+
+
+/* =========================================================
+   שקף 08 · תדר ביניים קבוע
+   ========================================================= */
+.sl-body>.ifwrap,.ifwrap{display:flex;flex-direction:column;gap:10px;flex:1 1 0;min-height:0}
+.ifplots{display:grid;grid-template-columns:1fr 62px 1fr;gap:8px;flex:1 1 0;min-height:0;align-items:stretch}
+.ifplot{min-width:0;min-height:0;background:#fff;border:1px solid var(--b-line);
+  border-radius:11px;box-shadow:var(--b-shadow-sm);overflow:hidden;display:flex;
+  position:relative;padding-top:0}
+.ifplot>canvas{display:block;width:100%!important;height:100%!important;margin:0}
+.ifarrow{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+.ifarrow i{font-style:normal;font-size:52px;font-weight:800;color:var(--b-accent);line-height:1}
+.ifarrow{background:#ecfeff;border-radius:10px;border:1px solid #a5f3fc}
+.ifarrow span{font-size:13px;font-weight:700;color:var(--b-accent-dark);white-space:nowrap}
+
+.ifside{display:grid;grid-template-columns:300px 1fr;gap:10px;flex:0 0 auto;align-items:stretch}
+.iflead{grid-column:1/-1;margin:0;font-size:18px;line-height:1.38;color:var(--b-ink-soft);
+  background:#f8fafc;border:1px solid var(--b-line);border-radius:10px;padding:8px 14px;
+  display:flex;align-items:center;direction:rtl;text-align:start}
+.iflead b{color:var(--b-accent-dark)}
+.ifctl{background:#fff;border:1px solid var(--b-line);border-radius:10px;
+  box-shadow:var(--b-shadow-sm);padding:8px 11px;display:flex;flex-direction:column;gap:6px}
+.ifctl .chips{gap:6px}
+.ifctl .chip{font-size:17px;padding:4px 10px;white-space:nowrap;min-width:0}
+.ifctl .chips{flex-wrap:nowrap}
+.ifctl .chips .chip{flex:1 1 0;text-align:center}
+.ifctl .ro{display:grid;gap:4px}
+.ifctl .status{font-size:15px;line-height:1.28;margin:0}
+.ifctl .btn5{height:30px;font-size:16px}
+
+.ifcards{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-content:start}
+.ifcard{background:#fff;border:1.5px solid #a5f3fc;border-radius:10px;
+  padding:8px 10px;display:flex;flex-direction:column;gap:3px;justify-content:center;
+  min-height:96px}
+.ifcard.alt{border-color:#fde68a;background:#fffbeb}
+.ifcard h4{margin:0;font-size:14px;font-weight:700;color:var(--b-muted)}
+.ifcard-v{font:800 21px var(--mono);color:#0e7490;direction:ltr;text-align:center;line-height:1.1;
+  width:100%;display:block}
+.ifcard.alt .ifcard-v{color:#b45309}
+.ifcard-f{text-align:center;font-size:15px;color:#475569}
+.ifcard-f .katex{font-size:.92em}
+
+/* =========================================================
+   שקף 09 · LO — התרשים הוא האלמנט המרכזי
+   ========================================================= */
+.sl-body>.lowrap,.lowrap{display:flex;flex-direction:column;gap:12px;flex:1 1 0;min-height:0}
+.lomap{flex:0 0 auto;background:#fff;border:1px solid var(--b-line);
+  border-radius:12px;box-shadow:var(--b-shadow-md);padding:26px 30px;
+  display:flex;align-items:center;justify-content:center}
+
+/* חמישה בלוקים בשורה + עמודה מתחת לערבל. הגריד מבטיח שהחץ
+   נופל בדיוק מתחת לערבל, ולא "איפשהו" בין הבלוקים. */
+.lomap-grid{display:grid;width:100%;
+  grid-template-columns:repeat(9,minmax(0,1fr));
+  grid-template-rows:auto auto auto;gap:12px 6px;align-items:stretch}
+.lomap-grid>.rc{grid-row:1;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:3px;padding:20px 8px;border-radius:12px;background:#fff;
+  border:2.5px solid var(--rc,#cbd5e1);text-align:center;font-size:21px;font-weight:800;
+  line-height:1.16;color:var(--b-ink);overflow-wrap:anywhere;min-height:96px}
+.lomap-grid>.rc small{font-size:15px;font-weight:600;color:var(--b-text);line-height:1.12;
+  display:block;margin-top:2px;unicode-bidi:isolate}
+.lomap-grid>.rc.hot small{color:rgba(255,255,255,.94)}
+.lomap-grid>.arw{grid-row:1;align-self:center;justify-self:center;
+  color:#cbd5e1;font-size:24px;font-weight:800}
+
+/* עמודות הבלוקים: 1,3,5,7,9 — החצים ב-2,4,6,8 */
+.lomap-grid>.rc:nth-of-type(1){grid-column:1}
+.lomap-grid>.arw:nth-of-type(2){grid-column:2}
+.lomap-grid>.rc:nth-of-type(3){grid-column:3}
+.lomap-grid>.arw:nth-of-type(4){grid-column:4}
+.lomap-grid>.rc:nth-of-type(5){grid-column:5}
+.lomap-grid>.arw:nth-of-type(6){grid-column:6}
+.lomap-grid>.rc:nth-of-type(7){grid-column:7}
+.lomap-grid>.arw:nth-of-type(8){grid-column:8}
+.lomap-grid>.rc:nth-of-type(9){grid-column:9}
+
+/* החץ היורד: בעמודה של הערבל (5), בין השורה הראשונה ל-LO */
+.lomap-grid>.stem{grid-row:2;grid-column:5;display:flex;align-items:center;
+  justify-content:center;gap:8px;padding:2px 0}
+.lomap-grid>.stem i{font-style:normal;font-size:32px;font-weight:800;
+  color:#7c3aed;line-height:1}
+.lomap-grid>.stem span{font-size:17px;font-weight:700;color:#6d28d9;white-space:nowrap}
+
+/* בלוק ה-LO: מתפרש על שלוש עמודות ממורכזות מתחת לערבל */
+.lomap-grid>.rc.lo{grid-row:3;grid-column:3 / span 3;min-height:74px;
+  padding:14px 18px;font-size:22px;justify-self:stretch}
+
+.lomap-grid .rc.dim{opacity:.52;border-color:#cbd5e1;color:var(--b-muted)}
+.lomap-grid .rc.hot{background:var(--rc);color:#fff;border-color:var(--rc);
+  box-shadow:0 6px 18px rgba(124,58,237,.26)}
+.lomap-grid .rc.hot small{color:rgba(255,255,255,.92)}
+
+.locards{display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1 1 0;min-height:0}
+.locard{background:#fff;border:1px solid var(--b-line);border-radius:12px;
+  padding:14px 20px;box-shadow:var(--b-shadow-sm);
+  display:flex;flex-direction:column;justify-content:center}
+.locard h3{margin:0 0 5px;font-size:19px;font-weight:800}
+.locard ul{margin:0;padding-inline-start:20px;display:grid;gap:3px}
+.locard li{font-size:18px;line-height:1.34;color:var(--b-text)}
+.locard.yes{border-inline-start:5px solid #059669}
+.locard.yes h3{color:#047857}
+.locard.no{border-inline-start:5px solid #d97706;background:#fffdf5}
+.locard.no h3{color:#b45309}
+
+/* =========================================================
+   שקף 10 · ערבל — נוסחאות למעלה, גרפים ממלאים את השאר
+   ========================================================= */
+.sl-body>.mixwrap,.mixwrap{display:flex;flex-direction:column;gap:10px;flex:1 1 0;min-height:0}
+.mixformulas{display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:0 0 auto}
+.mixf{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;
+  background:#fff;border:1.5px solid var(--b-line);border-radius:11px;padding:5px 14px;
+  box-shadow:var(--b-shadow-sm);min-height:0}
+.mixf-l{font-size:15px;font-weight:800;color:var(--b-muted);white-space:nowrap}
+.mixf-e{text-align:center}
+.mixf-e .katex{font-size:1.16em}
+.mixf-v{font:800 18px var(--mono);color:#0e7490;white-space:nowrap;direction:ltr}
+
+.mixplots{display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1 1 0;min-height:0;overflow:hidden}
+.mixplot{min-width:0;min-height:0;background:#fff;border:1px solid var(--b-line);
+  border-radius:11px;box-shadow:var(--b-shadow-sm);overflow:hidden;display:flex}
+.mixplot>canvas{display:block;width:100%!important;height:100%!important;margin:0}
+
+.mixctl{display:grid;grid-template-columns:1fr 1fr auto auto;gap:14px;align-items:center;
+  background:#fff;border:1px solid var(--b-line);border-radius:11px;padding:7px 14px;
+  box-shadow:var(--b-shadow-sm);flex:0 0 auto}
+.mixctl .ctl{margin:0}
+.mixctl label{font-size:16px;font-weight:700}
+.mixctl output{font-size:16px}
+.mixctl .status{font-size:16px;margin:0;white-space:nowrap}
+.mixctl .btn5{height:34px;font-size:17px;padding:0 18px}
+
+
+/* --- שקף 10: מספיק מקום לשורת התוויות התחתונה בכל גרף --- */
+.mixplot{padding-bottom:2px}
+.mixplots{grid-template-rows:1fr}
+
+
+/* =========================================================
+   שקף 11 · המסנן בוחר את ההפרש
+   ========================================================= */
+.sl-body>.ifs2,.ifs2{display:flex;flex-direction:column;gap:10px;flex:1 1 0;min-height:0}
+.ifs2-plots{display:grid;grid-template-columns:1fr 340px;gap:12px;flex:1 1 0;min-height:0}
+.ifs2-p{min-width:0;min-height:0;background:#fff;border:1px solid var(--b-line);
+  border-radius:11px;box-shadow:var(--b-shadow-sm);overflow:hidden;display:flex}
+.ifs2-p>canvas{display:block;width:100%!important;height:100%!important;margin:0}
+.ifs2-side{display:grid;grid-template-columns:1fr 1fr;gap:10px;flex:0 0 auto}
+.ifs2-nums{display:grid;grid-template-rows:1fr 1fr;gap:8px}
+.ifs2-n{background:#fff;border:1.5px solid #a5f3fc;border-radius:10px;padding:8px 12px;
+  display:flex;flex-direction:column;justify-content:center;gap:2px}
+.ifs2-n.alt{border-color:#fde68a;background:#fffbeb}
+.ifs2-n small{font-size:14px;font-weight:700;color:var(--b-muted)}
+.ifs2-n b{font:800 23px var(--mono);color:#0e7490;direction:ltr}
+.ifs2-n.alt b{color:#b45309}
+.ifs2-side .rfctl{flex-direction:row;flex-wrap:wrap;align-items:center;gap:10px}
+.ifs2-side .rfctl .ctl{flex:1 1 44%}
+.ifs2-side .rfctl .status{flex:1 1 100%;white-space:nowrap}
+.ifs2-side .rfctl .btn5{flex:0 0 auto}
+
+/* =========================================================
+   שקף 12 · הזרקה גבוהה מול נמוכה
+   ========================================================= */
+.sl-body>.inj2,.inj2{display:grid;grid-template-columns:1fr 316px;gap:14px;flex:1 1 0;min-height:0}
+.inj2-plot{min-width:0;min-height:0;background:#fff;border:1px solid var(--b-line);
+  border-radius:12px;box-shadow:var(--b-shadow-md);overflow:hidden;display:flex}
+.inj2-plot>canvas{display:block;width:100%!important;height:100%!important;margin:0}
+.inj2-side{display:flex;flex-direction:column;gap:10px;min-width:0;min-height:0}
+.inj2-side .rfctl{gap:10px}
+.inj2-ro{display:grid;gap:6px;margin:2px 0}
+.inj2-ro>div{display:flex;align-items:baseline;justify-content:space-between;gap:8px;
+  border-bottom:1px dashed var(--b-line);padding-bottom:4px}
+.inj2-ro small{font-size:15px;font-weight:700;color:var(--b-muted)}
+.inj2-ro b{font:800 19px var(--mono);color:var(--b-ink);direction:ltr}
+.inj2-ro .hl b{color:#7c3aed}
+.inj2-f{background:#0f172a;color:#e2e8f0;border-radius:9px;padding:8px 12px;
+  font:700 18px var(--mono);text-align:center;direction:ltr}
+.inj2-note{margin:0;font-size:17px;line-height:1.44;color:var(--b-ink-soft);
+  background:#f8fafc;border:1px solid var(--b-line);border-radius:10px;padding:11px 14px;flex:0 0 auto}
+.inj2-side .rfctl{flex:1 1 auto;justify-content:flex-start}
+
+/* =========================================================
+   שקף 13 החדש · שינינו את תדר הנושא
+   ========================================================= */
+.sl-body>.shfwrap,.shfwrap{display:flex;flex-direction:column;gap:12px;flex:1 1 0;min-height:0}
+.shfpair{display:grid;grid-template-columns:1fr 88px 1fr;gap:10px;flex:1 1 0;min-height:0}
+.shfp{min-width:0;min-height:0;background:#fff;border:1px solid var(--b-line);
+  border-radius:12px;box-shadow:var(--b-shadow-md);overflow:hidden;display:flex}
+.shfp>canvas{display:block;width:100%!important;height:100%!important;margin:0}
+.shfarrow{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
+  background:#ecfeff;border:1px solid #a5f3fc;border-radius:12px}
+.shfarrow i{font-style:normal;font-size:48px;font-weight:800;color:var(--b-accent);line-height:1}
+.shfarrow span{font-size:13px;font-weight:800;color:var(--b-accent-dark);
+  writing-mode:vertical-rl;text-orientation:mixed;letter-spacing:.02em}
+.shffoot{flex:0 0 auto;text-align:center;background:linear-gradient(135deg,#ecfeff,#f5f3ff);
+  border:1px solid #a5f3fc;border-radius:12px;padding:10px 18px}
+.shfbig{margin:0;font-size:27px;font-weight:800;color:var(--b-ink);line-height:1.24}
+.shfsmall{margin:3px 0 0;font-size:18px;font-weight:600;color:var(--b-text)}
+
+/* =========================================================
+   שקף 14 החדש · רוחב מסנן IF
+   ========================================================= */
+.sl-body>.bwf,.bwf{display:grid;grid-template-columns:1fr 320px;gap:14px;flex:1 1 0;min-height:0}
+.bwf-plot{min-width:0;min-height:0;background:#fff;border:1px solid var(--b-line);
+  border-radius:12px;box-shadow:var(--b-shadow-md);overflow:hidden;display:flex}
+.bwf-plot>canvas{display:block;width:100%!important;height:100%!important;margin:0}
+.bwf-side{display:flex;flex-direction:column;gap:10px;min-width:0;min-height:0}
+.bwf-side .rfctl{gap:9px}
+.bwf-notes{margin:0;padding:0;list-style:none;display:grid;gap:6px;flex:0 0 auto}
+.bwf-notes li{font-size:16px;line-height:1.3;color:var(--b-text);
+  background:#fff;border:1px solid var(--b-line);border-inline-start:4px solid #d97706;
+  border-radius:9px;padding:6px 10px}
+.bwf-notes b{color:var(--b-ink)}
+
+
+/* --- שקף 16: שני גרפי FM באותו גובה, ממלאים את התיבה --- */
+#s16 .plotstack{display:grid;grid-template-rows:1fr 1fr;gap:8px}
+#s16 .plotbox{display:flex;padding:0;overflow:hidden}
+#s16 .plotbox>canvas{display:block;width:100%!important;height:100%!important;margin:0}
+
+
+/* =========================================================
+   שקף 18 המאוחד · המגבל — שלושה גרפים + תיבת הסבר
+   ========================================================= */
+.sl-body>.lim3,.lim3{display:grid;grid-template-columns:1fr 322px;gap:12px;flex:1 1 0;min-height:0}
+.lim3-plots{display:grid;grid-template-rows:1fr 1fr 1fr;gap:7px;min-height:0}
+.lim3-p{min-width:0;min-height:0;background:#fff;border:1px solid var(--b-line);
+  border-radius:10px;box-shadow:var(--b-shadow-sm);overflow:hidden;display:flex}
+.lim3-p>canvas{display:block;width:100%!important;height:100%!important;margin:0}
+.lim3-side{display:flex;flex-direction:column;gap:9px;min-width:0;min-height:0}
+.lim3-side .rfctl{gap:8px;flex:0 0 auto}
+.lim3-side .rfctl .ctl{margin:0}
+.lim3-side .status{font-size:16px;line-height:1.3;margin:0}
+.lim3-teach{background:linear-gradient(135deg,#ecfeff,#f5f3ff);border:1px solid #a5f3fc;
+  border-radius:11px;padding:11px 14px;flex:1 1 auto;min-height:0;overflow:hidden}
+.lim3-teach h4{margin:0 0 5px;font-size:17px;font-weight:800;color:var(--b-accent-dark)}
+.lim3-teach p{margin:0;font-size:15.5px;line-height:1.38;color:var(--b-ink-soft)}
+.lim3-tech{margin-top:7px !important;padding-top:7px;border-top:1px dashed #a5f3fc;
+  font-size:14.5px !important;color:#92400e !important}
+
+/* =========================================================
+   שקף 21 · AM — שלושה גרפים שווים
+   ========================================================= */
+.sl-body>.am3,.am3{display:flex;flex-direction:column;gap:10px;flex:1 1 0;min-height:0}
+.am3-plots{display:grid;grid-template-rows:1fr 1fr 1fr;gap:7px;flex:1 1 0;min-height:0}
+.am3-p{min-width:0;min-height:0;background:#fff;border:1px solid var(--b-line);
+  border-radius:10px;box-shadow:var(--b-shadow-sm);overflow:hidden;display:flex}
+.am3-p>canvas{display:block;width:100%!important;height:100%!important;margin:0}
+.am3-foot{display:flex;align-items:center;gap:16px;flex:0 0 auto;
+  background:#f8fafc;border:1px solid var(--b-line);border-radius:11px;padding:9px 14px}
+.am3-guide{margin:0;flex:1 1 auto;font-size:17px;line-height:1.36;color:var(--b-ink-soft)}
+.am3-foot .btn5{flex:0 0 auto;height:38px;font-size:17px;padding:0 18px}
+
+/* =========================================================
+   שקף 22 · מעבר למגלאי
+   ========================================================= */
+.sl-body>.tr22,.tr22{display:flex;flex-direction:column;justify-content:center;gap:24px;
+  flex:1 1 0;min-height:0}
+.tr22 .bigmap>.rc{min-height:210px;font-size:22px}
+.tr22 .bigmap>.rc small{font-size:17px}
+.tr22 .bigmap>.rc.hot{background:#d97706;color:#fff;border-color:#d97706}
+.tr22 .bigmap>.rc.next{background:#db2777;color:#fff;border-color:#db2777;
+  box-shadow:0 6px 18px rgba(219,39,119,.24)}
+.tr22 .bigmap>.rc.hot small,.tr22 .bigmap>.rc.next small{color:rgba(255,255,255,.92)}
+.tr22-guide{margin:0;font-size:21px;line-height:1.46;color:var(--b-ink-soft);
+  background:#f8fafc;border:1px solid var(--b-line);border-inline-start:5px solid var(--b-accent);
+  border-radius:11px;padding:14px 20px;text-wrap:pretty}
+
+/* =========================================================
+   שקף 25 המאוחד · גלאי שיפוע — שלושה שלבים
+   ========================================================= */
+.sl-body>.sl3,.sl3{display:grid;grid-template-columns:1fr 318px;gap:12px;flex:1 1 0;min-height:0}
+.sl3-plots{display:grid;grid-template-rows:1fr 1fr 1fr;gap:7px;min-height:0}
+.sl3-p{min-width:0;min-height:0;background:#fff;border:1px solid var(--b-line);
+  border-radius:10px;box-shadow:var(--b-shadow-sm);overflow:hidden;display:flex}
+.sl3-p>canvas{display:block;width:100%!important;height:100%!important;margin:0}
+.sl3-side{display:flex;flex-direction:column;gap:9px;min-width:0;min-height:0}
+.sl3-side .rfctl{gap:8px;flex:0 0 auto}
+.sl3-teach{background:#f8fafc;border:1px solid var(--b-line);border-radius:11px;
+  padding:11px 14px;flex:1 1 auto;min-height:0;overflow:hidden}
+.sl3-teach p{margin:0;font-size:15.5px;line-height:1.4;color:var(--b-ink-soft)}
+.sl3-dc{margin-top:7px !important;padding-top:7px;border-top:1px dashed var(--b-line);
+  color:#92400e !important}
+
+/* =========================================================
+   שקף 31 · משוב
+   ========================================================= */
+.sl-body>.fb31,.fb31{display:flex;flex-direction:column;gap:11px;flex:1 1 0;min-height:0}
+.fb31-bridge{margin:0;font-size:19px;line-height:1.4;color:var(--b-ink-soft);
+  background:#f8fafc;border:1px solid var(--b-line);border-inline-start:5px solid var(--b-accent);
+  border-radius:11px;padding:11px 16px;flex:0 0 auto;text-wrap:pretty}
+.fb31-body{display:grid;grid-template-columns:1fr 314px;gap:12px;flex:1 1 0;min-height:0}
+.fb31-body>.plotbox{padding:0;overflow:hidden;display:flex}
+.fb31-body>.plotbox>canvas{display:block;width:100%!important;height:100%!important;margin:0}
+.fb31-side{display:flex;flex-direction:column;gap:9px;min-height:0}
+.fb31-side .rfctl{flex:0 0 auto;gap:8px}
+.fb31-guide{margin:0;font-size:16px;line-height:1.4;color:var(--b-ink-soft);
+  background:#fff;border:1px solid var(--b-line);border-radius:10px;padding:10px 13px;flex:1 1 auto}
+.fb31-mod{margin:0;font-size:14px;line-height:1.32;color:var(--b-muted);flex:0 0 auto}
+
+
+/* --- תג "תוקן" לא ידחוף את שורת הכותרת --- */
+.sl-h .revtag{display:inline-block;vertical-align:middle;white-space:nowrap}
+/* .sl-h היה display:flex כדי לסדר את תג ה"תוקן". זה הפך את ה-h2
+   לפריט flex עם flex-shrink:1, והוא התכווץ מתחת לגובה השורה —
+   כך כותרות בשתי שורות נחתכו אנכית. מחזירים block, ומסדרים
+   את התג ב-inline-block. */
+.sl-h{display:block}
+
+/* --- שקף 31: הגרף גדול יותר, ההסבר מתקצר --- */
+.fb31-body{grid-template-columns:1fr 292px}
+.fb31-guide{font-size:15.5px;line-height:1.38}
+
+
+/* --- כותרת השקף: שתי שורות מקסימום, בלי חיתוך --- */
+.sl .sl-h h2{line-height:1.12;overflow-wrap:break-word;text-wrap:balance}
+/* כותרות ארוכות: גופן קטן יותר כדי שייכנסו בשתי שורות שלמות.
+   הסלקטור כולל .sl.tight כדי לגבור על .sl.tight .sl-h h2{font-size:32px}. */
+.sl.tight#s15 .sl-h h2{font-size:25px}
+.sl.tight#s18 .sl-h h2{font-size:25px}
+.sl.tight#s25 .sl-h h2{font-size:26px}
+.sl.tight#s21 .sl-h h2{font-size:29px}
+.sl.tight#s22 .sl-h h2{font-size:30px}
+
+
+/* =========================================================
+   שקף 36 · תרשים גלאי PLL — חוג סגור
+   ========================================================= */
+.sl-body>.pllm,.pllm{display:grid;grid-template-columns:1fr 322px;
+  grid-template-rows:1fr auto;gap:12px;flex:1 1 0;min-height:0}
+.pllm-map{grid-column:1;display:flex;align-items:center;gap:5px;min-height:0;
+  background:#fff;border:1px solid var(--b-line);border-radius:12px;
+  box-shadow:var(--b-shadow-md);padding:18px 16px}
+.pllbox{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:3px;padding:18px 6px;border-radius:11px;background:#fff;
+  border:2.5px solid #cbd5e1;font:800 19px inherit;font-family:inherit;color:var(--b-ink);
+  text-align:center;line-height:1.15;cursor:pointer;transition:.16s}
+.pllbox small{font-size:14px;font-weight:600;color:var(--b-text)}
+.pllbox:hover{border-color:#0891b2}
+.pllbox.on{background:#7c3aed;color:#fff;border-color:#7c3aed;
+  box-shadow:0 6px 18px rgba(124,58,237,.26)}
+.pllbox.on small{color:rgba(255,255,255,.92)}
+.pllflow{flex:none;color:#cbd5e1;font-size:24px;font-weight:800;transition:.16s}
+.pllflow.on{color:#7c3aed}
+.pllm-fb{grid-column:1;display:flex;justify-content:center}
+.pllm-fb .pllbox{flex:0 0 auto;padding:9px 26px;border-style:dashed;font-size:17px}
+.pllm-side{grid-row:1/span 2;grid-column:2;display:flex;min-height:0}
+.pllm-card{background:#fff;border:1px solid var(--b-line);border-radius:12px;
+  box-shadow:var(--b-shadow-sm);padding:14px 16px;display:flex;
+  flex-direction:column;gap:9px;flex:1 1 auto;min-height:0}
+.pllm-card h4{margin:0;font-size:20px;font-weight:800;color:#6d28d9}
+.pllm-card p{margin:0;font-size:17px;line-height:1.42;color:var(--b-ink-soft);flex:1 1 auto}
+.pllm-nav{display:flex;gap:7px;flex-wrap:wrap}
+.pllm-nav .chip{font-size:16px;padding:5px 12px}
+
+/* =========================================================
+   שקף 23 · נעילה — שתי שכבות מפורשות
+   שורה 1: באנר המודל לכל רוחב. שורה 2: גרפים (73%) + צד (27%).
+   אין כאן grid אוטומטי: כל ילד ממוקם באזור מפורש.
+   ========================================================= */
+.sl-body>.lk3,.lk3{
+  display:flex;flex-direction:column;gap:9px;
+  flex:1 1 0;min-height:0;
+}
+.lk3-note{
+  flex:0 0 auto;margin:0;font-size:15px;line-height:1.3;font-weight:700;
+  color:#92400e;background:#fffbeb;border:1px dashed #fbbf24;
+  border-radius:8px;padding:6px 12px;text-align:center;
+}
+.lk3-body{
+  display:grid;grid-template-columns:minmax(0,73fr) minmax(0,27fr);
+  gap:11px;flex:1 1 0;min-height:0;
+}
+.lk3-plots{
+  display:grid;grid-template-rows:1fr 1fr;gap:8px;min-height:0;min-width:0;
+}
+.lk3-p{
+  min-width:0;min-height:0;background:#fff;border:1px solid var(--b-line);
+  border-radius:11px;box-shadow:var(--b-shadow-sm);overflow:hidden;display:flex;
+}
+.lk3-p>canvas{display:block;width:100%!important;height:100%!important;margin:0}
+
+.lk3-side{display:flex;flex-direction:column;gap:9px;min-width:0;min-height:0}
+.lk3-side .rfctl{flex:0 0 auto;gap:8px;padding:10px 12px}
+.lk3-side .plotcap{margin:0}
+.lk3-side .chips.col{flex-direction:column;gap:5px}
+.lk3-side .chips.col .chip{
+  width:100%;text-align:center;font-size:16px;padding:6px 8px;
+}
+.lk3-side .ro{display:grid;grid-template-columns:1fr;gap:5px}
+.lk3-side .ro>div{background:#f8fafc;border:1px solid var(--b-line);
+  border-radius:8px;padding:5px 9px;min-width:0}
+.lk3-side .ro small{display:block;font-size:12.5px;font-weight:700;
+  color:var(--b-muted);line-height:1.2;margin-bottom:1px}
+.lk3-side .ro b{display:block;font:800 15px/1.2 var(--mono);color:var(--b-ink);
+  direction:ltr;unicode-bidi:isolate;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis}
+
+.lk3-guide{
+  margin:0;font-size:16px;line-height:1.42;color:var(--b-ink-soft);
+  background:#f8fafc;border:1px solid var(--b-line);border-radius:10px;
+  padding:11px 13px;flex:1 1 auto;min-height:0;overflow:auto;
+}
+
+/* =========================================================
+   שקף 38 · שחזור השמע
+   ========================================================= */
+.sl-body>.pa3,.pa3{display:grid;grid-template-columns:1fr 300px;gap:12px;flex:1 1 0;min-height:0}
+.pa3-plots{display:grid;grid-template-rows:1fr 1fr 1fr;gap:7px;min-height:0}
+.pa3-p{min-width:0;min-height:0;background:#fff;border:1px solid var(--b-line);
+  border-radius:10px;box-shadow:var(--b-shadow-sm);overflow:hidden;display:flex}
+.pa3-p>canvas{display:block;width:100%!important;height:100%!important;margin:0}
+.pa3-side{display:flex;flex-direction:column;gap:9px;min-height:0}
+.pa3-side .rfctl{flex:0 0 auto;gap:8px}
+.pa3-teach{background:#f8fafc;border:1px solid var(--b-line);border-radius:11px;
+  padding:11px 14px;flex:1 1 auto;display:flex;flex-direction:column;gap:8px}
+.pa3-teach p{margin:0;font-size:15.5px;line-height:1.4;color:var(--b-ink-soft)}
+.pa3-teach b{color:var(--b-ink)}
+
+/* =========================================================
+   שקף 43 · AFC
+   ========================================================= */
+.sl-body>.afc2,.afc2{display:flex;flex-direction:column;gap:10px;flex:1 1 0;min-height:0}
+.afc2-map{display:flex;align-items:center;gap:7px;flex:0 0 auto;flex-wrap:wrap;
+  background:#fff;border:1px solid var(--b-line);border-radius:11px;padding:8px 12px}
+.afc2-map>.rc{flex:1 1 0;min-width:0;padding:8px 6px;border-radius:9px;text-align:center;
+  border:2px solid var(--rc,#cbd5e1);font:800 16px inherit;font-family:inherit;background:#fff}
+.afc2-map>i{color:#cbd5e1;font-style:normal;font-weight:800}
+.afc2-lo{display:flex;flex-direction:column;align-items:center;gap:3px;flex:0 0 auto}
+.afc2-lo .rc{width:74px;white-space:nowrap;font-size:15px}
+.afc2-fb{font-size:13px;font-weight:800;color:#7c3aed;white-space:nowrap}
+.afc2-body{display:grid;grid-template-columns:1fr 300px;gap:12px;flex:1 1 0;min-height:0}
+.afc2-plot{min-width:0;min-height:0;background:#fff;border:1px solid var(--b-line);
+  border-radius:11px;box-shadow:var(--b-shadow-sm);overflow:hidden;display:flex}
+.afc2-plot>canvas{display:block;width:100%!important;height:100%!important;margin:0}
+.afc2-side{display:flex;flex-direction:column;gap:9px;min-height:0}
+.afc2-lead{margin:0;font-size:16px;line-height:1.4;color:var(--b-ink-soft);
+  background:#f8fafc;border:1px solid var(--b-line);border-radius:10px;padding:10px 13px;flex:0 0 auto}
+.afc2-side .rfctl{flex:1 1 auto;gap:8px;overflow:hidden}
+
+/* =========================================================
+   שקף 45 · טבלת AM/FM
+   ========================================================= */
+.sl-body>.amfm45,.amfm45{flex:1 1 0;min-height:0;display:flex}
+.amfm-t{width:100%;border-collapse:separate;border-spacing:0;background:#fff;
+  border:1px solid var(--b-line);border-radius:12px;overflow:hidden;
+  box-shadow:var(--b-shadow-md);font-size:17px}
+.amfm-t th{background:#0f172a;color:#fff;padding:11px 13px;font-size:16px;font-weight:800;text-align:start}
+.amfm-t td{padding:13px;border-top:1px solid var(--b-line);vertical-align:top;
+  line-height:1.4;color:var(--b-ink-soft)}
+.amfm-t td:first-child{font-weight:800;color:var(--b-ink);white-space:nowrap;width:15%}
+.amfm-t td:last-child{font-size:15.5px;color:#92400e;background:#fffbeb;width:26%}
+.amfm-t tr:nth-child(even) td{background-color:#fafbfc}
+.amfm-t tr:nth-child(even) td:last-child{background-color:#fffbeb}
+
+/* =========================================================
+   שקפי תרגיל · 48/49
+   ========================================================= */
+.sl-body>.ex,.ex{display:flex;flex-direction:column;gap:10px;flex:1 1 0;min-height:0}
+.ex-q{margin:0;font-size:21px;line-height:1.42;color:var(--b-ink);font-weight:600;
+  background:#f8fafc;border:1px solid var(--b-line);border-inline-start:5px solid var(--b-accent);
+  border-radius:11px;padding:12px 16px}
+.ex-given{display:flex;gap:12px;flex:0 0 auto}
+.ex-given>div{flex:1 1 0;background:#fff;border:1px solid var(--b-line);border-radius:10px;
+  padding:8px 12px;display:flex;flex-direction:column;gap:2px}
+.ex-given small{font-size:14px;font-weight:700;color:var(--b-muted)}
+.ex-given b{font:800 19px var(--mono);color:#0e7490;direction:ltr}
+.ex .step{font-size:19px}
+.ex .step p{margin:6px 0 0;font-size:17px;line-height:1.42;color:var(--b-ink-soft)}
+.ex-f{margin-top:5px;background:#f8fafc;border-radius:9px;padding:6px 12px;text-align:center}
+.ex-f .katex{font-size:1.3em}
+.ex-why{font-size:17px !important;color:#92400e !important}
+.ex-nav{display:flex;gap:9px;flex:0 0 auto}
+.ex-nav .btn5{height:38px;font-size:17px;padding:0 20px}
+.ex-nav .chip{font-size:16px;padding:6px 16px}
+
+
+/* =========================================================
+   שקף 36 · פריסה — כותרת בשתי שורות, בלוקים בגובה סביר
+   ========================================================= */
+/* שורת הכותרת הייתה קבועה ל-64px בגריד, ולכן כותרת בשתי שורות נחתכה.
+   כאן השורה גמישה, והגוף מקבל את השאר. */
+/* שורת הכותרת הייתה "auto" אבל .sl.dense מקטין אותה, והגריד של .sl
+   נשאר auto 1fr auto auto — הבעיה האמיתית: h2 עם text-wrap:balance
+   נשבר לשתי שורות אבל .sl-h הוא flex-direction:column עם gap, ולכן
+   הגובה מחושב נכון — הקטיעה הייתה מה-clamp הקודם. מוסר אותו. */
+.sl .sl-h h2{-webkit-line-clamp:unset;overflow:visible}
+#s36 .sl-h h2{font-size:26px;line-height:1.16;text-wrap:balance}
+.sl-body>.pllm{grid-template-rows:auto auto;gap:10px;align-content:center}
+.pllm-map{align-items:stretch;padding:16px 14px;gap:4px;height:auto;min-height:250px}
+.pllm-map .pllbox{padding:26px 8px;justify-content:center;font-size:20px}
+.pllm-map .pllbox small{font-size:14px;line-height:1.15}
+.pllm-side{grid-row:1/span 2}
+.pllm-fb{align-self:center}
+.pllm-side{grid-row:1/span 2}
+.pllm-card{padding:13px 15px;gap:8px}
+.pllm-card h4{font-size:19px}
+.pllm-card p{font-size:16.5px;line-height:1.4}
+
+
+/* =========================================================
+   שקף 52 · התאמת בעיה לרכיב
+   ========================================================= */
+.sl-body>.match52,.match52{display:grid;gap:9px;flex:1 1 0;align-content:center;min-height:0}
+.m52row{display:flex;align-items:center;gap:14px;background:#fff;
+  border:1px solid var(--b-line);border-radius:11px;padding:12px 16px;
+  box-shadow:var(--b-shadow-sm)}
+.m52q{flex:1 1 auto;font-size:18px;line-height:1.34;color:var(--b-ink-soft)}
+.m52a{flex:0 0 auto;font:800 17px inherit;font-family:inherit;color:#0e7490;
+  background:#ecfeff;border:1.5px solid #a5f3fc;border-radius:8px;
+  padding:5px 14px;white-space:nowrap}
+
+
+/* =========================================================
+   כותרות ארוכות בשתי שורות — תן לשורת הכותרת לגדול
+   .sl.dense קובע padding/gap קשיחים; כאן הכותרת מקבלת את
+   הגובה שהיא צריכה, והגוף מקבל את השאר (1fr).
+   ========================================================= */
+.sl.tight .sl-h{flex:0 0 auto;min-height:0}
+.sl.tight .sl-h h2{overflow:visible;display:block}
+/* שקפים עם כותרת ארוכה במיוחד */
+#s18 .sl-h h2,#s25 .sl-h h2,#s36 .sl-h h2,#s38 .sl-h h2,#s43 .sl-h h2{text-wrap:pretty}
+
+
+/* =========================================================
+   שקף 36 · תרשים סטטי — כל ההסברים גלויים, בלי תלות ב-JS
+   ========================================================= */
+.sl-body>.pllm2,.pllm2{display:flex;flex-direction:column;gap:10px;flex:1 1 0;
+  min-height:0;justify-content:center}
+.pllm2-map{display:flex;align-items:stretch;gap:5px;flex:0 0 auto;
+  background:#fff;border:1px solid var(--b-line);border-radius:12px;
+  box-shadow:var(--b-shadow-md);padding:16px 14px}
+.pllm2-map .pllbox{flex:1 1 0;min-width:0;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:3px;padding:20px 6px;border-radius:11px;background:#fff;
+  border:2.5px solid #cbd5e1;font-weight:800;font-size:19px;color:var(--b-ink);
+  text-align:center;line-height:1.16}
+.pllm2-map .pllbox.in{border-color:#0891b2;background:#ecfeff}
+.pllm2-map .pllbox.pd{border-color:#7c3aed;background:#f5f3ff}
+.pllm2-map .pllbox.lpf{border-color:#059669;background:#ecfdf5}
+.pllm2-map .pllbox.vco{border-color:#d97706;background:#fffbeb}
+.pllm2-map .pllbox.out{border-color:#db2777;background:#fdf2f8}
+.pllm2-map .pllbox small{font-size:13.5px;font-weight:700;color:var(--b-text)}
+.pllm2-map .pllflow{flex:none;display:flex;align-items:center;color:#94a3b8;font-size:22px;font-weight:800}
+.pllm2-fb{flex:0 0 auto;text-align:center;font-size:17px;font-weight:800;color:#b91c1c;
+  background:#fef2f2;border:1.5px dashed #fca5a5;border-radius:10px;padding:8px 14px}
+.pllm2-legend{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;
+  flex:0 0 auto;align-content:start}
+.pllm2-legend>div{background:#fff;border:1px solid var(--b-line);border-radius:10px;
+  padding:10px 13px;box-shadow:var(--b-shadow-sm)}
+.pllm2-legend b{display:block;font-size:16px;color:var(--b-accent-dark);margin-bottom:3px}
+.pllm2-legend p{margin:0;font-size:15px;line-height:1.36;color:var(--b-ink-soft)}
+
+
+/* =========================================================
+   כותרת השקף — לעולם לא מכווצת, לעולם לא חתוכה
+   ========================================================= */
+.sl .sl-h h2{
+  display:block;
+  flex:none;
+  min-height:min-content;
+  height:auto;
+  max-height:none;
+  overflow:visible;
+  -webkit-line-clamp:unset;
+  padding-bottom:1px;
+}
+.sl-h{overflow:visible}
+
+
+/* =========================================================
+   ביקורת 28.10.2026 · P0
+   תאי טבלה עם טווחים מספריים: בידוד דו-כיווני כדי שלא ייווצר
+   "MHz88". ה-bdi כבר בתוכן; זה גיבוי לטקסט שנשמט ממנו.
+   ========================================================= */
+.amfm-t td{unicode-bidi:plaintext;text-align:start}
+.amfm-t td bdi[dir="ltr"]{unicode-bidi:isolate;white-space:nowrap;
+  display:inline-block;direction:ltr;font-variant-numeric:tabular-nums}
+.amfm-t td:first-child{unicode-bidi:isolate}
+
+/* P0-2 · שקף AFC: סימון מודל אידיאלי */
+.afc2-model{display:flex;align-items:flex-start;gap:9px;margin-top:8px;
+  background:#fffbeb;border:1px solid #fde68a;border-radius:10px;padding:8px 11px}
+.afc2-model span{flex:none;font-size:13.5px;font-weight:800;color:#92400e;
+  background:#fde68a;border-radius:6px;padding:2px 7px;white-space:nowrap}
+.afc2-model p{margin:0;font-size:14.5px;line-height:1.36;color:#92400e}
+
+/* P1 · תווית "מודל לימודי" גנרית על גרפים */
+.modeltag{display:inline-flex;align-items:center;gap:6px;font-size:15px;
+  font-weight:800;color:#92400e;background:#fffbeb;border:1px dashed #fbbf24;
+  border-radius:7px;padding:3px 10px}
+.modeltag::before{content:"";width:7px;height:7px;border-radius:50%;background:#f59e0b}
+
+
+/* P1 · שקף 20 — תווית מודל מעל שלושת הגרפים */
+.sl3-model{flex:0 0 auto;margin:0;font-size:15px;line-height:1.32;color:#92400e;
+  background:#fffbeb;border:1px dashed #fbbf24;border-radius:8px;padding:6px 11px;
+  text-align:center;font-weight:700}
+
+
+/* =========================================================
+   ביקורת 28.10.2026 · P1-7
+   שקף 28 — "בהמשך לתרגיל הקודם" מעל השאלה
+   ========================================================= */
+.ex-cont{margin:0 0 2px;font-size:16px;font-weight:800;color:#0e7490;
+  background:#ecfeff;border:1px solid #a5f3fc;border-radius:8px;
+  padding:6px 12px;flex:0 0 auto}
+
+/* P2 · שקף 29 — מרכוז אנכי וקריאות בלבד; התוכן לא משתנה */
+.match52{gap:11px}
+.m52row{padding:14px 18px}
+.m52q{font-size:19px;line-height:1.38}
+.m52a{font-size:18px;padding:6px 16px}
+
+
+/* =========================================================
+   שקף 02 · מחוון סטיית התדר המרבית
+   ========================================================= */
+.mfm-hint{margin:0;font-size:13.5px;line-height:1.38;color:var(--b-muted);
+  background:#f8fafc;border:1px solid var(--b-line);border-radius:8px;padding:7px 10px}
+.mfm-hint b{color:var(--b-ink)}
+/* ידית הגרירה על גרף אות המידע */
+#s02 canvas[data-c="m"]{cursor:ew-resize;touch-action:none}
+
+
+/* =========================================================
+   שקף 13 · חץ ההמרה נושא כעת את תדר ה-LO
+   ========================================================= */
+.shfarrow{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:3px;flex:0 0 auto;min-width:132px;padding:0 4px}
+.shfarrow .shflo{font:800 15px/1.25 var(--mono);color:#7c3aed;direction:ltr;
+  white-space:nowrap;background:#f5f3ff;border:1px solid #ddd6fe;
+  border-radius:6px;padding:2px 7px}
+.shfarrow i{font-style:normal;font-size:26px;color:#94a3b8;line-height:1}
+.shfarrow span{font-size:12.5px;font-weight:700;color:var(--b-muted);
+  text-align:center;line-height:1.22;text-wrap:balance}
+.shffoot .shfbig{font-size:19px;line-height:1.42}

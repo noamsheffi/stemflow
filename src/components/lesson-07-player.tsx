@@ -1,0 +1,506 @@
+"use client";
+
+import Link from "next/link";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
+import { concepts, formulas } from "../lib/course-data";
+import { splitFormulaName } from "../lib/formula-name";
+import FormulaScroll from "./formula-scroll";
+import { Tex } from "./lesson-04-deck";
+import { lesson07Chapters, lesson07DeckVersion, lesson07MainSlideCount, lesson07Slides, lesson07TotalMinutes } from "./lesson-07-data";
+import styles from "./lesson-06-player.module.css";
+
+const courseId = "communication-systems";
+const lessonId = "lesson-07";
+const L7_CHAPTERS = lesson07Chapters;
+const L7_SLIDES = lesson07Slides;
+const L7_LINKS: Record<number, { c?: string[]; f?: string[] }> = {};
+const formulaAliases: Record<string, string> = {
+  f1: "lambda", f3: "monopole", f7: "barkhausen_steady", f8: "am_time_domain",
+  f9: "am_mod_index", f10: "am_bandwidth", f11: "am_power_total",
+  f12: "am_spectrum_components", f13: "am_power_carrier", f14: "am_efficiency", f15: "am_envelope",
+};
+const conceptAliases: Record<string, string> = {
+  c2: "modulation-need", c3: "modulation-need", c5: "spectrum-am", c7: "carrier-wave",
+  c8: "carrier-wave", c9: "modulation-need", c10: "modulation-am",
+  c11: "power-efficiency-am", c12: "envelope-ma",
+};
+const pad2 = (value: number) => String(value).padStart(2, "0");
+const slideLabel = (item: (typeof L7_SLIDES)[number]) => pad2(item.n);
+const slideCounter = (item: (typeof L7_SLIDES)[number]) => `${pad2(item.n)} / ${pad2(lesson07MainSlideCount)}`;
+const extensionSlideCatalog = JSON.stringify(L7_SLIDES.map((item) => ({ slideId: item.slideId, slideNumber: item.n, minutes: item.min > 0 ? item.min : null, title: item.h, chapter: L7_CHAPTERS.find((chapter) => chapter.id === item.ch)?.title ?? "", section: item.sec })));
+const deckUrl = "/courses/communication-systems/lesson-07/lesson.html";
+type Lesson07FrameWindow = Window & { L7?: { show?: (index: number) => void; togglePresenter?: (force?: boolean) => void } };
+const feedbackTypes = [
+  { key: "unclear", label: "לא הבנתי", hint: "משהו בשקף לא ברור", color: "#D9731F", soft: "#FDF3EA" },
+  { key: "example", label: "צריך עוד דוגמה", hint: "הבנתי חלקית, עוד דוגמה תעזור", color: "#137A86", soft: "#E8F4F5" },
+  { key: "question", label: "יש לי שאלה", hint: "אכתוב אותה למטה", color: "#3B5BA9", soft: "#ECF0FA" },
+  { key: "mistake", label: "נראה שיש טעות", hint: "בנוסחה, במספר או בטקסט", color: "#C0392B", soft: "#FCEDEB" },
+] as const;
+type FeedbackType = (typeof feedbackTypes)[number]["key"];
+type SlideFeedbackValue = { t: FeedbackType; text: string; ts: number };
+type FeedbackMap = Record<number, SlideFeedbackValue>;
+const feedbackType = (key: FeedbackType) => feedbackTypes.find((item) => item.key === key)!;
+
+function useLessonState<T>(key: string, initial: T) {
+  const [value, setValue] = useState(initial);
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    try {
+      const saved = window.localStorage.getItem(key);
+      if (saved !== null) setValue(JSON.parse(saved) as T);
+    } catch { /* Player state is optional when browser storage is unavailable. */ }
+    setReady(true);
+  }, [key]);
+  useEffect(() => {
+    if (!ready) return;
+    try { window.localStorage.setItem(key, JSON.stringify(value)); }
+    catch { /* Keep the player interactive when browser storage is unavailable. */ }
+  }, [key, ready, value]);
+  return [value, setValue] as const;
+}
+
+function Chevron({ back = false }: { back?: boolean }) {
+  return <svg className={back ? styles.previousIcon : undefined} viewBox="0 0 20 20" aria-hidden="true"><path d="m7 4 6 6-6 6" /></svg>;
+}
+
+function ScaledSlide({ slide, className, frameRef, onFrameLoad }: { slide: (typeof L7_SLIDES)[number]; className: string; frameRef: React.RefObject<HTMLIFrameElement | null>; onFrameLoad: () => void }) {
+  const host = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(0.5);
+  useEffect(() => {
+    const element = host.current;
+    if (!element) return;
+    const update = () => {
+      const rect = element.getBoundingClientRect();
+      const nextScale = Math.min(rect.width / 1600, rect.height / 900);
+      if (Number.isFinite(nextScale) && nextScale > 0) setScale(nextScale);
+    };
+    update();
+    const observer = new ResizeObserver(update);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+  return <div ref={host} className={className}>
+    <div className={styles.stageBox} style={{ width: 1600 * scale, height: 900 * scale }}>
+      <div className={styles.slideCanvas} data-current-slide="true" data-slide-id={slide.slideId} data-slide-id-source="authored" data-slide-number={slide.n} data-minutes={slide.min || ""} data-slide-title={slide.h} data-section={L7_CHAPTERS.find((item) => item.id === slide.ch)?.title ?? ""} style={{ transform: "scale(" + scale + ")" }}>
+        <iframe ref={frameRef} className={styles.deckFrame} src={deckUrl} title={`מערך שיעור 6 · ${slide.h}`} onLoad={onFrameLoad} />
+      </div>
+    </div>
+  </div>;
+}
+
+function FeedbackIcon({ type, size = 20 }: { type: FeedbackType | "syllo"; size?: number }) {
+  const paths: Record<string, React.ReactNode> = {
+    unclear: <><circle cx="12" cy="12" r="9"/><path d="M9.3 9.3a2.8 2.8 0 0 1 5.4 1c0 1.9-2.7 2.3-2.7 4"/><circle cx="12" cy="17.3" r=".6" fill="currentColor"/></>,
+    example: <><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1 2V16h5.2v-.2c0-.8.4-1.5 1-2A6 6 0 0 0 12 3z"/></>,
+    question: <><path d="m4 20 1.2-4.2L15.6 5.4a2 2 0 0 1 2.9 0l.1.1a2 2 0 0 1 0 2.9L8.2 18.8z"/><path d="m13.8 7.2 3 3"/></>,
+    mistake: <><path d="m12 3.5 9 16H3z"/><path d="M12 10v4"/><circle cx="12" cy="16.8" r=".6" fill="currentColor"/></>,
+    syllo: <path d="M7 8a4 4 0 1 0 0 8c3.2 0 6.8-8 10-8a4 4 0 1 1 0 8c-3.2 0-6.8-8-10-8z"/>,
+  };
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths[type]}</svg>;
+}
+
+function Outline({ index, go, feedback, seen, onClose }: { index: number; go: (index: number) => void; feedback: FeedbackMap; seen: number[]; onClose: () => void }) {
+  const current = L7_SLIDES[index];
+  const [open, setOpen] = useState<Record<number, boolean>>({ [current.ch]: true });
+  useEffect(() => setOpen((value) => ({ ...value, [current.ch]: true })), [current.ch]);
+  return <aside className={styles.outline} aria-label="מבנה השיעור">
+    <header className={styles.outlineHeader}>
+      <div className={styles.outlineTitleRow}><span className={styles.lessonBadge} dir="ltr">07</span><div><span className={styles.eyebrow}>מערכות תקשורת · שיעור 07</span><h2>מקלט FM</h2></div></div>
+      <div className={styles.lessonProgress}><span>{seen.length}/{L7_SLIDES.length} שקפים נצפו · {lesson07MainSlideCount} במסלול החובה</span><i><b style={{ width: `${Math.min(100, seen.length / L7_SLIDES.length * 100)}%` }} /></i></div>
+      <button type="button" className={styles.closePanel} onClick={onClose}>סגירה</button>
+    </header>
+    <div className={styles.outlineSectionHeading}>מקלט FM · בחירת תחנה וגילוי</div>
+    <nav className={styles.outlineScroll} aria-label="פרקי השיעור">
+      {L7_CHAPTERS.map((chapter) => {
+        const items = L7_SLIDES.filter((slide) => slide.ch === chapter.id);
+        const appendixDivider = chapter.title === "נספחים · רשות";
+        const progressItems = appendixDivider ? items.filter((slide) => slide.sourceId !== "sAPX") : items;
+        const count = progressItems.filter((slide) => seen.includes(slide.n)).length;
+        const marked = items.filter((slide) => feedback[slide.n]).length;
+        return <section className={styles.chapter} key={chapter.id}>
+          <button type="button" className={[styles.chapterButton, current.ch === chapter.id ? styles.chapterActive : ""].join(" ")} aria-expanded={Boolean(open[chapter.id])} onClick={() => setOpen((value) => ({ ...value, [chapter.id]: !value[chapter.id] }))}>
+            <span className={styles.chapterNumber} dir="ltr">{chapter.id > 0 ? pad2(chapter.id) : "·"}</span><span className={styles.chapterTitle}>{chapter.title}</span>
+            {marked > 0 && <span className={styles.flagCount} style={{ "--feedback-count": feedbackType("unclear").color, "--feedback-count-soft": feedbackType("unclear").soft } as React.CSSProperties}>{marked}</span>}
+            <span className={styles.progressRing} style={{ "--progress": progressItems.length ? count / progressItems.length : 0 } as React.CSSProperties} aria-label={count + " מתוך " + progressItems.length + " שקפים נצפו"} />
+          </button>
+          {open[chapter.id] && <div className={styles.chapterSlides}>{items.map((slide) => <button type="button" key={slide.n} className={[styles.slideLink, current.n === slide.n ? styles.slideActive : "", seen.includes(slide.n) ? styles.slideSeen : ""].join(" ")} onClick={() => go(slide.n - 1)} aria-current={slide.n === current.n ? "step" : undefined}>
+            <span className={styles.slideNumber} dir="ltr">{slideLabel(slide)}</span><span className={styles.slideTitle}>{slide.h}</span>
+            {feedback[slide.n] && <span className={styles.feedbackMarker} style={{ color: feedbackType(feedback[slide.n].t).color }} title={feedbackType(feedback[slide.n].t).label}><FeedbackIcon type={feedback[slide.n].t} size={13} /></span>}
+            {slide.kind && <span className={styles.interactiveMark} title={slide.kind}>◆</span>}
+          </button>)}</div>}
+        </section>;
+      })}
+    </nav>
+  </aside>;
+}
+
+function FeedbackPopover({ slide, feedback, open, setOpen, onSave, onDelete, busy, error, dark = false }: { slide: (typeof L7_SLIDES)[number]; feedback: FeedbackMap; open: boolean; setOpen: (value: boolean) => void; onSave: (value: SlideFeedbackValue) => Promise<boolean>; onDelete: () => Promise<void>; busy: boolean; error: string; dark?: boolean }) {
+  const current = feedback[slide.n];
+  const [pick, setPick] = useState<FeedbackType | null>(current?.t ?? null);
+  const [text, setText] = useState(current?.text ?? "");
+  const [editing, setEditing] = useState(!current);
+  const textArea = useRef<HTMLTextAreaElement>(null);
+  useEffect(() => { setPick(current?.t ?? null); setText(current?.text ?? ""); setEditing(!current); }, [slide.n, current]);
+  useEffect(() => { if (open && pick === "question") textArea.current?.focus(); }, [open, pick]);
+  const send = async () => { if (!pick || (pick === "question" && !text.trim())) return; if (await onSave({ t: pick, text: text.trim(), ts: Date.now() })) { setEditing(false); setOpen(false); } };
+  const type = current ? feedbackType(current.t) : undefined;
+  return <div className={[styles.feedback, dark ? styles.feedbackDark : ""].join(" ")} style={{ "--feedback-error": feedbackType("mistake").color } as React.CSSProperties}>
+    {open && <section className={styles.feedbackPopover} role="dialog" aria-label="משוב על השקף" aria-modal="false">
+      <header className={styles.feedbackHeader}><div><b>משוב על השקף</b><span><i dir="ltr">{slideLabel(slide)}</i> · {slide.h}</span></div><button type="button" onClick={() => setOpen(false)} aria-label="סגירת משוב">×</button></header>
+      {current && !editing ? <div className={styles.feedbackSent}><div className={styles.feedbackSentCard} style={{ "--feedback-color": type!.color, "--feedback-soft": type!.soft } as React.CSSProperties}><span><FeedbackIcon type={type!.key} size={18} /></span><div><b>{type!.label}</b>{current.text && <p>“{current.text}”</p>}<small>נשלח · אנונימי למרצה</small></div></div>{error && <p className={styles.feedbackError} role="alert">{error}</p>}<div className={styles.feedbackActions}><button type="button" onClick={() => setEditing(true)}>עריכה</button><button type="button" disabled={busy} onClick={() => void onDelete()}>{busy ? "מבטל…" : "ביטול המשוב"}</button></div></div> : <div className={styles.feedbackBody}>
+        <b>מה תרצו לשתף?</b><div className={styles.feedbackOptions}>{feedbackTypes.map((item) => <button type="button" key={item.key} aria-pressed={pick === item.key} className={pick === item.key ? styles.feedbackOptionSelected : ""} style={{ "--feedback-color": item.color, "--feedback-soft": item.soft } as React.CSSProperties} onClick={() => setPick(item.key)}><span><FeedbackIcon type={item.key} size={18} /></span><span><b>{item.label}</b><small>{item.hint}</small></span></button>)}</div>
+        <textarea ref={textArea} rows={3} maxLength={800} value={text} onChange={(event) => setText(event.target.value)} placeholder={pick === "question" ? "מה השאלה?" : pick === "mistake" ? "איפה הטעות?" : "אפשר להוסיף כמה מילים (אופציונלי)"} />
+        {error && <p className={styles.feedbackError} role="alert">{error}</p>}<footer><button type="button" disabled={!pick || (pick === "question" && !text.trim()) || busy} onClick={send}>{busy ? "שולח…" : current ? "עדכון" : "שליחה"}</button><small>נשמר לשקף הזה · אנונימי למרצה</small></footer>
+      </div>}
+    </section>}
+    <button type="button" className={[styles.feedbackFab, current ? styles.feedbackFabSet : "", open ? styles.feedbackFabOpen : ""].join(" ")} style={type ? { background: type.color } : undefined} onClick={() => setOpen(!open)} aria-label={open ? "סגירת חלונית המשוב" : type ? `עריכת משוב: ${type.label}` : "משוב על השקף (F)"} aria-expanded={open}>{open ? "×" : <FeedbackIcon type={current?.t ?? "syllo"} size={current ? 24 : 27} />}</button>
+    {!open && type && <span className={styles.feedbackTag} style={{ color: type.color }}>{type.label}</span>}
+  </div>;
+}
+
+function SlideContext({ slide, feedback, openFeedback, notes, setNotes, onClose }: { slide: (typeof L7_SLIDES)[number]; feedback: FeedbackMap; openFeedback: () => void; notes: Record<number, string>; setNotes: (value: Record<number, string>) => void; onClose: () => void }) {
+  const links = (L7_LINKS as Record<number, { f?: string[]; c?: string[] }>)[slide.n] ?? {};
+  const formulaIds = (links.f ?? []).map((id: string) => formulaAliases[id]).filter(Boolean);
+  const conceptIds = (links.c ?? []).map((id: string) => conceptAliases[id]).filter(Boolean);
+  const slideFormulas = formulas.filter((item) => formulaIds.includes(item.formulaId));
+  const slideConcepts = concepts.filter((item) => conceptIds.includes(item.conceptId));
+  const currentFeedback = feedback[slide.n];
+  const hasSlideContext = Boolean(slide.tk || slideFormulas.length || slideConcepts.length);
+  const currentFeedbackType = currentFeedback ? feedbackType(currentFeedback.t) : undefined;
+  return <aside className={styles.slideContext} aria-label="מידע והערות לשקף">
+    <header className={styles.contextHeader}><span>בשקף הזה</span><b dir="ltr">{slideLabel(slide)}</b><button type="button" className={styles.closePanel} onClick={onClose}>סגירה</button></header>
+    <div className={styles.contextBody}>
+      <button type="button" className={[styles.flagButton, currentFeedback ? styles.flagged : ""].join(" ")} style={currentFeedbackType ? { "--feedback-color": currentFeedbackType.color, "--feedback-soft": currentFeedbackType.soft } as React.CSSProperties : undefined} onClick={openFeedback}>
+        <span className={styles.flagIcon}><FeedbackIcon type={currentFeedback?.t ?? "syllo"} size={18} /></span><span><b>{currentFeedbackType?.label ?? "משוב על השקף"}</b><small>{currentFeedback?.text ? `“${currentFeedback.text}”` : currentFeedback ? "נשלח · לחצו לעריכה" : "לא הבנתי, דוגמה, שאלה או טעות"}</small></span>
+      </button>
+      {slide.tk && <div className={styles.takeaway}><small>העיקר</small>{slide.tk}</div>}
+      {!hasSlideContext && <section className={styles.lessonOverview}><h3>מפת השיעור</h3>
+        {L7_CHAPTERS.map((chapter, i) => {
+          const end = (L7_CHAPTERS[i + 1]?.start ?? L7_SLIDES.length + 1) - 1;
+          return <div className={styles.lessonOverviewRow} key={chapter.id}><b dir="ltr">{chapter.id ? pad2(chapter.id) : "·"}</b><span>{chapter.title}</span><small dir="ltr">{slideLabel(L7_SLIDES[chapter.start - 1])}–{slideLabel(L7_SLIDES[end - 1])}</small></div>;
+        })}
+        {L7_SLIDES[L7_SLIDES.length - 1]?.tk && <p><b>העיקר בשיעור</b>{L7_SLIDES[L7_SLIDES.length - 1].tk}</p>}
+      </section>}
+      {slideFormulas.length > 0 && <section className={styles.contextSection}><h3>נוסחאות <span dir="ltr">{slideFormulas.length}</span></h3>
+        {slideFormulas.map((item) => {
+          const name = splitFormulaName(item.name);
+          return <article className={styles.formulaCard} key={item.formulaId}><b><span>{name.hebrew}</span>{name.english && <span className={styles.formulaEnglish} dir="ltr">{name.english}</span>}</b><FormulaScroll className={styles.formulaScroll} fadeClassName={styles.formulaOverflow} atEndClassName={styles.formulaAtEnd}><Tex tex={item.expression} /></FormulaScroll></article>;
+        })}
+        <Link href={"/course/" + courseId + "/formulas"} className={styles.contextMore}>לנוסחאון המלא ←</Link>
+      </section>}
+      {slideConcepts.length > 0 && <section className={styles.contextSection}><h3>מושגים <span dir="ltr">{slideConcepts.length}</span></h3>
+        {slideConcepts.map((item) => <article className={styles.conceptCard} key={item.conceptId}><b>{item.name}</b></article>)}
+        <Link href={"/course/" + courseId + "/concepts"} className={styles.contextMore}>למפת המושגים ←</Link>
+      </section>}
+      <label className={styles.noteLabel}><span>הערה שלי</span><textarea value={notes[slide.n] ?? ""} maxLength={2000} placeholder="הערה אישית לשקף הזה…" onChange={(event) => setNotes({ ...notes, [slide.n]: event.target.value })} /></label>
+      <p className={styles.localNote}>הערות והתקדמות נשמרות בדפדפן הזה בלבד.</p>
+    </div>
+  </aside>;
+}
+
+function ChapterBar({ index, go, feedback }: { index: number; go: (index: number) => void; feedback: FeedbackMap }) {
+  return <nav className={styles.chapterBar} aria-label="התקדמות בין פרקי השיעור">{L7_CHAPTERS.map((chapter, i) => {
+    const start = chapter.start - 1;
+    const end = L7_CHAPTERS[i + 1] ? L7_CHAPTERS[i + 1].start - 1 : L7_SLIDES.length;
+    const count = end - start;
+    const progress = Math.max(0, Math.min(1, (index + 1 - start) / count));
+    return <button type="button" key={chapter.id} className={[styles.chapterSegment, index >= start && index < end ? styles.segmentActive : ""].join(" ")} style={{ flex: count }} onClick={() => go(start)} title={chapter.title} aria-label={"מעבר לפרק: " + chapter.title}>
+      <i style={{ width: (progress * 100) + "%" }} />
+      {L7_SLIDES.slice(start, end).map((slide, slideIndex) => feedback[slide.n] ? <em key={slide.n} style={{ insetInlineStart: ((slideIndex + 0.5) / count * 100) + "%", background: feedbackType(feedback[slide.n].t).color }} /> : null)}
+    </button>;
+  })}</nav>;
+}
+
+export default function Lesson07Player({ lecturerMode = false }: { lecturerMode?: boolean } = {}) {
+  const stateKey = `syllo:student:lesson:${lessonId}:${lesson07DeckVersion}`;
+  const [index, setIndex] = useLessonState(stateKey + ":index", 0);
+  const [flags, setFlags] = useLessonState<number[]>(stateKey + ":flags", []);
+  const [seen, setSeen] = useLessonState<number[]>(stateKey + ":seen", []);
+  const [notes, setNotes] = useLessonState<Record<number, string>>(stateKey + ":notes", {});
+  const [feedback, setFeedback] = useLessonState<FeedbackMap>(stateKey + ":feedback", {});
+  const [outlineOpen, setOutlineOpen] = useLessonState(stateKey + ":outline", true);
+  const [contextOpen, setContextOpen] = useLessonState(stateKey + ":context", true);
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
+  const [feedbackBusy, setFeedbackBusy] = useState(false);
+  const [feedbackError, setFeedbackError] = useState("");
+  const [compact, setCompact] = useState(false);
+  const playerRef = useRef<HTMLDivElement>(null);
+  const deckFrameRef = useRef<HTMLIFrameElement>(null);
+  const indexRef = useRef(index);
+  indexRef.current = index;
+  const previewButtonRef = useRef<HTMLButtonElement>(null);
+  const exitLessonLinkRef = useRef<HTMLAnchorElement>(null);
+  const wasOpened = useRef(false);
+  const [present, setPresent] = useState(false);
+  const [opened, setOpened] = useState(false);
+  const [showSpeakerNotes, setShowSpeakerNotes] = useState(false);
+  const [previewAbove, setPreviewAbove] = useState(300);
+  const [previewWidth, setPreviewWidth] = useState(700);
+  const previewCardRef = useRef<HTMLElement>(null);
+  const [narrow, setNarrow] = useState(false);
+  const slide = L7_SLIDES[index];
+  const chapter = L7_CHAPTERS.find((item) => item.id === slide.ch)!;
+  const lessonBaseHref = lecturerMode ? `/lecturer/lessons/${lessonId}` : `/course/${courseId}/lessons/${lessonId}`;
+  const go = useCallback((next: number) => {
+    const target = Math.max(0, Math.min(L7_SLIDES.length - 1, next));
+    setIndex(target);
+    const embedded = deckFrameRef.current?.contentWindow as Lesson07FrameWindow | null | undefined;
+    embedded?.L7?.show?.(target);
+  }, [setIndex]);
+  const onDeckFrameLoad = useCallback(() => {
+    const frame = deckFrameRef.current;
+    const embedded = frame?.contentWindow as Lesson07FrameWindow | null | undefined;
+    if (!frame || !embedded?.L7?.show) return;
+    try {
+      const document = frame.contentDocument;
+      if (document && !document.getElementById("syllo-platform-embed-style")) {
+        const style = document.createElement("style");
+        style.id = "syllo-platform-embed-style";
+        style.textContent = "body.presenting::after{display:none!important}.local-toolbar,.local-controls,.drawer{display:none!important}";
+        document.head.append(style);
+      }
+    } catch { /* Same-origin static deck is expected; the outer player remains available if access is restricted. */ }
+    embedded.L7.togglePresenter?.(true);
+    embedded.L7.show(indexRef.current);
+  }, []);
+  const notifyLecturer = useCallback((type: "open" | "exit") => {
+    window.dispatchEvent(new CustomEvent(`syllo:lesson-player-${type}`));
+  }, []);
+  const exitLesson = useCallback(() => {
+    notifyLecturer("exit");
+    setOpened(false);
+  }, [notifyLecturer]);
+  useEffect(() => {
+    const onDeckSlide = (event: MessageEvent) => {
+      if (event.origin !== window.location.origin || event.source !== deckFrameRef.current?.contentWindow) return;
+      const next = event.data?.slideIndexChanged;
+      if (!Number.isInteger(next) || next < 0 || next >= L7_SLIDES.length) return;
+      setIndex(next);
+    };
+    window.addEventListener("message", onDeckSlide);
+    return () => window.removeEventListener("message", onDeckSlide);
+  }, [setIndex]);
+  const enterPresentation = useCallback(() => {
+    setPresent(true);
+    if (document.fullscreenEnabled && !document.fullscreenElement) {
+      void document.documentElement.requestFullscreen().catch(() => {});
+    }
+  }, []);
+  const exitPresentation = useCallback(() => {
+    setPresent(false);
+    setShowSpeakerNotes(false);
+    if (document.fullscreenElement) void document.exitFullscreen().catch(() => {});
+  }, []);
+  useEffect(() => {
+    if (opened) return;
+    const card = previewCardRef.current;
+    if (!card) return;
+    const scroller = card.closest("main");
+    const measure = () => {
+      const above = Math.max(0, Math.ceil(card.getBoundingClientRect().top + (scroller?.scrollTop ?? 0)));
+      const stageHeight = Math.max(0, window.innerHeight - above - 64 - 24);
+      const availableWidth = card.parentElement?.clientWidth ?? window.innerWidth;
+      setPreviewAbove(above);
+      setPreviewWidth(Math.min(availableWidth, Math.floor(stageHeight * 16 / 9)));
+    };
+    measure();
+    window.addEventListener("resize", measure);
+    const observer = new ResizeObserver(measure);
+    const pageContent = scroller?.firstElementChild;
+    if (pageContent) observer.observe(pageContent);
+    observer.observe(card);
+    return () => { window.removeEventListener("resize", measure); observer.disconnect(); };
+  }, [opened]);
+  useEffect(() => { setSeen((value) => value.includes(slide.n) ? value : [...value, slide.n]); }, [setSeen, slide.n]);
+  const studentTelemetry = useRef({ sessionId: "", anonymousClientId: "", slideIndex: 0, slideStartedAt: 0, started: false });
+  useEffect(() => {
+    if (lecturerMode) return;
+    const state = studentTelemetry.current;
+    const send = (eventType: "lesson_started" | "slide_viewed" | "lesson_ended", slideIndex: number | null = null, activeDurationMs: number | null = null) => {
+      if (!state.sessionId || !state.anonymousClientId) return;
+      const slideForEvent = slideIndex === null ? null : L7_SLIDES[slideIndex];
+      void fetch("/api/learning-events", {
+        method: "POST", keepalive: true, headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          anonymous_client_id: state.anonymousClientId, session_id: state.sessionId,
+          course_id: courseId, lesson_id: lessonId, deck_version: lesson07DeckVersion,
+          event_type: eventType, slide_id: slideForEvent?.slideId ?? null,
+          slide_number: slideForEvent?.n ?? null, active_duration_ms: activeDurationMs,
+          occurred_at: new Date().toISOString(),
+        }),
+      }).catch(() => {});
+    };
+    if (!opened) {
+      if (state.started) {
+        send("slide_viewed", state.slideIndex, Math.max(0, Math.min(3_600_000, Date.now() - state.slideStartedAt)));
+        send("lesson_ended");
+        state.started = false;
+      }
+      return;
+    }
+    if (!state.started) {
+      const clientKey = "syllo:anonymous-client-id";
+      let clientId = window.localStorage.getItem(clientKey);
+      if (!clientId) { clientId = window.crypto.randomUUID(); window.localStorage.setItem(clientKey, clientId); }
+      state.anonymousClientId = clientId;
+      state.sessionId = window.crypto.randomUUID();
+      state.slideIndex = index;
+      state.slideStartedAt = Date.now();
+      state.started = true;
+      send("lesson_started");
+    } else if (state.slideIndex !== index) {
+      send("slide_viewed", state.slideIndex, Math.max(0, Math.min(3_600_000, Date.now() - state.slideStartedAt)));
+      state.slideIndex = index;
+      state.slideStartedAt = Date.now();
+    }
+  }, [opened, index, lecturerMode]);
+  useEffect(() => {
+    const handleLecturerNavigation = (event: Event) => {
+      const slideNumber = (event as CustomEvent<number>).detail;
+      if (Number.isInteger(slideNumber)) go(slideNumber - 1);
+    };
+    window.addEventListener("syllo:lecturer-goto-slide", handleLecturerNavigation);
+    return () => window.removeEventListener("syllo:lecturer-goto-slide", handleLecturerNavigation);
+  }, [go]);
+  useEffect(() => {
+    const player = playerRef.current;
+    if (!player || typeof ResizeObserver === "undefined") return;
+    const observer = new ResizeObserver(([entry]) => {
+      const nextCompact = entry.contentRect.width < 1192;
+      const nextNarrow = entry.contentRect.width < 900;
+      setCompact(nextCompact);
+      setNarrow(nextNarrow);
+      if (nextCompact && outlineOpen && contextOpen) setContextOpen(false);
+      if (!nextCompact && !outlineOpen && !contextOpen) setOutlineOpen(true);
+    });
+    observer.observe(player);
+    return () => observer.disconnect();
+  }, [contextOpen, opened, outlineOpen]);
+  useEffect(() => {
+    if (opened) exitLessonLinkRef.current?.focus();
+    else if (wasOpened.current) previewButtonRef.current?.focus();
+    wasOpened.current = opened;
+  }, [opened]);
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement;
+      const eventPath = event.composedPath();
+      const originatedInEditor = eventPath.some((node) => node instanceof HTMLElement && (node.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(node.tagName)));
+      if (originatedInEditor) return;
+      if (target.isContentEditable || /INPUT|TEXTAREA|SELECT/.test(target.tagName)) return;
+      if (event.key === " " && target.closest("button")) return;
+      if (["ArrowLeft", "PageDown", " "].includes(event.key)) { event.preventDefault(); go(index + 1); }
+      else if (["ArrowRight", "PageUp"].includes(event.key)) { event.preventDefault(); go(index - 1); }
+      else if (event.key === "Escape") {
+        if (feedbackOpen) setFeedbackOpen(false);
+        else if (present) exitPresentation();
+        else if (compact && contextOpen) setContextOpen(false);
+        else if (narrow && outlineOpen) setOutlineOpen(false);
+        else exitLesson();
+      }
+      else if (event.key.toLowerCase() === "p") setPresent((value) => !value);
+      else if (event.key.toLowerCase() === "n") setShowSpeakerNotes((value) => !value);
+      else if (event.key.toLowerCase() === "f") setFeedbackOpen((value) => !value);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [compact, contextOpen, exitLesson, exitPresentation, feedbackOpen, go, index, narrow, outlineOpen, present, setContextOpen, setOutlineOpen]);
+
+  const saveFeedback = async (value: SlideFeedbackValue): Promise<boolean> => {
+    setFeedbackError("");
+    setFeedbackBusy(true);
+    try {
+      const clientKey = "syllo:anonymous-client-id";
+      let anonymousClientId = window.localStorage.getItem(clientKey);
+      if (!anonymousClientId) { anonymousClientId = window.crypto.randomUUID(); window.localStorage.setItem(clientKey, anonymousClientId); }
+      const apiTypes: Record<FeedbackType, string> = { unclear: "NOT_UNDERSTOOD", example: "NEED_EXAMPLE", question: "QUESTION", mistake: "POSSIBLE_ERROR" };
+      const response = await fetch("/api/student/slide-feedback", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ anonymousClientId, courseId, lessonId, slideId: slide.slideId, slideNumber: slide.n, deckVersion: lesson07DeckVersion, feedbackType: apiTypes[value.t], optionalComment: value.text, submittedAt: new Date(value.ts).toISOString(), pageUrl: window.location.href, idempotencyKey: `${courseId}:${lessonId}:${slide.slideId}` }) });
+      if (!response.ok) throw new Error("לא הצלחנו לשמור את המשוב. נסו שוב.");
+      setFeedback((previous) => ({ ...previous, [slide.n]: value }));
+      window.dispatchEvent(new CustomEvent("syllo:lesson-feedback-update", { detail: { feedback: { ...feedback, [slide.n]: value } } }));
+      setFlags((previous) => value.t === "unclear" ? previous.includes(slide.n) ? previous : [...previous, slide.n] : previous.filter((n) => n !== slide.n));
+      setFeedbackOpen(false);
+      return true;
+    } catch (error) { setFeedbackError(error instanceof Error ? error.message : "לא הצלחנו לשמור את המשוב. נסו שוב."); return false; }
+    finally { setFeedbackBusy(false); }
+  };
+  const deleteFeedback = async () => {
+    setFeedbackBusy(true);
+    setFeedbackError("");
+    try {
+      const clientId = window.localStorage.getItem("syllo:anonymous-client-id");
+      if (clientId) {
+        const response = await fetch("/api/student/slide-feedback", { method: "DELETE", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ anonymousClientId: clientId, courseId, lessonId, slideId: slide.slideId }) });
+        if (!response.ok) throw new Error("לא הצלחנו לבטל את המשוב. נסו שוב.");
+      }
+      setFeedback((previous) => { const next = { ...previous }; delete next[slide.n]; return next; });
+      const nextFeedback = { ...feedback };
+      delete nextFeedback[slide.n];
+      window.dispatchEvent(new CustomEvent("syllo:lesson-feedback-update", { detail: { feedback: nextFeedback } }));
+      setFlags((previous) => previous.filter((n) => n !== slide.n));
+    } catch (error) { setFeedbackError(error instanceof Error ? error.message : "לא הצלחנו לבטל את המשוב. נסו שוב."); }
+    finally { setFeedbackBusy(false); }
+  };
+
+  useEffect(() => { setFeedbackError(""); }, [slide.n]);
+
+  if (!opened) return <section ref={previewCardRef} style={{ "--above": `${previewAbove}px`, "--preview-width": `${previewWidth}px` } as React.CSSProperties} className={["l4-player", styles.preview].join(" ")} aria-label="תצוגה מקדימה של מערך השיעור">
+    <div className={styles.previewStage}><div className={styles.previewPlaceholder}><span>מערכות תקשורת · שיעור 07</span><strong>מקלט FM</strong><small>הגרסה העדכנית של מערך השיעור מוכנה לפתיחה</small></div></div>
+    <footer className={styles.previewFooter}><div><strong>מערך שיעור 07 · מקלט FM</strong><span>{lesson07MainSlideCount} שקפים · {lesson07TotalMinutes} דקות</span></div><button ref={previewButtonRef} type="button" className={styles.openLessonButton} onClick={() => { notifyLecturer("open"); setOutlineOpen(true); setContextOpen(window.innerWidth > 1191); setOpened(true); }}>פתיחת מערך השיעור <span aria-hidden="true">←</span></button></footer>
+  </section>;
+
+  if (typeof document === "undefined") return null;
+
+  if (present) return createPortal(<div dir="rtl" className={[styles.present, "l4-player", "syllo-student-app"].join(" ")} data-lesson-player="true" data-course-id={courseId} data-lesson-id={lessonId} data-deck-version={lesson07DeckVersion} data-slides={extensionSlideCatalog} role="dialog" aria-label="הצגת שקף">
+    <ScaledSlide slide={slide} className={styles.presentStage} frameRef={deckFrameRef} onFrameLoad={onDeckFrameLoad} />
+    <FeedbackPopover slide={slide} feedback={feedback} open={feedbackOpen} setOpen={setFeedbackOpen} onSave={saveFeedback} onDelete={deleteFeedback} busy={feedbackBusy} error={feedbackError} dark />
+    {showSpeakerNotes && slide.notes && <aside className={styles.speakerNotes}><b>הערות מרצה</b><p>{slide.notes}</p></aside>}
+    <div className={styles.presentControls}>
+      <button type="button" onClick={() => go(index - 1)}>הקודם</button><span dir="ltr">{slideCounter(slide)}</span>
+      <button type="button" onClick={() => go(index + 1)}>הבא</button>{lecturerMode && <button type="button" aria-pressed={showSpeakerNotes} onClick={() => setShowSpeakerNotes((value) => !value)}>הערות מרצה · N</button>}
+      <button type="button" onClick={exitPresentation}>יציאה · Esc</button>
+    </div>
+    <ChapterBar index={index} go={go} feedback={feedback} />
+  </div>, document.body);
+
+  return createPortal(<div dir="rtl" ref={playerRef} className={["l4-player", "syllo-student-app", styles.player, outlineOpen ? styles.withOutline : "", contextOpen ? styles.withContext : ""].join(" ")} data-lesson-player="true" data-course-id={courseId} data-lesson-id={lessonId} data-deck-version={lesson07DeckVersion} data-slides={extensionSlideCatalog}>
+    <header className={styles.playerToolbar}>
+        <div className={styles.lessonIdentity}>
+          <Link ref={exitLessonLinkRef} href={lecturerMode ? "/lecturer/sessions#lessons" : `/course/${courseId}`} onClick={exitLesson} className={styles.courseBreadcrumb} aria-label={lecturerMode ? "חזרה לפנל המרצים" : "חזרה לקורס מערכות תקשורת"}><span className={styles.breadcrumbArrow} aria-hidden="true">›</span><span><small>{lecturerMode ? "חזרה לפנל המרצים" : "חזרה לקורס"}</small><b>מערכות תקשורת</b></span></Link>
+          <span className={styles.toolbarDivider} aria-hidden="true" />
+          <span className={styles.lessonMode}><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3" y="3" width="14" height="11" rx="1.5"/><path d="M7 17h6M10 14v3"/></svg><b>מערך שיעור</b></span>
+          <span className={styles.lessonBadge} dir="ltr">07</span>
+          <span className={styles.lessonTitle}>מקלט FM</span>
+        </div>
+        <nav className={styles.loopPhases} aria-label="שלבי הלמידה">
+          <Link aria-current="page" className={styles.phaseActive} href={`${lessonBaseHref}/slides`}><span dir="ltr">01</span>בכיתה</Link>
+          <Link href={`${lessonBaseHref}/practice`} onClick={exitLesson}><span dir="ltr">02</span>אחרי השיעור</Link>
+          <Link href={`${lessonBaseHref}/summary`} onClick={exitLesson}><span dir="ltr">03</span>לקראת השיעור הבא</Link>
+        </nav>
+        <div className={styles.toolbarActions}>
+          <button type="button" className={styles.toolbarButton} aria-pressed={outlineOpen} aria-label="מבנה השיעור" title="מבנה השיעור" onClick={() => { const next = !outlineOpen; setOutlineOpen(next); if (compact && next) setContextOpen(false); }}><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14"/></svg></button>
+          <button type="button" className={styles.toolbarButton} aria-pressed={contextOpen} aria-label="הקשר לשקף" title="הקשר לשקף" onClick={() => { const next = !contextOpen; setContextOpen(next); if (compact && next) setOutlineOpen(false); }}><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2" y="3" width="16" height="14" rx="1.5"/><path d="M13 3v14"/></svg></button>
+          <button type="button" className={styles.presentButton} onClick={enterPresentation}>הצגה</button>
+        </div>
+    </header>
+    <div className={styles.loopProgress} aria-hidden="true" />
+    <div className={styles.playerWorkspace}>
+      {compact && (contextOpen || narrow && outlineOpen) && <button type="button" className={styles.drawerScrim} onClick={() => contextOpen ? setContextOpen(false) : setOutlineOpen(false)} aria-label={contextOpen ? "סגירת פאנל ההקשר" : "סגירת מבנה השיעור"} />}
+      {outlineOpen && <Outline index={index} go={go} feedback={feedback} seen={seen} onClose={() => setOutlineOpen(false)} />}
+      <main className={styles.playerMain} aria-label="נגן שיעור 07">
+      <div className={styles.stageWrap}><ScaledSlide slide={slide} className={styles.stage} frameRef={deckFrameRef} onFrameLoad={onDeckFrameLoad} /><FeedbackPopover slide={slide} feedback={feedback} open={feedbackOpen} setOpen={setFeedbackOpen} onSave={saveFeedback} onDelete={deleteFeedback} busy={feedbackBusy} error={feedbackError} /></div>
+      <footer className={styles.playerFooter}>
+        <ChapterBar index={index} go={go} feedback={feedback} />
+        <div className={styles.slideNav}>
+          <button type="button" className={styles.navButton} aria-label="לשקף הקודם" onClick={() => go(index - 1)}><Chevron back /></button>
+          <span className={styles.slideCount} dir="ltr">{slideCounter(slide)}</span>
+          <button type="button" className={styles.navButton} aria-label="לשקף הבא" onClick={() => go(index + 1)}><Chevron /></button>
+          <span className={styles.chapterLabel}>{chapter.title}</span><span className={styles.timeLeft}>{lesson07TotalMinutes} דקות</span>
+        </div>
+      </footer>
+      </main>
+      {contextOpen && <SlideContext slide={slide} feedback={feedback} openFeedback={() => setFeedbackOpen(true)} notes={notes} setNotes={setNotes} onClose={() => setContextOpen(false)} />}
+    </div>
+  </div>, document.body);
+}

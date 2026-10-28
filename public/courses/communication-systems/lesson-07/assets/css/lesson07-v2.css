@@ -1,0 +1,80 @@
+/* =========================================================
+   שיעור 07 · v2 — שכבת תיקונים
+   אין טוקנים חדשים: כל הצבעים מגיעים מ־--b-* של שיעור 06.
+   כאן רק רכיבים שנוספו לצורך תיקוני המפרט.
+   ========================================================= */
+
+/* ---------- שקף 36 · דיאגרמת חוג סגור (משוב אמיתי) ---------- */
+.loopsvg{width:100%;max-width:1300px;margin:0 auto;flex:0 0 auto;display:block}
+.loopsvg text{font-family:"Heebo","Segoe UI","Noto Sans Hebrew",Arial,sans-serif}
+
+/* ---------- תג "תוקן" ליד כותרת השקף ---------- */
+.revtag{
+  display:inline-block;margin-inline-start:10px;vertical-align:3px;
+  font-size:12.5px;font-weight:800;letter-spacing:.02em;color:#0e7490;
+  background:#ecfeff;border:1px solid #a5f3fc;border-radius:6px;padding:1px 7px;
+}
+
+/* ---------- מגירה רחבה (יומן תיקונים) ---------- */
+.drawer.wide{width:min(560px,95vw)}
+
+/* ---------- טבלאות דחוסות לשקפים 44–45 ---------- */
+.tbl.dense td,.tbl.dense th{padding:3px 9px;font-size:19px}
+.tbl.dense th{font-size:17px}
+.tbl th.l,.tbl td.l{text-align:right}
+
+/* ---------- שקף 45 · הפרדה בין השוואה למקלט לבין נתוני שידור ---------- */
+.gradeline{display:flex;align-items:center;gap:9px;font-size:17px;font-weight:800;color:var(--b-muted)}
+.gradeline::after{content:"";flex:1;height:1px;background:var(--b-line)}
+
+/* ---------- שקף 47 · נוסח מסויג ---------- */
+.qual{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.qual .q{background:#fff;border:1px solid var(--b-line);border-radius:9px;padding:6px 10px}
+.qual .q b{display:block;font-size:17px;color:var(--b-accent-dark)}
+.qual .q span{font-size:18px;color:var(--b-text);line-height:1.3}
+
+/* ---------- תווית "נדרש אימות" ---------- */
+.needver{
+  display:inline-flex;align-items:center;gap:6px;font-size:16px;font-weight:800;
+  color:#92400e;background:#fffbeb;border:1px dashed #fbbf24;border-radius:7px;padding:1px 8px;white-space:nowrap;
+}
+.needver::before{content:"?";display:inline-grid;place-items:center;width:15px;height:15px;border-radius:50%;
+  background:#f59e0b;color:#fff;font-size:11px;line-height:1}
+
+/* ---------- יומן תיקונים (מגירה) ---------- */
+.revsum{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;padding:10px 14px}
+.revsum .k{background:#fff;border:1px solid var(--b-line);border-radius:9px;padding:6px 8px;text-align:center}
+.revsum .k b{display:block;font:800 19px var(--mono);color:var(--b-ink);direction:ltr}
+.revsum .k span{font-size:12px;color:var(--b-muted);font-weight:700}
+.revitem{border:1px solid var(--b-line);border-radius:10px;background:#fff;padding:8px 11px;margin:0 14px 8px}
+.revitem h4{margin:0 0 2px;font-size:13.5px;font-weight:800;color:var(--b-ink);display:flex;gap:7px;align-items:center}
+.revitem h4 .n{font:700 11.5px var(--mono);background:var(--b-ink);color:#fff;border-radius:5px;padding:1px 5px}
+.revitem h4 .pr{font-size:11px;font-weight:800;border-radius:5px;padding:1px 6px;margin-inline-start:auto}
+.revitem .pr.krit{background:#fef2f2;color:#b91c1c;border:1px solid #fecaca}
+.revitem .pr.gavoha{background:#fff7ed;color:#9a3412;border:1px solid #fed7aa}
+.revitem .pr.beinoni{background:#fffbeb;color:#92400e;border:1px solid #fde68a}
+.revitem .pr.namuch{background:#f8fafc;color:#475569;border:1px solid #e2e8f0}
+.revitem p{margin:0;font-size:12.5px;line-height:1.4;color:var(--b-text)}
+.revitem p b{color:var(--b-ink)}
+.revitem .go{font-size:11.5px;font-weight:700;color:var(--b-accent-dark);background:none;border:none;padding:2px 0;margin-top:2px}
+.revitem .go:hover{text-decoration:underline}
+.revfilters{display:flex;gap:6px;flex-wrap:wrap;padding:0 14px 8px}
+.revfilters button{font-size:12px;font-weight:700;padding:3px 9px;border-radius:7px;border:1px solid #cbd5e1;background:#fff;color:var(--b-ink)}
+.revfilters button[aria-pressed=true]{background:var(--b-ink);color:#fff;border-color:var(--b-ink)}
+.drawer .revitem{padding:8px 10px}
+
+/* ---------- סימון שקף מתוקן בתוכן העניינים ---------- */
+.ol-s .ol-rev{display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--b-accent);
+  margin-inline-start:7px;vertical-align:2px}
+
+/* ---------- שקף 42 · עקומת מעבר ---------- */
+.iftwo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+
+/* ---------- שקף 43 · שרשרת AFC ---------- */
+.afcchain{display:flex;align-items:center;gap:6px}
+.afcchain .n{flex:1 1 0;min-width:0;background:#fff;border:2px solid var(--rc,#0ea5e9);border-radius:9px;
+  padding:5px 4px;text-align:center;font-size:16.5px;font-weight:800;color:var(--b-ink);line-height:1.15}
+.afcchain .n small{display:block;font-size:13.5px;font-weight:600;color:var(--b-muted)}
+.afcchain .n.err{border-color:#dc2626;background:#fef2f2}
+.afcchain .n.act{border-color:#059669;background:#ecfdf5}
+.afcchain i{font-style:normal;color:#cbd5e1;font-weight:800;flex:none}

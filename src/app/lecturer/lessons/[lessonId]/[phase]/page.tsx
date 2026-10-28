@@ -4,6 +4,7 @@ import Lesson04Player from "../../../../../components/lesson-04-player";
 import Lesson05Player from "../../../../../components/lesson-05-player";
 import Lesson05Practice from "../../../../../components/lesson-05-practice";
 import Lesson06Player from "../../../../../components/lesson-06-player";
+import Lesson07Player from "../../../../../components/lesson-07-player";
 import LecturerWorkspace from "../../../../../components/lecturer-workspace";
 import { getLesson } from "../../../../../lib/course-data";
 import styles from "./lesson-preview.module.css";
@@ -31,6 +32,7 @@ export default async function LecturerLessonPreviewPage({ params }: { params: Pr
     {phase === "slides" && lesson.lessonId === "lesson-04" ? <Lesson04Player lecturerMode />
         : phase === "slides" && lesson.lessonId === "lesson-05" ? <Lesson05Player lecturerMode />
           : phase === "slides" && lesson.lessonId === "lesson-06" ? <Lesson06Player lecturerMode />
+            : phase === "slides" && lesson.lessonId === "lesson-07" ? <Lesson07Player lecturerMode />
         : phase === "practice" && lesson.lessonId === "lesson-05" ? <Lesson05Practice />
           : resource ? <section className={styles.viewer}><iframe src={resource.href} title={`${resource.title}: ${lesson.title}`} allowFullScreen /><div className={styles.viewerFooter}><span>{resource.title}</span><Link className={styles.openNew} href={resource.href} target="_blank" rel="noreferrer">פתיחה בחלון חדש ↗</Link></div></section>
             : <p className={styles.empty}>{phase === "summary" ? "רפלקציה זו זמינה בסביבת הסטודנטים בלבד." : "אין לשיעור הזה תוכן בשלב שנבחר."} <Link className={styles.openNew} href="/lecturer/sessions#lessons">חזרה למערכי השיעור</Link></p>}
