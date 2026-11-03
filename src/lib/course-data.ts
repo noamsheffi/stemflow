@@ -2,6 +2,7 @@ import { conceptMap, conceptFormulaIds } from "./concept-map";
 import formulaSheet from "./formula-sheet-data.json";
 import { lesson06Slides } from "../components/lesson-06-data";
 import { lesson07Slides } from "../components/lesson-07-data";
+import { lesson08Slides } from "../components/lesson-08-data";
 
 export type ResourceKind = "lesson-html" | "simulation" | "exercise" | "supporting-material";
 
@@ -259,6 +260,19 @@ export const lessons: CourseLesson[] = [
     slides: lesson07Slides.map((slide) => ({ slideId: slide.slideId, number: slide.n, title: slide.h })),
     resources: [
       { resourceId: "lesson-07-main-html", kind: "lesson-html", title: "מערך שיעור — מקלט FM", href: "/course/communication-systems/lessons/lesson-07/slides" },
+    ],
+  },
+  {
+    lessonId: "lesson-08",
+    number: 8,
+    title: "גלאי AM ו־FM",
+    url: "/course/communication-systems/lessons/lesson-08",
+    topics: ["גלאי מעטפת", "קבוע זמן RC", "AGC", "מגבל FM", "גלאי שיפוע", "PLL", "AFC"],
+    formulaIds: [],
+    conceptIds: [],
+    slides: lesson08Slides.map((slide) => ({ slideId: slide.slideId, number: slide.n, title: slide.h })),
+    resources: [
+      { resourceId: "lesson-08-main-html", kind: "lesson-html", title: "מערך שיעור — גלאי AM ו־FM", href: "/course/communication-systems/lessons/lesson-08/slides" },
     ],
   },
 ];

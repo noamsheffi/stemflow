@@ -6,7 +6,12 @@ export function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
   const accessScope = accessScopeForPath(pathname);
   const accessToken = request.cookies.get(ACCESS_COOKIE)?.value;
-  if (!validAccessSession(accessToken, accessScope)) {
+  // Lecturer previews embed the same protected static deck as the student player.
+  // This grants only read access to lesson assets, not student pages or APIs.
+  const lecturerLessonAsset = ["GET", "HEAD"].includes(request.method)
+    && /^\/courses\/communication-systems\/lesson-\d+(?:\/|$)/.test(pathname)
+    && validAccessSession(accessToken, "lecturer");
+  if (!validAccessSession(accessToken, accessScope) && !lecturerLessonAsset) {
     if (pathname.startsWith("/api/")) {
       return NextResponse.json({ error: "authentication_required" }, { status: 401, headers: { "Cache-Control": "no-store" } });
     }

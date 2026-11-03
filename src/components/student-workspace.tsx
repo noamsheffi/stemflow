@@ -10,6 +10,7 @@ import { splitFormulaName } from "../lib/formula-name";
 import { lesson04Slides } from "./lesson-04-data";
 import { lesson05Slides } from "./lesson-05-player";
 import { lesson06Slides } from "./lesson-06-data";
+import { lesson08Slides, lesson08DeckVersion } from "./lesson-08-data";
 import FormulaMath from "./formula-math";
 import FormulaScroll from "./formula-scroll";
 import CourseTree from "./course-tree";
@@ -70,8 +71,9 @@ function ContextPanel({ pathname }: { pathname: string }) {
   const lessonConcepts = selectedLesson ? concepts.filter((item) => selectedLesson.conceptIds.includes(item.conceptId)) : [];
   const [tab, setTab] = useState<"formulas" | "concepts" | "notes" | "feedback">("formulas");
   const [feedback, setFeedback] = useState<Record<number, { t: string; text: string }>>({});
-  const hasFeedbackTab = ["lesson-04", "lesson-05", "lesson-06"].includes(selectedLesson?.lessonId ?? "");
-  const lessonFeedbackKey = `syllo:student:lesson:${selectedLesson?.lessonId ?? "lesson-04"}:feedback`;
+  const hasFeedbackTab = ["lesson-04", "lesson-05", "lesson-06", "lesson-08"].includes(selectedLesson?.lessonId ?? "");
+  const lessonStateKey = `syllo:student:lesson:${selectedLesson?.lessonId ?? "lesson-04"}${selectedLesson?.lessonId === "lesson-08" ? `:${lesson08DeckVersion}` : ""}`;
+  const lessonFeedbackKey = `${lessonStateKey}:feedback`;
   const tabOrder: Array<"formulas" | "concepts" | "notes" | "feedback"> = hasFeedbackTab ? ["formulas", "concepts", "feedback", "notes"] : ["formulas", "concepts", "notes"];
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const noteStorageKey = `syllo:lesson-note:${route.courseId}:${selectedLesson?.lessonId ?? "course"}`;
@@ -85,6 +87,7 @@ function ContextPanel({ pathname }: { pathname: string }) {
   useEffect(() => {
     if (!hasFeedbackTab) return;
     const refresh = (event?: Event) => {
+      if (event instanceof CustomEvent && event.detail?.lessonId && event.detail.lessonId !== selectedLesson?.lessonId) return;
       const next = event instanceof CustomEvent ? event.detail?.feedback : undefined;
       if (next && typeof next === "object") { setFeedback(next as Record<number, { t: string; text: string }>); return; }
       try {
@@ -95,7 +98,7 @@ function ContextPanel({ pathname }: { pathname: string }) {
     refresh();
     window.addEventListener("syllo:lesson-feedback-update", refresh);
     return () => window.removeEventListener("syllo:lesson-feedback-update", refresh);
-  }, [hasFeedbackTab, lessonFeedbackKey]);
+  }, [hasFeedbackTab, lessonFeedbackKey, selectedLesson?.lessonId]);
 
   const saveNote = (value: string) => {
     setNote(value);
@@ -144,10 +147,11 @@ function ContextPanel({ pathname }: { pathname: string }) {
             ? lesson05Slides[slideNumber - 1]?.title
             : selectedLesson?.lessonId === "lesson-06"
               ? lesson06Slides[slideNumber - 1]?.h
+              : selectedLesson?.lessonId === "lesson-08" ? lesson08Slides[slideNumber - 1]?.h
               : lesson04Slides.find((entry) => entry.n === slideNumber)?.h;
           if (!slideTitle || !selectedLesson) return null;
           return <Link key={number} className={styles.contextFeedback} href={appCourseHref(route.courseId, `lessons/${selectedLesson.lessonId}/slides`)} onClick={() => {
-            try { window.localStorage.setItem(`syllo:student:lesson:${selectedLesson.lessonId}:index`, JSON.stringify(slideNumber - 1)); } catch { /* Slide remains reachable from the outline. */ }
+            try { window.localStorage.setItem(`${lessonStateKey}:index`, JSON.stringify(slideNumber - 1)); } catch { /* Slide remains reachable from the outline. */ }
           }}><b>שקף <span dir="ltr">{String(slideNumber).padStart(2, "0")}</span> · {slideTitle}</b><small>{item.t === "unclear" ? "לא הבנתי" : item.t === "example" ? "צריך עוד דוגמה" : item.t === "question" ? "יש לי שאלה" : "נראה שיש טעות"}{item.text ? ` · ${item.text}` : ""}</small></Link>;
         }) : <p className={styles.contextEmpty}>עדיין לא שמרת משוב לשקפי השיעור.</p>}
       </>}
